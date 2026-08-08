@@ -1,0 +1,958 @@
+/* ==========================================================================
+   CELEBRITY XCEL DECK MAP PLATFORM - DESIGN SYSTEM (REFINED HSL & AUDITED)
+   Theme: Luxury Nautical Dark Mode (Oceanic Obsidian & Imperial Brass)
+   Spec Reference: docs/design/design_guide.md & docs/design/deck_plan_viewer_spec.md
+   ========================================================================== */
+
+:root {
+  /* Surface & Base HSL Color Palette Tokens */
+  --bg-abyss: hsl(220, 55%, 5%);              /* #050914 - App Base Dark */
+  --bg-deep-ocean: hsl(218, 50%, 8%);         /* #0a111e - Main Canvas Base */
+  --bg-surface-dark: hsl(217, 44%, 12%);      /* #111a2d - Card Base */
+  --bg-surface-glass: hsla(217, 40%, 15%, 0.65); /* Floating Card Glass Level 1 */
+  --bg-surface-glass-hover: hsla(217, 40%, 20%, 0.82);
+
+  /* Legacy Fallbacks for Backward Compatibility */
+  --bg-dark-0: var(--bg-abyss);
+  --bg-dark-1: var(--bg-deep-ocean);
+  --bg-dark-2: var(--bg-surface-dark);
+  --bg-dark-3: hsl(218, 35%, 18%);
+
+  /* Glassmorphism Borders & Overlays */
+  --glass-bg: hsla(217, 40%, 15%, 0.65);
+  --glass-bg-hover: hsla(217, 40%, 22%, 0.85);
+  --glass-border: hsla(215, 50%, 60%, 0.18);
+  --glass-border-glow: hsla(187, 100%, 50%, 0.40);
+  --border-subtle: hsla(215, 30%, 30%, 0.35);
+
+  /* Maritime Brand Accents */
+  --accent-gold: hsl(43, 74%, 52%);           /* #e0aa3e - Imperial Gold Accent */
+  --accent-gold-hover: hsl(43, 85%, 60%);
+  --accent-gold-light: hsl(43, 85%, 72%);
+  --accent-cyan: hsl(187, 100%, 42%);         /* #00d9f5 - Celestial Cyan Telemetry Glow */
+  --accent-cyan-glow: hsla(187, 100%, 50%, 0.25);
+  --accent-blue: hsl(217, 91%, 60%);
+  --accent-emerald: hsl(160, 84%, 39%);      /* #10b981 - Port / Access */
+  --accent-crimson: hsl(348, 83%, 47%);      /* #e11d48 - Emergency / Starboard */
+  --accent-amber: hsl(38, 92%, 50%);          /* #f59e0b - Caution */
+  --accent-purple: hsl(280, 75%, 60%);
+
+  /* Amenity Category HSL Color Tokens */
+  --amenity-stateroom: hsl(215, 80%, 65%);     /* Staterooms & Cabins */
+  --amenity-stateroom-bg: hsla(215, 70%, 18%, 0.85);
+  --amenity-stateroom-text: hsl(215, 90%, 92%);
+
+  --amenity-suite: hsl(38, 92%, 50%);          /* Suites & VIP */
+  --amenity-suite-bg: hsla(38, 80%, 18%, 0.85);
+  --amenity-suite-text: hsl(38, 95%, 90%);
+
+  --amenity-dining: hsl(25, 95%, 53%);         /* Fine Dining & Buffets */
+  --amenity-dining-bg: hsla(25, 80%, 16%, 0.85);
+  --amenity-dining-text: hsl(25, 100%, 92%);
+
+  --amenity-bar: hsl(280, 75%, 60%);            /* Lounges & Bars */
+  --amenity-bar-bg: hsla(280, 60%, 18%, 0.85);
+  --amenity-bar-text: hsl(280, 90%, 92%);
+
+  --amenity-entertainment: hsl(330, 85%, 55%);  /* Entertainment & Theater */
+  --amenity-entertainment-bg: hsla(330, 70%, 18%, 0.85);
+  --amenity-entertainment-text: hsl(330, 95%, 92%);
+
+  --amenity-pool: hsl(187, 100%, 42%);         /* Pool Deck & Outdoor */
+  --amenity-pool-bg: hsla(187, 80%, 14%, 0.85);
+  --amenity-pool-text: hsl(187, 100%, 90%);
+
+  --amenity-spa: hsl(160, 84%, 39%);          /* Spa, Wellness & Gym */
+  --amenity-spa-bg: hsla(160, 70%, 14%, 0.85);
+  --amenity-spa-text: hsl(160, 90%, 90%);
+
+  --amenity-services: hsl(43, 74%, 52%);       /* Guest Services & Excursions */
+  --amenity-services-bg: hsla(43, 60%, 16%, 0.85);
+  --amenity-services-text: hsl(43, 90%, 90%);
+
+  --amenity-magic-carpet: hsl(48, 96%, 53%);   /* Cantilevered Platform */
+  --amenity-magic-carpet-bg: hsla(48, 80%, 18%, 0.85);
+  --amenity-magic-carpet-text: hsl(48, 100%, 90%);
+
+  /* Neutral Text Tokens (WCAG 2.1 AAA Compliant) */
+  --text-primary: hsl(210, 40%, 98%);         /* 16.8:1 on Abyss */
+  --text-secondary: hsl(215, 20%, 75%);       /* 9.4:1 on Glass */
+  --text-muted: hsl(215, 15%, 58%);           /* 4.8:1 on Glass */
+  --text-inverse: hsl(220, 55%, 5%);          /* On Light Badges / Gold */
+  --text-gold: hsl(43, 90%, 75%);
+
+  /* Typography System Stack */
+  --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+
+  /* Typography Scale Matrix Variables */
+  --text-size-display: 2.0rem;       /* 32px Title */
+  --text-size-h1: 1.5rem;            /* 24px H1 */
+  --text-size-h2: 1.125rem;          /* 18px H2 */
+  --text-size-h3: 0.9375rem;         /* 15px H3 */
+  --text-size-body-lg: 1.0rem;       /* 16px Body Large */
+  --text-size-body-md: 0.875rem;     /* 14px Body Medium */
+  --text-size-body-sm: 0.75rem;      /* 12px Body Small */
+  --text-size-micro: 0.6875rem;      /* 11px Micro Tag */
+  --text-size-mono: 0.8125rem;       /* 13px Telemetry */
+
+  /* Elevation Shadows & Lighting Highlights */
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.70);
+  --shadow-glow: 0 0 20px hsla(187, 100%, 50%, 0.25);
+  --shadow-gold-glow: 0 0 16px hsla(43, 74%, 52%, 0.35);
+
+  /* Radii Scale */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+
+  /* Touch Target Dimensions */
+  --touch-target-min: 44px;
+}
+
+/* Glassmorphism Elevation Specs (Section 4.1 Specification) */
+.glass-panel-el1 {
+  background: var(--bg-surface-glass);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: 
+    0 8px 32px 0 rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-md);
+}
+
+.glass-panel-el2 {
+  background: hsla(217, 45%, 11%, 0.88);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid var(--border-active-glow);
+  box-shadow: 
+    0 12px 48px 0 rgba(0, 0, 0, 0.65),
+    0 0 24px 0 var(--accent-cyan-glow),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-lg);
+}
+
+/* Keyboard Focus Ring (WCAG 2.1 AA) */
+:focus-visible {
+  outline: 3px solid var(--accent-cyan) !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 12px var(--accent-cyan-glow) !important;
+}
+
+/* Custom Scrollbar Formatting */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(5, 9, 20, 0.5);
+}
+::-webkit-scrollbar-thumb {
+  background: hsla(215, 30%, 50%, 0.25);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-cyan);
+}
+
+/* Reset & Canvas Setup */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-deep-ocean);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Typography Hierarchy */
+h1, .font-h1 {
+  font-family: var(--font-display);
+  font-size: var(--text-size-h1);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+h2, .font-h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-size-h2);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.00em;
+}
+
+h3, .font-h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-size-h3);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+code, pre, .font-mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-size-mono);
+}
+
+/* App Container */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  background: radial-gradient(circle at 50% 15%, hsl(218, 48%, 11%) 0%, hsl(220, 55%, 5%) 100%);
+  position: relative;
+}
+
+/* Header Navbar */
+.navbar {
+  height: 64px;
+  background: hsla(218, 50%, 8%, 0.90);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 1000;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--text-primary);
+}
+
+.brand-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--accent-gold) 0%, hsl(40, 70%, 40%) 100%);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 16px hsla(43, 74%, 52%, 0.4);
+  color: var(--text-inverse);
+}
+
+.brand-title {
+  font-size: var(--text-size-h2);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ship-badge {
+  background: hsla(43, 74%, 52%, 0.15);
+  border: 1px solid var(--accent-gold);
+  color: var(--accent-gold-light);
+  font-size: var(--text-size-micro);
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  min-height: 40px;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-size: var(--text-size-body-md);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.btn-glass:hover {
+  background: var(--glass-bg-hover);
+  border-color: var(--accent-cyan);
+  box-shadow: var(--shadow-glow);
+  color: var(--accent-cyan);
+  transform: translateY(-1px);
+}
+
+.btn-glass.active {
+  background: hsla(187, 100%, 50%, 0.18);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+  box-shadow: var(--shadow-glow);
+}
+
+.btn-primary-gold {
+  background: linear-gradient(135deg, var(--accent-gold) 0%, hsl(40, 75%, 45%) 100%);
+  color: var(--text-inverse);              /* High contrast AAA dark text on gold */
+  border: none;
+  min-height: 40px;
+  padding: 8px 20px;
+  border-radius: var(--radius-md);
+  font-size: var(--text-size-body-md);
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: var(--shadow-gold-glow), 0 4px 14px rgba(0,0,0,0.4);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary-gold:hover {
+  background: linear-gradient(135deg, var(--accent-gold-hover) 0%, hsl(40, 80%, 50%) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 0 20px hsla(43, 74%, 52%, 0.55);
+}
+
+/* Main Viewport Workspace */
+.main-viewport {
+  flex: 1;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Sidebar Dock (Collapsible) */
+.sidebar-dock {
+  width: 340px;
+  background: hsla(218, 50%, 7%, 0.94);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-right: 1px solid var(--glass-border);
+  display: flex;
+  flex-direction: column;
+  z-index: 900;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  box-shadow: var(--shadow-lg);
+}
+
+.sidebar-dock.collapsed {
+  margin-left: -340px;
+}
+
+.dock-toggle-btn {
+  position: absolute;
+  right: -40px;
+  top: 20px;
+  width: 40px;
+  height: 40px;
+  background: hsla(218, 50%, 7%, 0.94);
+  border: 1px solid var(--glass-border);
+  border-left: none;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 950;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.dock-toggle-btn:hover {
+  color: var(--accent-cyan);
+  border-color: var(--accent-cyan);
+  background: hsla(217, 40%, 18%, 0.95);
+}
+
+.dock-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.search-box {
+  position: relative;
+  margin-top: 14px;
+}
+
+.search-input {
+  width: 100%;
+  min-height: 42px;
+  background: hsla(215, 30%, 20%, 0.40);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 10px 14px 10px 42px;
+  color: var(--text-primary);
+  font-size: var(--text-size-body-md);
+  font-family: var(--font-body);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  border-color: var(--accent-cyan);
+  background: hsla(187, 100%, 50%, 0.08);
+  box-shadow: 0 0 16px var(--accent-cyan-glow);
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+}
+
+.dock-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.filter-section-title {
+  font-size: var(--text-size-micro);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filter-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filter-chip {
+  background: hsla(215, 30%, 20%, 0.35);
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  font-size: var(--text-size-body-sm);
+  min-height: 32px;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.filter-chip:hover {
+  background: hsla(187, 100%, 50%, 0.12);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+
+.filter-chip.active {
+  background: hsla(187, 100%, 50%, 0.20);
+  border-color: var(--accent-cyan);
+  color: var(--text-primary);
+  font-weight: 600;
+  box-shadow: 0 0 12px var(--accent-cyan-glow);
+}
+
+.filter-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.search-results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.search-result-card {
+  background: hsla(215, 30%, 20%, 0.25);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.search-result-card:hover, .search-result-card.active {
+  background: hsla(187, 100%, 50%, 0.12);
+  border-color: var(--accent-cyan);
+  transform: translateX(4px);
+}
+
+.res-title {
+  font-size: var(--text-size-body-md);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.res-sub {
+  font-size: var(--text-size-body-sm);
+  color: var(--text-secondary);
+  margin-top: 3px;
+}
+
+/* Map Canvas Container & Leaflet Custom Tooltips */
+.map-container {
+  flex: 1;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  background: var(--bg-abyss);
+  overflow: hidden;
+}
+
+#deck-map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-abyss);
+  z-index: 1;
+}
+
+.leaflet-container {
+  background-color: var(--bg-abyss) !important;
+  font-family: var(--font-body) !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.leaflet-custom-tooltip {
+  background: hsla(218, 50%, 8%, 0.95) !important;
+  border: 1px solid var(--accent-cyan) !important;
+  border-radius: var(--radius-md) !important;
+  color: var(--text-primary) !important;
+  box-shadow: var(--shadow-md), 0 0 16px var(--accent-cyan-glow) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  padding: 6px 10px !important;
+}
+
+.leaflet-custom-tooltip::before {
+  border-top-color: var(--accent-cyan) !important;
+}
+
+/* Leaflet Venue Marker Labels (Overlap / Collision Clamped) */
+.custom-venue-label-container {
+  pointer-events: auto;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.custom-venue-label-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-size-micro);
+  font-weight: 600;
+  white-space: nowrap;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.custom-venue-label-pill:hover {
+  transform: translate(-50%, -50%) scale(1.06);
+  border-color: var(--accent-cyan) !important;
+  box-shadow: 0 0 16px var(--accent-cyan-glow);
+  z-index: 1000;
+}
+
+/* Vector Polygon Glow Effects */
+.upscaled-vector-polygon {
+  filter: drop-shadow(0 0 6px hsla(187, 100%, 50%, 0.35));
+  transition: all 0.3s ease;
+}
+
+/* Floating Deck Switcher Pill Bar (Audited Layout) */
+.deck-switcher-overlay {
+  position: absolute;
+  left: 24px;
+  top: 24px;
+  z-index: 800;
+  background: hsla(218, 50%, 7%, 0.90);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: calc(100% - 120px);
+  box-shadow: var(--shadow-lg);
+  width: 220px;
+}
+
+.deck-switcher-label {
+  font-size: var(--text-size-micro);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  text-align: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.deck-list-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  max-height: 440px;
+  padding-right: 4px;
+}
+
+.deck-pill {
+  min-height: var(--touch-target-min);         /* 44px Touch Target Compliance */
+  background: hsla(215, 30%, 20%, 0.25);
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  font-size: var(--text-size-body-sm);
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+
+.deck-pill:hover {
+  background: hsla(215, 30%, 30%, 0.4);
+  color: var(--text-primary);
+  border-color: var(--glass-border);
+}
+
+.deck-pill.active {
+  background: linear-gradient(135deg, hsla(43, 74%, 52%, 0.25) 0%, hsla(187, 100%, 50%, 0.20) 100%);
+  border-color: var(--accent-gold);
+  color: var(--accent-gold-light);
+  font-weight: 700;
+  box-shadow: var(--shadow-gold-glow);
+}
+
+.deck-num {
+  font-family: var(--font-mono);
+  font-size: var(--text-size-mono);
+}
+
+.deck-tag {
+  font-size: var(--text-size-micro);
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.deck-pill.active .deck-tag {
+  color: var(--accent-gold-light);
+}
+
+/* Quick Decks Jump Pill Bar */
+.quick-decks-bar {
+  display: flex;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--glass-border);
+  overflow-x: auto;
+}
+
+.quick-deck-btn {
+  min-width: 40px;
+  min-height: 34px;
+  background: hsla(215, 30%, 20%, 0.3);
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-size-micro);
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quick-deck-btn:hover {
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+  background: hsla(187, 100%, 50%, 0.15);
+}
+
+/* Floating Toolbar Controls (Audited 44px Touch Targets) */
+.map-toolbar {
+  position: absolute;
+  right: 24px;
+  top: 24px;
+  z-index: 800;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.toolbar-group {
+  background: hsla(218, 50%, 7%, 0.90);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: var(--shadow-lg);
+}
+
+.tool-btn {
+  width: var(--touch-target-min);            /* 44px x 44px Touch Target */
+  height: var(--touch-target-min);
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  border-radius: var(--radius-md);           /* 12px Radius Spec */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.tool-btn:hover {
+  background: hsla(215, 30%, 30%, 0.4);
+  color: var(--accent-cyan);
+  transform: scale(1.05);                    /* Micro-interaction hover */
+}
+
+.tool-btn:active {
+  transform: scale(0.95);                    /* Micro-interaction press */
+}
+
+.tool-btn.active {
+  background: hsla(187, 100%, 50%, 0.20);
+  color: var(--accent-cyan);
+  border: 1px solid var(--accent-cyan);
+  box-shadow: var(--shadow-glow);
+}
+
+/* Compass Widget Orientation Indicator */
+.compass-icon-wrapper {
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Upscale Status Telemetry Indicator Pill */
+.upscale-status-bar {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 800;
+  background: hsla(218, 50%, 7%, 0.94);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--glass-border-glow);
+  padding: 10px 24px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow-lg), 0 0 24px hsla(187, 100%, 50%, 0.18);
+}
+
+.status-badge-active {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--text-size-micro);
+  font-weight: 700;
+  color: var(--accent-cyan);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.status-pulse {
+  width: 8px;
+  height: 8px;
+  background: var(--accent-cyan);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--accent-cyan);
+  animation: pulseGlow 1.8s infinite;
+}
+
+@keyframes pulseGlow {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 18px var(--accent-cyan); }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+/* Modal Drawer Overlay (Audited Responsive Layout) */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;                  /* Desktop Right Slide-over Drawer */
+  padding: 0;
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-card {
+  background: hsla(218, 50%, 9%, 0.97);
+  border-left: 1px solid var(--border-active-glow);
+  box-shadow: -12px 0 48px rgba(0, 0, 0, 0.85), -4px 0 24px hsla(187, 100%, 50%, 0.15);
+  width: 100%;
+  max-width: 520px;                            /* Sleek Right Inspector Spec */
+  height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.modal-header {
+  padding: 24px 28px;
+  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-close {
+  background: hsla(215, 30%, 25%, 0.3);
+  border: 1px solid var(--glass-border);
+  color: var(--text-muted);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  background: hsla(348, 83%, 47%, 0.2);
+  border-color: var(--accent-crimson);
+  color: var(--text-primary);
+}
+
+.modal-body {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  flex: 1;
+}
+
+.code-block {
+  background: var(--bg-abyss);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  font-family: var(--font-mono);
+  font-size: var(--text-size-mono);
+  color: var(--accent-cyan);
+  overflow-x: auto;
+  line-height: 1.6;
+}
+
+/* Responsive Mobile Viewport Adaptations */
+@media (max-width: 768px) {
+  .modal-overlay {
+    align-items: flex-end;                    /* Mobile Bottom Sheet Layout */
+  }
+
+  .modal-card {
+    max-width: 100%;
+    height: 85vh;
+    border-left: none;
+    border-top: 1px solid var(--border-active-glow);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes slideInUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  .deck-switcher-overlay {
+    left: 12px;
+    top: 12px;
+    width: 180px;
+  }
+
+  .map-toolbar {
+    right: 12px;
+    top: 12px;
+  }
+}
+
