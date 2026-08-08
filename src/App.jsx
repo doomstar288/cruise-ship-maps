@@ -6,7 +6,7 @@ import CabinInspectorModal from './components/CabinInspectorModal';
 import ApiInspectorModal from './components/ApiInspectorModal';
 import MultiSourceInspectorModal from './components/MultiSourceInspectorModal';
 import { CELEBRITY_XCEL_DECKS, CELEBRITY_XCEL_METADATA, SAMPLE_WAYFINDING_ROUTES } from './data/celebrityXcelData';
-import { Search, Filter, Sparkles, Navigation, Layers, ShieldCheck, MapPin, ChevronRight, X, ChevronLeft, Info, Download, CheckCircle2 } from 'lucide-react';
+import { Search, Navigation, ChevronRight, X, ChevronLeft, CheckCircle2 } from 'lucide-react';
 import './styles/design-system.css';
 
 export default function App() {
@@ -46,7 +46,7 @@ export default function App() {
     setSearchQuery('');
   };
 
-  const handleStartWayfinding = (venue) => {
+  const handleStartWayfinding = () => {
     const matchingRoute = SAMPLE_WAYFINDING_ROUTES[0];
     setActiveRoute(matchingRoute);
     setSelectedVenue(null);
@@ -166,6 +166,9 @@ export default function App() {
                   </div>
                   <div style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
                     Cross-referenced with Official CAD, AIS Satellite, AI Super-Res, & Passenger Logs.
+                  </div>
+                  <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', marginTop: '8px', fontStyle: 'italic' }}>
+                    Simulated demo data — scores are illustrative, not from live feeds.
                   </div>
                 </div>
 

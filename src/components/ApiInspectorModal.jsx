@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Code, Copy, Check, ExternalLink, ShieldCheck, Database, Cpu, Download } from 'lucide-react';
+import { X, Code, Copy, Check, ShieldCheck, Database, Cpu, Download } from 'lucide-react';
 import { CELEBRITY_XCEL_METADATA } from '../data/celebrityXcelData';
 
 export default function ApiInspectorModal({ currentDeck, onClose }) {

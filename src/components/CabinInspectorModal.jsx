@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Navigation, ShieldCheck, Sparkles, MapPin, ExternalLink, CheckCircle2 } from 'lucide-react';
+import { X, Navigation, Sparkles, CheckCircle2 } from 'lucide-react';
 import { calculateSourceConsensus } from '../utils/multiSourceDataConsensus';
 
 export default function CabinInspectorModal({ venue, deck, onClose, onStartWayfinding }) {
