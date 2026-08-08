@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { CELEBRITY_XCEL_DECKS, CELEBRITY_XCEL_METADATA } from './celebrityXcelData';
+import { isValidImo } from '../utils/imo';
+
+describe('Celebrity Xcel vessel metadata', () => {
+  it('carries a checksum-valid IMO number', () => {
+    expect(isValidImo(CELEBRITY_XCEL_METADATA.imoNumber)).toBe(true);
+  });
+});
 
 describe('Celebrity Xcel deck dataset', () => {
   it('generates all 17 decks with sequential levels', () => {

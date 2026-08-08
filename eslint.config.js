@@ -7,7 +7,7 @@ export default [
   { ignores: ['dist/**', 'node_modules/**', 'coverage/**'] },
   js.configs.recommended,
   {
-    files: ['**/*.{js,jsx}'],
+    files: ['**/*.{js,jsx,mjs}'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
@@ -28,5 +28,11 @@ export default [
     // Test files run under Vitest globals.
     files: ['src/**/*.{test,spec}.{js,jsx}', 'src/test/**/*.{js,jsx}'],
     languageOptions: { globals: { ...globals.node, ...globals.vitest } },
+  },
+  {
+    // Build/data scripts are Node-only, never shipped to the browser.
+    files: ['scripts/**/*.{js,mjs}'],
+    languageOptions: { globals: globals.node },
+    rules: { 'no-console': 'off' },
   },
 ];
