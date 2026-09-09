@@ -22,6 +22,13 @@ jobs:
   analyze:
     name: Analyze (JavaScript)
     runs-on: ubuntu-latest
+    # Code scanning must be enabled on the repository for the results upload to
+    # succeed; on a private repo that requires GitHub Advanced Security. Until
+    # then CodeQL analyzes the code fine but cannot publish, so this job is kept
+    # non-blocking rather than failing every pull request. Remove this line once
+    # code scanning is enabled (Settings -> Code security) so real findings gate
+    # merges.
+    continue-on-error: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
