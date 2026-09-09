@@ -9,7 +9,9 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/test/setup.js'],
-    include: ['src/**/*.{test,spec}.{js,jsx}'],
+    // Build scripts are covered too — the published API packs are a contract
+    // with external consumers, so their shape needs the same guard as the app.
+    include: ['src/**/*.{test,spec}.{js,jsx}', 'scripts/**/*.test.mjs'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],

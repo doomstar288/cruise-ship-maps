@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "npm run export:packs",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint .",
@@ -12,6 +13,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "seed:fleet": "node scripts/seed-fleet.mjs",
+    "export:packs": "node scripts/export-ship-packs.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
