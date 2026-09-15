@@ -1,14 +1,14 @@
-// Celebrity Xcel Geospatial Deck Data & Open API Dataset (All 17 Decks)
-// Flagship Edge-Class Vessel - Celebrity Cruises (Royal Caribbean Group)
+// Celebrity Xcel deck dataset — fifth ship of Celebrity Cruises' Edge Series.
 
-import { generateAll17Decks } from './celebrityXcelFullDeckGenerator.js';
+import { generateAllDecks } from './celebrityXcelFullDeckGenerator.js';
+import { buildRoute } from '../utils/wayfinding.js';
 
 export const CELEBRITY_XCEL_METADATA = {
   id: "celebrity-xcel",
   name: "Celebrity Xcel",
   cruiseLine: "Celebrity Cruises",
   parentCorporation: "Royal Caribbean Group",
-  shipClass: "Edge Class (Fifth Vessel)",
+  shipClass: "Edge Series (Fifth Ship)",
   // Corrected from 9938430, which fails the IMO check-digit test (see
   // src/utils/imo.js) and therefore was never a valid IMO number.
   // Source: Wikidata Q137168318 (CC0), cross-checked via scripts/seed-fleet.mjs.
@@ -16,55 +16,38 @@ export const CELEBRITY_XCEL_METADATA = {
   grossTonnage: 140600,
   lengthMeters: 327,
   beamMeters: 39,
-  maxPassengers: 3260,
+  maxPassengers: 3276,
   crewCapacity: 1400,
   maidenVoyageYear: 2025,
-  totalDecks: 17,
-  deckRange: { min: 1, max: 17 },
+  // 16 decks in all; the 15 guest decks are numbered 2–12 and 14–17.
+  totalDecks: 16,
+  guestDecks: 15,
+  deckRange: { min: 2, max: 17 },
   iconicFeature: "Magic Carpet (Moving Cantilevered Platform)"
 };
 
-export const CELEBRITY_XCEL_DECKS = generateAll17Decks();
+export const CELEBRITY_XCEL_DECKS = generateAllDecks();
+
+const deckVenues = (level) => CELEBRITY_XCEL_DECKS.find((d) => d.level === level).venues;
+
+/** First cabin of a class on a deck, so preset routes track the generated numbering. */
+const firstCabin = (level, cabinClass, side) =>
+  deckVenues(level).find((v) => v.cabinClass === cabinClass && (!side || v.side === side)).id;
 
 export const SAMPLE_WAYFINDING_ROUTES = [
-  {
+  buildRoute(CELEBRITY_XCEL_DECKS, {
     id: "route-1",
-    name: "Stateroom 10101 to Magic Carpet (Deck 5)",
-    origin: { deck: 10, name: "Stateroom 10101", coords: [167, 77] },
-    destination: { deck: 5, name: "Magic Carpet Platform", coords: [175, 101] },
-    distanceMeters: 85,
-    estimatedMinutes: 3,
-    steps: [
-      "Exit Stateroom 10101 into Corridor",
-      "Walk 20m Midship to Elevator Bank B",
-      "Take Elevator down from Deck 10 to Deck 5",
-      "Step out on Deck 5 Starboard and walk 10m to Magic Carpet Entrance"
-    ]
-  },
-  {
+    from: { deck: 10, venueId: firstCabin(10, "C2", "Starboard") },
+    to: { deck: 5, venueId: "v5-magic-carpet" },
+  }),
+  buildRoute(CELEBRITY_XCEL_DECKS, {
     id: "route-2",
-    name: "Iconic Suite 12101 to Sunset Bar (Deck 15)",
-    origin: { deck: 12, name: "Iconic Suite 12101", coords: [35, 31] },
-    destination: { deck: 15, name: "Sunset Bar", coords: [292, 50] },
-    distanceMeters: 220,
-    estimatedMinutes: 6,
-    steps: [
-      "Exit Iconic Suite 12101 into Forward Suite Lobby",
-      "Take Forward Elevator Bank A up from Deck 12 to Deck 15",
-      "Walk Aft past Fitness Center and Rooftop Garden to Sunset Bar Terrace"
-    ]
-  },
-  {
+    from: { deck: 12, venueId: firstCabin(12, "IC", "Port") },
+    to: { deck: 15, venueId: "v15-sunset-bar" },
+  }),
+  buildRoute(CELEBRITY_XCEL_DECKS, {
     id: "route-3",
-    name: "Stateroom 3101 to The Theatre (Deck 4)",
-    origin: { deck: 3, name: "Stateroom 3101", coords: [46, 25] },
-    destination: { deck: 4, name: "The Theatre at Xcel", coords: [50, 50] },
-    distanceMeters: 45,
-    estimatedMinutes: 2,
-    steps: [
-      "Walk Forward from Stateroom 3101 to Forward Elevator Bank A",
-      "Take Elevator or Stairs up to Deck 4",
-      "Enter Main Foyer of The Theatre at Xcel"
-    ]
-  }
+    from: { deck: 3, venueId: firstCabin(3, "O2", "Port") },
+    to: { deck: 4, venueId: "v4-theatre" },
+  }),
 ];

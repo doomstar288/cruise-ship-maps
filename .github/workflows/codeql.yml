@@ -12,23 +12,13 @@ on:
 
 permissions:
   contents: read
-  security-events: write
-  # Required by the CodeQL action to read the workflow run; without it the
-  # analysis succeeds but the upload fails with "Resource not accessible by
-  # integration" on private repositories.
+  # Lets the CodeQL action read the workflow run it belongs to.
   actions: read
 
 jobs:
   analyze:
     name: Analyze (JavaScript)
     runs-on: ubuntu-latest
-    # Code scanning must be enabled on the repository for the results upload to
-    # succeed; on a private repo that requires GitHub Advanced Security. Until
-    # then CodeQL analyzes the code fine but cannot publish, so this job is kept
-    # non-blocking rather than failing every pull request. Remove this line once
-    # code scanning is enabled (Settings -> Code security) so real findings gate
-    # merges.
-    continue-on-error: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -38,7 +28,64 @@ jobs:
         with:
           languages: javascript-typescript
 
+      # Code scanning is not enabled on this private repository (it needs GitHub
+      # Code Security), so uploading to the Security tab fails with "Code
+      # scanning is not enabled". Analyze without uploading and gate on the SARIF
+      # below instead. If code scanning is enabled later, switch `upload` back to
+      # `always`, restore `security-events: write`, and drop the gate step.
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
           category: '/language:javascript-typescript'
+          upload: never
+          output: sarif-results
+
+      - name: Upload SARIF report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: codeql-sarif
+          path: sarif-results
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Fail on CodeQL findings
+        run: |
+          node --input-type=module <<'EOF'
+          import { readdirSync, readFileSync, appendFileSync } from 'node:fs';
+
+          const dir = 'sarif-results';
+          const findings = [];
+          for (const file of readdirSync(dir).filter((f) => f.endsWith('.sarif'))) {
+            const sarif = JSON.parse(readFileSync(`${dir}/${file}`, 'utf8'));
+            for (const run of sarif.runs ?? []) {
+              for (const result of run.results ?? []) {
+                const loc = result.locations?.[0]?.physicalLocation;
+                findings.push({
+                  rule: result.ruleId,
+                  level: result.level ?? 'warning',
+                  where: `${loc?.artifactLocation?.uri ?? '?'}:${loc?.region?.startLine ?? '?'}`,
+                  message: (result.message?.text ?? '').replace(/\s+/g, ' '),
+                });
+              }
+            }
+          }
+
+          const summary = findings.length
+            ? [
+                `### CodeQL: ${findings.length} finding(s)`,
+                '',
+                '| Rule | Level | Location | Message |',
+                '|---|---|---|---|',
+                ...findings.map((f) => `| \`${f.rule}\` | ${f.level} | \`${f.where}\` | ${f.message.replace(/\|/g, '\\|')} |`),
+              ].join('\n')
+            : '### CodeQL: no findings';
+          appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${summary}\n`);
+
+          for (const f of findings) {
+            const [file, line] = f.where.split(':');
+            console.log(`::error file=${file},line=${line},title=${f.rule}::${f.message}`);
+          }
+          if (findings.length) process.exit(1);
+          console.log('No CodeQL findings.');
+          EOF
