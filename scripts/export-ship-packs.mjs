@@ -54,6 +54,16 @@ const ELEVATOR_PATTERN = /\b(elevator|lift)\b/i;
 const STAIR_PATTERN = /\b(stair|stairwell|stairs)\b/i;
 const MUSTER_PATTERN = /\b(muster|assembly station|lifeboat)\b/i;
 const CABIN_CATEGORY = /^(staterooms?|suites?)$/i;
+/** Crew and back-of-house space: category "Crew & Service", or a name like
+ *  "Crew & Technical Areas" / "Provision Stores". Tags are deliberately not read:
+ *  the Navigation Bridge is also tagged "Crew Only" but is a named landmark. */
+const CREW_PATTERN = /\b(crew|technical areas?|provision stores?|back[- ]of[- ]house)\b/i;
+
+/** Whether a record is decorative or crew-only rather than somewhere a guest goes. */
+export function isNonGuestSpace(venue) {
+  if (venue.hideLabel) return true;
+  return CREW_PATTERN.test(`${venue.category ?? ''} ${venue.name ?? ''}`);
+}
 
 /**
  * Structural kind for a venue record, using the Cruise Deck GeoJSON Extension
@@ -70,6 +80,11 @@ export function classifyFeature(venue) {
   if (STAIR_PATTERN.test(haystack)) return 'stairwell';
   if (MUSTER_PATTERN.test(haystack)) return 'muster_station';
   if (CABIN_CATEGORY.test(venue.category ?? '')) return 'cabin';
+  // Crew strips and back-of-house blocks are emitted as `corridor`, not dropped:
+  // consumers (AuraTrip) still draw corridors as circulation, so the deck keeps
+  // its real footprint, but only venue/poi/muster_station are listed in search.
+  // Never use `poi` or `muster_station` here: consumers list both.
+  if (isNonGuestSpace(venue)) return 'corridor';
   return 'venue';
 }
 
@@ -205,7 +220,9 @@ export function revisionOf(pack) {
 /** Build one ship's pack from its in-app metadata + deck records. */
 export function buildPack(metadata, decks) {
   const geometry = {
-    units: 'plan-units',
+    // The deck grid is drawn to real proportions (1 unit = 1 m). Consumers still
+    // normalize against `extent`; `units` only tells them distances are metres.
+    units: 'meters',
     // The deck grid runs bow (x=0) to stern (x=length), port (y=0) to starboard.
     orientation: 'horizontal',
     extent: computeExtent(decks),
