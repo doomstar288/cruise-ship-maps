@@ -1,8 +1,18 @@
-import React from 'react';
-import { X, Navigation, Sparkles, CheckCircle2 } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { X, Navigation, Sparkles, CheckCircle2, MapPin } from 'lucide-react';
 import { calculateSourceConsensus } from '../utils/multiSourceDataConsensus';
+import { describeLocation } from '../utils/deckPlanDataPipeline';
 
 export default function CabinInspectorModal({ venue, deck, onClose, onStartWayfinding }) {
+  // Escape closes the drawer; the map behind it stays usable.
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [onClose]);
+
   if (!venue) return null;
 
   const isStateroom = venue.category === 'Staterooms' || venue.category === 'Suites';
@@ -10,8 +20,8 @@ export default function CabinInspectorModal({ venue, deck, onClose, onStartWayfi
   const consensus = calculateSourceConsensus(venue.id);
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-card" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+    <div className="modal-overlay drawer">
+      <div className="modal-card" role="dialog" aria-modal="false" aria-labelledby="venue-inspector-title">
         {/* Header */}
         <div className="modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -20,16 +30,17 @@ export default function CabinInspectorModal({ venue, deck, onClose, onStartWayfi
               height: '14px',
               borderRadius: '50%',
               background: venue.color,
-              boxShadow: `0 0 12px ${venue.color}`
+              boxShadow: `0 0 12px ${venue.color}`,
+              flexShrink: 0
             }}></span>
             <div>
-              <h3 style={{ fontSize: '1.15rem', color: 'var(--text-primary)' }}>{venue.name}</h3>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
-                {deck.name} • Grid Coordinates: [{venue.center[0]}m Bow, {venue.center[1]}m Port]
+              <h3 id="venue-inspector-title" style={{ fontSize: '1.15rem', color: 'var(--text-primary)' }}>{venue.name}</h3>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <MapPin size={12} /> Deck {deck.level} · {describeLocation(venue.center)}
               </div>
             </div>
           </div>
-          <button className="modal-close" onClick={onClose} aria-label="Close modal">
+          <button className="modal-close" onClick={onClose} aria-label="Close details">
             <X size={18} />
           </button>
         </div>
@@ -62,13 +73,13 @@ export default function CabinInspectorModal({ venue, deck, onClose, onStartWayfi
 
             {isStateroom && venue.sqft && (
               <span className="ship-badge" style={{ background: 'rgba(245,158,11,0.1)', borderColor: '#f59e0b', color: '#f59e0b' }}>
-                📐 {venue.sqft} sq ft {venue.verandaSqft ? `(+${venue.verandaSqft} sq ft Veranda)` : ''}
+                📐 {venue.sqft} sq ft {venue.verandaSqft ? `(incl. ${venue.verandaSqft} sq ft veranda)` : ''}
               </span>
             )}
 
             {isStateroom && venue.ada && (
               <span className="ship-badge" style={{ background: 'rgba(20,184,166,0.15)', borderColor: '#14b8a6', color: '#14b8a6' }}>
-                ♿ ADA Accessible (Roll-in Shower)
+                ♿ Accessible
               </span>
             )}
 
@@ -82,7 +93,7 @@ export default function CabinInspectorModal({ venue, deck, onClose, onStartWayfi
           {/* Description */}
           <div style={{ background: 'rgba(255,255,255,0.03)', padding: '16px', borderRadius: 'var(--radius-md)', border: '1px solid var(--glass-border)' }}>
             <h4 style={{ fontSize: '0.85rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '8px' }}>
-              Venue Specification & Details
+              About
             </h4>
             <p style={{ fontSize: '0.92rem', color: 'var(--text-primary)', lineHeight: 1.6 }}>
               {venue.description}
@@ -108,14 +119,14 @@ export default function CabinInspectorModal({ venue, deck, onClose, onStartWayfi
           {/* Stateroom specific attributes */}
           {isStateroom && venue.connecting && (
             <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-              🔗 <strong>Connecting Stateroom Door:</strong> Direct access to Stateroom {venue.connecting}
+              🔗 <strong>Connecting stateroom:</strong> {venue.connecting}
             </div>
           )}
 
           {/* Actions */}
           <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
             <button className="btn-primary-gold" style={{ flex: 1, justifyContent: 'center' }} onClick={() => onStartWayfinding(venue)}>
-              <Navigation size={16} /> Route Wayfinding to Venue
+              <Navigation size={16} /> Directions from nearest elevators
             </button>
           </div>
         </div>
