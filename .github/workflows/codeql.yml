@@ -1,0 +1,44 @@
+name: CodeQL
+
+on:
+  push:
+    branches: [main]
+  # No branch filter, so stacked PRs are analyzed too, not just those
+  # targeting main.
+  pull_request:
+  schedule:
+    # Weekly scan (Mondays 06:00 UTC) to catch newly disclosed patterns.
+    - cron: '0 6 * * 1'
+
+permissions:
+  contents: read
+  security-events: write
+  # Required by the CodeQL action to read the workflow run; without it the
+  # analysis succeeds but the upload fails with "Resource not accessible by
+  # integration" on private repositories.
+  actions: read
+
+jobs:
+  analyze:
+    name: Analyze (JavaScript)
+    runs-on: ubuntu-latest
+    # Code scanning must be enabled on the repository for the results upload to
+    # succeed; on a private repo that requires GitHub Advanced Security. Until
+    # then CodeQL analyzes the code fine but cannot publish, so this job is kept
+    # non-blocking rather than failing every pull request. Remove this line once
+    # code scanning is enabled (Settings -> Code security) so real findings gate
+    # merges.
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: '/language:javascript-typescript'

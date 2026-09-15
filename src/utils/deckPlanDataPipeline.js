@@ -58,9 +58,8 @@ export function generateHullOutline(deckNum) {
  */
 export function generateCorridorStaterooms(deckNum) {
   const rooms = [];
-  const roomLength = 7.5;  // 7.5m long room along X-axis
-  const roomDepth = 14;    // 14m wide room along Y-axis
-  
+  const roomLength = 7.5; // 7.5m long room along X-axis (rooms are 14m deep along Y)
+
   // Define Port corridor row (Y: 14 to 28) and Starboard corridor row (Y: 72 to 86)
   const xStart = 45;
   const xEnd = 270;

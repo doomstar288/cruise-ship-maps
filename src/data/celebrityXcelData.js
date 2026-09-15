@@ -1,7 +1,7 @@
 // Celebrity Xcel Geospatial Deck Data & Open API Dataset (All 17 Decks)
 // Flagship Edge-Class Vessel - Celebrity Cruises (Royal Caribbean Group)
 
-import { generateAll17Decks } from './celebrityXcelFullDeckGenerator';
+import { generateAll17Decks } from './celebrityXcelFullDeckGenerator.js';
 
 export const CELEBRITY_XCEL_METADATA = {
   id: "celebrity-xcel",
@@ -9,7 +9,10 @@ export const CELEBRITY_XCEL_METADATA = {
   cruiseLine: "Celebrity Cruises",
   parentCorporation: "Royal Caribbean Group",
   shipClass: "Edge Class (Fifth Vessel)",
-  imoNumber: "9938430",
+  // Corrected from 9938430, which fails the IMO check-digit test (see
+  // src/utils/imo.js) and therefore was never a valid IMO number.
+  // Source: Wikidata Q137168318 (CC0), cross-checked via scripts/seed-fleet.mjs.
+  imoNumber: "9884136",
   grossTonnage: 140600,
   lengthMeters: 327,
   beamMeters: 39,

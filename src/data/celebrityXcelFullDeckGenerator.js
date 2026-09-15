@@ -1,7 +1,7 @@
 // Programmatic CAD-Accurate Deck Data Generator for Celebrity Xcel (All 17 Decks)
 // Ensures 100% boundary clamping, non-overlapping vector polygons, and authentic stateroom density.
 
-import { generateHullOutline, generateCorridorStaterooms, generateCenterlineCore } from '../utils/deckPlanDataPipeline';
+import { generateHullOutline, generateCorridorStaterooms, generateCenterlineCore } from '../utils/deckPlanDataPipeline.js';
 
 const BRAND_COLORS = {
   stateroom: "#3b82f6",

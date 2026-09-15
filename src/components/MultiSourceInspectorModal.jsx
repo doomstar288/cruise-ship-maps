@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, ShieldCheck, CheckCircle2, Layers, Cpu, Database, Satellite } from 'lucide-react';
+import { X, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { ACCURACY_SOURCES } from '../utils/multiSourceDataConsensus';
 import { CELEBRITY_XCEL_METADATA } from '../data/celebrityXcelData';
 
@@ -27,6 +27,21 @@ export default function MultiSourceInspectorModal({ currentDeck, onClose }) {
 
         {/* Body */}
         <div className="modal-body">
+          {/* Prototype disclaimer */}
+          <div style={{
+            background: 'hsla(38, 92%, 50%, 0.10)',
+            border: '1px solid var(--accent-gold)',
+            borderRadius: 'var(--radius-md)',
+            padding: '12px 16px',
+            fontSize: '0.78rem',
+            color: 'var(--text-secondary)',
+            lineHeight: 1.5,
+          }}>
+            <strong style={{ color: 'var(--accent-gold)' }}>Prototype / simulated data.</strong>{' '}
+            Confidence scores, AI super-resolution, and the data sources below are illustrative
+            placeholders for this demo. They are not derived from live CAD, AIS, or satellite feeds.
+          </div>
+
           {/* Overview Badge */}
           <div style={{
             background: 'hsla(160, 84%, 39%, 0.12)',
