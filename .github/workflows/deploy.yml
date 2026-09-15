@@ -25,9 +25,13 @@ jobs:
     name: Build site
     runs-on: ubuntu-latest
     # Only deploy when the triggering CI run passed (or on a manual dispatch).
+    # The `branches: [main]` filter matches the triggering run's head branch,
+    # which a fork PR from its own `main` also satisfies, so require that CI
+    # ran for a push to this repo's main.
     if: >-
       github.event_name == 'workflow_dispatch' ||
-      github.event.workflow_run.conclusion == 'success'
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push')
     steps:
       - name: Checkout
         uses: actions/checkout@v4
