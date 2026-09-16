@@ -155,6 +155,48 @@ export function spansDecksFor(venue) {
   return decks.length ? decks : undefined;
 }
 
+// --------------------------------------------------------- position confidence
+
+/**
+ * How far a consumer can trust where a feature is drawn, weakest last:
+ * - `verified`: deck, fore/aft zone and side checked against an authoritative plan.
+ * - `zone`: deck and fore/aft zone are reliable; exact spot and side are not.
+ * - `estimated`: deck or zone is uncertain or conflicting, or the geometry is synthetic.
+ */
+export const POSITION_CONFIDENCE = ['verified', 'zone', 'estimated'];
+
+/** What a feature gets when its source record sets no `positionConfidence`.
+ *  Corridors are absent on purpose: they are circulation, never a destination. */
+const DEFAULT_POSITION_CONFIDENCE = {
+  venue: 'zone',
+  poi: 'zone',
+  muster_station: 'zone',
+  elevator: 'estimated',
+  stairwell: 'estimated',
+  cabin: 'estimated',
+};
+
+/**
+ * Per-type defaults published once at pack level instead of on every feature.
+ * Cabins are ~1,700 of the ~1,800 features, so stamping each one would add
+ * ~50 KB raw for a value that is the same everywhere. A consumer resolves a
+ * feature's confidence as `feature.positionConfidence ??
+ * pack.positionConfidenceDefaults[feature.featureType]`, and treats a result that
+ * is still undefined as "no confidence claim" (only corridors, today).
+ */
+export const PACK_POSITION_CONFIDENCE_DEFAULTS = { cabin: 'estimated' };
+
+/** A record's confidence: its own authored fact, else the default for its type. */
+export function positionConfidenceFor(venue, featureType) {
+  if (featureType === 'corridor') return undefined;
+  const authored = venue.positionConfidence;
+  if (authored === undefined) return DEFAULT_POSITION_CONFIDENCE[featureType];
+  if (!POSITION_CONFIDENCE.includes(authored)) {
+    throw new Error(`Venue ${venue.id} has unknown positionConfidence "${authored}"`);
+  }
+  return authored;
+}
+
 // -------------------------------------------------------------------- geometry
 
 /** Plan coordinates carry ~1 cm of meaning; 2 dp keeps files small losslessly. */
@@ -223,6 +265,10 @@ function toFeature(venue) {
     tags: venue.tags?.length ? venue.tags : undefined,
     color: venue.color,
   };
+  const confidence = positionConfidenceFor(venue, featureType);
+  if (confidence !== PACK_POSITION_CONFIDENCE_DEFAULTS[featureType]) {
+    feature.positionConfidence = confidence;
+  }
   if (featureType === 'cabin') feature.cabin = cabinMetaFor(venue);
   return feature;
 }
@@ -261,8 +307,8 @@ export function aliasesFor(shipName, cruiseLine) {
  * the revision stable and every cached client skips the re-download.
  */
 export function revisionOf(pack) {
-  const { specVersion, shipId, geometry, decks } = pack;
-  const canonical = JSON.stringify({ specVersion, shipId, geometry, decks });
+  const { specVersion, shipId, geometry, positionConfidenceDefaults, decks } = pack;
+  const canonical = JSON.stringify({ specVersion, shipId, geometry, positionConfidenceDefaults, decks });
   return createHash('sha256').update(canonical).digest('hex').slice(0, 12);
 }
 
@@ -289,6 +335,7 @@ export function buildPack(metadata, decks) {
     attribution: ATTRIBUTION,
     sourceUrl: SOURCE_URL,
     geometry,
+    positionConfidenceDefaults: PACK_POSITION_CONFIDENCE_DEFAULTS,
     decks: decks.map(toDeck).sort((a, b) => a.deckNumber - b.deckNumber),
   };
 
