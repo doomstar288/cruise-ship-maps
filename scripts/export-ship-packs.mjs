@@ -108,6 +108,53 @@ export function cabinMetaFor(venue) {
   return Object.values(meta).some((v) => v !== undefined) ? meta : undefined;
 }
 
+// ------------------------------------------------------------- names and spans
+
+/** Feature types a consumer lists in guest search, and so the only ones that get aliases. */
+const ALIASABLE_TYPES = new Set(['venue', 'poi']);
+
+/** Case-, accent- and spacing-insensitive form of a name: "Café" and "cafe" match. */
+export function foldName(name) {
+  return String(name ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
+ * Alternate names for a feature, as authored on its deck record. Order is kept;
+ * repeats and an alias that restates the feature's own name are dropped, so a
+ * multi-deck venue can hand every level the same list. Accents are compared, not
+ * folded, here: "Oceanview Cafe" is the point of an alias for "Oceanview Café",
+ * since not every consumer folds accents. Returns undefined when nothing is
+ * left, so the pack omits the key rather than emitting `[]`.
+ */
+export function featureAliasesFor(venue, featureType) {
+  const authored = (venue.aliases ?? []).map((a) => String(a).trim()).filter(Boolean);
+  if (!authored.length) return undefined;
+  if (!ALIASABLE_TYPES.has(featureType)) {
+    // Loud, not silent: an alias on crew space or a cabin is a data mistake.
+    throw new Error(`${venue.id} is a ${featureType}; only venue and poi features take aliases`);
+  }
+  const exactKey = (text) => String(text ?? '').toLowerCase().replace(/\s+/g, ' ').trim();
+  const seen = new Set([exactKey(venue.name)]);
+  const aliases = authored.filter((alias) => {
+    const key = exactKey(alias);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  return aliases.length ? aliases : undefined;
+}
+
+/** Every deck a multi-deck venue occupies, ascending and deduplicated; undefined if none. */
+export function spansDecksFor(venue) {
+  const decks = [...new Set((venue.spansDecks ?? []).filter(Number.isInteger))].sort((a, b) => a - b);
+  return decks.length ? decks : undefined;
+}
+
 // -------------------------------------------------------------------- geometry
 
 /** Plan coordinates carry ~1 cm of meaning; 2 dp keeps files small losslessly. */
@@ -163,7 +210,9 @@ function toFeature(venue) {
   const feature = {
     id: venue.id,
     name: venue.name,
+    aliases: featureAliasesFor(venue, featureType),
     featureType,
+    spansDecks: spansDecksFor(venue),
     category: venue.category,
     description: venue.description,
     bounds: bounds.length >= 2 ? [bounds[0], bounds[1]] : [center, center],
