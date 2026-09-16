@@ -35,8 +35,17 @@ describe('classifyFeature', () => {
     expect(classifyFeature({ name: 'Suite 12101', category: 'Suites' })).toBe('cabin');
   });
 
+  it('emits crew and back-of-house space as corridor so consumers draw but never list it', () => {
+    expect(classifyFeature({ name: 'Crew Service Area', category: 'Crew & Service', hideLabel: true })).toBe('corridor');
+    expect(classifyFeature({ name: 'Galley', category: 'Crew & Service', tags: ['Crew Only'] })).toBe('corridor');
+    expect(classifyFeature({ name: 'Crew & Technical Areas' })).toBe('corridor');
+    expect(classifyFeature({ name: 'Provision Stores' })).toBe('corridor');
+    expect(classifyFeature({ name: 'Decorative strip', category: 'Pool & Sun Deck', hideLabel: true })).toBe('corridor');
+  });
+
   it('falls back to venue for everything else', () => {
     expect(classifyFeature({ name: 'Luminae Restaurant', category: 'Fine Dining' })).toBe('venue');
+    expect(classifyFeature({ name: 'Celebrity Flagship Store', category: 'Shopping & Galleries' })).toBe('venue');
     expect(classifyFeature({ name: 'Unlabelled space' })).toBe('venue');
   });
 });
@@ -136,7 +145,42 @@ describe('the published Celebrity Xcel pack', () => {
   const pack = xcel();
 
   it('declares the spec version consumers check', () => {
+    // `units: "meters"` was additive, so v1 still describes this pack.
     expect(pack.specVersion).toBe(SPEC_VERSION);
+    expect(SPEC_VERSION).toBe(1);
+  });
+
+  it('declares metre units and keeps extent as the normalizer', () => {
+    expect(pack.geometry.units).toBe('meters');
+    const { minX, maxX } = pack.geometry.extent;
+    expect(maxX - minX).toBeCloseTo(pack.geometry.lengthMeters, 0);
+  });
+
+  it('lists no crew, service, technical or stores space as a venue', () => {
+    // AuraTrip puts every `venue` in guest search, so a leak here shows guests
+    // "Crew Service Area" results.
+    const byId = new Map(SHIPS[0].decks.flatMap((d) => d.venues).map((v) => [v.id, v]));
+    const venues = pack.decks.flatMap((d) => d.features.filter((f) => f.featureType === 'venue'));
+    const leaks = venues.filter(
+      (f) =>
+        byId.get(f.id)?.hideLabel ||
+        /crew|service area|technical|provision stores/i.test(`${f.category} ${f.name}`)
+    );
+    expect(leaks.map((f) => `${f.id} ${f.name}`)).toEqual([]);
+  });
+
+  it('still draws crew strips, as corridor', () => {
+    const crew = pack.decks.flatMap((d) => d.features.filter((f) => f.category === 'Crew & Service'));
+    expect(crew.length).toBeGreaterThan(0);
+    expect(new Set(crew.map((f) => f.featureType))).toEqual(new Set(['corridor']));
+  });
+
+  it('keeps real guest venues as venues', () => {
+    const venueNames = pack.decks.flatMap((d) =>
+      d.features.filter((f) => f.featureType === 'venue').map((f) => f.name)
+    );
+    expect(venueNames).toContain('Sunset Bar');
+    expect(venueNames).toContain('Le Voyage by Daniel Boulud');
   });
 
   it('carries the provenance a consumer must display', () => {
