@@ -1,6 +1,13 @@
 // Deck data for Celebrity Xcel's 15 guest decks (2–12 and 14–17; the ship has
 // no Deck 1 or 13 for guests). Venue decks and fore/aft zoning follow published
 // descriptions of the ship; exact footprints are synthetic approximations.
+//
+// `positionConfidence` records how far a venue's placement can be trusted. Leave
+// it unset when deck and fore/aft zone trace to a published source (the exporter
+// defaults guest venues to "zone"). Set "estimated", with the reason alongside,
+// when sources conflict, no source places the venue, or Celebrity's own plan
+// puts it in a different zone than drawn here. Nothing is "verified" until P1.1
+// checks deck, zone and side against an official plan.
 
 import {
   CORE_STATIONS,
@@ -143,6 +150,7 @@ export function generateAllDecks() {
         }),
         venue(2, {
           id: 'v2-gangway',
+          positionConfidence: 'estimated', // not in any published source
           name: 'Gangway & Security',
           category: 'Guest Services',
           color: C.service,
@@ -228,6 +236,7 @@ export function generateAllDecks() {
         venue(3, {
           id: 'v3-martini-bar',
           aliases: ['Martini Bar'],
+          positionConfidence: 'estimated', // sources conflict: Deck 2 vs Deck 3
           name: 'The Martini Bar',
           category: 'Bars & Lounges',
           color: C.bar,
@@ -249,6 +258,7 @@ export function generateAllDecks() {
         }),
         venue(3, {
           id: 'v3-shore-excursions',
+          positionConfidence: 'estimated', // sources conflict: Deck 3 vs Deck 4
           name: 'Shore Excursions',
           category: 'Guest Services',
           color: C.service,
@@ -269,6 +279,7 @@ export function generateAllDecks() {
         }),
         venue(3, {
           id: 'v3-camp-at-sea',
+          positionConfidence: 'estimated', // Celebrity's plan labels it forward, not aft
           name: 'Camp at Sea',
           category: 'Kids & Teens',
           color: C.entertainment,
@@ -279,6 +290,7 @@ export function generateAllDecks() {
         }),
         venue(3, {
           id: 'v3-concierge-lounge',
+          positionConfidence: 'estimated', // Celebrity's plan labels it midship, not aft
           name: 'Concierge Lounge',
           category: 'Guest Services',
           color: C.service,
@@ -394,6 +406,7 @@ export function generateAllDecks() {
         }),
         venue(4, {
           id: 'v4-casino',
+          positionConfidence: 'estimated', // Celebrity's plan labels it midship, not aft
           name: 'Casino',
           category: 'Entertainment',
           color: C.entertainment,
@@ -403,6 +416,7 @@ export function generateAllDecks() {
         }),
         venue(4, {
           id: 'v4-craft-social',
+          positionConfidence: 'estimated', // Celebrity's plan labels it midship, not aft
           name: 'Craft Social',
           category: 'Bars & Lounges',
           color: C.bar,
@@ -414,6 +428,7 @@ export function generateAllDecks() {
         venue(4, {
           id: 'v4-the-club',
           ...partOf('the-club'),
+          positionConfidence: 'estimated', // Celebrity's plan labels it forward-midship, not aft
           name: 'The Club',
           category: 'Entertainment',
           color: C.entertainment,
@@ -487,6 +502,7 @@ export function generateAllDecks() {
         }),
         venue(5, {
           id: 'v5-flagship-store',
+          positionConfidence: 'estimated', // Celebrity's plan labels it midship, not forward
           name: 'Celebrity Flagship Store',
           category: 'Shopping & Galleries',
           color: C.shopping,
@@ -497,6 +513,7 @@ export function generateAllDecks() {
         }),
         venue(5, {
           id: 'v5-annex',
+          positionConfidence: 'estimated', // no published source gives its fore/aft zone
           name: 'The Annex',
           category: 'Bars & Lounges',
           color: C.bar,
@@ -507,6 +524,7 @@ export function generateAllDecks() {
         }),
         venue(5, {
           id: 'v5-shops',
+          positionConfidence: 'estimated', // no published source gives its fore/aft zone
           name: 'Boutiques',
           category: 'Shopping & Galleries',
           color: C.shopping,
@@ -517,6 +535,7 @@ export function generateAllDecks() {
         }),
         venue(5, {
           id: 'v5-blu',
+          positionConfidence: 'estimated', // Celebrity's plan labels it aft, not midship
           name: 'Blu',
           category: 'Fine Dining',
           color: C.dining,
@@ -584,6 +603,7 @@ export function generateAllDecks() {
         venue(5, {
           id: 'v5-attic',
           ...partOf('the-club', { aliases: ['The Attic'] }),
+          positionConfidence: 'estimated', // Celebrity's plan labels it forward-midship, not aft
           name: 'The Attic at The Club',
           category: 'Entertainment',
           color: C.entertainment,
@@ -790,6 +810,7 @@ export function generateAllDecks() {
         }),
         venue(14, {
           id: 'v14-mast-grill',
+          positionConfidence: 'estimated', // sources conflict: Deck 14 vs Deck 16
           name: 'Mast Grill & Bar',
           category: 'Casual Dining',
           color: C.dining,
@@ -820,6 +841,7 @@ export function generateAllDecks() {
         venue(14, {
           id: 'v14-cafe-terrace',
           aliases: ['Oceanview Cafe Terrace'],
+          positionConfidence: 'estimated', // not in any published source
           name: 'Oceanview Café Terrace',
           category: 'Casual Dining',
           color: C.dining,
@@ -830,6 +852,7 @@ export function generateAllDecks() {
         }),
         venue(14, {
           id: 'v14-aft-sundeck',
+          positionConfidence: 'estimated', // not in any published source
           name: 'Aft Sun Deck',
           category: 'Pool & Sun Deck',
           color: C.pool,
@@ -879,6 +902,7 @@ export function generateAllDecks() {
         }),
         venue(15, {
           id: 'v15-fitness',
+          positionConfidence: 'estimated', // sources conflict: Deck 14 vs Deck 15
           name: 'Fitness Center',
           category: 'Spa & Wellness',
           color: C.spa,
@@ -888,6 +912,7 @@ export function generateAllDecks() {
         }),
         venue(15, {
           id: 'v15-bora',
+          positionConfidence: 'estimated', // Celebrity's plan labels it aft of the Rooftop Garden
           name: 'Bora',
           category: 'Fine Dining',
           color: C.dining,
@@ -906,6 +931,7 @@ export function generateAllDecks() {
         }),
         venue(15, {
           id: 'v15-sunset-bar',
+          positionConfidence: 'estimated', // sources conflict: Deck 15 only vs Decks 15–16
           name: 'Sunset Bar',
           category: 'Bars & Lounges',
           color: C.bar,
@@ -957,6 +983,7 @@ export function generateAllDecks() {
         }),
         venue(16, {
           id: 'v16-luminae',
+          positionConfidence: 'estimated', // Celebrity's plan labels it forward, not midship
           name: 'Luminae at The Retreat',
           category: 'Fine Dining',
           color: C.dining,
@@ -1004,6 +1031,7 @@ export function generateAllDecks() {
         ...generateCenterlineCore(17, ['fwd']),
         venue(17, {
           id: 'v17-retreat-sundeck',
+          positionConfidence: 'estimated', // Celebrity's plan labels it forward of the elevators
           name: 'The Retreat Sundeck',
           category: 'Pool & Sun Deck',
           color: C.pool,
@@ -1013,6 +1041,7 @@ export function generateAllDecks() {
         }),
         venue(17, {
           id: 'v17-retreat-bar',
+          positionConfidence: 'estimated', // Celebrity's plan labels it forward of the elevators
           name: 'The Retreat Bar',
           category: 'Bars & Lounges',
           color: C.bar,

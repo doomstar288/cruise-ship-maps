@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 
 import {
+  PACK_POSITION_CONFIDENCE_DEFAULTS,
+  POSITION_CONFIDENCE,
   SHIPS,
   SPEC_VERSION,
   aliasesFor,
@@ -11,6 +13,7 @@ import {
   featureAliasesFor,
   foldName,
   indexEntryFor,
+  positionConfidenceFor,
   reconcileIndexTimestamp,
   reconcilePackTimestamp,
   revisionOf,
@@ -62,6 +65,30 @@ describe('cabinMetaFor', () => {
 
   it('drops an unknown side rather than guessing one', () => {
     expect(cabinMetaFor({ name: 'Suite 12101', category: 'Suites' }).side).toBeUndefined();
+  });
+});
+
+describe('positionConfidenceFor', () => {
+  it('keeps a confidence authored on the source record', () => {
+    expect(positionConfidenceFor({ id: 'v', positionConfidence: 'estimated' }, 'venue')).toBe('estimated');
+    expect(positionConfidenceFor({ id: 'c', positionConfidence: 'zone' }, 'cabin')).toBe('zone');
+  });
+
+  it('defaults by feature type when the record sets none', () => {
+    expect(positionConfidenceFor({}, 'venue')).toBe('zone');
+    expect(positionConfidenceFor({}, 'poi')).toBe('zone');
+    expect(positionConfidenceFor({}, 'muster_station')).toBe('zone');
+    expect(positionConfidenceFor({}, 'elevator')).toBe('estimated');
+    expect(positionConfidenceFor({}, 'stairwell')).toBe('estimated');
+    expect(positionConfidenceFor({}, 'cabin')).toBe('estimated');
+  });
+
+  it('makes no claim for corridors, which are never a destination', () => {
+    expect(positionConfidenceFor({ positionConfidence: 'zone' }, 'corridor')).toBeUndefined();
+  });
+
+  it('rejects a value outside the vocabulary rather than publishing it', () => {
+    expect(() => positionConfidenceFor({ id: 'v', positionConfidence: 'exact' }, 'venue')).toThrow(/exact/);
   });
 });
 
@@ -228,6 +255,60 @@ describe('the published Celebrity Xcel pack', () => {
     const cabins = pack.decks.flatMap((d) => d.features.filter((f) => f.featureType === 'cabin'));
     expect(cabins.length).toBeGreaterThan(0);
     expect(cabins.every((c) => !!c.cabin?.number)).toBe(true);
+  });
+});
+
+describe('position confidence in the published Celebrity Xcel pack', () => {
+  const pack = xcel();
+  const features = pack.decks.flatMap((d) => d.features);
+  const byName = (name) => features.find((f) => f.name === name);
+  /** How a consumer resolves it: the feature's own value, else the pack default for its type. */
+  const resolved = (f) => f.positionConfidence ?? pack.positionConfidenceDefaults?.[f.featureType];
+
+  it('stays specVersion 1, since the field is additive', () => {
+    expect(pack.specVersion).toBe(1);
+  });
+
+  it('gives every guest venue an allowed confidence on the feature itself', () => {
+    const guest = features.filter((f) => ['venue', 'poi', 'muster_station'].includes(f.featureType));
+    expect(guest.length).toBeGreaterThan(0);
+    for (const f of guest) expect(POSITION_CONFIDENCE, `${f.id}`).toContain(f.positionConfidence);
+  });
+
+  it('claims nothing is verified until P1.1 checks an official plan', () => {
+    expect(features.filter((f) => resolved(f) === 'verified').map((f) => f.id)).toEqual([]);
+  });
+
+  it('marks the venues whose sources conflict as estimated', () => {
+    for (const name of ['Fitness Center', 'Mast Grill & Bar', 'Sunset Bar', 'The Martini Bar']) {
+      expect(byName(name)?.positionConfidence, name).toBe('estimated');
+    }
+  });
+
+  it('keeps a well-sourced venue at zone', () => {
+    expect(byName('Le Voyage by Daniel Boulud').positionConfidence).toBe('zone');
+  });
+
+  it('resolves every cabin to estimated through the documented pack default', () => {
+    // Synthetic numbering (P1.2). Published once at pack level, not on ~1,700 features.
+    expect(pack.positionConfidenceDefaults).toEqual(PACK_POSITION_CONFIDENCE_DEFAULTS);
+    const cabins = features.filter((f) => f.featureType === 'cabin');
+    expect(cabins.length).toBeGreaterThan(0);
+    expect(cabins.every((c) => resolved(c) === 'estimated')).toBe(true);
+    expect(cabins.some((c) => 'positionConfidence' in c)).toBe(false);
+  });
+
+  it('marks elevators and stairwells estimated and leaves corridors without a claim', () => {
+    const cores = features.filter((f) => f.featureType === 'elevator' || f.featureType === 'stairwell');
+    expect(cores.length).toBeGreaterThan(0);
+    expect(cores.every((f) => f.positionConfidence === 'estimated')).toBe(true);
+    const corridors = features.filter((f) => f.featureType === 'corridor');
+    expect(corridors.every((f) => resolved(f) === undefined)).toBe(true);
+  });
+
+  it('changes the revision when a confidence changes', () => {
+    const edited = { ...pack, positionConfidenceDefaults: { cabin: 'zone' } };
+    expect(revisionOf(edited)).not.toBe(revisionOf(pack));
   });
 });
 
