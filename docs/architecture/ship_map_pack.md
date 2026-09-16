@@ -21,6 +21,7 @@ doesn't know, and must treat every optional field as possibly absent.
 | `license`, `attribution`, `sourceUrl` | Provenance. `attribution` must be displayed. |
 | `geometry` | `units: "meters"`, `orientation`, and a pack-wide `extent` that every deck normalizes against. |
 | `decks[]` | Ascending `deckNumber`. Numbers are not contiguous (no Deck 13). |
+| `positionConfidenceDefaults` | Optional. Per-`featureType` fallback for `positionConfidence`, e.g. `{ "cabin": "estimated" }`. See [position confidence](./ship_map_pack_position_confidence.md). |
 | `revision`, `updatedAt` | `revision` is a content hash, so re-exporting unchanged data keeps it. |
 
 ## Feature (`decks[].features[]`)
@@ -34,6 +35,7 @@ doesn't know, and must treat every optional field as possibly absent.
 | `cabin` | Cabins only: `number`, `type`, `side`, `accessible`, sizes. |
 | `aliases` | Optional `string[]`. Other names guests and daily programs use, e.g. `"OVC"` for Oceanview Café or `"The Theater"` for The Theatre. Includes accent-free spellings (`"Oceanview Cafe"`). Only on `venue` and `poi`. |
 | `spansDecks` | Optional `number[]`, ascending. Every deck a multi-deck venue occupies, set on **each** of its per-deck features, so any level leads to the whole span. Always includes the feature's own deck. |
+| `positionConfidence` | Optional `"verified"`, `"zone"` or `"estimated"`: how far to trust where the feature is drawn. Omitted when it equals the pack default for its type. See [position confidence](./ship_map_pack_position_confidence.md). |
 
 An empty `aliases` or `spansDecks` is omitted, never emitted as `[]`.
 

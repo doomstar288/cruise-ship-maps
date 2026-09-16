@@ -4,8 +4,8 @@ How far a consumer can trust where a feature is drawn. It's an optional, additiv
 `specVersion` stays `1`. Use it to soften the UI, e.g. show "near midship" or "Approximate"
 instead of a precise pin.
 
-This is a self-contained section of the pack format, kept in its own file so it can be folded
-into the main pack format doc without conflicts.
+This is the detail doc for the field. The pack format as a whole is in
+[`ship_map_pack.md`](./ship_map_pack.md).
 
 ## Values
 
