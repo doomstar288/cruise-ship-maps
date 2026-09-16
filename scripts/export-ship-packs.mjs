@@ -34,6 +34,7 @@ import {
   CELEBRITY_XCEL_METADATA,
   CELEBRITY_XCEL_DECKS,
 } from '../src/data/celebrityXcelData.js';
+import { withEntrances } from './venue-entrances.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(__dirname, '..');
@@ -274,8 +275,9 @@ function toFeature(venue) {
 }
 
 function toDeck(deck) {
-  const features = (deck.venues ?? []).map(toFeature).filter(Boolean);
   const outline = (deck.shapeCoordinates ?? []).filter(isPoint).map(roundPoint);
+  // Large venues get `entrances` on their corridor-facing edges (P1.4).
+  const features = withEntrances((deck.venues ?? []).map(toFeature).filter(Boolean), outline);
   return {
     deckNumber: deck.level,
     deckName: deck.name,
