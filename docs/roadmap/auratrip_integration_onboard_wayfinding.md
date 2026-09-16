@@ -1,6 +1,8 @@
 # Roadmap — AuraTrip Integration & Onboard Event Wayfinding
 
-_Written 2026-09-15. Status: **Proposed**. Spans two repos:_
+_Written 2026-09-15. Status: **In progress** — Phase 0 shipped 2026-09-16; Phase 1 and
+P4.1 underway. Live tracking: [#24](https://github.com/doomstar288/cruise-ship-maps/issues/24).
+Spans two repos:_
 
 - **Producer** — `cruise-ship-maps` (this repo): deck data, Ship Map Pack exports.
 - **Consumer** — `big-trip-planner` (AuraTrip): offline PWA that renders packs in its deck viewer.
@@ -34,7 +36,7 @@ deck. It must work **offline at sea**, because that is the only time anyone need
 | Capability | Cruise Ship Maps | AuraTrip |
 |---|---|---|
 | Vector deck geometry | ✅ 15 real guest decks at 327 m × 39 m (PR #14) | ✅ Tier 0 `DeckVectorMap` renders packs |
-| Pack transport + offline cache | ✅ static `/v1/ships/**.json` on `prebuild` | ✅ IDB + SW `CacheFirst`, inert unless `VITE_SHIP_MAPS_URL` set |
+| Pack transport + offline cache | ✅ static `/v1/ships/**.json` on `prebuild` | ✅ IDB + SW `CacheFirst`, inert unless `VITE_SHIP_MAPS_URL` set (on in production since Phase 0) |
 | Onboard events | — | ✅ `OnboardReservation[]` (Epic A), daily-program parser, agenda, reminders |
 | Venue on an event | — | ⚠️ free text only (`reservation.venue`, `ParsedActivity.notes`) |
 | Traveler's cabin | — | ✅ `TripMetadata.cabinNumber`, `ShipCard.cabin` |
@@ -85,7 +87,17 @@ Found while researching the real ship and reading both codebases. Each maps to a
 Sizes: **S** ≤ 1 day, **M** 2–4 days, **L** 1–2 weeks. Each phase ends in something
 shippable; later phases never block earlier value.
 
-### Phase 0 — Land it and turn it on  `S–M` · both repos
+### Phase 0 — Land it and turn it on  `S–M` · both repos · ✅ shipped 2026-09-16
+
+| # | Status |
+|---|---|
+| P0.1 | ✅ [#14](https://github.com/doomstar288/cruise-ship-maps/pull/14) |
+| P0.2, P0.3 | ✅ [#26](https://github.com/doomstar288/cruise-ship-maps/pull/26). All 38 crew/back-of-house features (not only the `hideLabel` strips) now export as `corridor`. |
+| P0.4, P0.7 | ✅ [AuraTrip #166](https://github.com/doomstar288/big-trip-planner/pull/166). Docker `build.args` default to the Pages URL. It also fixed the SW pack rule, which never matched cross-origin, and made pack URLs revision-addressed (`plan.json?rev=`) with a `NetworkFirst` catalog, so updates aren't pinned for 180 days. |
+| P0.5 | ✅ [AuraTrip #165](https://github.com/doomstar288/big-trip-planner/pull/165) |
+| P0.6 | ✅ [#17](https://github.com/doomstar288/cruise-ship-maps/issues/17). The repo was private with Pages disabled; it was made public and the self-hosted runner retired first. Base URL `https://doomstar288.github.io/cruise-ship-maps`, `access-control-allow-origin: *`. Fork-PR deploy guard [#25](https://github.com/doomstar288/cruise-ship-maps/pull/25). |
+
+Original task list:
 
 Goal: AuraTrip users see the corrected Xcel map from the published service.
 
