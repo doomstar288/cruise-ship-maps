@@ -8,10 +8,13 @@ import {
   cabinMetaFor,
   classifyFeature,
   computeExtent,
+  featureAliasesFor,
+  foldName,
   indexEntryFor,
   reconcileIndexTimestamp,
   reconcilePackTimestamp,
   revisionOf,
+  spansDecksFor,
 } from './export-ship-packs.mjs';
 
 const xcel = () => buildPack(SHIPS[0].metadata, SHIPS[0].decks);
@@ -239,5 +242,153 @@ describe('indexEntryFor', () => {
     });
     expect(entry.deckCount).toBeGreaterThan(0);
     expect(JSON.stringify(entry)).not.toMatch(/features/);
+  });
+});
+
+describe('featureAliasesFor', () => {
+  it('drops repeats and an alias that restates the name, ignoring case', () => {
+    const venue = { id: 'x', name: 'The Theatre', aliases: ['OVC', 'the  theatre', 'ovc', ' Theater '] };
+    expect(featureAliasesFor(venue, 'venue')).toEqual(['OVC', 'Theater']);
+  });
+
+  it('keeps an accent-free spelling, for consumers that do not fold accents', () => {
+    const venue = { id: 'x', name: 'Oceanview Café', aliases: ['Oceanview Cafe'] };
+    expect(featureAliasesFor(venue, 'venue')).toEqual(['Oceanview Cafe']);
+  });
+
+  it('returns undefined rather than an empty list', () => {
+    expect(featureAliasesFor({ id: 'x', name: 'The Theatre', aliases: ['the theatre'] }, 'venue')).toBeUndefined();
+    expect(featureAliasesFor({ id: 'x', name: 'Casino' }, 'venue')).toBeUndefined();
+  });
+
+  it('refuses aliases on anything a guest does not search for', () => {
+    for (const type of ['corridor', 'cabin', 'elevator', 'stairwell']) {
+      expect(() => featureAliasesFor({ id: 'x', name: 'Galley', aliases: ['Kitchen'] }, type)).toThrow(/only venue and poi/);
+    }
+  });
+});
+
+describe('spansDecksFor', () => {
+  it('sorts and deduplicates', () => {
+    expect(spansDecksFor({ spansDecks: [16, 2, 5, 14, 5] })).toEqual([2, 5, 14, 16]);
+  });
+
+  it('returns undefined rather than an empty list', () => {
+    expect(spansDecksFor({ spansDecks: [] })).toBeUndefined();
+    expect(spansDecksFor({})).toBeUndefined();
+  });
+});
+
+describe('aliases and spans in the Celebrity Xcel pack', () => {
+  const pack = xcel();
+  const features = pack.decks.flatMap((d) => d.features.map((f) => ({ ...f, deck: d.deckNumber })));
+  const byName = (name) => {
+    const found = features.find((f) => f.name === name);
+    expect(found, name).toBeDefined();
+    return found;
+  };
+  // Levels of one multi-deck venue, from the deck records (the group is not published).
+  const groupOf = new Map(SHIPS[0].decks.flatMap((d) => d.venues).map((v) => [v.id, v.venueGroup ?? v.id]));
+
+  it('still declares spec version 1: both fields are additive', () => {
+    expect(pack.specVersion).toBe(1);
+  });
+
+  it.each([
+    ['The Theatre', ['The Theater', 'Theatre', 'Theater']],
+    ['The Theatre (Middle Level)', ['The Theatre', 'The Theater', 'Theatre', 'Theater']],
+    ['The Theatre (Upper Level)', ['The Theatre', 'The Theater', 'Theatre', 'Theater']],
+    ['Oceanview Café', ['OVC', 'Oceanview Cafe', 'Buffet']],
+    ['Celebrity Pool Club', ['Pool Deck', 'Resort Deck', 'Main Pool']],
+    ['Le Grand Bistro', ['Le Petit Chef', 'Le Bistro']],
+    ['Grand Plaza', ['Grand Plaza Bar']],
+    ['Grand Plaza (Upper Level)', ['Grand Plaza', 'Grand Plaza Bar']],
+    ['Magic Carpet (Pool Deck)', ['Magic Carpet', 'Magic Carpet Bar']],
+    ['The Martini Bar', ['Martini Bar']],
+    ['Spice Café', ['Spice Cafe']],
+    ['The Bazaar (Upper Level)', ['The Bazaar']],
+  ])('gives %s the names a daily program uses', (name, expected) => {
+    expect(byName(name).aliases).toEqual(expect.arrayContaining(expected));
+  });
+
+  it('offers an accent-free alias for every accented guest venue name', () => {
+    const accented = features.filter(
+      (f) => ['venue', 'poi'].includes(f.featureType) && f.name !== f.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    );
+    expect(accented.length).toBeGreaterThan(0);
+    for (const f of accented) {
+      const plain = f.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      expect(f.aliases, f.name).toContain(plain);
+    }
+  });
+
+  it.each([
+    [['The Theatre', 'The Theatre (Middle Level)', 'The Theatre (Upper Level)'], [3, 4, 5]],
+    [['Grand Plaza', 'Grand Plaza (Middle Level)', 'Grand Plaza (Upper Level)'], [3, 4, 5]],
+    [['Mosaic at The Bazaar', 'Market at The Bazaar', 'Spice Café', 'The Bazaar (Upper Level)'], [4, 5, 6]],
+    [['The Club', 'The Attic at The Club'], [4, 5]],
+    [
+      ['Magic Carpet (Tender Platform)', 'Magic Carpet (Deck 5 Dining)', 'Magic Carpet (Pool Deck)', 'Magic Carpet (Dinner on the Edge)'],
+      [2, 5, 14, 16],
+    ],
+  ])('sets the span on every level of %j', (names, span) => {
+    for (const name of names) expect(byName(name).spansDecks, name).toEqual(span);
+  });
+
+  it('keeps every alias unique to one venue across the ship', () => {
+    // A resolver must never find two different venues for the same text. Only
+    // levels of one multi-deck venue may share a name.
+    const owners = new Map();
+    const claim = (text, f) => {
+      const key = foldName(text);
+      const group = groupOf.get(f.id);
+      owners.set(key, [...(owners.get(key) ?? []), { group, label: `${f.id} (${text})` }]);
+    };
+    for (const f of features) {
+      claim(f.name, f);
+      for (const alias of f.aliases ?? []) claim(alias, f);
+    }
+    const clashes = [...owners.entries()].filter(
+      ([, claims]) => claims.some((c) => c.group !== claims[0].group) && claims.length > 1
+    );
+    // Generated cabins and crew strips legitimately repeat names ("Crew Service
+    // Area", "Forward Elevators"), so only clashes involving an alias count.
+    const aliasKeys = new Set(features.flatMap((f) => (f.aliases ?? []).map(foldName)));
+    expect(clashes.filter(([key]) => aliasKeys.has(key)).map(([, claims]) => claims.map((c) => c.label))).toEqual([]);
+  });
+
+  it('never gives an alias to anything but a guest venue or point of interest', () => {
+    const wrong = features.filter((f) => f.aliases && !['venue', 'poi'].includes(f.featureType));
+    expect(wrong.map((f) => f.id)).toEqual([]);
+  });
+
+  it('lists a span that contains the feature itself and only decks in the pack', () => {
+    const decks = new Set(pack.decks.map((d) => d.deckNumber));
+    const spanning = features.filter((f) => f.spansDecks);
+    expect(spanning.length).toBeGreaterThan(0);
+    for (const f of spanning) {
+      expect(f.spansDecks, f.id).toContain(f.deck);
+      expect(f.spansDecks.length, f.id).toBeGreaterThan(1);
+      expect(f.spansDecks, f.id).toEqual([...new Set(f.spansDecks)].sort((a, b) => a - b));
+      for (const n of f.spansDecks) expect(decks.has(n), `${f.id} spans missing deck ${n}`).toBe(true);
+    }
+  });
+
+  it('gives every level of a group the same span', () => {
+    const spans = new Map();
+    for (const f of features.filter((x) => x.spansDecks)) {
+      const group = groupOf.get(f.id);
+      spans.set(group, [...(spans.get(group) ?? []), JSON.stringify(f.spansDecks)]);
+    }
+    for (const [group, list] of spans) expect(new Set(list).size, group).toBe(1);
+  });
+
+  it('omits both keys, never emitting empty arrays, when a feature has none', () => {
+    const json = JSON.stringify(pack);
+    expect(json).not.toMatch(/"aliases":\[\]/);
+    expect(json).not.toMatch(/"spansDecks":\[\]/);
+    const casino = byName('Casino');
+    expect('aliases' in JSON.parse(JSON.stringify(casino))).toBe(false);
+    expect('spansDecks' in JSON.parse(JSON.stringify(casino))).toBe(false);
   });
 });
