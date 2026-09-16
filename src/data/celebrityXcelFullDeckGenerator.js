@@ -40,6 +40,38 @@ function deck(level, { title, category, description, venues }) {
 
 const venue = (level, fields) => placeVenue(level, fields);
 
+// ------------------------------------------------------------- names and spans
+
+/**
+ * Venues that occupy more than one deck. The deck data draws each level as its
+ * own record, so every level carries the whole span and the names a daily
+ * program uses for the venue as a whole. A consumer can then find the venue from
+ * whichever level it matches first.
+ *
+ * `venueGroup` ties the levels together for this repo's own checks (a shared
+ * alias is only legal within one group); the exporter does not publish it.
+ */
+const VENUE_GROUPS = {
+  theatre: { spansDecks: [3, 4, 5], aliases: ['The Theatre', 'The Theater', 'Theatre', 'Theater'] },
+  'grand-plaza': { spansDecks: [3, 4, 5], aliases: ['Grand Plaza', 'Grand Plaza Bar'] },
+  // Mosaic (4), the Market and Spice Café (5) and the upper level (6) all sit
+  // inside the one triple-height Bazaar, so they share its span. They keep their
+  // own names: "The Bazaar" alone means the upper-level entertainment space, not
+  // the restaurants below it, so only that level answers to it.
+  'the-bazaar': { spansDecks: [4, 5, 6], aliases: [] },
+  // The Attic is the second floor of The Club, with its own programming.
+  'the-club': { spansDecks: [4, 5], aliases: [] },
+  'magic-carpet': { spansDecks: [2, 5, 14, 16], aliases: ['Magic Carpet', 'Magic Carpet Bar'] },
+};
+
+/** Fields for one level of a multi-deck venue, plus names only this level answers
+ *  to. The exporter drops an alias that repeats the feature's own name. */
+const partOf = (venueGroup, { aliases = [] } = {}) => ({
+  venueGroup,
+  spansDecks: VENUE_GROUPS[venueGroup].spansDecks,
+  aliases: [...VENUE_GROUPS[venueGroup].aliases, ...aliases],
+});
+
 // ---------------------------------------------------------------- stateroom decks
 
 /** Standard mid/aft veranda cabin, with Prime Edge through the midship section. */
@@ -131,6 +163,7 @@ export function generateAllDecks() {
         }),
         magicCarpetStop(2, {
           name: 'Magic Carpet (Tender Platform)',
+          ...partOf('magic-carpet'),
           description: 'At Deck 2 the Magic Carpet becomes a tender embarkation platform for Destination Gateway.',
           tags: ['Tender Platform', 'Starboard'],
         }),
@@ -167,6 +200,7 @@ export function generateAllDecks() {
       venues: [
         venue(3, {
           id: 'v3-theatre',
+          ...partOf('theatre'),
           name: 'The Theatre',
           category: 'Entertainment',
           color: C.entertainment,
@@ -182,6 +216,7 @@ export function generateAllDecks() {
         }),
         venue(3, {
           id: 'v3-grand-plaza',
+          ...partOf('grand-plaza'),
           name: 'Grand Plaza',
           category: 'Entertainment',
           color: C.entertainment,
@@ -192,6 +227,7 @@ export function generateAllDecks() {
         }),
         venue(3, {
           id: 'v3-martini-bar',
+          aliases: ['Martini Bar'],
           name: 'The Martini Bar',
           category: 'Bars & Lounges',
           color: C.bar,
@@ -202,6 +238,7 @@ export function generateAllDecks() {
         }),
         venue(3, {
           id: 'v3-plaza-cafe',
+          aliases: ['Grand Plaza Cafe'],
           name: 'Grand Plaza Café',
           category: 'Casual Dining',
           color: C.dining,
@@ -284,6 +321,7 @@ export function generateAllDecks() {
       venues: [
         venue(4, {
           id: 'v4-theatre',
+          ...partOf('theatre'),
           name: 'The Theatre (Middle Level)',
           category: 'Entertainment',
           color: C.entertainment,
@@ -323,6 +361,7 @@ export function generateAllDecks() {
         }),
         venue(4, {
           id: 'v4-le-grand-bistro',
+          aliases: ['Le Bistro', 'Le Petit Chef'],
           name: 'Le Grand Bistro',
           category: 'Fine Dining',
           color: C.dining,
@@ -333,6 +372,7 @@ export function generateAllDecks() {
         }),
         venue(4, {
           id: 'v4-grand-plaza',
+          ...partOf('grand-plaza'),
           name: 'Grand Plaza (Middle Level)',
           category: 'Entertainment',
           color: C.entertainment,
@@ -343,6 +383,7 @@ export function generateAllDecks() {
         }),
         venue(4, {
           id: 'v4-cafe-al-bacio',
+          aliases: ['Cafe al Bacio'],
           name: 'Café al Bacio',
           category: 'Casual Dining',
           color: C.dining,
@@ -372,6 +413,7 @@ export function generateAllDecks() {
         }),
         venue(4, {
           id: 'v4-the-club',
+          ...partOf('the-club'),
           name: 'The Club',
           category: 'Entertainment',
           color: C.entertainment,
@@ -402,6 +444,7 @@ export function generateAllDecks() {
         }),
         venue(4, {
           id: 'v4-mosaic',
+          ...partOf('the-bazaar', { aliases: ['Mosaic'] }),
           name: 'Mosaic at The Bazaar',
           category: 'Fine Dining',
           color: C.dining,
@@ -423,6 +466,7 @@ export function generateAllDecks() {
       venues: [
         venue(5, {
           id: 'v5-theatre',
+          ...partOf('theatre'),
           name: 'The Theatre (Upper Level)',
           category: 'Entertainment',
           color: C.entertainment,
@@ -493,6 +537,7 @@ export function generateAllDecks() {
         }),
         venue(5, {
           id: 'v5-grand-plaza',
+          ...partOf('grand-plaza'),
           name: 'Grand Plaza (Upper Level)',
           category: 'Entertainment',
           color: C.entertainment,
@@ -523,6 +568,7 @@ export function generateAllDecks() {
         }),
         magicCarpetStop(5, {
           name: 'Magic Carpet (Deck 5 Dining)',
+          ...partOf('magic-carpet'),
           description: 'The cantilevered Magic Carpet docks on Deck 5 as an open-air extension of the dining venues.',
           tags: ['Cantilevered', 'Ocean Views', 'Starboard'],
         }),
@@ -537,6 +583,7 @@ export function generateAllDecks() {
         }),
         venue(5, {
           id: 'v5-attic',
+          ...partOf('the-club', { aliases: ['The Attic'] }),
           name: 'The Attic at The Club',
           category: 'Entertainment',
           color: C.entertainment,
@@ -546,6 +593,7 @@ export function generateAllDecks() {
         }),
         venue(5, {
           id: 'v5-bazaar-market',
+          ...partOf('the-bazaar'),
           name: 'Market at The Bazaar',
           category: 'Casual Dining',
           color: C.dining,
@@ -555,6 +603,7 @@ export function generateAllDecks() {
         }),
         venue(5, {
           id: 'v5-spice-cafe',
+          ...partOf('the-bazaar', { aliases: ['Spice Cafe'] }),
           name: 'Spice Café',
           category: 'Casual Dining',
           color: C.dining,
@@ -586,6 +635,7 @@ export function generateAllDecks() {
         }),
         venue(6, {
           id: 'v6-bazaar',
+          ...partOf('the-bazaar', { aliases: ['The Bazaar'] }),
           name: 'The Bazaar (Upper Level)',
           category: 'Entertainment',
           color: C.entertainment,
@@ -713,6 +763,7 @@ export function generateAllDecks() {
         }),
         venue(14, {
           id: 'v14-pool-club',
+          aliases: ['Pool Deck', 'Resort Deck', 'Main Pool'],
           name: 'Celebrity Pool Club',
           category: 'Pool & Sun Deck',
           color: C.pool,
@@ -733,6 +784,7 @@ export function generateAllDecks() {
         }),
         magicCarpetStop(14, {
           name: 'Magic Carpet (Pool Deck)',
+          ...partOf('magic-carpet'),
           description: 'On Deck 14 the Magic Carpet extends the pool deck out over the sea, in front of the cabanas.',
           tags: ['Pool Deck', 'Starboard'],
         }),
@@ -747,6 +799,7 @@ export function generateAllDecks() {
         }),
         venue(14, {
           id: 'v14-oceanview-cafe',
+          aliases: ['OVC', 'Oceanview Cafe', 'Buffet'],
           name: 'Oceanview Café',
           category: 'Casual Dining',
           color: C.dining,
@@ -766,6 +819,7 @@ export function generateAllDecks() {
         }),
         venue(14, {
           id: 'v14-cafe-terrace',
+          aliases: ['Oceanview Cafe Terrace'],
           name: 'Oceanview Café Terrace',
           category: 'Casual Dining',
           color: C.dining,
@@ -923,6 +977,7 @@ export function generateAllDecks() {
         }),
         magicCarpetStop(16, {
           name: 'Magic Carpet (Dinner on the Edge)',
+          ...partOf('magic-carpet'),
           description: 'The Magic Carpet’s highest stop, used for “Dinner on the Edge” and sail-away events.',
           tags: ['Dinner on the Edge', 'Starboard'],
         }),
