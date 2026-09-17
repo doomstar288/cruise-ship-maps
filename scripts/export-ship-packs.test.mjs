@@ -21,6 +21,13 @@ import {
 } from './export-ship-packs.mjs';
 
 const xcel = () => buildPack(SHIPS[0].metadata, SHIPS[0].decks);
+// Building a pack rasterizes every deck for the routing graph (seconds under coverage),
+// so tests that only read a pack share one build, made while the file is collected
+// rather than inside a test's time limit. None of them mutate it.
+const sharedPack = xcel();
+const sharedXcel = () => sharedPack;
+// The one test that needs two independent exports builds twice.
+const TWO_BUILDS_TIMEOUT_MS = 60_000;
 
 describe('classifyFeature', () => {
   it('reads vertical circulation out of the tags, not the category', () => {
@@ -129,10 +136,10 @@ describe('revisionOf', () => {
     const b = xcel();
     expect(b.updatedAt).toBeDefined();
     expect(revisionOf(b)).toBe(revisionOf(a));
-  });
+  }, TWO_BUILDS_TIMEOUT_MS);
 
   it('changes when deck content changes', () => {
-    const pack = xcel();
+    const pack = sharedXcel();
     const edited = { ...pack, decks: pack.decks.slice(0, 3) };
     expect(revisionOf(edited)).not.toBe(revisionOf(pack));
   });
@@ -142,19 +149,19 @@ describe('timestamp reconciliation', () => {
   it('keeps the previous updatedAt when the revision is unchanged', () => {
     // Otherwise every `npm run build` rewrites the committed pack with nothing
     // but a new timestamp, churning a 188 KB diff.
-    const pack = xcel();
+    const pack = sharedXcel();
     const previous = { revision: pack.revision, updatedAt: '2020-01-01T00:00:00.000Z' };
     expect(reconcilePackTimestamp(pack, previous).updatedAt).toBe('2020-01-01T00:00:00.000Z');
   });
 
   it('takes the new timestamp when content actually changed', () => {
-    const pack = xcel();
+    const pack = sharedXcel();
     const previous = { revision: 'stale0000000', updatedAt: '2020-01-01T00:00:00.000Z' };
     expect(reconcilePackTimestamp(pack, previous).updatedAt).toBe(pack.updatedAt);
   });
 
   it('stamps a fresh timestamp on a first export', () => {
-    const pack = xcel();
+    const pack = sharedXcel();
     expect(reconcilePackTimestamp(pack, null).updatedAt).toBe(pack.updatedAt);
   });
 
@@ -172,7 +179,7 @@ describe('timestamp reconciliation', () => {
 });
 
 describe('the published Celebrity Xcel pack', () => {
-  const pack = xcel();
+  const pack = sharedXcel();
 
   it('declares the spec version consumers check', () => {
     // `units: "meters"` was additive, so v1 still describes this pack.
@@ -259,7 +266,7 @@ describe('the published Celebrity Xcel pack', () => {
 });
 
 describe('position confidence in the published Celebrity Xcel pack', () => {
-  const pack = xcel();
+  const pack = sharedXcel();
   const features = pack.decks.flatMap((d) => d.features);
   const byName = (name) => features.find((f) => f.name === name);
   /** How a consumer resolves it: the feature's own value, else the pack default for its type. */
@@ -314,7 +321,7 @@ describe('position confidence in the published Celebrity Xcel pack', () => {
 
 describe('indexEntryFor', () => {
   it('summarizes the pack without duplicating its geometry', () => {
-    const entry = indexEntryFor(xcel());
+    const entry = indexEntryFor(sharedXcel());
     expect(entry).toMatchObject({
       shipId: 'celebrity-xcel',
       shipName: 'Celebrity Xcel',
@@ -361,7 +368,7 @@ describe('spansDecksFor', () => {
 });
 
 describe('aliases and spans in the Celebrity Xcel pack', () => {
-  const pack = xcel();
+  const pack = sharedXcel();
   const features = pack.decks.flatMap((d) => d.features.map((f) => ({ ...f, deck: d.deckNumber })));
   const byName = (name) => {
     const found = features.find((f) => f.name === name);
