@@ -1,0 +1,19 @@
+{
+  "$comment": [
+    "Wikipedia articles the fleet gap check should stop reporting, by article title or Wikidata QID.",
+    "Use for ships that are not cruise ships (troopships, ferries, icebreakers) or are deliberately out of scope.",
+    "Each entry needs a reason."
+  ],
+  "ignore": [
+    {
+      "title": "Yamal (icebreaker)",
+      "qid": "Q1459518",
+      "reason": "Nuclear icebreaker that carries tourists on North Pole voyages. Wikipedia files it under Category:Expedition cruise ships, but the registry covers purpose-built cruise ships."
+    },
+    {
+      "title": "50 Let Pobedy",
+      "qid": "Q241428",
+      "reason": "Nuclear icebreaker chartered for North Pole tourist voyages; same reason as Yamal (icebreaker)."
+    }
+  ]
+}

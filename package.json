@@ -13,6 +13,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "seed:fleet": "node scripts/seed-fleet.mjs",
+    "check:fleet-gaps": "node scripts/check-fleet-gaps.mjs",
     "export:packs": "node scripts/export-ship-packs.mjs",
     "record:route-fixtures": "node scripts/route-fixtures.mjs",
     "test": "vitest run",

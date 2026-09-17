@@ -27,6 +27,12 @@ describe('fleet registry artifact', () => {
     expect(registry.provenance.retrievedAt).toBeTruthy();
   });
 
+  it('keeps ships Wikipedia knows about that Wikidata does not type as cruise ships', () => {
+    // Included by override: Wikidata types it only as a "ship" (see scripts/check-fleet-gaps.mjs).
+    expect(findShipByName(registry, 'Resilient Lady')?.imo).toBe('9805348');
+    expect(registry.ships.filter((s) => s.includedByOverride).length).toBeGreaterThan(20);
+  });
+
   it('contains a substantial fleet', () => {
     expect(registry.ships.length).toBeGreaterThan(400);
     expect(registry.classes.length).toBeGreaterThan(20);
@@ -76,8 +82,15 @@ describe('fleet overrides', () => {
         expect(ship, `IMO ${entry.imo} should be excluded`).toBeNull();
         continue;
       }
-      const fields = entry.set ?? entry.add;
       expect(ship, `IMO ${entry.imo} should exist`).not.toBeNull();
+      if (entry.include) {
+        expect(ship.wikidataId, `IMO ${entry.imo} should come from ${entry.include}`).toBe(
+          entry.include
+        );
+        expect(ship.includedByOverride).toBe(true);
+      }
+      const fields = entry.set ?? entry.add;
+      if (!fields) continue;
       expect(ship).toMatchObject(fields);
       expect(ship.overriddenFields).toEqual(expect.arrayContaining(Object.keys(fields)));
     }

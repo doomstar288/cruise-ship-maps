@@ -5,33 +5,33 @@
     "sourceUrl": "https://query.wikidata.org/sparql",
     "license": "CC0-1.0",
     "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
-    "retrievedAt": "2026-09-17T17:06:07.473Z",
-    "queryHash": "a673c70df873be41",
+    "retrievedAt": "2026-09-17T17:46:00.900Z",
+    "queryHash": "a2e9ea79fb678c71",
     "generator": "scripts/seed-fleet.mjs",
     "overrides": "scripts/fleet-overrides.json",
     "note": "Vessel identity and specifications only. Contains no deck-plan geometry. Fields listed in a ship's \"overriddenFields\" were corrected by hand, not sourced."
   },
   "stats": {
-    "ships": 691,
-    "classes": 53,
+    "ships": 728,
+    "classes": 64,
     "byStatus": {
-      "in_service": 341,
+      "in_service": 345,
       "on_order": 2,
-      "retired": 154,
-      "unknown": 194
+      "retired": 156,
+      "unknown": 225
     },
     "byCategory": {
-      "ocean": 595,
-      "expedition": 0,
-      "river": 47,
-      "ferry": 46,
-      "other": 3
+      "ocean": 577,
+      "expedition": 32,
+      "river": 55,
+      "ferry": 48,
+      "other": 16
     },
-    "withOperator": 376,
-    "withMmsi": 457,
-    "withClass": 191,
-    "withTonnage": 553,
-    "overridden": 3,
+    "withOperator": 381,
+    "withMmsi": 485,
+    "withClass": 252,
+    "withTonnage": 588,
+    "overridden": 96,
     "operatorAmbiguous": 13,
     "missingFromSource": 0,
     "invalidImoChecksums": 3,
@@ -44,6 +44,9 @@
       "operator": "Vodohod",
       "imos": [
         "8218598",
+        "8326008",
+        "8326010",
+        "8422606",
         "8422618",
         "8501000",
         "8521919",
@@ -60,7 +63,7 @@
         "8922450",
         "8925036"
       ],
-      "shipCount": 16
+      "shipCount": 19
     },
     {
       "id": "Q1346396",
@@ -73,13 +76,49 @@
         "9226906",
         "9230115",
         "9320556",
+        "9398905",
+        "9398917",
         "9477438",
         "9692569",
         "9767091",
         "9802384",
         "9871036"
       ],
-      "shipCount": 11
+      "shipCount": 13
+    },
+    {
+      "id": "Q28456719",
+      "name": "Excellence-class cruise ship",
+      "operator": "Carnival Cruise Line",
+      "imos": [
+        "9781865",
+        "9781877",
+        "9781889",
+        "9781891",
+        "9826548",
+        "9837444",
+        "9837456",
+        "9849693",
+        "9851737"
+      ],
+      "shipCount": 9
+    },
+    {
+      "id": "Q3114654",
+      "name": "Grand-class cruise ship",
+      "operator": "Princess Cruises",
+      "imos": [
+        "9192351",
+        "9192363",
+        "9215490",
+        "9228198",
+        "9293399",
+        "9333151",
+        "9333175",
+        "9378462",
+        "9424883"
+      ],
+      "shipCount": 9
     },
     {
       "id": "Q2975860",
@@ -98,6 +137,36 @@
       "shipCount": 8
     },
     {
+      "id": "Q1933630",
+      "name": "Mikhail Kalinin-class passenger ship",
+      "operator": null,
+      "imos": [
+        "5109019",
+        "5113436",
+        "5186196",
+        "5234917",
+        "5404677",
+        "5414971",
+        "5429407"
+      ],
+      "shipCount": 7
+    },
+    {
+      "id": "Q3211627",
+      "name": "Royal-class cruise ship",
+      "operator": "Princess Cruises",
+      "imos": [
+        "9584712",
+        "9584724",
+        "9614036",
+        "9614141",
+        "9802396",
+        "9807126",
+        "9837468"
+      ],
+      "shipCount": 7
+    },
+    {
       "id": "Q2309619",
       "name": "Sphinx-class cruise ship",
       "operator": "AIDA Cruises",
@@ -111,6 +180,20 @@
         "9601132"
       ],
       "shipCount": 7
+    },
+    {
+      "id": "Q15789743",
+      "name": "Breakaway-class cruise ship",
+      "operator": "Norwegian Cruise Line",
+      "imos": [
+        "9677076",
+        "9703796",
+        "9733105",
+        "9733117",
+        "9751509",
+        "9751511"
+      ],
+      "shipCount": 6
     },
     {
       "id": "Q1124097",
@@ -155,6 +238,20 @@
       "shipCount": 6
     },
     {
+      "id": "Q2976021",
+      "name": "Vision-class cruise ship",
+      "operator": "Royal Caribbean International",
+      "imos": [
+        "9070620",
+        "9070632",
+        "9102978",
+        "9111802",
+        "9116864",
+        "9116876"
+      ],
+      "shipCount": 6
+    },
+    {
       "id": "Q1126574",
       "name": "Conquest-class cruise ship",
       "operator": "Carnival Cruise Line",
@@ -181,6 +278,45 @@
       "shipCount": 5
     },
     {
+      "id": "Q36847697",
+      "name": "Edge-class cruise ship",
+      "operator": "Celebrity Cruises",
+      "imos": [
+        "9812705",
+        "9838383",
+        "9838395",
+        "9838400",
+        "9884136"
+      ],
+      "shipCount": 5
+    },
+    {
+      "id": "Q1127612",
+      "name": "Ivan Franko-class passenger ship",
+      "operator": "Cruise & Maritime Voyages",
+      "imos": [
+        "5415901",
+        "6417097",
+        "6508195",
+        "6707753",
+        "7042318"
+      ],
+      "shipCount": 5
+    },
+    {
+      "id": "Q15942266",
+      "name": "Lirica-class cruise ship",
+      "operator": "MSC Cruises",
+      "imos": [
+        "9172777",
+        "9210141",
+        "9210153",
+        "9246102",
+        "9250464"
+      ],
+      "shipCount": 5
+    },
+    {
       "id": "Q7268963",
       "name": "Quantum-class cruise ship",
       "operator": "Royal Caribbean International",
@@ -194,19 +330,6 @@
       "shipCount": 5
     },
     {
-      "id": "Q3211627",
-      "name": "Royal-class cruise ship",
-      "operator": "Princess Cruises",
-      "imos": [
-        "9584712",
-        "9584724",
-        "9614036",
-        "9614141",
-        "9837468"
-      ],
-      "shipCount": 5
-    },
-    {
       "id": "Q2975989",
       "name": "Solstice-class cruise ship",
       "operator": "Celebrity Cruises",
@@ -216,6 +339,19 @@
         "9404314",
         "9451094",
         "9506459"
+      ],
+      "shipCount": 5
+    },
+    {
+      "id": "Q2975998",
+      "name": "Sun-class cruise ship",
+      "operator": "Cordelia Cruises",
+      "imos": [
+        "9000259",
+        "9103996",
+        "9150913",
+        "9169550",
+        "9218131"
       ],
       "shipCount": 5
     },
@@ -245,18 +381,6 @@
       "shipCount": 4
     },
     {
-      "id": "Q36847697",
-      "name": "Edge-class cruise ship",
-      "operator": "Celebrity Cruises",
-      "imos": [
-        "9812705",
-        "9838383",
-        "9838395",
-        "9884136"
-      ],
-      "shipCount": 4
-    },
-    {
       "id": "Q2975859",
       "name": "Fantasia-class cruise ship",
       "operator": "MSC Cruises",
@@ -281,18 +405,6 @@
       "shipCount": 4
     },
     {
-      "id": "Q1127612",
-      "name": "Ivan Franko-class passenger ship",
-      "operator": "Cruise & Maritime Voyages",
-      "imos": [
-        "5415901",
-        "6417097",
-        "6508195",
-        "6707753"
-      ],
-      "shipCount": 4
-    },
-    {
       "id": "Q2975896",
       "name": "Jewel-class cruise ship",
       "operator": "Norwegian Cruise Line",
@@ -301,18 +413,6 @@
         "9304057",
         "9342281",
         "9355733"
-      ],
-      "shipCount": 4
-    },
-    {
-      "id": "Q15942266",
-      "name": "Lirica-class cruise ship",
-      "operator": "MSC Cruises",
-      "imos": [
-        "9210141",
-        "9210153",
-        "9246102",
-        "9250464"
       ],
       "shipCount": 4
     },
@@ -341,6 +441,18 @@
       "shipCount": 4
     },
     {
+      "id": "Q2975978",
+      "name": "Radiance-class cruise ship",
+      "operator": "Royal Caribbean International",
+      "imos": [
+        "9195195",
+        "9195200",
+        "9228344",
+        "9228356"
+      ],
+      "shipCount": 4
+    },
+    {
       "id": "Q19831431",
       "name": "Rotterdam-class cruise ship",
       "operator": "Holland America Line",
@@ -365,16 +477,15 @@
       "shipCount": 4
     },
     {
-      "id": "Q2976021",
-      "name": "Vision-class cruise ship",
-      "operator": "Royal Caribbean International",
+      "id": "Q4700077",
+      "name": "Akademik Shuleykin-class oceanographic research vessel",
+      "operator": "Oceanwide Expeditions",
       "imos": [
-        "9070632",
-        "9102978",
-        "9116864",
-        "9116876"
+        "8010324",
+        "8010336",
+        "8010348"
       ],
-      "shipCount": 4
+      "shipCount": 3
     },
     {
       "id": "Q15622073",
@@ -395,17 +506,6 @@
         "7625794",
         "7625809",
         "7625811"
-      ],
-      "shipCount": 3
-    },
-    {
-      "id": "Q28456719",
-      "name": "Excellence-class cruise ship",
-      "operator": "AIDA Cruises",
-      "imos": [
-        "9781865",
-        "9781889",
-        "9826548"
       ],
       "shipCount": 3
     },
@@ -432,13 +532,13 @@
       "shipCount": 3
     },
     {
-      "id": "Q1933630",
-      "name": "Mikhail Kalinin-class passenger ship",
-      "operator": null,
+      "id": "Q42317734",
+      "name": "Prima-class cruise ship",
+      "operator": "Norwegian Cruise Line",
       "imos": [
-        "5109019",
-        "5234917",
-        "5429407"
+        "9823986",
+        "9823998",
+        "9824007"
       ],
       "shipCount": 3
     },
@@ -450,6 +550,28 @@
         "8802868",
         "8802882",
         "8802894"
+      ],
+      "shipCount": 3
+    },
+    {
+      "id": "Q25391838",
+      "name": "Seaside-class cruise ship",
+      "operator": "MSC Cruises",
+      "imos": [
+        "9745378",
+        "9843792",
+        "9843807"
+      ],
+      "shipCount": 3
+    },
+    {
+      "id": "Q2975992",
+      "name": "Sovereign-class cruise ship",
+      "operator": "Royal Caribbean International",
+      "imos": [
+        "8512281",
+        "8819500",
+        "8819512"
       ],
       "shipCount": 3
     },
@@ -475,12 +597,22 @@
       "shipCount": 2
     },
     {
-      "id": "Q3114654",
-      "name": "Grand-class cruise ship",
-      "operator": "Carnival Cruise Line",
+      "id": "Q108415116",
+      "name": "Classica-class cruise ship",
+      "operator": "Costa Cruises",
       "imos": [
-        "9333175",
-        "9424883"
+        "8716502",
+        "8821046"
+      ],
+      "shipCount": 2
+    },
+    {
+      "id": "Q118501176",
+      "name": "Horizon-class cruise ship",
+      "operator": null,
+      "imos": [
+        "8807088",
+        "8918136"
       ],
       "shipCount": 2
     },
@@ -495,12 +627,12 @@
       "shipCount": 2
     },
     {
-      "id": "Q42317734",
-      "name": "Prima-class cruise ship",
+      "id": "Q109018550",
+      "name": "Leo-class cruise ship",
       "operator": "Norwegian Cruise Line",
       "imos": [
-        "9823986",
-        "9823998"
+        "9141065",
+        "9141077"
       ],
       "shipCount": 2
     },
@@ -511,26 +643,6 @@
       "imos": [
         "9156462",
         "9210220"
-      ],
-      "shipCount": 2
-    },
-    {
-      "id": "Q2975978",
-      "name": "Radiance-class cruise ship",
-      "operator": "Royal Caribbean Group",
-      "imos": [
-        "9195200",
-        "9228356"
-      ],
-      "shipCount": 2
-    },
-    {
-      "id": "Q2975992",
-      "name": "Sovereign-class cruise ship",
-      "operator": null,
-      "imos": [
-        "8512281",
-        "8819500"
       ],
       "shipCount": 2
     },
@@ -555,13 +667,14 @@
       "shipCount": 2
     },
     {
-      "id": "Q4700077",
-      "name": "Akademik Shuleykin-class oceanographic research vessel",
-      "operator": null,
+      "id": "Q97358846",
+      "name": "World-class cruise ship",
+      "operator": "MSC Cruises",
       "imos": [
-        "8010324"
+        "9837420",
+        "9837432"
       ],
-      "shipCount": 1
+      "shipCount": 2
     },
     {
       "id": "Q899073",
@@ -582,11 +695,47 @@
       "shipCount": 1
     },
     {
+      "id": "Q116455436",
+      "name": "Explorer-class cruise ship",
+      "operator": "Regent Seven Seas Cruises",
+      "imos": [
+        "9703150"
+      ],
+      "shipCount": 1
+    },
+    {
+      "id": "Q55612706",
+      "name": "Global-class cruise ship",
+      "operator": "Disney Cruise Line",
+      "imos": [
+        "9808986"
+      ],
+      "shipCount": 1
+    },
+    {
       "id": "Q82762989",
       "name": "Infinity-class passenger ship",
       "operator": null,
       "imos": [
         "9834648"
+      ],
+      "shipCount": 1
+    },
+    {
+      "id": "Q3679352",
+      "name": "Kapitan Sorokin-class icebreaker",
+      "operator": null,
+      "imos": [
+        "7824417"
+      ],
+      "shipCount": 1
+    },
+    {
+      "id": "Q1899526",
+      "name": "Maria Yermolova-class passenger ship",
+      "operator": null,
+      "imos": [
+        "7391422"
       ],
       "shipCount": 1
     },
@@ -627,6 +776,15 @@
       "shipCount": 1
     },
     {
+      "id": "Q108940077",
+      "name": "Sphere-class cruise ship",
+      "operator": "Carnival Cruise Line",
+      "imos": [
+        "9863118"
+      ],
+      "shipCount": 1
+    },
+    {
       "id": "Q15852874",
       "name": "Viking Longship",
       "operator": "Viking River Cruises",
@@ -641,15 +799,6 @@
       "operator": "Viking Ocean Cruises",
       "imos": [
         "9650418"
-      ],
-      "shipCount": 1
-    },
-    {
-      "id": "Q97358846",
-      "name": "World-class cruise ship",
-      "operator": "MSC Cruises",
-      "imos": [
-        "9837432"
       ],
       "shipCount": 1
     }
@@ -883,8 +1032,8 @@
       "name": "MSC World Europa",
       "operator": "MSC Cruises",
       "operatorId": "Q663626",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "World-class cruise ship",
+      "shipClassId": "Q97358846",
       "builder": "Chantiers de l'Atlantique",
       "grossTonnage": 215863,
       "lengthMeters": 333.3,
@@ -895,7 +1044,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q76358629",
@@ -905,8 +1058,8 @@
       "name": "Disney Adventure",
       "operator": "Disney Cruise Line",
       "operatorId": "Q420947",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Global-class cruise ship",
+      "shipClassId": "Q55612706",
       "builder": "MV Werften",
       "grossTonnage": 208108,
       "lengthMeters": 342.7,
@@ -917,7 +1070,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q130004631",
@@ -949,8 +1106,8 @@
       "name": "Costa Toscana",
       "operator": "Costa Cruises",
       "operatorId": "Q1136349",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Excellence-class cruise ship",
+      "shipClassId": "Q28456719",
       "builder": "Meyer Turku",
       "grossTonnage": 186364,
       "lengthMeters": 337,
@@ -961,7 +1118,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q117075298",
@@ -971,8 +1132,8 @@
       "name": "Arvia",
       "operator": "P&O Cruises",
       "operatorId": "Q1759468",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Excellence-class cruise ship",
+      "shipClassId": "Q28456719",
       "builder": "Meyer Werft",
       "grossTonnage": 185581,
       "lengthMeters": 344.08,
@@ -983,7 +1144,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q109045578",
@@ -1147,8 +1312,8 @@
       "name": "Norwegian Encore",
       "operator": "Norwegian Cruise Line",
       "operatorId": "Q130309",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Breakaway-class cruise ship",
+      "shipClassId": "Q15789743",
       "builder": "Meyer Werft",
       "grossTonnage": 168800,
       "lengthMeters": null,
@@ -1159,7 +1324,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q19877077",
@@ -1191,8 +1360,8 @@
       "name": "Norwegian Bliss",
       "operator": "Norwegian Cruise Line",
       "operatorId": "Q130309",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Breakaway-class cruise ship",
+      "shipClassId": "Q15789743",
       "builder": "Meyer Werft",
       "grossTonnage": 168028,
       "lengthMeters": 333.32,
@@ -1203,7 +1372,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q16983037",
@@ -1213,8 +1386,8 @@
       "name": "Norwegian Joy",
       "operator": "Norwegian Cruise Line",
       "operatorId": "Q130309",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Breakaway-class cruise ship",
+      "shipClassId": "Q15789743",
       "builder": "Meyer Werft",
       "grossTonnage": 167725,
       "lengthMeters": 333.46,
@@ -1225,7 +1398,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q16223577",
@@ -1235,8 +1412,8 @@
       "name": "Norwegian Escape",
       "operator": "Norwegian Cruise Line",
       "operatorId": "Q130309",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Breakaway-class cruise ship",
+      "shipClassId": "Q15789743",
       "builder": "Meyer Werft",
       "grossTonnage": 165157,
       "lengthMeters": 325.9,
@@ -1247,7 +1424,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q18128240",
@@ -1411,8 +1592,8 @@
       "name": "Norwegian Aqua",
       "operator": "Norwegian Cruise Line",
       "operatorId": "Q130309",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Prima-class cruise ship",
+      "shipClassId": "Q42317734",
       "builder": "Fincantieri",
       "grossTonnage": 154140,
       "lengthMeters": 321.8,
@@ -1423,7 +1604,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q20010359",
@@ -1455,8 +1640,8 @@
       "name": "MSC Seaview",
       "operator": "MSC Cruises",
       "operatorId": "Q663626",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Seaside-class cruise ship",
+      "shipClassId": "Q25391838",
       "builder": "Fincantieri",
       "grossTonnage": 154000,
       "lengthMeters": 323,
@@ -1467,7 +1652,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q25110900",
@@ -1477,8 +1666,8 @@
       "name": "Genting Dream",
       "operator": "Genting Hong Kong",
       "operatorId": "Q16922766",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Breakaway-class cruise ship",
+      "shipClassId": "Q15789743",
       "builder": "Meyer Werft",
       "grossTonnage": 150695,
       "lengthMeters": 335.35,
@@ -1489,7 +1678,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q26844363",
@@ -1499,8 +1692,8 @@
       "name": "MS Manara",
       "operator": "Aroya Cruises",
       "operatorId": "Q128215153",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Breakaway-class cruise ship",
+      "shipClassId": "Q15789743",
       "builder": "Meyer Werft",
       "grossTonnage": 150695,
       "lengthMeters": 335.2,
@@ -1511,7 +1704,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q191888",
@@ -1588,8 +1785,8 @@
       "name": "Enchanted Princess",
       "operator": "Princess Cruises",
       "operatorId": "Q745700",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Royal-class cruise ship",
+      "shipClassId": "Q3211627",
       "builder": "Fincantieri",
       "grossTonnage": 145281,
       "lengthMeters": 329.92,
@@ -1600,7 +1797,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q65064228",
@@ -1610,8 +1811,8 @@
       "name": "Sky Princess",
       "operator": "Princess Cruises",
       "operatorId": "Q745700",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Royal-class cruise ship",
+      "shipClassId": "Q3211627",
       "builder": "Fincantieri",
       "grossTonnage": 145000,
       "lengthMeters": 330,
@@ -1622,7 +1823,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q97179447",
@@ -1874,8 +2079,8 @@
       "name": "Celebrity Ascent",
       "operator": "Celebrity Cruises",
       "operatorId": "Q1052823",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Edge-class cruise ship",
+      "shipClassId": "Q36847697",
       "builder": "Chantiers de l'Atlantique",
       "grossTonnage": 141420,
       "lengthMeters": 326.5,
@@ -1886,7 +2091,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q137168318",
@@ -2582,8 +2791,8 @@
       "name": "Diamond Princess",
       "operator": "Princess Cruises",
       "operatorId": "Q745700",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Grand-class cruise ship",
+      "shipClassId": "Q3114654",
       "builder": "Mitsubishi Heavy Industries",
       "grossTonnage": 115906,
       "lengthMeters": 290,
@@ -2594,7 +2803,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q1514518",
@@ -2714,8 +2927,8 @@
       "name": "Crown Princess",
       "operator": "Carnival Cruise Line",
       "operatorId": "Q656554",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Grand-class cruise ship",
+      "shipClassId": "Q3114654",
       "builder": "Fincantieri",
       "grossTonnage": 113561,
       "lengthMeters": 289.9,
@@ -2726,7 +2939,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q2714441",
@@ -2736,8 +2953,8 @@
       "name": "Emerald Princess",
       "operator": "Princess Cruises",
       "operatorId": "Q745700",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Grand-class cruise ship",
+      "shipClassId": "Q3114654",
       "builder": "Fincantieri",
       "grossTonnage": 113561,
       "lengthMeters": 289,
@@ -2748,7 +2965,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q1626933",
@@ -2758,8 +2979,8 @@
       "name": "Ruby Princess",
       "operator": "Princess Cruises",
       "operatorId": "Q745700",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Grand-class cruise ship",
+      "shipClassId": "Q3114654",
       "builder": "Fincantieri",
       "grossTonnage": 113561,
       "lengthMeters": 288.59,
@@ -2770,7 +2991,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q1136350",
@@ -2868,8 +3093,8 @@
       "name": "Caribbean Princess",
       "operator": "Carnival Cruise Line",
       "operatorId": "Q656554",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Grand-class cruise ship",
+      "shipClassId": "Q3114654",
       "builder": "Fincantieri",
       "grossTonnage": 112894,
       "lengthMeters": 289.6,
@@ -2880,7 +3105,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q52213820",
@@ -3044,8 +3273,8 @@
       "name": "Pacific Encounter",
       "operator": "Princess Cruises",
       "operatorId": "Q745700",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Grand-class cruise ship",
+      "shipClassId": "Q3114654",
       "builder": "Fincantieri",
       "grossTonnage": 108977,
       "lengthMeters": 289.51,
@@ -3057,7 +3286,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q747465",
@@ -3089,8 +3322,8 @@
       "name": "Pacific Adventure",
       "operator": "Princess Cruises",
       "operatorId": "Q745700",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Grand-class cruise ship",
+      "shipClassId": "Q3114654",
       "builder": "Fincantieri",
       "grossTonnage": 108806,
       "lengthMeters": 289,
@@ -3102,7 +3335,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q65091893",
@@ -3557,8 +3794,8 @@
       "name": "Carnival Luminosa",
       "operator": "Costa Cruises",
       "operatorId": "Q1136349",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Vista (2002)-class cruise ship",
+      "shipClassId": "Q1346396",
       "builder": "Fincantieri",
       "grossTonnage": 92720,
       "lengthMeters": 294,
@@ -3569,7 +3806,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q1120643",
@@ -3579,8 +3820,8 @@
       "name": "Costa Deliziosa",
       "operator": "Costa Cruises",
       "operatorId": "Q1136349",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Vista (2002)-class cruise ship",
+      "shipClassId": "Q1346396",
       "builder": "Fincantieri",
       "grossTonnage": 92720,
       "lengthMeters": 294,
@@ -3591,7 +3832,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q1881875",
@@ -3843,8 +4088,8 @@
       "name": "MS Radiance of the Seas",
       "operator": "Royal Caribbean International",
       "operatorId": "Q929872",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Radiance-class cruise ship",
+      "shipClassId": "Q2975978",
       "builder": "Meyer Werft",
       "grossTonnage": 90090,
       "lengthMeters": 293.2,
@@ -3855,7 +4100,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q917188",
@@ -3887,8 +4136,8 @@
       "name": "MS Serenade of the Seas",
       "operator": "Royal Caribbean International",
       "operatorId": "Q929872",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Radiance-class cruise ship",
+      "shipClassId": "Q2975978",
       "builder": "Meyer Werft",
       "grossTonnage": 90090,
       "lengthMeters": 293.2,
@@ -3899,7 +4148,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q2072116",
@@ -4196,8 +4449,8 @@
       "name": "Enchantment of the Seas",
       "operator": "Royal Caribbean International",
       "operatorId": "Q929872",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Vision-class cruise ship",
+      "shipClassId": "Q2976021",
       "builder": "Kvaerner Masa-Yards",
       "grossTonnage": 82910,
       "lengthMeters": 279.6,
@@ -4208,7 +4461,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q1996454",
@@ -4372,8 +4629,8 @@
       "name": "Norwegian Sun",
       "operator": "Cordelia Cruises",
       "operatorId": "Q140248460",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Sun-class cruise ship",
+      "shipClassId": "Q2975998",
       "builder": "Lloyd Werft",
       "grossTonnage": 78309,
       "lengthMeters": 258.06,
@@ -4384,7 +4641,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q1474724",
@@ -4420,8 +4681,8 @@
       "name": "MS Charming",
       "operator": null,
       "operatorId": "Q140137155",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Sun-class cruise ship",
+      "shipClassId": "Q2975998",
       "builder": "Fincantieri",
       "grossTonnage": 77499,
       "lengthMeters": 261,
@@ -4432,7 +4693,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q762432",
@@ -4442,8 +4707,8 @@
       "name": "MV Queen of the Oceans",
       "operator": "P&O Cruises",
       "operatorId": "Q1759468",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Sun-class cruise ship",
+      "shipClassId": "Q2975998",
       "builder": "Fincantieri",
       "grossTonnage": 77499,
       "lengthMeters": 260,
@@ -4454,7 +4719,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q3006084",
@@ -4464,8 +4733,8 @@
       "name": "Pacific World",
       "operator": "Peace Boat",
       "operatorId": "Q1049084",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Sun-class cruise ship",
+      "shipClassId": "Q2975998",
       "builder": "Fincantieri",
       "grossTonnage": 77441,
       "lengthMeters": 261,
@@ -4476,7 +4745,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q3019252",
@@ -4486,8 +4759,8 @@
       "name": "IMO 9103996",
       "operator": "Star Cruises",
       "operatorId": "Q606222",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Sun-class cruise ship",
+      "shipClassId": "Q2975998",
       "builder": "Fincantieri",
       "grossTonnage": 77441,
       "lengthMeters": 261,
@@ -4501,6 +4774,10 @@
       "formerOperators": [
         "Princess Cruises",
         "P&O Cruises Australia"
+      ],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
       ]
     },
     {
@@ -4602,8 +4879,8 @@
       "name": "Norwegian Spirit",
       "operator": "Norwegian Cruise Line",
       "operatorId": "Q130309",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Leo-class cruise ship",
+      "shipClassId": "Q109018550",
       "builder": "Meyer Werft",
       "grossTonnage": 75904,
       "lengthMeters": 268.6,
@@ -4614,7 +4891,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q115504",
@@ -4624,8 +4905,8 @@
       "name": "Resorts World One",
       "operator": null,
       "operatorId": "Q131604809",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Leo-class cruise ship",
+      "shipClassId": "Q109018550",
       "builder": "Meyer Werft",
       "grossTonnage": 75338,
       "lengthMeters": 268.6,
@@ -4638,6 +4919,10 @@
       "formerNames": [],
       "formerOperators": [
         "Dream Cruises"
+      ],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
       ]
     },
     {
@@ -4672,8 +4957,8 @@
       "name": "Majesty of the Oceans",
       "operator": "Royal Caribbean International",
       "operatorId": "Q929872",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Sovereign-class cruise ship",
+      "shipClassId": "Q2975992",
       "builder": "Chantiers de l'Atlantique",
       "grossTonnage": 74077,
       "lengthMeters": 268.32,
@@ -4684,7 +4969,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q2667937",
@@ -5138,8 +5427,8 @@
       "name": "Marella Discovery 2",
       "operator": "TUI Cruises",
       "operatorId": "Q325780",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Vision-class cruise ship",
+      "shipClassId": "Q2976021",
       "builder": "Chantiers de l'Atlantique",
       "grossTonnage": 69472,
       "lengthMeters": 264.26,
@@ -5150,7 +5439,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q1973535",
@@ -5732,8 +6025,8 @@
       "name": "Costa neoRomantica",
       "operator": "Costa Cruises",
       "operatorId": "Q1136349",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Classica-class cruise ship",
+      "shipClassId": "Q108415116",
       "builder": "Fincantieri",
       "grossTonnage": 56769,
       "lengthMeters": 221,
@@ -5744,7 +6037,11 @@
       "category": "ocean",
       "retirementYear": 2021,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q132529795",
@@ -5845,8 +6142,8 @@
       "name": "Seven Seas Explorer",
       "operator": "Regent Seven Seas Cruises",
       "operatorId": "Q3247233",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Explorer-class cruise ship",
+      "shipClassId": "Q116455436",
       "builder": "Fincantieri",
       "grossTonnage": 55254,
       "lengthMeters": 223,
@@ -5857,7 +6154,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q1971190",
@@ -5911,8 +6212,8 @@
       "name": "Margaritaville at Sea Paradise",
       "operator": "Margaritaville at Sea",
       "operatorId": "Q115631702",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Classica-class cruise ship",
+      "shipClassId": "Q108415116",
       "builder": "Fincantieri",
       "grossTonnage": 53015,
       "lengthMeters": 221,
@@ -5923,7 +6224,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q131194453",
@@ -6153,8 +6458,8 @@
       "name": "Ambition",
       "operator": "Ambassador Cruise Line",
       "operatorId": "Q109255784",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Lirica-class cruise ship",
+      "shipClassId": "Q15942266",
       "builder": "Chantiers de l'Atlantique",
       "grossTonnage": 48200,
       "lengthMeters": 216,
@@ -6165,7 +6470,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q7457403",
@@ -6188,6 +6497,29 @@
       "retirementYear": null,
       "formerNames": [],
       "formerOperators": []
+    },
+    {
+      "wikidataId": "Q83650670",
+      "imo": "9796250",
+      "imoValid": true,
+      "mmsi": "257034130",
+      "name": "Viking Orion",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": "Fincantieri",
+      "grossTonnage": 47861,
+      "lengthMeters": 228.3,
+      "beamMeters": null,
+      "inServiceYear": 2018,
+      "maxCapacity": null,
+      "status": "unknown",
+      "category": "ocean",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true
     },
     {
       "wikidataId": "Q17014761",
@@ -6333,8 +6665,8 @@
       "name": "MV Zenith",
       "operator": null,
       "operatorId": null,
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Horizon-class cruise ship",
+      "shipClassId": "Q118501176",
       "builder": "Meyer Werft",
       "grossTonnage": 47413,
       "lengthMeters": 208,
@@ -6345,7 +6677,11 @@
       "category": "ocean",
       "retirementYear": 2022,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q3360198",
@@ -6399,8 +6735,8 @@
       "name": "MV Horizon",
       "operator": null,
       "operatorId": null,
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Horizon-class cruise ship",
+      "shipClassId": "Q118501176",
       "builder": "Meyer Werft",
       "grossTonnage": 46811,
       "lengthMeters": 208,
@@ -6411,7 +6747,11 @@
       "category": "ocean",
       "retirementYear": 2022,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q782114",
@@ -7128,6 +7468,29 @@
       "formerOperators": []
     },
     {
+      "wikidataId": "Q2286554",
+      "imo": "9437866",
+      "imoValid": true,
+      "mmsi": "311022500",
+      "name": "MS Silver Spirit",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": "Fincantieri",
+      "grossTonnage": 36000,
+      "lengthMeters": 195.8,
+      "beamMeters": 26.5,
+      "inServiceYear": 2009,
+      "maxCapacity": 540,
+      "status": "unknown",
+      "category": "ocean",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true
+    },
+    {
       "wikidataId": "Q1079302",
       "imo": "9227390",
       "imoValid": true,
@@ -7170,6 +7533,29 @@
       "retirementYear": null,
       "formerNames": [],
       "formerOperators": []
+    },
+    {
+      "wikidataId": "Q427865",
+      "imo": "7904891",
+      "imoValid": true,
+      "mmsi": null,
+      "name": "MS Bahamas Celebration",
+      "operator": "Jahre Line",
+      "operatorId": "Q11977884",
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": "Howaldtswerke-Deutsche Werft",
+      "grossTonnage": 35483,
+      "lengthMeters": 205.25,
+      "beamMeters": 26.6,
+      "inServiceYear": 1981,
+      "maxCapacity": 1900,
+      "status": "retired",
+      "category": "ferry",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true
     },
     {
       "wikidataId": "Q5416",
@@ -8272,6 +8658,29 @@
       "formerOperators": []
     },
     {
+      "wikidataId": "Q897158",
+      "imo": "9000699",
+      "imoValid": true,
+      "mmsi": "311541000",
+      "name": "Villa Vie Odyssey",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": "Unión Naval de Levante",
+      "grossTonnage": 24344,
+      "lengthMeters": 163.81,
+      "beamMeters": 22.5,
+      "inServiceYear": 1993,
+      "maxCapacity": null,
+      "status": "unknown",
+      "category": "ocean",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true
+    },
+    {
       "wikidataId": "Q6719528",
       "imo": "9183518",
       "imoValid": true,
@@ -8642,10 +9051,13 @@
       "inServiceYear": 1972,
       "maxCapacity": 767,
       "status": "retired",
-      "category": "ocean",
+      "category": "expedition",
       "retirementYear": 2014,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "category"
+      ]
     },
     {
       "wikidataId": "Q65120417",
@@ -8981,6 +9393,29 @@
       "formerOperators": [
         "Viking Line"
       ]
+    },
+    {
+      "wikidataId": "Q20894609",
+      "imo": "7111078",
+      "imoValid": true,
+      "mmsi": null,
+      "name": "MS Southward",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": "Cantiere navale di Riva Trigoso",
+      "grossTonnage": 16710,
+      "lengthMeters": 168.38,
+      "beamMeters": 22.76,
+      "inServiceYear": 1971,
+      "maxCapacity": 732,
+      "status": "retired",
+      "category": "ocean",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true
     },
     {
       "wikidataId": "Q11335718",
@@ -9498,10 +9933,13 @@
       "inServiceYear": 1982,
       "maxCapacity": 380,
       "status": "unknown",
-      "category": "ocean",
+      "category": "expedition",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "category"
+      ]
     },
     {
       "wikidataId": "Q738211",
@@ -9542,10 +9980,13 @@
       "inServiceYear": 2007,
       "maxCapacity": 318,
       "status": "in_service",
-      "category": "ocean",
+      "category": "expedition",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "category"
+      ]
     },
     {
       "wikidataId": "Q138381435",
@@ -9656,6 +10097,32 @@
       "retirementYear": 2017,
       "formerNames": [],
       "formerOperators": []
+    },
+    {
+      "wikidataId": "Q2383420",
+      "imo": "7824417",
+      "imoValid": true,
+      "mmsi": "273146110",
+      "name": "Kapitan Khlebnikov",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": "Kapitan Sorokin-class icebreaker",
+      "shipClassId": "Q3679352",
+      "builder": "Wärtsilä",
+      "grossTonnage": 12288,
+      "lengthMeters": 122.5,
+      "beamMeters": null,
+      "inServiceYear": 1970,
+      "maxCapacity": null,
+      "status": "unknown",
+      "category": "expedition",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true,
+      "overriddenFields": [
+        "category"
+      ]
     },
     {
       "wikidataId": "Q6719448",
@@ -9814,6 +10281,29 @@
       "formerOperators": []
     },
     {
+      "wikidataId": "Q1614744",
+      "imo": "9048914",
+      "imoValid": true,
+      "mmsi": "259139000",
+      "name": "Nordlys",
+      "operator": "Hurtigruten",
+      "operatorId": "Q838725",
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": "Volkswerft",
+      "grossTonnage": 11204,
+      "lengthMeters": 121.8,
+      "beamMeters": 19.2,
+      "inServiceYear": 1994,
+      "maxCapacity": null,
+      "status": "in_service",
+      "category": "ferry",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true
+    },
+    {
       "wikidataId": "Q1392938",
       "imo": "6715372",
       "imoValid": true,
@@ -9874,10 +10364,13 @@
       "inServiceYear": 2015,
       "maxCapacity": 264,
       "status": "in_service",
-      "category": "ocean",
+      "category": "expedition",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "category"
+      ]
     },
     {
       "wikidataId": "Q246776",
@@ -9896,10 +10389,13 @@
       "inServiceYear": 2010,
       "maxCapacity": 264,
       "status": "in_service",
-      "category": "ocean",
+      "category": "expedition",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "category"
+      ]
     },
     {
       "wikidataId": "Q246341",
@@ -9918,10 +10414,13 @@
       "inServiceYear": 2010,
       "maxCapacity": 264,
       "status": "unknown",
-      "category": "ocean",
+      "category": "expedition",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "category"
+      ]
     },
     {
       "wikidataId": "Q6718162",
@@ -10012,6 +10511,32 @@
       "formerOperators": []
     },
     {
+      "wikidataId": "Q4744778",
+      "imo": "9084542",
+      "imoValid": true,
+      "mmsi": "366950740",
+      "name": "American Queen",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": null,
+      "grossTonnage": 10159,
+      "lengthMeters": 418,
+      "beamMeters": null,
+      "inServiceYear": 1995,
+      "maxCapacity": null,
+      "status": "unknown",
+      "category": "river",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true,
+      "overriddenFields": [
+        "category"
+      ]
+    },
+    {
       "wikidataId": "Q3476677",
       "imo": "8707343",
       "imoValid": true,
@@ -10055,6 +10580,52 @@
       "retirementYear": null,
       "formerNames": [],
       "formerOperators": []
+    },
+    {
+      "wikidataId": "Q56574101",
+      "imo": "9814026",
+      "imoValid": true,
+      "mmsi": null,
+      "name": "Le Lapérouse",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": "Fincantieri",
+      "grossTonnage": 9976,
+      "lengthMeters": 131.46,
+      "beamMeters": null,
+      "inServiceYear": 2018,
+      "maxCapacity": null,
+      "status": "unknown",
+      "category": "other",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true
+    },
+    {
+      "wikidataId": "Q60754049",
+      "imo": "9814038",
+      "imoValid": true,
+      "mmsi": null,
+      "name": "Le Champlain",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": "Fincantieri",
+      "grossTonnage": 9976,
+      "lengthMeters": 131.46,
+      "beamMeters": null,
+      "inServiceYear": 2018,
+      "maxCapacity": null,
+      "status": "unknown",
+      "category": "other",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true
     },
     {
       "wikidataId": "Q166842",
@@ -10121,6 +10692,29 @@
       "retirementYear": null,
       "formerNames": [],
       "formerOperators": []
+    },
+    {
+      "wikidataId": "Q65071578",
+      "imo": "9814040",
+      "imoValid": true,
+      "mmsi": null,
+      "name": "Le Bougainville",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": "Fincantieri",
+      "grossTonnage": 9900,
+      "lengthMeters": 131.5,
+      "beamMeters": null,
+      "inServiceYear": 2018,
+      "maxCapacity": null,
+      "status": "unknown",
+      "category": "other",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true
     },
     {
       "wikidataId": "Q2013393",
@@ -10258,6 +10852,29 @@
       "formerOperators": []
     },
     {
+      "wikidataId": "Q43022014",
+      "imo": "9793545",
+      "imoValid": true,
+      "mmsi": "238021000",
+      "name": "Golden Horizon",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": "Brodosplit",
+      "grossTonnage": 8770,
+      "lengthMeters": 162.22,
+      "beamMeters": null,
+      "inServiceYear": 2017,
+      "maxCapacity": 272,
+      "status": "unknown",
+      "category": "other",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true
+    },
+    {
       "wikidataId": "Q1583710",
       "imo": "9000168",
       "imoValid": true,
@@ -10274,7 +10891,7 @@
       "inServiceYear": 1991,
       "maxCapacity": 184,
       "status": "in_service",
-      "category": "ocean",
+      "category": "expedition",
       "retirementYear": null,
       "formerNames": [
         "Hanseatic",
@@ -10282,6 +10899,9 @@
       ],
       "formerOperators": [
         "Hapag-Lloyd Cruises"
+      ],
+      "overriddenFields": [
+        "category"
       ]
     },
     {
@@ -10323,10 +10943,13 @@
       "inServiceYear": 1974,
       "maxCapacity": 265,
       "status": "unknown",
-      "category": "ocean",
+      "category": "expedition",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "category"
+      ]
     },
     {
       "wikidataId": "Q134385320",
@@ -10373,6 +10996,32 @@
       "formerOperators": []
     },
     {
+      "wikidataId": "Q20894650",
+      "imo": "9677492",
+      "imoValid": true,
+      "mmsi": "546018800",
+      "name": "Aranui 5",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": null,
+      "grossTonnage": 7500,
+      "lengthMeters": 126.1,
+      "beamMeters": 22.2,
+      "inServiceYear": 2015,
+      "maxCapacity": 254,
+      "status": "unknown",
+      "category": "expedition",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true,
+      "overriddenFields": [
+        "category"
+      ]
+    },
+    {
       "wikidataId": "Q11765118",
       "imo": "8701193",
       "imoValid": true,
@@ -10395,6 +11044,32 @@
         "Vistamar"
       ],
       "formerOperators": []
+    },
+    {
+      "wikidataId": "Q2859534",
+      "imo": "9245354",
+      "imoValid": true,
+      "mmsi": "546001000",
+      "name": "M2",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": null,
+      "grossTonnage": 7393,
+      "lengthMeters": 117,
+      "beamMeters": 17.6,
+      "inServiceYear": 2002,
+      "maxCapacity": null,
+      "status": "unknown",
+      "category": "expedition",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true,
+      "overriddenFields": [
+        "category"
+      ]
     },
     {
       "wikidataId": "Q1205064",
@@ -10479,10 +11154,13 @@
       "inServiceYear": 2019,
       "maxCapacity": 170,
       "status": "in_service",
-      "category": "ocean",
+      "category": "expedition",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "category"
+      ]
     },
     {
       "wikidataId": "Q1408554",
@@ -10501,10 +11179,13 @@
       "inServiceYear": 1982,
       "maxCapacity": 310,
       "status": "unknown",
-      "category": "ocean",
+      "category": "expedition",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "category"
+      ]
     },
     {
       "wikidataId": "Q123248134",
@@ -10523,10 +11204,65 @@
       "inServiceYear": 2020,
       "maxCapacity": 100,
       "status": "in_service",
-      "category": "ocean",
+      "category": "expedition",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "category"
+      ]
+    },
+    {
+      "wikidataId": "Q4059130",
+      "imo": "8507729",
+      "imoValid": true,
+      "mmsi": "273414400",
+      "name": "Akademik Sergey Vavilov",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": "Hollming",
+      "grossTonnage": 6344,
+      "lengthMeters": 117,
+      "beamMeters": null,
+      "inServiceYear": 1988,
+      "maxCapacity": null,
+      "status": "unknown",
+      "category": "expedition",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true,
+      "overriddenFields": [
+        "category"
+      ]
+    },
+    {
+      "wikidataId": "Q1384284",
+      "imo": "7211074",
+      "imoValid": true,
+      "mmsi": "636013956",
+      "name": "MS Expedition",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": "Elsinore Shipyard and Machine Construction",
+      "grossTonnage": 6334,
+      "lengthMeters": 118.09,
+      "beamMeters": 19.84,
+      "inServiceYear": 1972,
+      "maxCapacity": 134,
+      "status": "unknown",
+      "category": "expedition",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true,
+      "overriddenFields": [
+        "category"
+      ]
     },
     {
       "wikidataId": "Q1782770",
@@ -10567,10 +11303,13 @@
       "inServiceYear": 1989,
       "maxCapacity": 132,
       "status": "unknown",
-      "category": "ocean",
+      "category": "expedition",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "category"
+      ]
     },
     {
       "wikidataId": "Q4718159",
@@ -10611,10 +11350,13 @@
       "inServiceYear": 2019,
       "maxCapacity": 100,
       "status": "in_service",
-      "category": "ocean",
+      "category": "expedition",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "category"
+      ]
     },
     {
       "wikidataId": "Q662644",
@@ -10639,6 +11381,57 @@
       "formerOperators": []
     },
     {
+      "wikidataId": "Q3569268",
+      "imo": "8420878",
+      "imoValid": true,
+      "mmsi": "309163000",
+      "name": "Wind Star",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": "Ateliers et Chantiers du Havre",
+      "grossTonnage": 5703,
+      "lengthMeters": 135,
+      "beamMeters": null,
+      "inServiceYear": 1986,
+      "maxCapacity": 148,
+      "status": "unknown",
+      "category": "other",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true
+    },
+    {
+      "wikidataId": "Q15628608",
+      "imo": "8422606",
+      "imoValid": true,
+      "mmsi": "273367610",
+      "name": "Viking Helgi",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": "Dmitriy Furmanov-class motorship",
+      "shipClassId": "Q1232848",
+      "builder": "Elbewerft Boizenburg",
+      "grossTonnage": 5594,
+      "lengthMeters": null,
+      "beamMeters": null,
+      "inServiceYear": 1984,
+      "maxCapacity": null,
+      "status": "unknown",
+      "category": "river",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true,
+      "overriddenFields": [
+        "category",
+        "shipClass",
+        "shipClassId"
+      ]
+    },
+    {
       "wikidataId": "Q1345251",
       "imo": "8707680",
       "imoValid": true,
@@ -10659,6 +11452,29 @@
       "retirementYear": null,
       "formerNames": [],
       "formerOperators": []
+    },
+    {
+      "wikidataId": "Q104382190",
+      "imo": "9838644",
+      "imoValid": true,
+      "mmsi": "503000129",
+      "name": "Coral Adventurer",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": null,
+      "grossTonnage": 5516,
+      "lengthMeters": 94.5,
+      "beamMeters": null,
+      "inServiceYear": 2019,
+      "maxCapacity": null,
+      "status": "unknown",
+      "category": "other",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true
     },
     {
       "wikidataId": "Q1633883",
@@ -10816,6 +11632,62 @@
       "retirementYear": null,
       "formerNames": [],
       "formerOperators": []
+    },
+    {
+      "wikidataId": "Q15624369",
+      "imo": "8326008",
+      "imoValid": true,
+      "mmsi": null,
+      "name": "Igor Stravinskiy",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": "Dmitriy Furmanov-class motorship",
+      "shipClassId": "Q1232848",
+      "builder": "Elbewerft Boizenburg",
+      "grossTonnage": 5414,
+      "lengthMeters": 129.11,
+      "beamMeters": null,
+      "inServiceYear": 1983,
+      "maxCapacity": null,
+      "status": "unknown",
+      "category": "river",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true,
+      "overriddenFields": [
+        "category",
+        "shipClass",
+        "shipClassId"
+      ]
+    },
+    {
+      "wikidataId": "Q12374885",
+      "imo": "8326010",
+      "imoValid": true,
+      "mmsi": "273333450",
+      "name": "Sergey Dyagilev",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": "Dmitriy Furmanov-class motorship",
+      "shipClassId": "Q1232848",
+      "builder": "Elbewerft Boizenburg",
+      "grossTonnage": 5414,
+      "lengthMeters": null,
+      "beamMeters": null,
+      "inServiceYear": 1983,
+      "maxCapacity": null,
+      "status": "unknown",
+      "category": "river",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true,
+      "overriddenFields": [
+        "category",
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q4258777",
@@ -11133,8 +12005,8 @@
       "name": "MV Sea Adventurer",
       "operator": null,
       "operatorId": null,
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Maria Yermolova-class passenger ship",
+      "shipClassId": "Q1899526",
       "builder": null,
       "grossTonnage": 4617,
       "lengthMeters": 100.01,
@@ -11142,10 +12014,15 @@
       "inServiceYear": 1975,
       "maxCapacity": 262,
       "status": "unknown",
-      "category": "ocean",
+      "category": "expedition",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "category",
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q6719888",
@@ -11164,10 +12041,13 @@
       "inServiceYear": 1989,
       "maxCapacity": 106,
       "status": "unknown",
-      "category": "ocean",
+      "category": "expedition",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "category"
+      ]
     },
     {
       "wikidataId": "Q104378398",
@@ -11274,10 +12154,13 @@
       "inServiceYear": 1976,
       "maxCapacity": null,
       "status": "retired",
-      "category": "ocean",
+      "category": "expedition",
       "retirementYear": 2012,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "category"
+      ]
     },
     {
       "wikidataId": "Q61042329",
@@ -11324,6 +12207,36 @@
       "formerOperators": []
     },
     {
+      "wikidataId": "Q52334955",
+      "imo": "8802870",
+      "imoValid": true,
+      "mmsi": "311061100",
+      "name": "Caledonian Sky",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": "Nuovi Cantieri Apuania",
+      "grossTonnage": 4200,
+      "lengthMeters": 90,
+      "beamMeters": null,
+      "inServiceYear": 1991,
+      "maxCapacity": null,
+      "status": "unknown",
+      "category": "other",
+      "retirementYear": null,
+      "formerNames": [
+        "Renaissance Six",
+        "Sun Viva 2",
+        "Capri",
+        "Megastar Capricorn",
+        "Hebridean Spirit",
+        "Sunrise"
+      ],
+      "formerOperators": [],
+      "includedByOverride": true
+    },
+    {
       "wikidataId": "Q16224048",
       "imo": "8802882",
       "imoValid": true,
@@ -11340,10 +12253,13 @@
       "inServiceYear": 1991,
       "maxCapacity": null,
       "status": "unknown",
-      "category": "ocean",
+      "category": "expedition",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "category"
+      ]
     },
     {
       "wikidataId": "Q52334979",
@@ -11362,14 +12278,17 @@
       "inServiceYear": 1992,
       "maxCapacity": null,
       "status": "unknown",
-      "category": "ocean",
+      "category": "expedition",
       "retirementYear": null,
       "formerNames": [
         "Renaissance Eight",
         "Renai Ii",
         "Sky"
       ],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "category"
+      ]
     },
     {
       "wikidataId": "Q1278325",
@@ -11454,10 +12373,13 @@
       "inServiceYear": 2003,
       "maxCapacity": null,
       "status": "unknown",
-      "category": "ocean",
+      "category": "expedition",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "category"
+      ]
     },
     {
       "wikidataId": "Q532885",
@@ -11480,6 +12402,32 @@
       "retirementYear": null,
       "formerNames": [],
       "formerOperators": []
+    },
+    {
+      "wikidataId": "Q277887",
+      "imo": "9524176",
+      "imoValid": true,
+      "mmsi": "211488640",
+      "name": "A-Rosa Aqua",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": "Neptun Werft",
+      "grossTonnage": 3600,
+      "lengthMeters": 135,
+      "beamMeters": 11.4,
+      "inServiceYear": 2009,
+      "maxCapacity": null,
+      "status": "unknown",
+      "category": "river",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true,
+      "overriddenFields": [
+        "category"
+      ]
     },
     {
       "wikidataId": "Q277923",
@@ -11524,6 +12472,58 @@
       "retirementYear": null,
       "formerNames": [],
       "formerOperators": []
+    },
+    {
+      "wikidataId": "Q277906",
+      "imo": "8979283",
+      "imoValid": true,
+      "mmsi": "211160700",
+      "name": "A-Rosa Mia",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": "Neptun Werft",
+      "grossTonnage": 3542,
+      "lengthMeters": 124.5,
+      "beamMeters": 14.4,
+      "inServiceYear": 2003,
+      "maxCapacity": null,
+      "status": "unknown",
+      "category": "river",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true,
+      "overriddenFields": [
+        "category"
+      ]
+    },
+    {
+      "wikidataId": "Q277910",
+      "imo": "8979295",
+      "imoValid": true,
+      "mmsi": "211160710",
+      "name": "A-Rosa Riva",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": "Neptun Werft",
+      "grossTonnage": 3542,
+      "lengthMeters": 124.5,
+      "beamMeters": 14.4,
+      "inServiceYear": 2004,
+      "maxCapacity": null,
+      "status": "unknown",
+      "category": "river",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true,
+      "overriddenFields": [
+        "category"
+      ]
     },
     {
       "wikidataId": "Q277902",
@@ -11615,6 +12615,32 @@
       "retirementYear": null,
       "formerNames": [],
       "formerOperators": []
+    },
+    {
+      "wikidataId": "Q5374683",
+      "imo": "9263538",
+      "imoValid": true,
+      "mmsi": "366902410",
+      "name": "Empress of the North",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": null,
+      "grossTonnage": 3388,
+      "lengthMeters": 116,
+      "beamMeters": null,
+      "inServiceYear": 2003,
+      "maxCapacity": 217,
+      "status": "unknown",
+      "category": "river",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true,
+      "overriddenFields": [
+        "category"
+      ]
     },
     {
       "wikidataId": "Q23578807",
@@ -11818,6 +12844,29 @@
       "formerOperators": []
     },
     {
+      "wikidataId": "Q105764886",
+      "imo": "9334088",
+      "imoValid": true,
+      "mmsi": "735059655",
+      "name": "National Geographic Endeavour",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": null,
+      "grossTonnage": 2695,
+      "lengthMeters": 72.3,
+      "beamMeters": null,
+      "inServiceYear": 2005,
+      "maxCapacity": null,
+      "status": "unknown",
+      "category": "other",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true
+    },
+    {
       "wikidataId": "Q30591830",
       "imo": "9265677",
       "imoValid": true,
@@ -11905,10 +12954,13 @@
       "inServiceYear": 1969,
       "maxCapacity": 118,
       "status": "retired",
-      "category": "ocean",
+      "category": "expedition",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "category"
+      ]
     },
     {
       "wikidataId": "Q2709886",
@@ -11927,10 +12979,36 @@
       "inServiceYear": 2001,
       "maxCapacity": null,
       "status": "in_service",
-      "category": "ocean",
+      "category": "expedition",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "category"
+      ]
+    },
+    {
+      "wikidataId": "Q2332255",
+      "imo": "8915445",
+      "imoValid": true,
+      "mmsi": "248786000",
+      "name": "Star Clipper",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": null,
+      "grossTonnage": 2298,
+      "lengthMeters": 111.57,
+      "beamMeters": 15.14,
+      "inServiceYear": 1992,
+      "maxCapacity": 170,
+      "status": "unknown",
+      "category": "other",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true
     },
     {
       "wikidataId": "Q16980568",
@@ -12067,6 +13145,58 @@
       "formerOperators": []
     },
     {
+      "wikidataId": "Q7076203",
+      "imo": "9292747",
+      "imoValid": true,
+      "mmsi": "503492000",
+      "name": "Oceanic Discoverer",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": null,
+      "grossTonnage": 1838,
+      "lengthMeters": 63,
+      "beamMeters": null,
+      "inServiceYear": 2005,
+      "maxCapacity": null,
+      "status": "unknown",
+      "category": "expedition",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true,
+      "overriddenFields": [
+        "category"
+      ]
+    },
+    {
+      "wikidataId": "Q414593",
+      "imo": "8010336",
+      "imoValid": true,
+      "mmsi": "273458210",
+      "name": "Akademik Shokalskiy",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": "Akademik Shuleykin-class oceanographic research vessel",
+      "shipClassId": "Q4700077",
+      "builder": "Laivateollisuus",
+      "grossTonnage": 1764,
+      "lengthMeters": 71.06,
+      "beamMeters": 12.82,
+      "inServiceYear": 1982,
+      "maxCapacity": 68,
+      "status": "unknown",
+      "category": "expedition",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true,
+      "overriddenFields": [
+        "category"
+      ]
+    },
+    {
       "wikidataId": "Q7209039",
       "imo": "8010324",
       "imoValid": true,
@@ -12083,10 +13213,41 @@
       "inServiceYear": 1982,
       "maxCapacity": null,
       "status": "unknown",
-      "category": "ocean",
+      "category": "expedition",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "category"
+      ]
+    },
+    {
+      "wikidataId": "Q4381977",
+      "imo": "8010348",
+      "imoValid": true,
+      "mmsi": "273458500",
+      "name": "Professor Molchanov",
+      "operator": "Oceanwide Expeditions",
+      "operatorId": "Q17104857",
+      "shipClass": "Akademik Shuleykin-class oceanographic research vessel",
+      "shipClassId": "Q4700077",
+      "builder": "Laivateollisuus",
+      "grossTonnage": 1753,
+      "lengthMeters": 69.7,
+      "beamMeters": 12.8,
+      "inServiceYear": 1982,
+      "maxCapacity": 48,
+      "status": "in_service",
+      "category": "expedition",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true,
+      "overriddenFields": [
+        "category",
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q106634431",
@@ -12263,6 +13424,29 @@
       "retirementYear": null,
       "formerNames": [],
       "formerOperators": []
+    },
+    {
+      "wikidataId": "Q7577967",
+      "imo": "8883563",
+      "imoValid": true,
+      "mmsi": "367645050",
+      "name": "Spirit of Glacier Bay",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": "Jeffboat",
+      "grossTonnage": 1471,
+      "lengthMeters": 54,
+      "beamMeters": null,
+      "inServiceYear": 1984,
+      "maxCapacity": null,
+      "status": "unknown",
+      "category": "other",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true
     },
     {
       "wikidataId": "Q6719838",
@@ -12707,6 +13891,32 @@
       "formerOperators": []
     },
     {
+      "wikidataId": "Q7278077",
+      "imo": "7738383",
+      "imoValid": true,
+      "mmsi": "677057200",
+      "name": "RV Vema",
+      "operator": "Windjammer Barefoot Cruises",
+      "operatorId": "Q8024256",
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": "Burmeister & Wain",
+      "grossTonnage": 420,
+      "lengthMeters": 70,
+      "beamMeters": null,
+      "inServiceYear": 1923,
+      "maxCapacity": null,
+      "status": "in_service",
+      "category": "other",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [
+        "Edward Francis Hutton",
+        "Lamont–Doherty Earth Observatory"
+      ],
+      "includedByOverride": true
+    },
+    {
       "wikidataId": "Q138855455",
       "imo": "9562415",
       "imoValid": true,
@@ -12749,6 +13959,29 @@
       "retirementYear": null,
       "formerNames": [],
       "formerOperators": []
+    },
+    {
+      "wikidataId": "Q54933225",
+      "imo": "9455882",
+      "imoValid": true,
+      "mmsi": null,
+      "name": "Celebrity Xploration",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": null,
+      "grossTonnage": 319,
+      "lengthMeters": 29.97,
+      "beamMeters": null,
+      "inServiceYear": 2007,
+      "maxCapacity": null,
+      "status": "unknown",
+      "category": "other",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true
     },
     {
       "wikidataId": "Q138642768",
@@ -12925,6 +14158,32 @@
       "retirementYear": null,
       "formerNames": [],
       "formerOperators": []
+    },
+    {
+      "wikidataId": "Q1855013",
+      "imo": "8650813",
+      "imoValid": true,
+      "mmsi": "244091000",
+      "name": "Noorderlicht",
+      "operator": "Imperial German Navy",
+      "operatorId": "Q156649",
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": "Flensburger Schiffbau-Gesellschaft",
+      "grossTonnage": 140,
+      "lengthMeters": 36,
+      "beamMeters": 6.5,
+      "inServiceYear": 1910,
+      "maxCapacity": null,
+      "status": "in_service",
+      "category": "expedition",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true,
+      "overriddenFields": [
+        "category"
+      ]
     },
     {
       "wikidataId": "Q4037166",
@@ -13418,8 +14677,8 @@
       "name": "MS Excelsior Neptune",
       "operator": null,
       "operatorId": null,
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Mikhail Kalinin-class passenger ship",
+      "shipClassId": "Q1933630",
       "builder": "Meyer Wismar",
       "grossTonnage": null,
       "lengthMeters": 122.15,
@@ -13430,7 +14689,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q3073343",
@@ -13682,8 +14945,8 @@
       "name": "MS Sounds of Orient",
       "operator": null,
       "operatorId": null,
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Mikhail Kalinin-class passenger ship",
+      "shipClassId": "Q1933630",
       "builder": "Meyer Wismar",
       "grossTonnage": null,
       "lengthMeters": 122.15,
@@ -13694,7 +14957,11 @@
       "category": "ocean",
       "retirementYear": 1989,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q446913",
@@ -14374,8 +15641,8 @@
       "name": "MS Grigoriy Ordzhonikidze",
       "operator": null,
       "operatorId": null,
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Mikhail Kalinin-class passenger ship",
+      "shipClassId": "Q1933630",
       "builder": "Meyer Wismar",
       "grossTonnage": null,
       "lengthMeters": 122.15,
@@ -14386,7 +15653,11 @@
       "category": "ocean",
       "retirementYear": 1992,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q7393731",
@@ -14418,8 +15689,8 @@
       "name": "Bashkiriya",
       "operator": null,
       "operatorId": null,
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Mikhail Kalinin-class passenger ship",
+      "shipClassId": "Q1933630",
       "builder": "Meyer Wismar",
       "grossTonnage": null,
       "lengthMeters": 122.15,
@@ -14430,7 +15701,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q6116290",
@@ -14541,6 +15816,29 @@
       "retirementYear": null,
       "formerNames": [],
       "formerOperators": []
+    },
+    {
+      "wikidataId": "Q1143472",
+      "imo": "7042318",
+      "imoValid": true,
+      "mmsi": null,
+      "name": "MS Mikhail Lermontov",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": "Ivan Franko-class passenger ship",
+      "shipClassId": "Q1127612",
+      "builder": "Meyer Wismar",
+      "grossTonnage": null,
+      "lengthMeters": 175.77,
+      "beamMeters": 23.6,
+      "inServiceYear": 1972,
+      "maxCapacity": 750,
+      "status": "unknown",
+      "category": "ocean",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true
     },
     {
       "wikidataId": "Q6718165",
@@ -15144,8 +16442,8 @@
       "name": "AIDAcosma",
       "operator": "AIDA Cruises",
       "operatorId": "Q293469",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Excellence-class cruise ship",
+      "shipClassId": "Q28456719",
       "builder": "Meyer Werft",
       "grossTonnage": null,
       "lengthMeters": 337,
@@ -15156,7 +16454,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q62112747",
@@ -15223,6 +16525,29 @@
       "retirementYear": null,
       "formerNames": [],
       "formerOperators": []
+    },
+    {
+      "wikidataId": "Q113679865",
+      "imo": "9805348",
+      "imoValid": true,
+      "mmsi": null,
+      "name": "Resilient Lady",
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": null,
+      "grossTonnage": null,
+      "lengthMeters": null,
+      "beamMeters": null,
+      "inServiceYear": 2022,
+      "maxCapacity": null,
+      "status": "unknown",
+      "category": "other",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true
     },
     {
       "wikidataId": "Q82320084",
@@ -15342,8 +16667,8 @@
       "name": "Mardi Gras",
       "operator": "Carnival Cruise Line",
       "operatorId": "Q656554",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Excellence-class cruise ship",
+      "shipClassId": "Q28456719",
       "builder": "Meyer Turku",
       "grossTonnage": null,
       "lengthMeters": null,
@@ -15354,7 +16679,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q104842314",
@@ -15364,8 +16693,8 @@
       "name": "Carnival Celebration",
       "operator": "Carnival Cruise Line",
       "operatorId": "Q656554",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Excellence-class cruise ship",
+      "shipClassId": "Q28456719",
       "builder": "Meyer Turku",
       "grossTonnage": null,
       "lengthMeters": 344.532,
@@ -15376,7 +16705,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q28494959",
@@ -15452,8 +16785,8 @@
       "name": "MSC Seashore",
       "operator": "MSC Cruises",
       "operatorId": "Q663626",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Seaside-class cruise ship",
+      "shipClassId": "Q25391838",
       "builder": "Fincantieri",
       "grossTonnage": null,
       "lengthMeters": null,
@@ -15464,7 +16797,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q115951907",
@@ -15474,8 +16811,8 @@
       "name": "MSC Seascape",
       "operator": "MSC Cruises",
       "operatorId": "Q663626",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Seaside-class cruise ship",
+      "shipClassId": "Q25391838",
       "builder": "Fincantieri",
       "grossTonnage": null,
       "lengthMeters": null,
@@ -15486,7 +16823,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q113519341",
@@ -15496,8 +16837,8 @@
       "name": "Carnival Jubilee",
       "operator": "Carnival Cruise Line",
       "operatorId": "Q656554",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Excellence-class cruise ship",
+      "shipClassId": "Q28456719",
       "builder": "Meyer Werft",
       "grossTonnage": null,
       "lengthMeters": 345320.1,
@@ -15508,7 +16849,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q123243810",
@@ -15659,10 +17004,13 @@
       "inServiceYear": 2022,
       "maxCapacity": 264,
       "status": "in_service",
-      "category": "ocean",
+      "category": "expedition",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "category"
+      ]
     },
     {
       "wikidataId": "Q141248921",
@@ -15694,8 +17042,8 @@
       "name": "Sun Princess (ship, 2024)",
       "operator": "Carnival Cruise Line",
       "operatorId": "Q656554",
-      "shipClass": null,
-      "shipClassId": null,
+      "shipClass": "Sphere-class cruise ship",
+      "shipClassId": "Q108940077",
       "builder": "Fincantieri",
       "grossTonnage": null,
       "lengthMeters": 345,
@@ -15706,7 +17054,11 @@
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "shipClass",
+        "shipClassId"
+      ]
     },
     {
       "wikidataId": "Q111948626",
