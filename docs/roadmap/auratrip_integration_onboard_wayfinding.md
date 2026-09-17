@@ -1,7 +1,8 @@
 # Roadmap — AuraTrip Integration & Onboard Event Wayfinding
 
-_Written 2026-09-15. Status: **In progress** — Phase 0 shipped 2026-09-16; Phase 1 and
-P4.1 underway. Live tracking: [#24](https://github.com/doomstar288/cruise-ship-maps/issues/24).
+_Written 2026-09-15. Status: **Phases 0, 2, 3, 4 and 5 shipped** (2026-09-16 to 2026-09-17).
+Phase 1 is half done: P1.3 and P1.4 shipped; P1.1 and P1.2 wait on an official Celebrity plan.
+Live tracking: [#24](https://github.com/doomstar288/cruise-ship-maps/issues/24).
 Spans two repos:_
 
 - **Producer** — `cruise-ship-maps` (this repo): deck data, Ship Map Pack exports.
@@ -31,7 +32,9 @@ deck. It must work **offline at sea**, because that is the only time anyone need
 
 ---
 
-## 2. Where things stand today
+## 2. Where things stood (2026-09-15)
+
+As written before the work started. For where it ended up, see the status tables in §4.
 
 | Capability | Cruise Ship Maps | AuraTrip |
 |---|---|---|
@@ -115,7 +118,19 @@ Goal: AuraTrip users see the corrected Xcel map from the published service.
 in Travel Tools → Ship & Deck Plan. Search finds "Sunset Bar" on Deck 15 and no "Crew
 Service Area". The map loads in airplane mode after one online visit.
 
-### Phase 1 — Data you can route on  `M` · maps
+### Phase 1 — Data you can route on  `M` · maps · ◐ half shipped
+
+| # | Status |
+|---|---|
+| P1.1 | ⏳ [#18](https://github.com/doomstar288/cruise-ship-maps/issues/18). Needs an official Celebrity plan (facts only). Zone leads are posted on the issue. |
+| P1.2 | ⏳ [#19](https://github.com/doomstar288/cruise-ship-maps/issues/19). Needs the real ship's published cabin ranges. |
+| P1.3 | ✅ [#29](https://github.com/doomstar288/cruise-ship-maps/pull/29). 46 venues `zone`, 22 `estimated`, 0 `verified`. |
+| P1.4 | ✅ [#30](https://github.com/doomstar288/cruise-ship-maps/pull/30). 85 entrances on 27 venues, all derived on corridor-facing edges. |
+
+When P1.1 moves venues, regenerate the pack (routing included) and re-record the route
+fixtures (`npm run record:route-fixtures`), then refresh AuraTrip's fixture copies.
+
+Original task list:
 
 Goal: positions trustworthy enough that walking times are not misleading.
 
@@ -139,7 +154,18 @@ Goal: positions trustworthy enough that walking times are not misleading.
 the real ship's published ranges resolve to the correct deck section. Producer tests
 assert each entrance sits on a corridor edge of its venue.
 
-### Phase 2 — Routing graph in the pack  `L` · maps
+### Phase 2 — Routing graph in the pack  `L` · maps · ✅ shipped 2026-09-16
+
+| # | Status |
+|---|---|
+| P2.1–P2.3 | ✅ [#36](https://github.com/doomstar288/cruise-ship-maps/pull/36). 576 nodes, 587 walk edges, compact tuples; +7.5 % gzipped (budget 15 %). Decks 2, 4, 5, 14, 15 and 16 are split by full-beam venues, so the P2.2 rule was relaxed to "every walk section has an elevator lobby" with documented connectors ([routing doc](../architecture/ship_map_pack_routing.md)). |
+| P2.4, P2.5 | ✅ [#37](https://github.com/doomstar288/cruise-ship-maps/pull/37). One dependency-free router (`src/utils/shipRouter.js`) draws the site's routes; 14 route fixtures are published at `v1/ships/celebrity-xcel/route-fixtures.json`. |
+
+**Cost model (decided 2026-09-17, [AuraTrip #161](https://github.com/doomstar288/big-trip-planner/issues/161)):**
+routes are *chosen* with lift 60 s + 8 s per level and stairs 30 s per level (the fixtures'
+`costModel`). Phase 3's table below only sets the displayed time range.
+
+Original task list:
 
 Goal: ship a small, offline-routable network with every pack.
 
@@ -183,7 +209,15 @@ the interface spec.
 **Accept when:** the maps site draws multi-deck routes from the graph. The fixtures pass
 in both repos. The pack stays within budget.
 
-### Phase 3 — On-device routing & walking-time model  `M–L` · AuraTrip
+### Phase 3 — On-device routing & walking-time model  `M–L` · AuraTrip · ✅ shipped 2026-09-17
+
+| # | Status |
+|---|---|
+| P3.1, P3.3 | ✅ [AuraTrip #177](https://github.com/doomstar288/big-trip-planner/pull/177). `PackRouting` sanitizer and a TypeScript port of the maps router; all 14 route fixtures pass. |
+| P3.2 | ✅ [AuraTrip #178](https://github.com/doomstar288/big-trip-planner/pull/178). Stateroom 10175 → Le Voyage shows "3–6 min", or "3–8 min" to a reservation. |
+| P3.4 | ✅ [AuraTrip #179](https://github.com/doomstar288/big-trip-planner/pull/179). "Directions from cabin" in the deck viewer, drawn per deck, with "Next: Deck N". |
+
+Original task list:
 
 Pure logic in `src/utils/*` with sibling tests, per AuraTrip conventions.
 
@@ -214,7 +248,16 @@ Pure logic in `src/utils/*` with sibling tests, per AuraTrip conventions.
 elevators, and step-free mode never uses stairs. The viewer shows the route across both
 decks with the network disabled.
 
-### Phase 4 — Event → venue linking (the core of the request)  `M` · both repos
+### Phase 4 — Event → venue linking (the core of the request)  `M` · both repos · ✅ shipped 2026-09-17
+
+| # | Status |
+|---|---|
+| P4.1 | ✅ [#27](https://github.com/doomstar288/cruise-ship-maps/pull/27). `aliases` and `spansDecks` in the pack. |
+| P4.2 | ✅ [AuraTrip #170](https://github.com/doomstar288/big-trip-planner/pull/170). 45/45 located rows of a synthetic 60-row Xcel program resolve, none to a wrong venue. |
+| P4.3 | ✅ [AuraTrip #171](https://github.com/doomstar288/big-trip-planner/pull/171). `venueRef`, set only by a manual pick. |
+| P4.4 | ✅ [AuraTrip #172](https://github.com/doomstar288/big-trip-planner/pull/172). Per-ship venue keywords. |
+
+Original task list:
 
 - **P4.1 Aliases in the pack (maps).** Additive `aliases: string[]` per feature:
   "The Theater", "Theatre"; "OVC", "Buffet" for Oceanview Café; "Pool Deck", "Resort Deck"
@@ -241,7 +284,19 @@ decks with the network disabled.
 the rest prompt, and no activity resolves to the wrong venue. Measure against a
 checked-in, anonymized text fixture.
 
-### Phase 5 — Agenda UX: directions, times, leave-by  `M` · AuraTrip
+### Phase 5 — Agenda UX: directions, times, leave-by  `M` · AuraTrip · ✅ shipped 2026-09-17
+
+| # | Status |
+|---|---|
+| P5.0 | ✅ [AuraTrip #187](https://github.com/doomstar288/big-trip-planner/pull/187). `venueRef` on activities too (decided 2026-09-17); port plans now ride in backup, merge and sync. |
+| P5.1 | ✅ [AuraTrip #189](https://github.com/doomstar288/big-trip-planner/pull/189). "📍 venue · Deck N" and "🚶 3–8 min · leave by 7:20 PM (approx.)" chips. |
+| P5.2 | ✅ [AuraTrip #188](https://github.com/doomstar288/big-trip-planner/pull/188). Default start is the previous agenda item, falling back to the cabin (decided 2026-09-17); remembered per day. |
+| P5.3 | ✅ [AuraTrip #191](https://github.com/doomstar288/big-trip-planner/pull/191). Directions sheet and Pick on map / Change venue, for bookings and activities. |
+| P5.4 | ✅ [AuraTrip #192](https://github.com/doomstar288/big-trip-planner/pull/192). Reminders at leave-by. |
+| P5.5 | ✅ [AuraTrip #193](https://github.com/doomstar288/big-trip-planner/pull/193). "Trivia ends 7:28 PM, but the walk takes 2–6 min — not enough time". |
+| P5.6 | ✅ [AuraTrip #194](https://github.com/doomstar288/big-trip-planner/pull/194). Found that timed reminders never fired at their time (all-day .ics alarms, manual-only in-app) and fixed it; "approx." everywhere; verified at 1280 and 375 px and offline. |
+
+Original task list:
 
 - **P5.1 Agenda chips.** In `OnboardAgenda`, show "📍 venue · Deck N" plus
   "🚶 6–8 min · leave by 19:20" when a route is computable.
@@ -314,11 +369,12 @@ in parallel with Phase 2, because it only needs names and aliases, not routes.
 
 **Open questions for the team**
 
-1. Should `venueRef` live on `OnboardReservation` only, or also on `ParsedActivity` in port
-   plans?
-2. Is "Previous agenda item" the right default origin, or "My cabin"?
+1. ~~Should `venueRef` live on `OnboardReservation` only, or also on `ParsedActivity` in port
+   plans?~~ **Both** (2026-09-17, P5.0).
+2. ~~Is "Previous agenda item" the right default origin, or "My cabin"?~~ **Previous agenda
+   item**, falling back to the cabin (2026-09-17, P5.2).
 3. Do we want the maps site itself to accept a daily program (paste → routes), or keep that
-   experience AuraTrip-only?
+   experience AuraTrip-only? *Still open.*
 
 ---
 
