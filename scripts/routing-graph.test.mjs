@@ -294,6 +294,7 @@ describe('routing in the published Celebrity Xcel pack', () => {
     }
   });
 
+  // Rebuilds the whole graph once per connector: seconds each under coverage on CI.
   it('needs every connector: removing any one leaves a venue unreachable', () => {
     for (const connector of ROUTING_CONNECTORS) {
       const problems = [];
@@ -303,7 +304,7 @@ describe('routing in the published Celebrity Xcel pack', () => {
       });
       expect(problems.length, connector.reason).toBeGreaterThan(0);
     }
-  });
+  }, 120_000);
 
   it('keeps a corridor node near every cabin, for the snap rule', () => {
     // Cabins snap to their deck's nearest `corridor` node. The four Deck 15 Edge
