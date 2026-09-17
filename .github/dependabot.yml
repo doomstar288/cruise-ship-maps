@@ -12,6 +12,13 @@ updates:
         dependency-type: development
       production-dependencies:
         dependency-type: production
+    ignore:
+      # ESLint 10 is blocked until eslint-plugin-react supports it (7.37 peers ^9.7);
+      # a grouped bump that includes it cannot install. Revisit when the plugin does.
+      - dependency-name: eslint
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@eslint/js'
+        update-types: ['version-update:semver-major']
 
   # Keep GitHub Actions pinned to current majors.
   - package-ecosystem: github-actions
