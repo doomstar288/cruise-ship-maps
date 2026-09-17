@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 
 import {
   FIELD_MARKER,
+  decodeEntities,
   extractClassField,
   extractImo,
   findMissingShips,
@@ -47,6 +48,22 @@ describe('article parsing', () => {
     expect(extractImo('{{IMO Number|1234568}}')).toBeNull();
     // Bare numbers in prose are not identifiers.
     expect(extractImo('She carried 9884136 passengers')).toBeNull();
+  });
+
+  it('decodes entities in one pass, without double-unescaping', () => {
+    expect(decodeEntities('Queen&#39;s &amp; Co &quot;X&quot;')).toBe('Queen\'s & Co "X"');
+    expect(decodeEntities('&#x27;a&#x27;')).toBe("'a'");
+    // A title containing the literal text "&lt;" must not become "<".
+    expect(decodeEntities('&amp;lt;')).toBe('&lt;');
+    expect(decodeEntities('AT&T &unknown; 100% &#999999999;')).toBe(
+      'AT&T &unknown; 100% &#999999999;'
+    );
+  });
+
+  it('strips nested and unterminated comments and refs', () => {
+    expect(extractClassField('| class = A<!--<!-- x -->-->')).toBe('A');
+    expect(extractClassField('| class = A<!-- unterminated')).toBe('A');
+    expect(extractClassField('| class = A<ref>note')).toBe('A');
   });
 
   it('reads the class field without references or comments', () => {

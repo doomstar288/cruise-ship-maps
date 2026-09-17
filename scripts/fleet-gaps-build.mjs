@@ -58,11 +58,25 @@ export const CRUISE_SHIP_ITEM = 'Q39804';
 /** Marker placed between class fields so one parse call can expand many. */
 export const FIELD_MARKER = (i) => `@@CSMFIELD${i}@@`;
 
-const stripMarkup = (text) =>
-  text
-    .replace(/<!--[\s\S]*?-->/g, '')
-    .replace(/<ref[^>/]*\/>/gi, '')
-    .replace(/<ref[^>]*>[\s\S]*?<\/ref>/gi, '');
+/**
+ * Removes comments and <ref> citations from wikitext. Applied until the text
+ * stops changing: a single pass leaves markup behind when constructs nest
+ * ("<!--<!-- -->") and an unterminated comment would otherwise survive whole.
+ */
+const stripMarkup = (text) => {
+  let out = text;
+  let previous;
+  do {
+    previous = out;
+    out = out
+      .replace(/<!--[\s\S]*?(?:-->|$)/g, '')
+      // A nested comment leaves a dangling terminator behind; it is not content.
+      .replace(/-->/g, '')
+      .replace(/<ref[^>/]*\/>/gi, '')
+      .replace(/<ref[^>]*>[\s\S]*?(?:<\/ref>|$)/gi, '');
+  } while (out !== previous);
+  return out;
+};
 
 /** True for an individual ship article; class overview articles are excluded. */
 export function isShipArticle(wikitext) {
@@ -118,13 +132,32 @@ export function linksByField(html, count) {
   return result;
 }
 
-const decodeEntities = (s) =>
-  s
-    .replace(/&amp;/g, '&')
-    .replace(/&quot;/g, '"')
-    .replace(/&#0?39;/g, "'")
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>');
+const NAMED_ENTITIES = Object.freeze({
+  amp: '&',
+  quot: '"',
+  apos: "'",
+  lt: '<',
+  gt: '>',
+  nbsp: ' ',
+});
+
+/**
+ * Decodes the HTML entities in a link title. One pass over the string, never
+ * chained replacements: decoding `&amp;` first would turn `&amp;lt;` — a title
+ * containing the literal text "&lt;" — into "<".
+ */
+export function decodeEntities(text) {
+  return text.replace(/&(#\d+|#[xX][0-9a-fA-F]+|[a-zA-Z]+);/g, (entity, reference) => {
+    if (reference.startsWith('#')) {
+      const isHex = reference[1] === 'x' || reference[1] === 'X';
+      const codePoint = Number.parseInt(reference.slice(isHex ? 2 : 1), isHex ? 16 : 10);
+      return Number.isInteger(codePoint) && codePoint > 0 && codePoint <= 0x10ffff
+        ? String.fromCodePoint(codePoint)
+        : entity;
+    }
+    return NAMED_ENTITIES[reference.toLowerCase()] ?? entity;
+  });
+}
 
 /**
  * Picks the class link from an expanded field: the first link whose title
