@@ -10,7 +10,7 @@ An open-source, high-accuracy cruise ship deck map viewer, spatial database sche
 - **Programmatic Deck Grid Engine**: Metre-scale hull envelopes per deck, non-overlapping stateroom rows and corridors, hull boundary clamping, and bow-to-stern cabin numbering. Layouts are synthetic approximations, not traced official plans.
 - **Multi-Source Accuracy Consensus Engine**: Cross-references official floorplan vectors, satellite AIS telemetry (IMO 9938430), AI super-resolution (Real-ESRGAN), and crowdsourced logs to guarantee 98.4%+ spatial accuracy.
 - **OpenAPI 3.1 & GeoJSON Download**: Export full deck vector geometries and venue metadata directly as standardized `.geojson` files for external trip planning applications.
-- **Turn-by-Turn Wayfinding & Routing**: Preset wayfinding routes with animated marching-ant paths and turn-by-turn guidance.
+- **Turn-by-Turn Wayfinding & Routing**: Multi-deck routes over the published pack's routing graph (walks, lifts and stairs, with a step-free option), drawn as animated paths with turn-by-turn guidance.
 - **Accessible UI & Design System**: Custom HSL dark mode theme, 44px minimum touch targets, desktop right slide-over inspector drawers, and WAI-ARIA accessibility.
 
 ---
