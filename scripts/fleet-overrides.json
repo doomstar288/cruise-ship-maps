@@ -1,0 +1,40 @@
+{
+  "$comment": [
+    "Hand corrections applied on top of Wikidata by scripts/seed-fleet.mjs, keyed by IMO.",
+    "Each entry needs an imo, a reason, a source URL where possible, and exactly one action:",
+    "  set:     patch fields on a sourced ship, e.g. { \"status\": \"retired\" }",
+    "  add:     a ship Wikidata lacks entirely (needs at least a name)",
+    "  exclude: true to drop a false positive (a ferry, a yacht, a duplicate)",
+    "Prefer fixing Wikidata too; the refresh PR lists overrides that become stale.",
+    "Editable fields: see OVERRIDABLE_FIELDS in scripts/fleet-registry-build.mjs."
+  ],
+  "overrides": [
+    {
+      "imo": "9884136",
+      "reason": "Celebrity Xcel is the fifth Edge-class ship, but its Wikidata item has no vessel-class statement, so it is missing from the Edge class's sister-ship index.",
+      "source": "https://www.wikidata.org/wiki/Q36847697",
+      "set": {
+        "shipClass": "Edge-class cruise ship",
+        "shipClassId": "Q36847697"
+      }
+    },
+    {
+      "imo": "9210218",
+      "reason": "Wikidata lists both Royal Caribbean International and Azamara as undated current operators; the ship sails for Azamara (its sister Azamara Pursuit is already dated correctly).",
+      "source": "https://www.wikidata.org/wiki/Q2875081",
+      "set": {
+        "operator": "Azamara",
+        "operatorId": "Q2875081"
+      }
+    },
+    {
+      "imo": "8843446",
+      "reason": "Wikidata's only operator statements are historic US Coast Guard / US Navy service with no end dates; the vessel now sails for Sea Cloud Cruises.",
+      "source": "https://en.wikipedia.org/wiki/Sea_Cloud",
+      "set": {
+        "operator": "Sea Cloud Cruises",
+        "operatorId": null
+      }
+    }
+  ]
+}
