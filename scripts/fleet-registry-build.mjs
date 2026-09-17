@@ -236,13 +236,13 @@ export function applyLifecycle(ship, row, now, previous = null) {
  * Ships in the previous registry that Wikidata no longer returns are kept, not
  * deleted: a vanished row is far more often a Wikidata edit than a vanished
  * ship, and dropping it would break any deck plan attached to that IMO.
- * Ships that existed only because of an `add` override are not carried —
- * removing the override is how you remove them.
+ * Ships that existed only because of an `add` or `include` override are not
+ * carried — removing the override is how you remove them.
  */
 export function carryForward(sourced, previous, today) {
   const sourcedImos = new Set(sourced.map((s) => s.imo));
   const carried = (previous?.ships ?? [])
-    .filter((s) => !sourcedImos.has(s.imo) && s.source !== 'override')
+    .filter((s) => !sourcedImos.has(s.imo) && s.source !== 'override' && !s.includedByOverride)
     .map((s) => ({
       // Registries written before lifecycle fields existed lack these.
       status: 'unknown',
@@ -269,10 +269,20 @@ export function validateOverrides(file) {
     seen.add(entry?.imo);
     if (!entry?.reason?.trim()) errors.push(`${at}: "reason" is required`);
 
-    const actions = ['set', 'add', 'exclude'].filter((key) => entry?.[key] !== undefined);
-    if (actions.length !== 1) {
-      errors.push(`${at}: needs exactly one of "set", "add", "exclude"`);
+    const actions = ['set', 'add', 'exclude', 'include'].filter(
+      (key) => entry?.[key] !== undefined
+    );
+    // `include` brings a ship in; pairing it with `set` to correct that ship is allowed.
+    const combinable =
+      actions.length === 2 && actions.includes('include') && actions.includes('set');
+    if (actions.length !== 1 && !combinable) {
+      errors.push(
+        `${at}: needs exactly one of "set", "add", "exclude", "include" (or "include" with "set")`
+      );
       return;
+    }
+    if (entry.include !== undefined && !/^Q\d+$/.test(entry.include)) {
+      errors.push(`${at}: "include" must be a Wikidata item id like "Q113679865"`);
     }
     const fields = entry.set ?? entry.add;
     if (fields) {
@@ -304,7 +314,16 @@ export function applyOverrides(ships, file) {
   const stale = [];
 
   for (const entry of file?.overrides ?? []) {
-    const existing = byImo.get(entry.imo);
+    let existing = byImo.get(entry.imo);
+    if (entry.include) {
+      // The seeder already queried this item; confirm it arrived under this IMO.
+      if (existing?.wikidataId !== entry.include) {
+        stale.push({ imo: entry.imo, action: 'include' });
+        continue;
+      }
+      existing = { ...existing, includedByOverride: true };
+      byImo.set(entry.imo, existing);
+    }
     if (entry.exclude) {
       if (existing) byImo.delete(entry.imo);
       else stale.push({ imo: entry.imo, action: 'exclude' });
@@ -532,11 +551,10 @@ export function renderSummary({ diff, registry, stale = [], guardrailFailures = 
       (c) => `${shipLabel(c.ship)}: ${c.fields.join(', ')}`,
       15
     ),
-    ...section(
-      'Stale overrides',
-      stale,
-      (s) =>
-        `IMO ${s.imo} (\`${s.action}\`) no longer matches — delete it from scripts/fleet-overrides.json`
+    ...section('Stale overrides', stale, (s) =>
+      s.action === 'include'
+        ? `IMO ${s.imo} (\`include\`): Wikidata item not found or its IMO differs — fix or delete the override`
+        : `IMO ${s.imo} (\`${s.action}\`) no longer matches — delete it from scripts/fleet-overrides.json`
     )
   );
 

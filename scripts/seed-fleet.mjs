@@ -22,7 +22,6 @@
  *   node scripts/seed-fleet.mjs [--limit N] [--out PATH] [--dry-run]
  *     [--overrides PATH] [--summary PATH] [--allow-large-change]
  *
- * No dependencies: uses Node 20+ global fetch.
  */
 
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
@@ -43,20 +42,16 @@ import {
   renderSummary,
   validateOverrides,
 } from './fleet-registry-build.mjs';
+import { SPARQL_ENDPOINT, runSparql } from './wikimedia.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(__dirname, '..');
-
-const SPARQL_ENDPOINT = 'https://query.wikidata.org/sparql';
-// Wikidata asks for a descriptive User-Agent identifying the client.
-const USER_AGENT =
-  'cruise-ship-maps-fleet-seeder/1.0 (https://github.com/doomstar288/cruise-ship-maps)';
 
 const DEFAULT_OUT = resolve(REPO_ROOT, 'public/data/fleet-registry.json');
 const DEFAULT_OVERRIDES = resolve(REPO_ROOT, 'scripts/fleet-overrides.json');
 
 /**
- * A vessel qualifies three ways, because Wikidata typing is inconsistent:
+ * A vessel qualifies four ways, because Wikidata typing is inconsistent:
  *   1. it is (a subclass of) a cruise ship,
  *   2. its vessel class is a cruise-ship class, or
  *   3. its operator is a cruise line.
@@ -72,16 +67,24 @@ const DEFAULT_OVERRIDES = resolve(REPO_ROOT, 'scripts/fleet-overrides.json');
  * independently so they could describe different classes. The class id and
  * label are packed together for the same reason.
  */
-const MEMBERSHIP = `
+const membership = (includeQids = []) => `
   ?ship wdt:P458 ?imo .
   {   ?ship wdt:P31/wdt:P279* wd:Q39804 }
   UNION
   {   ?ship wdt:P289 ?cCls . ?cCls wdt:P279* wd:Q39804 }
   UNION
-  {   ?ship wdt:P137 ?cOp .  ?cOp wdt:P31/wdt:P279* wd:Q946499 }
+  {   ?ship wdt:P137 ?cOp .  ?cOp wdt:P31/wdt:P279* wd:Q946499 }${
+    // 4. named by an `include` override: a real cruise ship whose Wikidata item
+    //    matches none of the rules above (typically typed only as "ship").
+    includeQids.length
+      ? `
+  UNION
+  {   VALUES ?ship { ${includeQids.map((q) => `wd:${q}`).join(' ')} } }`
+      : ''
+  }
 `;
 
-const QUERY = `
+const identityQuery = (includeQids) => `
 SELECT ?ship ?shipLabel ?imo
        (MIN(?mmsi)             AS ?mmsiV)
        (MIN(?classPair)        AS ?classV)
@@ -92,7 +95,7 @@ SELECT ?ship ?shipLabel ?imo
        (MIN(?inService)        AS ?entered)
        (MAX(?capacity)         AS ?maxCapacity)
 WHERE {
-${MEMBERSHIP}
+${membership(includeQids)}
   OPTIONAL { ?ship wdt:P587 ?mmsi }
   OPTIONAL {
     ?ship wdt:P289 ?class .
@@ -127,7 +130,7 @@ ORDER BY DESC(?gt)
  * Types include a river/cruiseferry class supertype so a ship typed only by its
  * class (e.g. a Dmitriy Furmanov-class motorship) still categorises as river.
  */
-const LIFECYCLE_QUERY = `
+const lifecycleQuery = (includeQids) => `
 SELECT ?ship
        (GROUP_CONCAT(DISTINCT ?opEntry; separator="${ENTRY_SEPARATOR}") AS ?operators)
        (GROUP_CONCAT(DISTINCT ?nameEntry; separator="${ENTRY_SEPARATOR}") AS ?names)
@@ -136,7 +139,7 @@ SELECT ?ship
        (MIN(?entry) AS ?serviceEntry)
        (MAX(?retire) AS ?retirement)
 WHERE {
-${MEMBERSHIP}
+${membership(includeQids)}
   OPTIONAL {
     ?ship p:P137 ?opSt . ?opSt ps:P137 ?op .
     ?opSt wikibase:rank ?opRank .
@@ -193,47 +196,6 @@ function parseArgs(argv) {
     }
   }
   return args;
-}
-
-/** POSTs the query, retrying on transient failures with exponential backoff. */
-async function runQuery(query, { attempts = 4 } = {}) {
-  let lastError;
-  for (let attempt = 1; attempt <= attempts; attempt += 1) {
-    try {
-      const response = await fetch(SPARQL_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/sparql-results+json',
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'User-Agent': USER_AGENT,
-        },
-        body: new URLSearchParams({ query }),
-        signal: AbortSignal.timeout(180_000),
-      });
-
-      if (response.status === 429 || response.status >= 500) {
-        throw new Error(`Wikidata responded ${response.status} ${response.statusText}`);
-      }
-      if (!response.ok) {
-        // 4xx other than rate limiting means a bad query — retrying won't help.
-        const body = await response.text();
-        throw Object.assign(
-          new Error(`Query rejected (${response.status}): ${body.slice(0, 400)}`),
-          { fatal: true }
-        );
-      }
-      return await response.json();
-    } catch (error) {
-      if (error.fatal) throw error;
-      lastError = error;
-      if (attempt < attempts) {
-        const delay = 2 ** attempt * 1000;
-        console.warn(`  attempt ${attempt} failed (${error.message}); retrying in ${delay}ms`);
-        await new Promise((r) => setTimeout(r, delay));
-      }
-    }
-  }
-  throw new Error(`Wikidata query failed after ${attempts} attempts: ${lastError?.message}`);
 }
 
 const value = (binding, key) => binding[key]?.value ?? null;
@@ -375,10 +337,15 @@ async function main() {
   }
   const previous = await readJson(args.out, { optional: true });
 
+  const includeQids = [
+    ...new Set((overrides?.overrides ?? []).map((o) => o.include).filter(Boolean)),
+  ].sort();
+  const QUERY = identityQuery(includeQids);
+  const LIFECYCLE_QUERY = lifecycleQuery(includeQids);
   const query = args.limit ? `${QUERY}\nLIMIT ${args.limit}` : QUERY;
   console.log('Querying Wikidata for cruise vessels...');
   const started = Date.now();
-  const [raw, lifecycleRaw] = [await runQuery(query), await runQuery(LIFECYCLE_QUERY)];
+  const [raw, lifecycleRaw] = [await runSparql(query), await runSparql(LIFECYCLE_QUERY)];
   const bindings = raw.results.bindings;
   const lifecycle = new Map(
     lifecycleRaw.results.bindings.map((row) => [qid(value(row, 'ship')), row])

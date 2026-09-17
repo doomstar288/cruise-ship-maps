@@ -1,0 +1,8 @@
+{
+  "$comment": [
+    "Wikipedia articles the fleet gap check should stop reporting, by article title or Wikidata QID.",
+    "Use for ships that are not cruise ships (troopships, ferries, icebreakers) or are deliberately out of scope.",
+    "Each entry needs a reason."
+  ],
+  "ignore": []
+}
