@@ -9,11 +9,15 @@ import {
   getClassesByCoverage,
 } from './fleetRegistry';
 import { isValidImo } from '../utils/imo';
+import { CATEGORIES, STATUSES, validateOverrides } from '../../scripts/fleet-registry-build.mjs';
 
 // Exercised against the committed registry so the tests also guard the
 // generated artifact, not just the helper logic.
 const registry = JSON.parse(
   readFileSync(resolve(__dirname, '../../public/data/fleet-registry.json'), 'utf8')
+);
+const overrides = JSON.parse(
+  readFileSync(resolve(__dirname, '../../scripts/fleet-overrides.json'), 'utf8')
 );
 
 describe('fleet registry artifact', () => {
@@ -41,11 +45,41 @@ describe('fleet registry artifact', () => {
     expect(registry.stats.invalidImoChecksums).toBeLessThan(20);
   });
 
+  it('gives every ship a known lifecycle status and category', () => {
+    for (const ship of registry.ships) {
+      expect(STATUSES).toContain(ship.status);
+      expect(CATEGORIES).toContain(ship.category);
+    }
+    const counted = Object.values(registry.stats.byStatus).reduce((a, b) => a + b, 0);
+    expect(counted).toBe(registry.ships.length);
+  });
+
   it('references every class in the index from at least one ship', () => {
     const shipClassIds = new Set(registry.ships.map((s) => s.shipClassId).filter(Boolean));
     for (const cls of registry.classes) {
       expect(shipClassIds.has(cls.id)).toBe(true);
       expect(cls.shipCount).toBe(cls.imos.length);
+    }
+  });
+});
+
+// Guards against hand-editing the overrides file without re-running the seeder.
+describe('fleet overrides', () => {
+  it('is a valid overrides file', () => {
+    expect(validateOverrides(overrides)).toEqual([]);
+  });
+
+  it('is reflected in the committed registry', () => {
+    for (const entry of overrides.overrides) {
+      const ship = findShipByImo(registry, entry.imo);
+      if (entry.exclude) {
+        expect(ship, `IMO ${entry.imo} should be excluded`).toBeNull();
+        continue;
+      }
+      const fields = entry.set ?? entry.add;
+      expect(ship, `IMO ${entry.imo} should exist`).not.toBeNull();
+      expect(ship).toMatchObject(fields);
+      expect(ship.overriddenFields).toEqual(expect.arrayContaining(Object.keys(fields)));
     }
   });
 });
@@ -71,6 +105,21 @@ describe('lookup helpers', () => {
     const rcl = getShipsByOperator(registry, 'Royal Caribbean');
     expect(rcl.length).toBeGreaterThan(5);
     expect(rcl.every((s) => /royal caribbean/i.test(s.operator))).toBe(true);
+  });
+
+  it('filters an operator’s ships by status', () => {
+    const all = getShipsByOperator(registry, 'Royal Caribbean');
+    const active = getShipsByOperator(registry, 'Royal Caribbean', { status: 'in_service' });
+    expect(active.length).toBeGreaterThan(5);
+    expect(active.length).toBeLessThanOrEqual(all.length);
+    expect(active.every((s) => s.status === 'in_service')).toBe(true);
+  });
+
+  it('attributes sold ships to their current operator, not a former one', () => {
+    // Azamara Pursuit sailed for Princess and P&O before Azamara (dated on Wikidata).
+    const pursuit = findShipByImo(registry, '9210220');
+    expect(pursuit.operator).toBe('Azamara');
+    expect(pursuit.formerOperators).toEqual(expect.arrayContaining(['Princess Cruises']));
   });
 });
 
