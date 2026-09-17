@@ -188,7 +188,11 @@ which is what filters out the operators, ports and people those pages link to.
 | **Historic ships** — IMO below 7000000 (built before ~1970) | Never proposed automatically; `include` by hand if wanted |
 
 `scripts/fleet-gap-ignore.json` silences findings that are not wanted (by
-article title or QID, with a reason).
+article title or QID, with a reason) — the nuclear icebreakers *Yamal* and
+*50 Let Pobedy*, for instance, carry tourists to the North Pole but are not
+cruise ships. Ignoring a ship only stops it being proposed: if it is already in
+the registry through an `include` override, remove that override too, which the
+check warns about.
 
 ### Guards on the proposals
 

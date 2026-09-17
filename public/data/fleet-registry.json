@@ -5,33 +5,33 @@
     "sourceUrl": "https://query.wikidata.org/sparql",
     "license": "CC0-1.0",
     "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
-    "retrievedAt": "2026-09-17T17:34:52.192Z",
-    "queryHash": "cfb61dd920ae0d89",
+    "retrievedAt": "2026-09-17T17:46:00.900Z",
+    "queryHash": "a2e9ea79fb678c71",
     "generator": "scripts/seed-fleet.mjs",
     "overrides": "scripts/fleet-overrides.json",
     "note": "Vessel identity and specifications only. Contains no deck-plan geometry. Fields listed in a ship's \"overriddenFields\" were corrected by hand, not sourced."
   },
   "stats": {
-    "ships": 730,
-    "classes": 65,
+    "ships": 728,
+    "classes": 64,
     "byStatus": {
-      "in_service": 346,
+      "in_service": 345,
       "on_order": 2,
       "retired": 156,
-      "unknown": 226
+      "unknown": 225
     },
     "byCategory": {
-      "ocean": 578,
-      "expedition": 33,
+      "ocean": 577,
+      "expedition": 32,
       "river": 55,
       "ferry": 48,
       "other": 16
     },
-    "withOperator": 382,
-    "withMmsi": 487,
-    "withClass": 254,
-    "withTonnage": 590,
-    "overridden": 97,
+    "withOperator": 381,
+    "withMmsi": 485,
+    "withClass": 252,
+    "withTonnage": 588,
+    "overridden": 96,
     "operatorAmbiguous": 13,
     "missingFromSource": 0,
     "invalidImoChecksums": 3,
@@ -585,16 +585,6 @@
         "9834753"
       ],
       "shipCount": 3
-    },
-    {
-      "id": "Q673835",
-      "name": "Arktika-class icebreaker",
-      "operator": "Atomflot",
-      "imos": [
-        "9077549",
-        "9152959"
-      ],
-      "shipCount": 2
     },
     {
       "id": "Q3211375",
@@ -8713,29 +8703,6 @@
       "formerOperators": []
     },
     {
-      "wikidataId": "Q241428",
-      "imo": "9152959",
-      "imoValid": true,
-      "mmsi": "273316240",
-      "name": "50 Let Pobedy",
-      "operator": "Atomflot",
-      "operatorId": "Q558639",
-      "shipClass": "Arktika-class icebreaker",
-      "shipClassId": "Q673835",
-      "builder": "Baltic Shipyard",
-      "grossTonnage": 23439,
-      "lengthMeters": 159.6,
-      "beamMeters": 30,
-      "inServiceYear": 2007,
-      "maxCapacity": null,
-      "status": "in_service",
-      "category": "ocean",
-      "retirementYear": null,
-      "formerNames": [],
-      "formerOperators": [],
-      "includedByOverride": true
-    },
-    {
       "wikidataId": "Q1584253",
       "imo": "8902333",
       "imoValid": true,
@@ -9022,32 +8989,6 @@
       "retirementYear": 2020,
       "formerNames": [],
       "formerOperators": []
-    },
-    {
-      "wikidataId": "Q1459518",
-      "imo": "9077549",
-      "imoValid": true,
-      "mmsi": "273132400",
-      "name": "Yamal",
-      "operator": null,
-      "operatorId": null,
-      "shipClass": "Arktika-class icebreaker",
-      "shipClassId": "Q673835",
-      "builder": "Baltic Shipyard",
-      "grossTonnage": 20646,
-      "lengthMeters": 150,
-      "beamMeters": 30,
-      "inServiceYear": 1992,
-      "maxCapacity": 100,
-      "status": "unknown",
-      "category": "expedition",
-      "retirementYear": null,
-      "formerNames": [],
-      "formerOperators": [],
-      "includedByOverride": true,
-      "overriddenFields": [
-        "category"
-      ]
     },
     {
       "wikidataId": "Q1814395",

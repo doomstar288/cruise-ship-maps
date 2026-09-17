@@ -9,6 +9,7 @@ import {
   guessClassTitle,
   isShipArticle,
   linksByField,
+  findIgnoredOverrides,
   mergeProposalsIntoOverrides,
   pickClassLink,
   proposeCategories,
@@ -350,6 +351,26 @@ describe('merging proposals into overrides', () => {
     mergeProposalsIntoOverrides(base, proposals);
     expect(base.overrides).toHaveLength(1);
     expect(base.overrides[0].set).toEqual({ shipClass: 'Edge-class cruise ship' });
+  });
+});
+
+describe('findIgnoredOverrides', () => {
+  const ignore = [{ title: 'Yamal (icebreaker)', qid: 'Q1459518', reason: 'not a cruise ship' }];
+
+  it('reports an include override for a ship the ignore list rejects', () => {
+    const overrides = [
+      { imo: '9077549', include: 'Q1459518' },
+      { imo: '9805348', include: 'Q113679865' },
+      { imo: '9884136', set: { category: 'ocean' } },
+    ];
+    expect(findIgnoredOverrides(overrides, ignore)).toEqual([
+      { imo: '9077549', qid: 'Q1459518', title: 'Yamal (icebreaker)' },
+    ]);
+  });
+
+  it('is quiet when the two files agree', () => {
+    expect(findIgnoredOverrides([{ imo: '9805348', include: 'Q113679865' }], ignore)).toEqual([]);
+    expect(findIgnoredOverrides(undefined, ignore)).toEqual([]);
   });
 });
 

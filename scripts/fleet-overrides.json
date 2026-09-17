@@ -391,15 +391,6 @@
       }
     },
     {
-      "imo": "9077549",
-      "reason": "Wikipedia lists \"Yamal (icebreaker)\" in Category:Expedition cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. Wikipedia files this ship under Category:Expedition cruise ships.",
-      "source": "https://en.wikipedia.org/wiki/Yamal_(icebreaker)",
-      "include": "Q1459518",
-      "set": {
-        "category": "expedition"
-      }
-    },
-    {
       "imo": "9084542",
       "reason": "Wikipedia lists \"American Queen\" in Category:River cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. Wikipedia files this ship under Category:River cruise ships.",
       "source": "https://en.wikipedia.org/wiki/American_Queen",
@@ -452,12 +443,6 @@
         "shipClass": "Sun-class cruise ship",
         "shipClassId": "Q2975998"
       }
-    },
-    {
-      "imo": "9152959",
-      "reason": "Wikipedia lists \"50 Let Pobedy\" in List of cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
-      "source": "https://en.wikipedia.org/wiki/50_Let_Pobedy",
-      "include": "Q241428"
     },
     {
       "imo": "9169550",

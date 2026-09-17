@@ -25,6 +25,7 @@ import {
   FIELD_MARKER,
   LIST_PAGES,
   extractClassField,
+  findIgnoredOverrides,
   findMissingShips,
   guessClassTitle,
   linksByField,
@@ -306,6 +307,14 @@ async function main() {
   const ignoreFile = await readJson(IGNORE);
   const ignored = new Set(ignoreFile.ignore.flatMap((e) => [e.title, e.qid].filter(Boolean)));
   const registryQids = new Set(registry.ships.map((s) => s.wikidataId).filter(Boolean));
+
+  const contradictions = findIgnoredOverrides(overrides.overrides, ignoreFile.ignore);
+  for (const c of contradictions) {
+    console.warn(
+      `  warning: IMO ${c.imo} is ignored as "${c.title}" but an include override still ` +
+        'keeps it in the registry — remove one of the two'
+    );
+  }
 
   console.log('Collecting cruise ship articles from Wikipedia categories...');
   const { articles, categories } = await collectCategorisedArticles();

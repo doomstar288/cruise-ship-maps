@@ -338,6 +338,22 @@ export function proposeCategories({ registry, categoryQids }) {
   return proposals.sort(byImoDesc);
 }
 
+/**
+ * Overrides that contradict the ignore list: ignoring a ship stops it being
+ * *proposed*, but an `include` override already in place keeps it in the
+ * registry, so the two files would disagree silently.
+ */
+export function findIgnoredOverrides(overrides, ignoreEntries) {
+  const ignoredQids = new Map(ignoreEntries.filter((e) => e.qid).map((e) => [e.qid, e]));
+  return (overrides ?? [])
+    .filter((o) => o.include && ignoredQids.has(o.include))
+    .map((o) => ({
+      imo: o.imo,
+      qid: o.include,
+      title: ignoredQids.get(o.include).title ?? o.include,
+    }));
+}
+
 const articleUrl = (title) =>
   `https://en.wikipedia.org/wiki/${encodeURIComponent(title.replace(/ /g, '_'))}`;
 
