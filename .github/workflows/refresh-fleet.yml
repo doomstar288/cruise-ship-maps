@@ -42,7 +42,7 @@ jobs:
         run: npm test
 
       - name: Open PR if the registry changed
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           branch: chore/refresh-fleet-registry
           base: main
