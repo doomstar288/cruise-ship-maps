@@ -63,6 +63,8 @@ describe('article parsing', () => {
   it('strips nested and unterminated comments and refs', () => {
     expect(extractClassField('| class = A<!--<!-- x -->-->')).toBe('A');
     expect(extractClassField('| class = A<!-- unterminated')).toBe('A');
+    // "--!>" is also a comment terminator in HTML.
+    expect(extractClassField('| class = A<!-- x --!>')).toBe('A');
     expect(extractClassField('| class = A<ref>note')).toBe('A');
   });
 

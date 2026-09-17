@@ -62,6 +62,7 @@ export const FIELD_MARKER = (i) => `@@CSMFIELD${i}@@`;
  * Removes comments and <ref> citations from wikitext. Applied until the text
  * stops changing: a single pass leaves markup behind when constructs nest
  * ("<!--<!-- -->") and an unterminated comment would otherwise survive whole.
+ * Both HTML comment terminators are recognised, "-->" and "--!>".
  */
 const stripMarkup = (text) => {
   let out = text;
@@ -69,9 +70,10 @@ const stripMarkup = (text) => {
   do {
     previous = out;
     out = out
-      .replace(/<!--[\s\S]*?(?:-->|$)/g, '')
+      // HTML ends a comment at "-->" or "--!>"; both appear in the wild.
+      .replace(/<!--[\s\S]*?(?:--!?>|$)/g, '')
       // A nested comment leaves a dangling terminator behind; it is not content.
-      .replace(/-->/g, '')
+      .replace(/--!?>/g, '')
       .replace(/<ref[^>/]*\/>/gi, '')
       .replace(/<ref[^>]*>[\s\S]*?(?:<\/ref>|$)/gi, '');
   } while (out !== previous);
