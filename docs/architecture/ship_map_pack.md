@@ -22,7 +22,7 @@ doesn't know, and must treat every optional field as possibly absent.
 | `geometry` | `units: "meters"`, `orientation`, and a pack-wide `extent` that every deck normalizes against. |
 | `decks[]` | Ascending `deckNumber`. Numbers are not contiguous (no Deck 13). |
 | `positionConfidenceDefaults` | Optional. Per-`featureType` fallback for `positionConfidence`, e.g. `{ "cabin": "estimated" }`. See [position confidence](./ship_map_pack_position_confidence.md). |
-| `routing` | Optional. A compact walk/elevator/stairs graph: per-deck nodes (lobbies, doors, corridor points) and walk edges, plus elevator banks and stairs as stop lists. Undirected. Cabins snap to the nearest corridor node. See [routing](./ship_map_pack_routing.md). |
+| `routing` | Optional. A compact walk/elevator/stairs graph: per-deck nodes (lobbies, doors, corridor points) and walk edges, plus elevator banks and stairs as stop lists. Undirected. Cabins snap to the nearest corridor node. See [routing](./ship_map_pack_routing.md). Route fixtures for ports are published beside the pack at `v1/ships/<id>/route-fixtures.json`. |
 | `revision`, `updatedAt` | `revision` is a content hash, so re-exporting unchanged data keeps it. |
 
 ## Feature (`decks[].features[]`)

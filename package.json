@@ -14,6 +14,7 @@
     "format:check": "prettier --check .",
     "seed:fleet": "node scripts/seed-fleet.mjs",
     "export:packs": "node scripts/export-ship-packs.mjs",
+    "record:route-fixtures": "node scripts/route-fixtures.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"

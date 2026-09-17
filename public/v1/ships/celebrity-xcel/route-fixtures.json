@@ -1,0 +1,351 @@
+{
+  "specVersion": 1,
+  "shipId": "celebrity-xcel",
+  "recordedAgainstRevision": "c2b64fbc5010",
+  "costModel": {
+    "walkingSpeedMps": 1.1,
+    "elevatorBoardS": 60,
+    "elevatorPerLevelS": 8,
+    "stairsPerLevelS": 30
+  },
+  "tolerance": {
+    "walkM": {
+      "abs": 2,
+      "rel": 0.03
+    },
+    "timeS": {
+      "abs": 5,
+      "rel": 0.05
+    }
+  },
+  "routes": [
+    {
+      "id": "cabin-10-to-magic-carpet-5",
+      "description": "Cabin snap, a lift ride down, then through World Class Bar onto the Magic Carpet",
+      "from": {
+        "cabinId": "c10-10175"
+      },
+      "to": {
+        "featureId": "v5-magic-carpet"
+      },
+      "stepFree": false,
+      "expected": {
+        "walkM": 145.7,
+        "timeS": 232.5,
+        "deckChanges": [
+          {
+            "mode": "elevator",
+            "fromDeck": 10,
+            "toDeck": 5
+          }
+        ],
+        "through": [
+          "v5-world-class-bar"
+        ]
+      }
+    },
+    {
+      "id": "suite-12-to-sunset-bar-15",
+      "description": "Two decks: stairs beat the lift wait",
+      "from": {
+        "cabinId": "c12-12100"
+      },
+      "to": {
+        "featureId": "v15-sunset-bar"
+      },
+      "stepFree": false,
+      "expected": {
+        "walkM": 264.42,
+        "timeS": 300.4,
+        "deckChanges": [
+          {
+            "mode": "stairs",
+            "fromDeck": 12,
+            "toDeck": 15
+          }
+        ],
+        "through": []
+      }
+    },
+    {
+      "id": "suite-12-to-sunset-bar-15-step-free",
+      "description": "The same trip step-free takes the lift",
+      "from": {
+        "cabinId": "c12-12100"
+      },
+      "to": {
+        "featureId": "v15-sunset-bar"
+      },
+      "stepFree": true,
+      "expected": {
+        "walkM": 264.42,
+        "timeS": 316.4,
+        "deckChanges": [
+          {
+            "mode": "elevator",
+            "fromDeck": 12,
+            "toDeck": 15
+          }
+        ],
+        "through": []
+      }
+    },
+    {
+      "id": "cabin-3-to-theatre-4",
+      "description": "One deck up by the stairs at the forward core",
+      "from": {
+        "cabinId": "c3-3100"
+      },
+      "to": {
+        "featureId": "v4-theatre"
+      },
+      "stepFree": false,
+      "expected": {
+        "walkM": 42.53,
+        "timeS": 68.7,
+        "deckChanges": [
+          {
+            "mode": "stairs",
+            "fromDeck": 3,
+            "toDeck": 4
+          }
+        ],
+        "through": []
+      }
+    },
+    {
+      "id": "theatre-4-to-grand-plaza-5",
+      "description": "Deck 4 is split, so the route drops to Deck 3 to get aft; consecutive flights count as one change",
+      "from": {
+        "featureId": "v4-theatre"
+      },
+      "to": {
+        "featureId": "v5-grand-plaza"
+      },
+      "stepFree": false,
+      "expected": {
+        "walkM": 144.28,
+        "timeS": 221.2,
+        "deckChanges": [
+          {
+            "mode": "stairs",
+            "fromDeck": 4,
+            "toDeck": 3
+          },
+          {
+            "mode": "stairs",
+            "fromDeck": 3,
+            "toDeck": 5
+          }
+        ],
+        "through": []
+      }
+    },
+    {
+      "id": "theatre-4-to-grand-plaza-5-step-free",
+      "description": "The same trip step-free: two lift rides",
+      "from": {
+        "featureId": "v4-theatre"
+      },
+      "to": {
+        "featureId": "v5-grand-plaza"
+      },
+      "stepFree": true,
+      "expected": {
+        "walkM": 144.28,
+        "timeS": 275.2,
+        "deckChanges": [
+          {
+            "mode": "elevator",
+            "fromDeck": 4,
+            "toDeck": 3
+          },
+          {
+            "mode": "elevator",
+            "fromDeck": 3,
+            "toDeck": 5
+          }
+        ],
+        "through": []
+      }
+    },
+    {
+      "id": "le-voyage-to-casino-4",
+      "description": "Same deck, same walk section: walking only",
+      "from": {
+        "featureId": "v4-le-voyage"
+      },
+      "to": {
+        "featureId": "v4-casino"
+      },
+      "stepFree": false,
+      "expected": {
+        "walkM": 63.97,
+        "timeS": 58.2,
+        "deckChanges": [],
+        "through": []
+      }
+    },
+    {
+      "id": "le-voyage-to-theatre-4-step-free",
+      "description": "Same deck, different walk sections: via a lift and back",
+      "from": {
+        "featureId": "v4-le-voyage"
+      },
+      "to": {
+        "featureId": "v4-theatre"
+      },
+      "stepFree": true,
+      "expected": {
+        "walkM": 183.22,
+        "timeS": 302.6,
+        "deckChanges": [
+          {
+            "mode": "elevator",
+            "fromDeck": 4,
+            "toDeck": 3
+          },
+          {
+            "mode": "elevator",
+            "fromDeck": 3,
+            "toDeck": 4
+          }
+        ],
+        "through": []
+      }
+    },
+    {
+      "id": "lifts-4-to-mosaic",
+      "description": "Nearest Deck 4 lobby to Mosaic, along the Cosmopolitan/Cyprus connector",
+      "from": {
+        "deck": 4,
+        "elevators": true
+      },
+      "to": {
+        "featureId": "v4-mosaic"
+      },
+      "stepFree": false,
+      "expected": {
+        "walkM": 38.44,
+        "timeS": 34.9,
+        "deckChanges": [],
+        "through": []
+      }
+    },
+    {
+      "id": "lifts-5-to-spice-cafe",
+      "description": "Nearest Deck 5 lobby to Spice Café, through Market at The Bazaar",
+      "from": {
+        "deck": 5,
+        "elevators": true
+      },
+      "to": {
+        "featureId": "v5-spice-cafe"
+      },
+      "stepFree": false,
+      "expected": {
+        "walkM": 46.44,
+        "timeS": 42.2,
+        "deckChanges": [],
+        "through": [
+          "v5-bazaar-market"
+        ]
+      }
+    },
+    {
+      "id": "retreat-lounge-to-sunset-bar-15-step-free",
+      "description": "Deck 15 sections joined only by lifts",
+      "from": {
+        "featureId": "v15-retreat-lounge"
+      },
+      "to": {
+        "featureId": "v15-sunset-bar"
+      },
+      "stepFree": true,
+      "expected": {
+        "walkM": 234.03,
+        "timeS": 364.8,
+        "deckChanges": [
+          {
+            "mode": "elevator",
+            "fromDeck": 15,
+            "toDeck": 12
+          },
+          {
+            "mode": "elevator",
+            "fromDeck": 12,
+            "toDeck": 15
+          }
+        ],
+        "through": []
+      }
+    },
+    {
+      "id": "edge-villa-15-to-retreat-bar-17-step-free",
+      "description": "An Edge Villa (the long snap) to the Retreat Bar across the sundeck",
+      "from": {
+        "cabinId": "c15-15100"
+      },
+      "to": {
+        "featureId": "v17-retreat-bar"
+      },
+      "stepFree": true,
+      "expected": {
+        "walkM": 109.68,
+        "timeS": 175.7,
+        "deckChanges": [
+          {
+            "mode": "elevator",
+            "fromDeck": 15,
+            "toDeck": 17
+          }
+        ],
+        "through": [
+          "v17-retreat-sundeck"
+        ]
+      }
+    },
+    {
+      "id": "cabin-8-to-magic-carpet-16-step-free",
+      "description": "Through the Glass-Walled Hot Tubs onto the Deck 16 Magic Carpet stop",
+      "from": {
+        "cabinId": "c8-8100"
+      },
+      "to": {
+        "featureId": "v16-magic-carpet"
+      },
+      "stepFree": true,
+      "expected": {
+        "walkM": 231.48,
+        "timeS": 326.4,
+        "deckChanges": [
+          {
+            "mode": "elevator",
+            "fromDeck": 8,
+            "toDeck": 16
+          }
+        ],
+        "through": [
+          "v16-hot-tubs"
+        ]
+      }
+    },
+    {
+      "id": "cabin-8-to-cabin-8",
+      "description": "Cabin to cabin on one deck: both ends snap",
+      "from": {
+        "cabinId": "c8-8100"
+      },
+      "to": {
+        "cabinId": "c8-8337"
+      },
+      "stepFree": false,
+      "expected": {
+        "walkM": 313.03,
+        "timeS": 284.6,
+        "deckChanges": [],
+        "through": []
+      }
+    }
+  ]
+}

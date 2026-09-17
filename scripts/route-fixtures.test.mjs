@@ -1,0 +1,99 @@
+import { readFileSync } from 'node:fs';
+import { describe, it, expect } from 'vitest';
+
+import { ROUTE_COSTS, createRouter } from '../src/utils/shipRouter.js';
+import {
+  FIXTURE_TOLERANCE,
+  ROUTE_FIXTURE_CASES,
+  fixturesPath,
+  packPath,
+  routerEndpoint,
+  runFixture,
+  withinTolerance,
+} from './route-fixtures.mjs';
+
+describe.each(Object.keys(ROUTE_FIXTURE_CASES))('route fixtures for %s', (shipId) => {
+  // The published files, exactly as a consumer fetches them.
+  const pack = JSON.parse(readFileSync(packPath(shipId), 'utf8'));
+  const fixtures = JSON.parse(readFileSync(fixturesPath(shipId), 'utf8'));
+  const router = createRouter(pack.routing);
+  const cases = ROUTE_FIXTURE_CASES[shipId];
+
+  it('records the cases, cost model and tolerances this repo defines', () => {
+    expect(fixtures).toMatchObject({ specVersion: 1, shipId, tolerance: FIXTURE_TOLERANCE });
+    expect(fixtures.costModel).toEqual({
+      walkingSpeedMps: pack.routing.walkingSpeedMps,
+      ...ROUTE_COSTS,
+    });
+    expect(fixtures.routes.map(({ expected: _expected, ...c }) => c)).toEqual(
+      cases.map((c) => ({ ...c, stepFree: c.stepFree ?? false }))
+    );
+    expect(new Set(fixtures.routes.map((r) => r.id)).size).toBe(fixtures.routes.length);
+  });
+
+  it('names ends that exist in the pack', () => {
+    for (const { from, to } of fixtures.routes) {
+      for (const end of [from, to]) {
+        if (end.featureId) expect(router.hasFeature(end.featureId)).toBe(true);
+        else if (end.cabinId) expect(routerEndpoint(pack, end).at).toHaveLength(2);
+        else expect(end.elevators).toBe(true);
+      }
+    }
+  });
+
+  it.each(fixtures.routes.map((r) => [r.id, r]))(
+    '%s matches the router within tolerance',
+    (id, fixture) => {
+      const actual = runFixture(router, pack, fixture);
+      expect(actual).not.toBeNull();
+      const { expected } = fixture;
+      expect(actual.deckChanges).toEqual(expected.deckChanges);
+      expect(actual.through).toEqual(expected.through);
+      expect(
+        withinTolerance(actual.walkM, expected.walkM, fixtures.tolerance.walkM),
+        `walkM ${actual.walkM}`
+      ).toBe(true);
+      expect(
+        withinTolerance(actual.timeS, expected.timeS, fixtures.tolerance.timeS),
+        `timeS ${actual.timeS}`
+      ).toBe(true);
+    }
+  );
+
+  it('covers every kind of trip a port has to get right', () => {
+    const all = fixtures.routes;
+    const modes = (r) => r.expected.deckChanges.map((c) => c.mode);
+    expect(all.some((r) => modes(r).length === 0)).toBe(true);
+    expect(all.some((r) => modes(r).includes('stairs'))).toBe(true);
+    expect(all.some((r) => r.stepFree && modes(r).includes('elevator'))).toBe(true);
+    expect(
+      all.some((r) =>
+        r.expected.deckChanges.some(
+          (c) => Math.abs(c.toDeck - c.fromDeck) > 1 && c.mode === 'stairs'
+        )
+      )
+    ).toBe(true);
+    expect(
+      all.some((r) => r.expected.deckChanges.some((c) => c.fromDeck === 12 && c.toDeck > 13))
+    ).toBe(true);
+    expect(all.some((r) => r.expected.through.length > 0)).toBe(true);
+    expect(all.some((r) => r.from.cabinId && r.to.cabinId)).toBe(true);
+    expect(all.some((r) => r.from.elevators)).toBe(true);
+    // Same deck, different walk sections: out by lift and back.
+    expect(
+      all.some(
+        (r) =>
+          r.expected.deckChanges.length === 2 &&
+          r.expected.deckChanges[0].fromDeck === r.expected.deckChanges[1].toDeck
+      )
+    ).toBe(true);
+  });
+
+  it('holds a step-free twin to never be cheaper than its stairs-allowed trip', () => {
+    for (const twin of fixtures.routes.filter((r) => r.stepFree)) {
+      const plain = fixtures.routes.find((r) => r.id === twin.id.replace(/-step-free$/, ''));
+      if (!plain) continue;
+      expect(plain.expected.timeS).toBeLessThanOrEqual(twin.expected.timeS);
+    }
+  });
+});

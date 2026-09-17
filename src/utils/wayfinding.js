@@ -1,159 +1,162 @@
 /**
- * Corridor-following wayfinding over the synthetic deck grid.
+ * Wayfinding for the maps site, over the pack's routing graph (roadmap P2.4).
  *
- * Routes walk along the nearer side corridor to an elevator core, ride to the
- * destination deck, and walk the same way to the venue. It is a readable
- * approximation, not a routing graph over real passageways.
+ * The route itself comes from `shipRouter.js`, the same graph and router the
+ * published pack and AuraTrip use. This module only maps site venues to graph
+ * endpoints and turns a route into step text and per-deck drawing data.
  */
 
-import { CENTERLINE_Y, CORE_STATIONS, SHIP_BEAM_M } from './deckPlanDataPipeline.js';
-
-// Corridor centre lines: hull margin + outside cabin depth + half the corridor.
-const PORT_CORRIDOR_Y = 8.5;
-const STARBOARD_CORRIDOR_Y = SHIP_BEAM_M - 8.5;
-const WALKING_METRES_PER_MINUTE = 70;
-const DECK_HEIGHT_M = 3;
-
-const coreId = (bank, level) => `elev-${bank}-${level}`;
+const CABIN_CATEGORY = /^(staterooms?|suites?)$/i;
 
 const findDeck = (decks, level) => decks.find((d) => d.level === level);
-const findVenue = (deck, id) => deck?.venues.find((v) => v.id === id);
+const findVenue = (decks, id) => {
+  for (const deck of decks) {
+    const venue = deck.venues.find((v) => v.id === id);
+    if (venue) return venue;
+  }
+  return null;
+};
 
-const sideOf = ([, y]) => (y < CENTERLINE_Y ? 'port' : 'starboard');
+/** "Stateroom 10124 (Concierge Class)" → "Stateroom 10124". */
+const shortName = (name) => name.replace(/\s*\(.*\)\s*$/, '');
 
-function corridorWalk(from, to) {
-  // Pick the corridor on the side of whichever end is not the elevator core.
-  const corridorY = sideOf(to) === 'port' ? PORT_CORRIDOR_Y : STARBOARD_CORRIDOR_Y;
-  const points = [from, [from[0], corridorY], [to[0], corridorY], to];
-  return points.filter((p, i) => i === 0 || p[0] !== points[i - 1][0] || p[1] !== points[i - 1][1]);
+/** The router endpoint for a site venue, or throws when it can't be routed to. */
+function endpointFor(decks, router, { deck, venueId }) {
+  if (!venueId) return { endpoint: { deck, elevators: true }, venue: null };
+  const venue = findDeck(decks, deck)?.venues.find((v) => v.id === venueId);
+  if (!venue) throw new Error(`Deck ${deck} has no venue ${venueId}`);
+  if (router.hasFeature(venueId)) return { endpoint: { featureId: venueId }, venue };
+  // Cabins have no nodes: they snap to their corridor (see the routing doc).
+  if (CABIN_CATEGORY.test(venue.category ?? '')) {
+    return { endpoint: { deck, at: venue.center, cabinId: venueId }, venue };
+  }
+  throw new Error(`${venue.name} is not on the routing graph`);
 }
 
-const pathLength = (points) =>
-  points.slice(1).reduce((sum, p, i) => sum + Math.hypot(p[0] - points[i][0], p[1] - points[i][1]), 0);
+const roundTo5 = (m) => Math.max(5, Math.round(m / 5) * 5);
 
-/** Elevator bank present on both decks that minimises walking at either end. */
-function chooseBank(decks, origin, destination) {
-  const originDeck = findDeck(decks, origin.deck);
-  const destDeck = findDeck(decks, destination.deck);
-  let best = null;
-  for (const bank of Object.keys(CORE_STATIONS)) {
-    const a = findVenue(originDeck, coreId(bank, origin.deck));
-    const b = findVenue(destDeck, coreId(bank, destination.deck));
-    if (!a || !b) continue;
-    const destWalk = Math.abs(destination.coords[0] - b.center[0]);
-    const cost = (origin.coords ? Math.abs(origin.coords[0] - a.center[0]) : 0) + destWalk;
-    // Banks between the two ends often tie on total walk; then prefer the
-    // shorter walk on the destination deck, which the guest knows less well.
-    const better = !best || cost < best.cost - 1 || (Math.abs(cost - best.cost) <= 1 && destWalk < best.destWalk);
-    if (better) best = { bank, cost, destWalk };
-  }
-  return best?.bank ?? null;
+/** Smaller x is forward; a walk that barely moves fore-aft gets no direction. */
+function heading(points) {
+  const dx = points[points.length - 1][0] - points[0][0];
+  if (dx < -5) return ' forward';
+  if (dx > 5) return ' aft';
+  return '';
 }
 
-const direction = (from, to) => (to[0] < from[0] ? 'forward' : 'aft');
+const upOrDown = (leg) => (leg.toDeck > leg.fromDeck ? 'up' : 'down');
 
-/**
- * Build a route between two venues (or from the best elevator bank on a deck).
- * @param {Array} decks - deck records
- * @param {object} spec
- * @param {string} spec.id
- * @param {{deck: number, venueId?: string}} spec.from - omit venueId to start at the elevators
- * @param {{deck: number, venueId: string}} spec.to
- */
-export function buildRoute(decks, { id, from, to }) {
-  const originVenue = from.venueId ? findVenue(findDeck(decks, from.deck), from.venueId) : null;
-  const destVenue = findVenue(findDeck(decks, to.deck), to.venueId);
-  if ((from.venueId && !originVenue) || !destVenue) {
-    throw new Error(`Route ${id} references a venue that does not exist`);
-  }
-
-  const origin = { deck: from.deck, coords: originVenue?.center ?? null };
-  const destination = { deck: to.deck, name: destVenue.name, coords: destVenue.center };
-  const bank = chooseBank(decks, origin, destination);
-  if (!bank) throw new Error(`Route ${id} has no elevator bank shared by Decks ${from.deck} and ${to.deck}`);
-
-  const originCore = findVenue(findDeck(decks, from.deck), coreId(bank, from.deck)).center;
-  const destCore = findVenue(findDeck(decks, to.deck), coreId(bank, to.deck)).center;
-  const bankName = `${CORE_STATIONS[bank].label} Elevators`;
-  origin.name = originVenue?.name ?? `${bankName} (Deck ${from.deck})`;
-  origin.core = originCore;
-  destination.core = destCore;
+function stepsFor(route, name, originName, destinationName) {
+  const { legs } = route;
+  if (legs.length === 0) return [`You're already at ${destinationName}.`];
 
   const steps = [];
-  let distance = 0;
-  if (originVenue) {
-    const walk = corridorWalk(originCore, originVenue.center);
-    distance += pathLength(walk);
-    steps.push(
-      `From ${shortName(originVenue)}, follow the ${sideOf(originVenue.center)} corridor ${direction(
-        originVenue.center,
-        originCore
-      )} to the ${bankName}.`
-    );
-  } else {
-    steps.push(`Start at the ${bankName} on Deck ${from.deck}.`);
-  }
+  if (legs[0].kind !== 'walk')
+    steps.push(`Start at the ${name(legs[0].from)} on Deck ${legs[0].fromDeck}.`);
+  legs.forEach((leg, i) => {
+    if (leg.kind === 'walk') {
+      const next = legs[i + 1];
+      const target = next ? `the ${name(next.from)}` : destinationName;
+      const prefix = i === 0 ? `From ${originName}` : `On Deck ${leg.deck}`;
+      const through = leg.through.length ? ` through ${leg.through.map(name).join(' and ')}` : '';
+      steps.push(
+        `${prefix}, walk about ${roundTo5(leg.lengthM)} m${heading(leg.points)}${through} to ${target}.`
+      );
+    } else if (leg.kind === 'elevator') {
+      steps.push(`Take the ${name(leg.from)} ${upOrDown(leg)} to Deck ${leg.toDeck}.`);
+    } else {
+      const decks = leg.levels === 1 ? 'one deck' : `${leg.levels} decks`;
+      steps.push(`Take the stairs ${upOrDown(leg)} ${decks} to Deck ${leg.toDeck}.`);
+    }
+  });
+  const last = legs[legs.length - 1];
+  if (last.kind !== 'walk') steps.push(`Arrive at ${destinationName}.`);
+  return steps;
+}
 
-  if (from.deck !== to.deck) {
-    distance += Math.abs(from.deck - to.deck) * DECK_HEIGHT_M;
-    steps.push(`Take the elevator ${to.deck > from.deck ? 'up' : 'down'} to Deck ${to.deck}.`);
-  }
+/**
+ * Build a route between two venues, or from a deck's elevators to a venue.
+ * @param {Array} decks - site deck records
+ * @param {object} router - from `createRouter(pack.routing)`
+ * @param {object} spec
+ * @param {string} spec.id
+ * @param {{deck: number, venueId?: string}} spec.from - omit venueId to start at the nearest elevators
+ * @param {{deck: number, venueId: string}} spec.to
+ * @param {{stepFree?: boolean}} [options] - step-free routes never use stairs
+ */
+export function buildRoute(decks, router, { id, from, to }, { stepFree = false } = {}) {
+  const origin = endpointFor(decks, router, from);
+  const destination = endpointFor(decks, router, to);
+  const route = router.route(origin.endpoint, destination.endpoint, { stepFree });
+  if (!route)
+    throw new Error(`Route ${id} has no path from Deck ${from.deck} to ${destination.venue.name}`);
 
-  const finalWalk = corridorWalk(destCore, destVenue.center);
-  const finalMetres = pathLength(finalWalk);
-  distance += finalMetres;
-  steps.push(
-    `Head ${direction(destCore, destVenue.center)} along the ${sideOf(destVenue.center)} side about ${Math.max(
-      5,
-      Math.round(finalMetres / 5) * 5
-    )} m to ${destVenue.name}.`
+  const name = (featureId) => findVenue(decks, featureId)?.name ?? featureId;
+  const originName = origin.venue
+    ? shortName(origin.venue.name)
+    : `${name(route.origin.featureId)} (Deck ${route.origin.deck})`;
+  const destinationName = destination.venue.name;
+
+  const firstPoint = route.legs.find((l) => l.kind === 'walk')?.points[0] ?? route.legs[0]?.fromAt;
+  const lastWalk = route.legs.findLast((l) => l.kind === 'walk');
+  const lastPoint = lastWalk?.points[lastWalk.points.length - 1] ?? route.legs.at(-1)?.toAt;
+  const visited = route.legs.flatMap((l) =>
+    l.kind === 'walk' ? [l.deck] : [l.fromDeck, l.toDeck]
   );
 
-  const distanceMeters = Math.round(distance);
   return {
     id,
-    name: `${originVenue ? shortName(originVenue) : bankName} → ${destVenue.name}`,
-    origin,
-    destination,
-    viaBank: bank,
-    distanceMeters,
-    estimatedMinutes: Math.max(1, Math.ceil(distanceMeters / WALKING_METRES_PER_MINUTE)),
-    steps,
+    name: `${originName} → ${destinationName}`,
+    stepFree,
+    // Starting at the elevators draws the lift pin, not an "A" marker.
+    origin: { deck: route.origin.deck, name: originName, coords: origin.venue ? firstPoint : null },
+    destination: { deck: route.destination.deck, name: destinationName, coords: lastPoint ?? null },
+    decks: [...new Set([route.origin.deck, ...visited, route.destination.deck])],
+    legs: route.legs,
+    deckChanges: route.deckChanges,
+    distanceMeters: Math.round(route.walkM),
+    estimatedMinutes: Math.max(1, Math.ceil(route.timeS / 60)),
+    steps: stepsFor(
+      route,
+      name,
+      origin.venue
+        ? originName
+        : `the ${name(route.origin.featureId)} on Deck ${route.origin.deck}`,
+      destinationName
+    ),
   };
 }
 
-/** "Stateroom 10124 (Concierge Class)" → "Stateroom 10124". */
-function shortName(venue) {
-  return venue.name.replace(/\s*\(.*\)\s*$/, '');
-}
-
 /**
- * The polyline and end markers to draw for a route on one deck, or null when
- * the route does not touch that deck.
+ * What to draw for a route on one deck: walk polylines, lift and stair
+ * landings, and the end markers. Null when the route doesn't touch the deck.
  */
 export function routePathForDeck(route, level) {
   if (!route) return null;
-  const onOrigin = route.origin.deck === level;
-  const onDest = route.destination.deck === level;
-  if (!onOrigin && !onDest) return null;
+  const segments = route.legs
+    .filter((l) => l.kind === 'walk' && l.deck === level)
+    .map((l) => l.points);
 
-  const segments = [];
-  if (onOrigin && route.origin.coords) {
-    segments.push(corridorWalk(route.origin.core, route.origin.coords).reverse());
-  }
-  if (onDest) {
-    segments.push(corridorWalk(route.destination.core, route.destination.coords));
-  }
-  if (segments.length === 0) {
-    // Origin deck when starting at the elevators: just mark the lobby.
-    segments.push([route.origin.core, route.origin.core]);
+  const landings = [];
+  for (const leg of route.legs) {
+    if (leg.kind === 'walk') continue;
+    for (const [deck, coords] of [
+      [leg.fromDeck, leg.fromAt],
+      [leg.toDeck, leg.toAt],
+    ]) {
+      if (deck !== level) continue;
+      if (landings.some((l) => l.coords[0] === coords[0] && l.coords[1] === coords[1])) continue;
+      landings.push({ coords, kind: leg.kind });
+    }
   }
 
-  const points = segments.flat();
-  return {
-    points,
-    start: onOrigin && route.origin.coords ? { coords: route.origin.coords, kind: 'origin' } : null,
-    elevator: onOrigin ? route.origin.core : route.destination.core,
-    end: onDest ? { coords: route.destination.coords, kind: 'destination' } : null,
-  };
+  const start =
+    route.origin.deck === level && route.origin.coords
+      ? { coords: route.origin.coords, kind: 'origin' }
+      : null;
+  const end =
+    route.destination.deck === level && route.destination.coords
+      ? { coords: route.destination.coords, kind: 'destination' }
+      : null;
+  if (segments.length === 0 && landings.length === 0 && !start && !end) return null;
+  return { segments, landings, start, end };
 }

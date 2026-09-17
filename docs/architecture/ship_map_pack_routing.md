@@ -1,6 +1,6 @@
 # Ship Map Pack v1: `routing`
 
-Roadmap tasks P2.1–P2.3. An optional pack-level block, added without a `specVersion` bump.
+Roadmap tasks P2.1–P2.5. An optional pack-level block, added without a `specVersion` bump.
 Consumers that don't know it ignore it.
 
 `routing` is a small walk/elevator/stairs graph. It is enough for walking directions, walk times
@@ -91,6 +91,82 @@ other walk edge stays out of every venue, cabin and crew interior.
 **Node identity.** Node indices are only stable within one `revision`. Stable references are
 feature ids: a lobby by its elevator/stairwell id, a door by `featureId` plus `n` or `"projected"`.
 Fixtures (P2.5) should route between those, not between corridor indices.
+
+## Routing on it
+
+[`src/utils/shipRouter.js`](../../src/utils/shipRouter.js) is the reference router: dependency-free
+Dijkstra over the expanded graph. The maps site draws its routes with it, the fixtures below are
+recorded with it, and AuraTrip's TypeScript port must match it.
+
+**Endpoints.**
+
+| Endpoint | Resolves to |
+| --- | --- |
+| `{ featureId }` | Every door of that venue on the graph (the cheapest wins), or an elevator or stairwell's landing. |
+| `{ deck, at: [x, y] }` | The nearest `corridor` node on that deck (the cabin snap rule). The snap distance **is** added to the walk, at both ends. |
+| `{ deck, elevators: true }` | Every connected elevator lobby on that deck (the cheapest wins). |
+
+**Cost is time, in seconds.**
+
+| Edge | Cost |
+| --- | --- |
+| `walk` | `lengthM / walkingSpeedMps` |
+| `elevator` | `elevatorBoardS` (60) + `elevatorPerLevelS` (8) × `decks` |
+| `stairs` | `stairsPerLevelS` (30) × `decks` |
+
+The lift numbers are guesses (see the roadmap's risks). They make stairs win for one or two decks
+and lifts win from three. `stepFree: true` drops stairs edges. Ties go to the lower node index, so
+a route is deterministic.
+
+**Result.** `walkM` (walk edges plus snaps), `timeS`, and `legs` in order: `walk` legs (`deck`,
+`points`, `lengthM`, `through`) and `elevator`/`stairs` legs (`fromDeck`, `toDeck`, `from`/`to`
+feature ids, `levels`, and `bank` for lifts). Consecutive stairs flights merge into one leg.
+`deckChanges` is `[{ mode, fromDeck, toDeck }]`, one entry per non-walk leg. A same-deck trip
+between walk sections has two.
+
+## Route fixtures
+
+`v1/ships/<id>/route-fixtures.json` is published beside the pack. It is the routing contract
+between this repo and ports.
+
+```jsonc
+{
+  "specVersion": 1,
+  "shipId": "celebrity-xcel",
+  "recordedAgainstRevision": "c2b64fbc5010",   // informational
+  "costModel": { "walkingSpeedMps": 1.1, "elevatorBoardS": 60, "elevatorPerLevelS": 8, "stairsPerLevelS": 30 },
+  "tolerance": { "walkM": { "abs": 2, "rel": 0.03 }, "timeS": { "abs": 5, "rel": 0.05 } },
+  "routes": [
+    {
+      "id": "lifts-5-to-spice-cafe",
+      "description": "…",
+      "from": { "deck": 5, "elevators": true },   // or { "featureId" } or { "cabinId" }
+      "to": { "featureId": "v5-spice-cafe" },
+      "stepFree": false,
+      "expected": { "walkM": 46.44, "timeS": 42.2, "deckChanges": [], "through": ["v5-bazaar-market"] }
+    }
+  ]
+}
+```
+
+- A `cabinId` end means "that cabin's pack `center`, snapped".
+- A port passes a case when `deckChanges` and `through` (sorted, de-duplicated) match exactly,
+  and `walkM` and `timeS` are each within `max(abs, rel × expected)`.
+- The 14 Xcel cases cover walking only, stairs vs lifts (with step-free twins), consecutive
+  flights, Deck 12 → 14, lift-only walk sections on one deck, every connector kind, the long
+  Edge Villa snap, and cabin to cabin.
+
+**The file is recorded, not re-exported.** `scripts/route-fixtures.test.mjs` runs the router
+against the committed pack and fails when a result leaves tolerance. So a layout, graph or router
+change shows up as a failing test instead of a quiet diff. When the change is intended (e.g.
+P1.1 moves venues), re-record and say why in the PR:
+
+```sh
+npm run record:route-fixtures
+```
+
+The cases live in `ROUTE_FIXTURE_CASES` in
+[`scripts/route-fixtures.mjs`](../../scripts/route-fixtures.mjs).
 
 ## How it is built
 

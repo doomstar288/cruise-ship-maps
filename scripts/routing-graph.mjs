@@ -1108,55 +1108,5 @@ export function buildRouting(
   };
 }
 
-/**
- * Expands a pack's compact `routing` block into plain nodes and undirected
- * edges, the shape a router works on. Node keys are `"<deck>:<index>"`; they
- * are only stable within one revision. Elevator edges join every pair of stops
- * of a bank; stairs edges join neighbouring stops. `decks` counts levels in
- * `pack.decks` order, so 12 → 14 is one level.
- */
-export function expandRouting(pack) {
-  const { routing } = pack;
-  const level = new Map(pack.decks.map((d, i) => [d.deckNumber, i]));
-  const nodes = [];
-  const edges = [];
-  const byFeature = new Map();
-  for (const { deckNumber, nodes: tuples, walk } of routing.decks) {
-    tuples.forEach(([x, y, kind = 'corridor', featureId, entrance], index) => {
-      const node = { key: `${deckNumber}:${index}`, deck: deckNumber, at: [x, y], kind };
-      if (featureId !== undefined) node.featureId = featureId;
-      if (kind === 'entrance') {
-        if (entrance === 'projected') node.projected = true;
-        else node.entrance = entrance;
-      }
-      if (kind !== 'entrance' && featureId) byFeature.set(featureId, node);
-      nodes.push(node);
-    });
-    for (const [i, j, lengthM, through] of walk) {
-      const edge = { from: `${deckNumber}:${i}`, to: `${deckNumber}:${j}`, kind: 'walk', lengthM };
-      if (through) edge.through = through;
-      edges.push(edge);
-    }
-  }
-  const levels = (a, b) => Math.abs(level.get(a.deck) - level.get(b.deck));
-  for (const { stops } of routing.elevators) {
-    const at = stops.map((id) => byFeature.get(id));
-    at.forEach((a, i) => {
-      for (const b of at.slice(i + 1))
-        edges.push({ from: a.key, to: b.key, kind: 'elevator', decks: levels(a, b) });
-    });
-  }
-  for (const stops of routing.stairs) {
-    const at = stops.map((id) => byFeature.get(id));
-    for (let i = 1; i < at.length; i += 1) {
-      edges.push({
-        from: at[i - 1].key,
-        to: at[i].key,
-        kind: 'stairs',
-        decks: levels(at[i - 1], at[i]),
-        stepFree: false,
-      });
-    }
-  }
-  return { nodes, edges };
-}
+// The router expands the block; the tests and the site share that one expansion.
+export { expandRouting } from '../src/utils/shipRouter.js';

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { CELEBRITY_XCEL_DECKS, CELEBRITY_XCEL_METADATA, SAMPLE_WAYFINDING_ROUTES } from './celebrityXcelData';
+import { CELEBRITY_XCEL_DECKS, CELEBRITY_XCEL_METADATA } from './celebrityXcelData';
 import { isValidImo } from '../utils/imo';
 import { CENTERLINE_Y, SHIP_LENGTH_M, hullHalfWidth, isInsideHull } from '../utils/deckPlanDataPipeline';
 
@@ -141,18 +141,5 @@ describe('real-ship layout', () => {
     const count = deckAt(8).venues.filter((v) => v.cabinClass).length;
     expect(count).toBeGreaterThan(150);
     expect(count).toBeLessThan(300);
-  });
-});
-
-describe('preset wayfinding routes', () => {
-  it('start and end on real venues with a positive walking distance', () => {
-    for (const route of SAMPLE_WAYFINDING_ROUTES) {
-      const origin = deckAt(route.origin.deck).venues.find((v) => v.name === route.origin.name);
-      const destination = deckAt(route.destination.deck).venues.find((v) => v.name === route.destination.name);
-      expect(origin?.center).toEqual(route.origin.coords);
-      expect(destination?.center).toEqual(route.destination.coords);
-      expect(route.distanceMeters).toBeGreaterThan(0);
-      expect(route.steps.length).toBeGreaterThanOrEqual(3);
-    }
   });
 });
