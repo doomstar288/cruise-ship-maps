@@ -75,9 +75,10 @@ empty today. The same tests cover overrides.
 - no entrance is on or within 0.25 m of a cabin or crew (`corridor`) feature
 - `specVersion` is still 1
 
-## Known limitation (for Phase 2)
+## Reaching the doors (Phase 2)
 
 Mosaic (Deck 4) and Spice Café (Deck 5) open onto 2 m transverse passages that the synthetic
 layout closes at both ends with the hull. Those passages connect to the rest of the deck only
-through sub-metre seams. The entrances are valid corridor edges, but a Phase 2 routing graph
-will need a link into those passages (P2.2 requires every listed venue to be reachable).
+through sub-metre seams. The entrances are still valid corridor edges. The routing graph reaches
+them through documented connectors, and doors that open onto walk sections with no lobby are left
+off the graph. See [routing](./ship_map_pack_routing.md#connectors).
