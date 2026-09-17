@@ -29,12 +29,14 @@ import { writeFile, readFile, mkdir } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
+import { gzipSync } from 'node:zlib';
 
 import {
   CELEBRITY_XCEL_METADATA,
   CELEBRITY_XCEL_DECKS,
 } from '../src/data/celebrityXcelData.js';
 import { withEntrances } from './venue-entrances.mjs';
+import { buildRouting } from './routing-graph.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(__dirname, '..');
@@ -309,8 +311,8 @@ export function aliasesFor(shipName, cruiseLine) {
  * the revision stable and every cached client skips the re-download.
  */
 export function revisionOf(pack) {
-  const { specVersion, shipId, geometry, positionConfidenceDefaults, decks } = pack;
-  const canonical = JSON.stringify({ specVersion, shipId, geometry, positionConfidenceDefaults, decks });
+  const { specVersion, shipId, geometry, positionConfidenceDefaults, decks, routing } = pack;
+  const canonical = JSON.stringify({ specVersion, shipId, geometry, positionConfidenceDefaults, decks, routing });
   return createHash('sha256').update(canonical).digest('hex').slice(0, 12);
 }
 
@@ -340,6 +342,8 @@ export function buildPack(metadata, decks) {
     positionConfidenceDefaults: PACK_POSITION_CONFIDENCE_DEFAULTS,
     decks: decks.map(toDeck).sort((a, b) => a.deckNumber - b.deckNumber),
   };
+  // Walk/lift/stairs graph derived from the exported decks (P2.1).
+  pack.routing = buildRouting(pack.decks);
 
   return { ...pack, revision: revisionOf(pack), updatedAt: new Date().toISOString() };
 }
@@ -407,23 +411,34 @@ async function writeJson(path, value, pretty) {
 
 /** Previously published JSON at `path`, or null on a first run. */
 async function readJsonIfExists(path) {
+  const text = await readTextIfExists(path);
+  return text === null ? null : JSON.parse(text);
+}
+
+async function readTextIfExists(path) {
   try {
-    return JSON.parse(await readFile(path, 'utf8'));
+    return await readFile(path, 'utf8');
   } catch {
     return null;
   }
 }
 
+/** "619 KB raw / 58 KB gzipped" for a file's text. */
+export function sizeSummary(text) {
+  const kb = (bytes) => `${(bytes / 1024).toFixed(0)} KB`;
+  return `${kb(Buffer.byteLength(text))} raw / ${kb(gzipSync(text).length)} gzipped`;
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
 
+  const previousText = new Map();
   const packs = await Promise.all(
     SHIPS.map(async ({ metadata, decks }) => {
       const pack = buildPack(metadata, decks);
-      const previous = await readJsonIfExists(
-        resolve(args.out, `v1/ships/${pack.shipId}/plan.json`)
-      );
-      return reconcilePackTimestamp(pack, previous);
+      const text = await readTextIfExists(resolve(args.out, `v1/ships/${pack.shipId}/plan.json`));
+      previousText.set(pack.shipId, text);
+      return reconcilePackTimestamp(pack, text === null ? null : JSON.parse(text));
     })
   );
 
@@ -440,10 +455,11 @@ async function main() {
 
   for (const pack of packs) {
     const features = pack.decks.reduce((n, d) => n + d.features.length, 0);
-    const bytes = Buffer.byteLength(serialize(pack, args.pretty));
+    const before = previousText.get(pack.shipId);
+    const after = sizeSummary(`${serialize(pack, args.pretty)}\n`);
     console.log(
       `  ${pack.shipName}: ${pack.decks.length} decks, ${features} features, ` +
-        `${(bytes / 1024).toFixed(0)} KB, rev ${pack.revision}`
+        `${before === null ? 'new' : sizeSummary(before)} → ${after}, rev ${pack.revision}`
     );
   }
 
