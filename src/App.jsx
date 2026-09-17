@@ -5,9 +5,9 @@ import DeckMapViewer from './components/DeckMapViewer';
 import CabinInspectorModal from './components/CabinInspectorModal';
 import ApiInspectorModal from './components/ApiInspectorModal';
 import MultiSourceInspectorModal from './components/MultiSourceInspectorModal';
-import { CELEBRITY_XCEL_DECKS, CELEBRITY_XCEL_METADATA, SAMPLE_WAYFINDING_ROUTES } from './data/celebrityXcelData';
+import { CELEBRITY_XCEL_DECKS, CELEBRITY_XCEL_METADATA } from './data/celebrityXcelData';
+import { SAMPLE_ROUTE_SPECS, routeFor } from './data/celebrityXcelRoutes';
 import { VENUE_COLORS } from './utils/deckPlanDataPipeline';
-import { buildRoute } from './utils/wayfinding';
 import { Search, Navigation, ChevronRight, X, ChevronLeft, CheckCircle2 } from 'lucide-react';
 import './styles/design-system.css';
 
@@ -38,7 +38,8 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showApiInspector, setShowApiInspector] = useState(false);
   const [showAccuracyInspector, setShowAccuracyInspector] = useState(false);
-  const [activeRoute, setActiveRoute] = useState(null);
+  const [routeSpec, setRouteSpec] = useState(null);
+  const [stepFree, setStepFree] = useState(false);
   const [isDockCollapsed, setIsDockCollapsed] = useState(startsCollapsed);
 
   const allVenuesList = useMemo(
@@ -60,6 +61,18 @@ export default function App() {
     );
   }, [allVenuesList, searchQuery]);
 
+  const sampleRoutes = useMemo(() => SAMPLE_ROUTE_SPECS.map((spec) => routeFor(spec, { stepFree })), [stepFree]);
+
+  // Re-routed when the step-free toggle changes; null when an end isn't routable.
+  const activeRoute = useMemo(() => {
+    if (!routeSpec) return null;
+    try {
+      return routeFor(routeSpec, { stepFree });
+    } catch {
+      return null;
+    }
+  }, [routeSpec, stepFree]);
+
   const selectVenue = useCallback((venue) => setSelectedVenue(venue), []);
   const toggleUpscale = useCallback(() => setIsUpscaledMode((on) => !on), []);
 
@@ -75,25 +88,24 @@ export default function App() {
   };
 
   const handleStartWayfinding = (venue) => {
+    const spec = {
+      id: `to-${venue.id}`,
+      from: { deck: currentDeck.level },
+      to: { deck: currentDeck.level, venueId: venue.id },
+    };
     try {
-      setActiveRoute(
-        buildRoute(CELEBRITY_XCEL_DECKS, {
-          id: `to-${venue.id}`,
-          from: { deck: currentDeck.level },
-          to: { deck: currentDeck.level, venueId: venue.id },
-        })
-      );
-      setSelectedVenue(null);
-      setIsDockCollapsed(false);
+      routeFor(spec, { stepFree });
     } catch {
-      // Venues on decks without a guest elevator bank cannot be routed to.
-      setActiveRoute(null);
+      // Crew space and other features off the routing graph have no route.
+      setRouteSpec(null);
+      return;
     }
+    setRouteSpec(spec);
+    setSelectedVenue(null);
+    setIsDockCollapsed(false);
   };
 
-  const routeDecks = activeRoute
-    ? [...new Set([activeRoute.origin.deck, activeRoute.destination.deck])]
-    : [];
+  const routeDecks = activeRoute?.decks ?? [];
 
   return (
     <div className="app-container">
@@ -209,12 +221,12 @@ export default function App() {
                     <div className="route-card">
                       <div className="route-card-header">
                         <span>{activeRoute.name}</span>
-                        <button onClick={() => setActiveRoute(null)} aria-label="Clear route">
+                        <button onClick={() => setRouteSpec(null)} aria-label="Clear route">
                           <X size={14} />
                         </button>
                       </div>
                       <div className="res-sub" style={{ marginBottom: '8px' }}>
-                        ~{activeRoute.distanceMeters} m • about {activeRoute.estimatedMinutes} min walk
+                        ~{activeRoute.distanceMeters} m walk • about {activeRoute.estimatedMinutes} min incl. lifts
                       </div>
                       <ol>
                         {activeRoute.steps.map((step, idx) => (
@@ -236,14 +248,18 @@ export default function App() {
                       )}
                     </div>
                   )}
+                  <label className="step-free-toggle">
+                    <input type="checkbox" checked={stepFree} onChange={(e) => setStepFree(e.target.checked)} />
+                    Step-free (elevators only, no stairs)
+                  </label>
                   <div className="search-results-list">
-                    {SAMPLE_WAYFINDING_ROUTES.map((route) => (
+                    {sampleRoutes.map((route) => (
                       <button
                         key={route.id}
                         className={`search-result-card ${activeRoute?.id === route.id ? 'active' : ''}`}
                         onClick={() => {
                           goToDeck(route.origin.deck);
-                          setActiveRoute(route);
+                          setRouteSpec(SAMPLE_ROUTE_SPECS.find((spec) => spec.id === route.id));
                         }}
                       >
                         <div style={{ textAlign: 'left' }}>
@@ -251,7 +267,7 @@ export default function App() {
                             <Navigation size={14} color="var(--accent-cyan)" /> {route.name}
                           </div>
                           <div className="res-sub">
-                            Deck {route.origin.deck} → Deck {route.destination.deck} • ~{route.estimatedMinutes} min walk
+                            Deck {route.origin.deck} → Deck {route.destination.deck} • ~{route.estimatedMinutes} min
                           </div>
                         </div>
                       </button>

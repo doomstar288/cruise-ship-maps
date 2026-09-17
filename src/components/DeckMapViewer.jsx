@@ -321,7 +321,7 @@ export default function DeckMapViewer({
     }
   }, [currentDeck, selectedVenue, activeFilter, currentZoom, onSelectVenue]);
 
-  // Wayfinding overlay: corridor path, elevator lobby and end markers.
+  // Wayfinding overlay: walk paths, lift and stair landings, and end markers.
   useEffect(() => {
     const routeGroup = routeLayerRef.current;
     if (!routeGroup || !currentDeck) return;
@@ -330,16 +330,18 @@ export default function DeckMapViewer({
     const path = routePathForDeck(activeRoute, currentDeck.level);
     if (!path) return;
 
-    routeGroup.addLayer(
-      L.polyline(path.points.map(toLatLng), {
-        color: '#22d3ee',
-        weight: 4,
-        opacity: 0.95,
-        lineJoin: 'round',
-        className: 'leaflet-path-route',
-        interactive: false,
-      })
-    );
+    for (const points of path.segments) {
+      routeGroup.addLayer(
+        L.polyline(points.map(toLatLng), {
+          color: '#22d3ee',
+          weight: 4,
+          opacity: 0.95,
+          lineJoin: 'round',
+          className: 'leaflet-path-route',
+          interactive: false,
+        })
+      );
+    }
 
     const pin = (coords, className, glyph, title) =>
       L.marker(toLatLng(coords), {
@@ -354,7 +356,10 @@ export default function DeckMapViewer({
         }),
       });
 
-    routeGroup.addLayer(pin(path.elevator, 'elevator', '⇅', 'Elevators'));
+    for (const landing of path.landings) {
+      const isLift = landing.kind === 'elevator';
+      routeGroup.addLayer(pin(landing.coords, 'elevator', isLift ? '⇅' : '⇞', isLift ? 'Elevators' : 'Stairs'));
+    }
     if (path.start) routeGroup.addLayer(pin(path.start.coords, 'origin', 'A', activeRoute.origin.name));
     if (path.end) routeGroup.addLayer(pin(path.end.coords, 'destination', 'B', activeRoute.destination.name));
   }, [activeRoute, currentDeck]);
