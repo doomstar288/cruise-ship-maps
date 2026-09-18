@@ -7,6 +7,7 @@
     "dev": "vite",
     "prebuild": "npm run export:packs",
     "build": "vite build",
+    "check:bundle-size": "node scripts/check-bundle-size.mjs",
     "preview": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

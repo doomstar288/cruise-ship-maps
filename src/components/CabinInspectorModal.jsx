@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { X, Navigation, Sparkles, CheckCircle2, MapPin } from 'lucide-react';
-import { calculateSourceConsensus } from '../utils/multiSourceDataConsensus';
+import { calculateSourceConsensus, ACCURACY_SOURCES } from '../utils/multiSourceDataConsensus';
 import { describeLocation } from '../utils/deckPlanDataPipeline';
 
 export default function CabinInspectorModal({ venue, deck, onClose, onStartWayfinding, onRouteFromHere }) {
@@ -59,9 +59,9 @@ export default function CabinInspectorModal({ venue, deck, onClose, onStartWayfi
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', fontWeight: 700, color: 'var(--accent-emerald)' }}>
               <CheckCircle2 size={16} />
-              <span>Multi-Source Verified: {consensus.confidence}</span>
+              <span>Multi-Source Verified: {(consensus.confidenceScore * 100).toFixed(0)}%</span>
             </div>
-            <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>{consensus.sourcesAgreed}/{consensus.sourcesChecked} sources</span>
+            <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>{consensus.sourcesCount}/{ACCURACY_SOURCES.length} sources</span>
           </div>
 
           {/* Subheader Badges */}
@@ -72,7 +72,7 @@ export default function CabinInspectorModal({ venue, deck, onClose, onStartWayfi
 
             {isStateroom && venue.sqft && (
               <span className="ship-badge" style={{ background: 'rgba(255,255,255,0.06)' }}>
-                📐 {venue.sqft} sq ft {venue.verandaSqft ? `(+{venue.verandaSqft} veranda)` : ''}
+                📐 {venue.sqft} sq ft {venue.verandaSqft ? `(+${venue.verandaSqft} sq ft veranda)` : ''}
               </span>
             )}
 
