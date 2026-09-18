@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import HeaderNavbar from './components/HeaderNavbar';
 import DeckSwitcher from './components/DeckSwitcher';
 import DeckMapViewer from './components/DeckMapViewer';
@@ -8,7 +8,7 @@ import MultiSourceInspectorModal from './components/MultiSourceInspectorModal';
 import RouteBuilderPanel from './components/RouteBuilderPanel';
 import SearchCommandPalette from './components/SearchCommandPalette';
 import { AVAILABLE_SHIPS, generateShip } from './utils/shipGenerator';
-import { getSampleRoutesForShip, routeOnShip } from './data/fleetRouting';
+import { getSampleRoutesForShip, loadShipRouting, routeOnShip } from './data/fleetRouting';
 import { VENUE_COLORS } from './utils/deckPlanDataPipeline';
 import { Search, Navigation, ChevronRight, X, ChevronLeft, CheckCircle2 } from 'lucide-react';
 import './styles/design-system.css';
@@ -75,20 +75,39 @@ export default function App() {
     );
   }, [allVenuesList, searchQuery]);
 
+  // The ship's routing graph is fetched from its published pack, so the decks
+  // draw straight away and routes appear once the graph lands.
+  const [routingShipId, setRoutingShipId] = useState(null);
+  useEffect(() => {
+    let cancelled = false;
+    loadShipRouting(selectedShipId)
+      .then(() => {
+        if (!cancelled) setRoutingShipId(selectedShipId);
+      })
+      .catch(() => {
+        // Routes stay unavailable; the deck map is unaffected.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedShipId]);
+
+  const isRoutingReady = routingShipId === selectedShipId;
+
   const sampleRoutes = useMemo(
-    () => getSampleRoutesForShip(selectedShipId, shipDecks, { stepFree }),
-    [selectedShipId, shipDecks, stepFree]
+    () => (isRoutingReady ? getSampleRoutesForShip(selectedShipId, shipDecks, { stepFree }) : []),
+    [isRoutingReady, selectedShipId, shipDecks, stepFree]
   );
 
   // Re-routed when ship, step-free toggle, or spec changes; null when an end isn't routable.
   const activeRoute = useMemo(() => {
-    if (!routeSpec) return null;
+    if (!routeSpec || !isRoutingReady) return null;
     try {
       return routeOnShip(selectedShipId, shipDecks, routeSpec, { stepFree });
     } catch {
       return null;
     }
-  }, [selectedShipId, shipDecks, routeSpec, stepFree]);
+  }, [isRoutingReady, selectedShipId, shipDecks, routeSpec, stepFree]);
 
   // Every selected venue carries the deck it sits on, so the inspector and the
   // router read the venue's own deck rather than whichever one is on screen.
@@ -126,12 +145,16 @@ export default function App() {
       from: { deck: currentDeck.level },
       to: { deck: targetDeck, venueId: venue.id },
     };
-    try {
-      routeOnShip(selectedShipId, shipDecks, spec, { stepFree });
-    } catch {
-      // Crew space and other features off the routing graph have no route.
-      setRouteSpec(null);
-      return;
+    // Only pre-flight the spec once the graph is here; before that, activeRoute
+    // resolves it as soon as it lands.
+    if (isRoutingReady) {
+      try {
+        routeOnShip(selectedShipId, shipDecks, spec, { stepFree });
+      } catch {
+        // Crew space and other features off the routing graph have no route.
+        setRouteSpec(null);
+        return;
+      }
     }
     setRouteSpec(spec);
     setSelectedVenue(null);

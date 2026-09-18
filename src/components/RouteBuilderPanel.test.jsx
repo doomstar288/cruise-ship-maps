@@ -1,9 +1,10 @@
 import React from 'react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeAll } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import RouteBuilderPanel from './RouteBuilderPanel.jsx';
 import { generateShip } from '../utils/shipGenerator.js';
-import { routeOnShip } from '../data/fleetRouting.js';
+import { loadShipRouting, routeOnShip } from '../data/fleetRouting.js';
+import { fetchFromPublic } from '../test/packFetch.js';
 
 const { decks } = generateShip('celebrity-xcel');
 const deck5 = decks.find((d) => d.level === 5);
@@ -24,6 +25,8 @@ const renderPanel = (activeRoute) =>
   );
 
 describe('RouteBuilderPanel route summary', () => {
+  beforeAll(() => loadShipRouting('celebrity-xcel', fetchFromPublic));
+
   it('counts the lift/stair hops rather than stringifying the hop list', () => {
     const route = routeOnShip(
       'celebrity-xcel',

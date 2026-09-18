@@ -1,8 +1,7 @@
 // Celebrity Xcel routing: the published pack's graph and the preset routes.
 
 // Only `routing` is bundled; Vite tree-shakes the rest of the pack JSON.
-import plan from '../../public/v1/ships/celebrity-xcel/plan.json' with { type: 'json' };
-const { routing } = plan;
+import { routing } from '../../public/v1/ships/celebrity-xcel/plan.json';
 import { createRouter } from '../utils/shipRouter.js';
 import { buildRoute } from '../utils/wayfinding.js';
 import { CELEBRITY_XCEL_DECKS } from './celebrityXcelData.js';
