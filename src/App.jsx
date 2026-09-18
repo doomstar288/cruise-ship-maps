@@ -90,7 +90,12 @@ export default function App() {
     }
   }, [selectedShipId, shipDecks, routeSpec, stepFree]);
 
-  const selectVenue = useCallback((venue) => setSelectedVenue(venue), []);
+  // Every selected venue carries the deck it sits on, so the inspector and the
+  // router read the venue's own deck rather than whichever one is on screen.
+  const selectVenue = useCallback(
+    (venue) => setSelectedVenue(venue ? { ...venue, deck: venue.deck ?? currentDeck } : null),
+    [currentDeck]
+  );
   const toggleUpscale = useCallback(() => setIsUpscaledMode((on) => !on), []);
 
   const goToDeck = useCallback((level) => {
@@ -115,7 +120,7 @@ export default function App() {
   };
 
   const handleStartWayfinding = (venue) => {
-    const targetDeck = venue.deckNumber || currentDeck.level;
+    const targetDeck = venue.deck?.level ?? currentDeck.level;
     const spec = {
       id: `to-${venue.id}`,
       from: { deck: currentDeck.level },
@@ -134,7 +139,7 @@ export default function App() {
   };
 
   const handleRouteFromHere = (venue) => {
-    const fromDeck = venue.deckNumber || currentDeck.level;
+    const fromDeck = venue.deck?.level ?? currentDeck.level;
     setRouteSpec((prev) => ({
       id: `from-${venue.id}`,
       from: { deck: fromDeck, venueId: venue.id },
@@ -145,7 +150,7 @@ export default function App() {
   };
 
   const handleSearchSelectVenue = useCallback((venue) => {
-    const deckLvl = venue.deckNumber ?? venue.deckLevel ?? venue.deck?.level;
+    const deckLvl = venue.deck?.level;
     if (deckLvl) {
       setCurrentDeckLevel(deckLvl);
     }
@@ -154,7 +159,7 @@ export default function App() {
   }, []);
 
   const handleSearchRouteToVenue = useCallback((venue) => {
-    const targetDeck = venue.deckNumber ?? venue.deckLevel ?? venue.deck?.level ?? currentDeck.level;
+    const targetDeck = venue.deck?.level ?? currentDeck.level;
     setCurrentDeckLevel(targetDeck);
     setSelectedVenue(venue);
     setRouteSpec({
@@ -391,7 +396,7 @@ export default function App() {
       {selectedVenue && (
         <CabinInspectorModal
           venue={selectedVenue}
-          deck={currentDeck}
+          deck={selectedVenue.deck ?? currentDeck}
           onClose={() => setSelectedVenue(null)}
           onStartWayfinding={handleStartWayfinding}
           onRouteFromHere={handleRouteFromHere}

@@ -15,6 +15,9 @@ export default function RouteBuilderPanel({
   const [fromQuery, setFromQuery] = useState('');
   const [toQuery, setToQuery] = useState('');
 
+  // deckChanges is the list of lift/stair hops on the route, not a count.
+  const deckChangeCount = activeRoute?.deckChanges?.length ?? 0;
+
   // All routable items: cabins and venues across all decks
   const routableItems = useMemo(() => {
     return decks.flatMap((d) =>
@@ -226,7 +229,7 @@ export default function RouteBuilderPanel({
             <div style={{ display: 'flex', gap: '12px', marginTop: '6px', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
               <span>🚶 <strong>{activeRoute.distanceMeters} m</strong></span>
               <span>⏱️ <strong>~{activeRoute.estimatedMinutes} min</strong></span>
-              <span>↕️ <strong>{activeRoute.deckChanges === 0 ? 'Single Deck' : `${activeRoute.deckChanges} Deck Change${activeRoute.deckChanges > 1 ? 's' : ''}`}</strong></span>
+              <span>↕️ <strong>{deckChangeCount === 0 ? 'Single Deck' : `${deckChangeCount} Deck Change${deckChangeCount > 1 ? 's' : ''}`}</strong></span>
             </div>
           </div>
 
