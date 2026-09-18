@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { X, Code, Copy, Check, ShieldCheck, Database, Cpu, Download } from 'lucide-react';
 import { CELEBRITY_XCEL_METADATA } from '../data/celebrityXcelData';
 
-export default function ApiInspectorModal({ currentDeck, onClose }) {
+export default function ApiInspectorModal({ currentDeck, onClose, currentShip = CELEBRITY_XCEL_METADATA }) {
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState('GEOJSON'); // GEOJSON | OPENAPI | SDK
+
+  const ship = currentShip ?? CELEBRITY_XCEL_METADATA;
 
   const mockGeoJson = {
     type: "FeatureCollection",
@@ -13,9 +15,9 @@ export default function ApiInspectorModal({ currentDeck, onClose }) {
       properties: { name: "urn:ogc:def:crs:EPSG::3857" }
     },
     shipMetadata: {
-      name: CELEBRITY_XCEL_METADATA.name,
-      imo: CELEBRITY_XCEL_METADATA.imoNumber,
-      cruiseLine: CELEBRITY_XCEL_METADATA.cruiseLine,
+      name: ship.name,
+      imo: ship.imoNumber,
+      cruiseLine: ship.cruiseLine,
       deckLevel: currentDeck.level,
       deckName: currentDeck.name
     },
@@ -50,7 +52,7 @@ info:
   version: 1.0.0
   description: Standardized geospatial deck maps & GeoJSON API for trip planning apps.
 paths:
-  /v1/ships/celebrity-xcel/decks/${currentDeck.level}/geojson:
+  /v1/ships/${ship.id || 'celebrity-xcel'}/decks/${currentDeck.level}/geojson:
     get:
       summary: Retrieve GeoJSON FeatureCollection for ${currentDeck.name}
       responses:
@@ -65,9 +67,9 @@ paths:
 
 const client = new CruiseMapClient({ apiKey: 'cm_live_open_access' });
 
-// Fetch GeoJSON for Celebrity Xcel Deck ${currentDeck.level}
+// Fetch GeoJSON for ${ship.name} Deck ${currentDeck.level}
 const deckMap = await client.ships.getDeckGeoJSON({
-  shipId: 'celebrity-xcel',
+  shipId: '${ship.id || 'celebrity-xcel'}',
   deckLevel: ${currentDeck.level},
   upscaleQuality: 'REAL_ESRGAN_4X'
 });

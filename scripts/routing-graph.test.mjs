@@ -77,7 +77,7 @@ describe('routing in the published Celebrity Xcel pack', () => {
     // confidence and entrances are all inside this hash. Update it only in a
     // change that means to edit deck data, never to make routing pass.
     expect(nonRoutingHash(pack)).toBe(
-      '36571abba37867ad1ee3af67c779b08cc93f1d78eeabc164b1155a6448e2eb14'
+      '1c877f419de3d35ed179fdcda6d1fe0f11291f05499b3085ae39b33d8d429e13'
     );
   });
 

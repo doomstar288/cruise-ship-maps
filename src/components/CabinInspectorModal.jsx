@@ -3,7 +3,7 @@ import { X, Navigation, Sparkles, CheckCircle2, MapPin } from 'lucide-react';
 import { calculateSourceConsensus } from '../utils/multiSourceDataConsensus';
 import { describeLocation } from '../utils/deckPlanDataPipeline';
 
-export default function CabinInspectorModal({ venue, deck, onClose, onStartWayfinding }) {
+export default function CabinInspectorModal({ venue, deck, onClose, onStartWayfinding, onRouteFromHere }) {
   // Escape closes the drawer; the map behind it stays usable.
   useEffect(() => {
     const onKeyDown = (event) => {
@@ -58,22 +58,27 @@ export default function CabinInspectorModal({ venue, deck, onClose, onStartWayfi
             justifyContent: 'space-between'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', fontWeight: 700, color: 'var(--accent-emerald)' }}>
-              <CheckCircle2 size={16} /> Multi-Source Accuracy Verified
+              <CheckCircle2 size={16} />
+              <span>Multi-Source Verified: {consensus.confidence}</span>
             </div>
-            <span style={{ fontSize: '0.78rem', color: 'var(--text-primary)', fontWeight: 800 }}>
-              {(consensus.confidenceScore * 100).toFixed(0)}% Confidence ({consensus.sourcesCount} Sources)
-            </span>
+            <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>{consensus.sourcesAgreed}/{consensus.sourcesChecked} sources</span>
           </div>
 
-          {/* Key Metric Tags */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-            <span className="ship-badge" style={{ background: 'rgba(0,217,245,0.1)', borderColor: '#00d9f5', color: '#00d9f5' }}>
+          {/* Subheader Badges */}
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <span className="ship-badge" style={{ background: 'rgba(255,255,255,0.06)' }}>
               {venue.category}
             </span>
 
             {isStateroom && venue.sqft && (
-              <span className="ship-badge" style={{ background: 'rgba(245,158,11,0.1)', borderColor: '#f59e0b', color: '#f59e0b' }}>
-                📐 {venue.sqft} sq ft {venue.verandaSqft ? `(incl. ${venue.verandaSqft} sq ft veranda)` : ''}
+              <span className="ship-badge" style={{ background: 'rgba(255,255,255,0.06)' }}>
+                📐 {venue.sqft} sq ft {venue.verandaSqft ? `(+{venue.verandaSqft} veranda)` : ''}
+              </span>
+            )}
+
+            {isStateroom && venue.side && (
+              <span className="ship-badge" style={{ background: 'rgba(255,255,255,0.06)' }}>
+                Side: {venue.side}
               </span>
             )}
 
@@ -124,10 +129,25 @@ export default function CabinInspectorModal({ venue, deck, onClose, onStartWayfi
           )}
 
           {/* Actions */}
-          <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
-            <button className="btn-primary-gold" style={{ flex: 1, justifyContent: 'center' }} onClick={() => onStartWayfinding(venue)}>
-              <Navigation size={16} /> Directions from nearest elevators
+          <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+            <button
+              className="btn-primary-gold"
+              style={{ flex: 1, justifyContent: 'center', fontSize: '0.82rem', padding: '8px' }}
+              onClick={() => onStartWayfinding(venue)}
+              title="Calculate route to this venue from elevators"
+            >
+              <Navigation size={14} /> Route To Here
             </button>
+            {onRouteFromHere && (
+              <button
+                className="btn-glass"
+                style={{ flex: 1, justifyContent: 'center', fontSize: '0.82rem', padding: '8px' }}
+                onClick={() => onRouteFromHere(venue)}
+                title="Set as start point for custom wayfinding"
+              >
+                <Navigation size={14} color="var(--accent-cyan)" /> Start From Here
+              </button>
+            )}
           </div>
         </div>
       </div>
