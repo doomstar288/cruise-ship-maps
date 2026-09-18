@@ -1,0 +1,79 @@
+name: Fleet gap check
+
+# Compares English Wikipedia's view of the cruise fleet with the registry and
+# keeps ONE tracking issue up to date with what is missing: ships, ship classes
+# and ship categories. Nothing is applied automatically — the issue says how to
+# apply proposals (`--write-overrides` + re-seed, reviewed in a PR) and how to
+# fix the same facts upstream on Wikidata (QuickStatements artifact).
+
+on:
+  schedule:
+    # Weekly, Tuesdays 05:00 UTC — a day after the fleet registry refresh, so
+    # the comparison runs against a current registry.
+    - cron: '0 5 * * 2'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: fleet-gaps
+  cancel-in-progress: false
+
+jobs:
+  check:
+    name: Compare with Wikipedia
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check for gaps
+        run: |
+          node scripts/check-fleet-gaps.mjs \
+            --report "$RUNNER_TEMP/gaps.md" \
+            --quickstatements "$RUNNER_TEMP/gaps.qs" \
+            --json "$RUNNER_TEMP/gaps.json"
+
+      - name: Publish report to the run summary
+        if: always()
+        run: |
+          if [ -f "$RUNNER_TEMP/gaps.md" ]; then
+            cat "$RUNNER_TEMP/gaps.md" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload QuickStatements and raw findings
+        uses: actions/upload-artifact@v5
+        with:
+          name: fleet-gaps
+          path: |
+            ${{ runner.temp }}/gaps.qs
+            ${{ runner.temp }}/gaps.json
+          if-no-files-found: warn
+
+      # One long-lived issue rather than one per gap: the report is a worklist
+      # that changes every week, and a new issue each time would be noise.
+      - name: Update the tracking issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITLE: 'Fleet gaps: ships, classes and categories missing from the registry'
+        run: |
+          gh label create fleet-gaps --description "Registry coverage gaps found on Wikipedia" \
+            --color BFD4F2 --force
+          number=$(gh issue list --label fleet-gaps --state open --limit 1 --json number --jq '.[0].number // empty')
+          if [ -n "$number" ]; then
+            gh issue edit "$number" --title "$TITLE" --body-file "$RUNNER_TEMP/gaps.md"
+            echo "Updated issue #$number"
+          else
+            gh issue create --title "$TITLE" --label fleet-gaps --body-file "$RUNNER_TEMP/gaps.md"
+          fi

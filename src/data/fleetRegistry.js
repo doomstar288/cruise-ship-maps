@@ -85,11 +85,17 @@ export function getSisterShips(registry, imo) {
   );
 }
 
-/** All vessels operated by a brand (case-insensitive). */
-export function getShipsByOperator(registry, operator) {
+/**
+ * All vessels a brand currently operates (case-insensitive). Pass `status`
+ * (e.g. 'in_service') to exclude ships on order, retired, or of unknown status.
+ */
+export function getShipsByOperator(registry, operator, { status } = {}) {
   if (!registry?.ships || !operator) return [];
   const needle = operator.trim().toLowerCase();
-  return registry.ships.filter((s) => s.operator && s.operator.toLowerCase().includes(needle));
+  return registry.ships.filter(
+    (s) =>
+      s.operator && s.operator.toLowerCase().includes(needle) && (!status || s.status === status)
+  );
 }
 
 /**

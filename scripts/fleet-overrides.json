@@ -1,0 +1,984 @@
+{
+  "$comment": [
+    "Hand corrections applied on top of Wikidata by scripts/seed-fleet.mjs, keyed by IMO.",
+    "Each entry needs an imo, a reason, a source URL where possible, and exactly one action:",
+    "  set:     patch fields on a sourced ship, e.g. { \"status\": \"retired\" }",
+    "  add:     a ship Wikidata lacks entirely (needs at least a name)",
+    "  exclude: true to drop a false positive (a ferry, a yacht, a duplicate)",
+    "Prefer fixing Wikidata too; the refresh PR lists overrides that become stale.",
+    "Editable fields: see OVERRIDABLE_FIELDS in scripts/fleet-registry-build.mjs."
+  ],
+  "overrides": [
+    {
+      "imo": "5113436",
+      "reason": "Wikipedia infobox for \"MS Excelsior Neptune\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/MS_Excelsior_Neptune",
+      "set": {
+        "shipClass": "Mikhail Kalinin-class passenger ship",
+        "shipClassId": "Q1933630"
+      }
+    },
+    {
+      "imo": "5186196",
+      "reason": "Wikipedia infobox for \"MS Sounds of Orient\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/MS_Sounds_of_Orient",
+      "set": {
+        "shipClass": "Mikhail Kalinin-class passenger ship",
+        "shipClassId": "Q1933630"
+      }
+    },
+    {
+      "imo": "5404677",
+      "reason": "Wikipedia infobox for \"MS Grigoriy Ordzhonikidze\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/MS_Grigoriy_Ordzhonikidze",
+      "set": {
+        "shipClass": "Mikhail Kalinin-class passenger ship",
+        "shipClassId": "Q1933630"
+      }
+    },
+    {
+      "imo": "5414971",
+      "reason": "Wikipedia infobox for \"MS Siritara Ocean Queen\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/MS_Siritara_Ocean_Queen",
+      "set": {
+        "shipClass": "Mikhail Kalinin-class passenger ship",
+        "shipClassId": "Q1933630"
+      }
+    },
+    {
+      "imo": "6924959",
+      "reason": "Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Category%3AExpedition_cruise_ships",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "7042318",
+      "reason": "Wikipedia lists \"MS Mikhail Lermontov\" in List of cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
+      "source": "https://en.wikipedia.org/wiki/MS_Mikhail_Lermontov",
+      "include": "Q1143472"
+    },
+    {
+      "imo": "7108514",
+      "reason": "Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Category%3AExpedition_cruise_ships",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "7111078",
+      "reason": "Wikipedia lists \"MS Southward\" in Category:Ships of Norwegian Cruise Line, List of cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
+      "source": "https://en.wikipedia.org/wiki/MS_Southward",
+      "include": "Q20894609"
+    },
+    {
+      "imo": "7211074",
+      "reason": "Wikipedia lists \"MS Expedition\" in Category:Expedition cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/MS_Expedition",
+      "include": "Q1384284",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "7325629",
+      "reason": "Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Category%3AExpedition_cruise_ships",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "7391422",
+      "reason": "Wikipedia infobox for \"MV Ocean Adventurer\" gives the ship class; Wikidata has no vessel-class statement. Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/MV_Ocean_Adventurer",
+      "set": {
+        "shipClass": "Maria Yermolova-class passenger ship",
+        "shipClassId": "Q1899526",
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "7391434",
+      "reason": "Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Category%3AExpedition_cruise_ships",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "7625811",
+      "reason": "Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Category%3AExpedition_cruise_ships",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "7738383",
+      "reason": "Wikipedia lists \"SV Mandalay\" in Category:Cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
+      "source": "https://en.wikipedia.org/wiki/SV_Mandalay",
+      "include": "Q7278077"
+    },
+    {
+      "imo": "7824417",
+      "reason": "Wikipedia lists \"Kapitan Khlebnikov\" in Category:Expedition cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Kapitan_Khlebnikov",
+      "include": "Q2383420",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "7904891",
+      "reason": "Wikipedia lists \"MS Bahamas Celebration\" in List of cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
+      "source": "https://en.wikipedia.org/wiki/MS_Bahamas_Celebration",
+      "include": "Q427865"
+    },
+    {
+      "imo": "8010324",
+      "reason": "Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Category%3AExpedition_cruise_ships",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "8010336",
+      "reason": "Wikipedia lists \"Akademik Shokalskiy\" in Category:Expedition cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Akademik_Shokalskiy",
+      "include": "Q414593",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "8010348",
+      "reason": "Wikipedia lists \"Professor Molchanov\" in Category:Expedition cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. Wikipedia infobox for \"Professor Molchanov\" gives the ship class; Wikidata has no vessel-class statement. Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Professor_Molchanov",
+      "include": "Q4381977",
+      "set": {
+        "shipClass": "Akademik Shuleykin-class oceanographic research vessel",
+        "shipClassId": "Q4700077",
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "8019356",
+      "reason": "Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Category%3AExpedition_cruise_ships",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "8326008",
+      "reason": "Wikipedia lists \"Volga Star\" in Category:River cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. Wikipedia infobox for \"Volga Star\" gives the ship class; Wikidata has no vessel-class statement. Wikipedia files this ship under Category:River cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Volga_Star",
+      "include": "Q15624369",
+      "set": {
+        "shipClass": "Dmitriy Furmanov-class motorship",
+        "shipClassId": "Q1232848",
+        "category": "river"
+      }
+    },
+    {
+      "imo": "8326010",
+      "reason": "Wikipedia lists \"Sergey Dyagilev (ship)\" in Category:River cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. Wikipedia infobox for \"Sergey Dyagilev (ship)\" gives the ship class; Wikidata has no vessel-class statement. Wikipedia files this ship under Category:River cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Sergey_Dyagilev_(ship)",
+      "include": "Q12374885",
+      "set": {
+        "shipClass": "Dmitriy Furmanov-class motorship",
+        "shipClassId": "Q1232848",
+        "category": "river"
+      }
+    },
+    {
+      "imo": "8420878",
+      "reason": "Wikipedia lists \"Wind Star (ship)\" in Category:Cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
+      "source": "https://en.wikipedia.org/wiki/Wind_Star_(ship)",
+      "include": "Q3569268"
+    },
+    {
+      "imo": "8422606",
+      "reason": "Wikipedia lists \"Viking Helgi\" in Category:River cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. Wikipedia infobox for \"Viking Helgi\" gives the ship class; Wikidata has no vessel-class statement. Wikipedia files this ship under Category:River cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Viking_Helgi",
+      "include": "Q15628608",
+      "set": {
+        "shipClass": "Dmitriy Furmanov-class motorship",
+        "shipClassId": "Q1232848",
+        "category": "river"
+      }
+    },
+    {
+      "imo": "8507729",
+      "reason": "Wikipedia lists \"Akademik Sergey Vavilov\" in Category:Expedition cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Akademik_Sergey_Vavilov",
+      "include": "Q4059130",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "8509181",
+      "reason": "Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Category%3AExpedition_cruise_ships",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "8650813",
+      "reason": "Wikipedia lists \"SV Noorderlicht\" in Category:Expedition cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/SV_Noorderlicht",
+      "include": "Q1855013",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "8716502",
+      "reason": "Wikipedia infobox for \"Margaritaville at Sea Paradise\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Margaritaville_at_Sea_Paradise",
+      "set": {
+        "shipClass": "Classica-class cruise ship",
+        "shipClassId": "Q108415116"
+      }
+    },
+    {
+      "imo": "8802870",
+      "reason": "Wikipedia lists \"Caledonian Sky\" in Category:Cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
+      "source": "https://en.wikipedia.org/wiki/Caledonian_Sky",
+      "include": "Q52334955"
+    },
+    {
+      "imo": "8802882",
+      "reason": "Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Category%3AExpedition_cruise_ships",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "8802894",
+      "reason": "Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Category%3AExpedition_cruise_ships",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "8806747",
+      "reason": "Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Category%3AExpedition_cruise_ships",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "8807088",
+      "reason": "Wikipedia infobox for \"MV Horizon\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/MV_Horizon",
+      "set": {
+        "shipClass": "Horizon-class cruise ship",
+        "shipClassId": "Q118501176"
+      }
+    },
+    {
+      "imo": "8819512",
+      "reason": "Wikipedia infobox for \"Majesty of the Seas\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Majesty_of_the_Seas",
+      "set": {
+        "shipClass": "Sovereign-class cruise ship",
+        "shipClassId": "Q2975992"
+      }
+    },
+    {
+      "imo": "8821046",
+      "reason": "Wikipedia infobox for \"Costa neoRomantica\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Costa_neoRomantica",
+      "set": {
+        "shipClass": "Classica-class cruise ship",
+        "shipClassId": "Q108415116"
+      }
+    },
+    {
+      "imo": "8843446",
+      "reason": "Wikidata's only operator statements are historic US Coast Guard / US Navy service with no end dates; the vessel now sails for Sea Cloud Cruises.",
+      "source": "https://en.wikipedia.org/wiki/Sea_Cloud",
+      "set": {
+        "operator": "Sea Cloud Cruises",
+        "operatorId": null
+      }
+    },
+    {
+      "imo": "8883563",
+      "reason": "Wikipedia lists \"Spirit of Glacier Bay\" in List of cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
+      "source": "https://en.wikipedia.org/wiki/Spirit_of_Glacier_Bay",
+      "include": "Q7577967"
+    },
+    {
+      "imo": "8915445",
+      "reason": "Wikipedia lists \"Star Clipper\" in List of cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
+      "source": "https://en.wikipedia.org/wiki/Star_Clipper",
+      "include": "Q2332255"
+    },
+    {
+      "imo": "8918136",
+      "reason": "Wikipedia infobox for \"MV Zenith\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/MV_Zenith",
+      "set": {
+        "shipClass": "Horizon-class cruise ship",
+        "shipClassId": "Q118501176"
+      }
+    },
+    {
+      "imo": "8979283",
+      "reason": "Wikipedia lists \"A-Rosa Mia\" in Category:River cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. Wikipedia files this ship under Category:River cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/A-Rosa_Mia",
+      "include": "Q277906",
+      "set": {
+        "category": "river"
+      }
+    },
+    {
+      "imo": "8979295",
+      "reason": "Wikipedia lists \"A-Rosa Riva\" in Category:River cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. Wikipedia files this ship under Category:River cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/A-Rosa_Riva",
+      "include": "Q277910",
+      "set": {
+        "category": "river"
+      }
+    },
+    {
+      "imo": "9000168",
+      "reason": "Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Category%3AExpedition_cruise_ships",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "9000259",
+      "reason": "Wikipedia infobox for \"Pacific World\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Pacific_World",
+      "set": {
+        "shipClass": "Sun-class cruise ship",
+        "shipClassId": "Q2975998"
+      }
+    },
+    {
+      "imo": "9000699",
+      "reason": "Wikipedia lists \"Villa Vie Odyssey\" in Category:Cruise ships, List of cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
+      "source": "https://en.wikipedia.org/wiki/Villa_Vie_Odyssey",
+      "include": "Q897158"
+    },
+    {
+      "imo": "9048914",
+      "reason": "Wikipedia lists \"MS Nordlys (1994)\" in List of cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
+      "source": "https://en.wikipedia.org/wiki/MS_Nordlys_(1994)",
+      "include": "Q1614744"
+    },
+    {
+      "imo": "9070620",
+      "reason": "Wikipedia infobox for \"Marella Discovery 2\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Marella_Discovery_2",
+      "set": {
+        "shipClass": "Vision-class cruise ship",
+        "shipClassId": "Q2976021"
+      }
+    },
+    {
+      "imo": "9084542",
+      "reason": "Wikipedia lists \"American Queen\" in Category:River cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. Wikipedia files this ship under Category:River cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/American_Queen",
+      "include": "Q4744778",
+      "set": {
+        "category": "river"
+      }
+    },
+    {
+      "imo": "9103996",
+      "reason": "Wikipedia infobox for \"MS Star Voyager\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/MS_Star_Voyager",
+      "set": {
+        "shipClass": "Sun-class cruise ship",
+        "shipClassId": "Q2975998"
+      }
+    },
+    {
+      "imo": "9111802",
+      "reason": "Wikipedia infobox for \"Enchantment of the Seas\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Enchantment_of_the_Seas",
+      "set": {
+        "shipClass": "Vision-class cruise ship",
+        "shipClassId": "Q2976021"
+      }
+    },
+    {
+      "imo": "9141065",
+      "reason": "Wikipedia infobox for \"Norwegian Spirit\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Norwegian_Spirit",
+      "set": {
+        "shipClass": "Leo-class cruise ship",
+        "shipClassId": "Q109018550"
+      }
+    },
+    {
+      "imo": "9141077",
+      "reason": "Wikipedia infobox for \"Star Navigator\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Star_Navigator",
+      "set": {
+        "shipClass": "Leo-class cruise ship",
+        "shipClassId": "Q109018550"
+      }
+    },
+    {
+      "imo": "9150913",
+      "reason": "Wikipedia infobox for \"MS Dream (1998)\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/MS_Dream_(1998)",
+      "set": {
+        "shipClass": "Sun-class cruise ship",
+        "shipClassId": "Q2975998"
+      }
+    },
+    {
+      "imo": "9169550",
+      "reason": "Wikipedia infobox for \"MV Queen of the Oceans\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/MV_Queen_of_the_Oceans",
+      "set": {
+        "shipClass": "Sun-class cruise ship",
+        "shipClassId": "Q2975998"
+      }
+    },
+    {
+      "imo": "9172777",
+      "reason": "Wikipedia infobox for \"MS Ambition\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/MS_Ambition",
+      "set": {
+        "shipClass": "Lirica-class cruise ship",
+        "shipClassId": "Q15942266"
+      }
+    },
+    {
+      "imo": "9192351",
+      "reason": "Wikipedia infobox for \"Carnival Adventure\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Carnival_Adventure",
+      "set": {
+        "shipClass": "Grand-class cruise ship",
+        "shipClassId": "Q3114654"
+      }
+    },
+    {
+      "imo": "9192363",
+      "reason": "Wikipedia infobox for \"Carnival Encounter\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Carnival_Encounter",
+      "set": {
+        "shipClass": "Grand-class cruise ship",
+        "shipClassId": "Q3114654"
+      }
+    },
+    {
+      "imo": "9195195",
+      "reason": "Wikipedia infobox for \"Radiance of the Seas\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Radiance_of_the_Seas",
+      "set": {
+        "shipClass": "Radiance-class cruise ship",
+        "shipClassId": "Q2975978"
+      }
+    },
+    {
+      "imo": "9210218",
+      "reason": "Wikidata lists both Royal Caribbean International and Azamara as undated current operators; the ship sails for Azamara (its sister Azamara Pursuit is already dated correctly).",
+      "source": "https://www.wikidata.org/wiki/Q2875081",
+      "set": {
+        "operator": "Azamara",
+        "operatorId": "Q2875081"
+      }
+    },
+    {
+      "imo": "9215490",
+      "reason": "Wikipedia infobox for \"Caribbean Princess\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Caribbean_Princess",
+      "set": {
+        "shipClass": "Grand-class cruise ship",
+        "shipClassId": "Q3114654"
+      }
+    },
+    {
+      "imo": "9218131",
+      "reason": "Wikipedia infobox for \"Norwegian Sun\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Norwegian_Sun",
+      "set": {
+        "shipClass": "Sun-class cruise ship",
+        "shipClassId": "Q2975998"
+      }
+    },
+    {
+      "imo": "9228198",
+      "reason": "Wikipedia infobox for \"Diamond Princess (ship)\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Diamond_Princess_(ship)",
+      "set": {
+        "shipClass": "Grand-class cruise ship",
+        "shipClassId": "Q3114654"
+      }
+    },
+    {
+      "imo": "9228344",
+      "reason": "Wikipedia infobox for \"Serenade of the Seas\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Serenade_of_the_Seas",
+      "set": {
+        "shipClass": "Radiance-class cruise ship",
+        "shipClassId": "Q2975978"
+      }
+    },
+    {
+      "imo": "9228368",
+      "reason": "Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Category%3AExpedition_cruise_ships",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "9245354",
+      "reason": "Wikipedia lists \"Aranui 3\" in Category:Expedition cruise ships, List of cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Aranui_3",
+      "include": "Q2859534",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "9263538",
+      "reason": "Wikipedia lists \"American Empress\" in Category:River cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. Wikipedia files this ship under Category:River cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/American_Empress",
+      "include": "Q5374683",
+      "set": {
+        "category": "river"
+      }
+    },
+    {
+      "imo": "9273076",
+      "reason": "Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Category%3AExpedition_cruise_ships",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "9292747",
+      "reason": "Wikipedia lists \"Coral Discoverer\" in Category:Expedition cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Coral_Discoverer",
+      "include": "Q7076203",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "9293399",
+      "reason": "Wikipedia infobox for \"Crown Princess (2005)\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Crown_Princess_(2005)",
+      "set": {
+        "shipClass": "Grand-class cruise ship",
+        "shipClassId": "Q3114654"
+      }
+    },
+    {
+      "imo": "9333151",
+      "reason": "Wikipedia infobox for \"Emerald Princess\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Emerald_Princess",
+      "set": {
+        "shipClass": "Grand-class cruise ship",
+        "shipClassId": "Q3114654"
+      }
+    },
+    {
+      "imo": "9334088",
+      "reason": "Wikipedia lists \"National Geographic Endeavour II\" in Category:Ships of Lindblad Expeditions, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
+      "source": "https://en.wikipedia.org/wiki/National_Geographic_Endeavour_II",
+      "include": "Q105764886"
+    },
+    {
+      "imo": "9370018",
+      "reason": "Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Category%3AExpedition_cruise_ships",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "9378462",
+      "reason": "Wikipedia infobox for \"Ruby Princess\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Ruby_Princess",
+      "set": {
+        "shipClass": "Grand-class cruise ship",
+        "shipClassId": "Q3114654"
+      }
+    },
+    {
+      "imo": "9398905",
+      "reason": "Wikipedia infobox for \"Carnival Luminosa\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Carnival_Luminosa",
+      "set": {
+        "shipClass": "Vista (2002)-class cruise ship",
+        "shipClassId": "Q1346396"
+      }
+    },
+    {
+      "imo": "9398917",
+      "reason": "Wikipedia infobox for \"Costa Deliziosa\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Costa_Deliziosa",
+      "set": {
+        "shipClass": "Vista (2002)-class cruise ship",
+        "shipClassId": "Q1346396"
+      }
+    },
+    {
+      "imo": "9437866",
+      "reason": "Wikipedia lists \"Silver Spirit (ship)\" in List of cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
+      "source": "https://en.wikipedia.org/wiki/Silver_Spirit_(ship)",
+      "include": "Q2286554"
+    },
+    {
+      "imo": "9455882",
+      "reason": "Wikipedia lists \"National Geographic Delfina\" in Category:Ships of Lindblad Expeditions, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
+      "source": "https://en.wikipedia.org/wiki/National_Geographic_Delfina",
+      "include": "Q54933225"
+    },
+    {
+      "imo": "9502506",
+      "reason": "Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Category%3AExpedition_cruise_ships",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "9502518",
+      "reason": "Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Category%3AExpedition_cruise_ships",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "9524176",
+      "reason": "Wikipedia lists \"A-Rosa Aqua\" in Category:River cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. Wikipedia files this ship under Category:River cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/A-Rosa_Aqua",
+      "include": "Q277887",
+      "set": {
+        "category": "river"
+      }
+    },
+    {
+      "imo": "9677076",
+      "reason": "Wikipedia infobox for \"Norwegian Escape\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Norwegian_Escape",
+      "set": {
+        "shipClass": "Breakaway-class cruise ship",
+        "shipClassId": "Q15789743"
+      }
+    },
+    {
+      "imo": "9677492",
+      "reason": "Wikipedia lists \"Aranui 5\" in Category:Expedition cruise ships, List of cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Aranui_5",
+      "include": "Q20894650",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "9703150",
+      "reason": "Wikipedia infobox for \"Seven Seas Explorer\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Seven_Seas_Explorer",
+      "set": {
+        "shipClass": "Explorer-class cruise ship",
+        "shipClassId": "Q116455436"
+      }
+    },
+    {
+      "imo": "9703796",
+      "reason": "Wikipedia infobox for \"Norwegian Joy\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Norwegian_Joy",
+      "set": {
+        "shipClass": "Breakaway-class cruise ship",
+        "shipClassId": "Q15789743"
+      }
+    },
+    {
+      "imo": "9704130",
+      "reason": "Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Category%3AExpedition_cruise_ships",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "9733105",
+      "reason": "Wikipedia infobox for \"Genting Dream\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Genting_Dream",
+      "set": {
+        "shipClass": "Breakaway-class cruise ship",
+        "shipClassId": "Q15789743"
+      }
+    },
+    {
+      "imo": "9733117",
+      "reason": "Wikipedia infobox for \"Aroya (ship)\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Aroya_(ship)",
+      "set": {
+        "shipClass": "Breakaway-class cruise ship",
+        "shipClassId": "Q15789743"
+      }
+    },
+    {
+      "imo": "9745378",
+      "reason": "Wikipedia infobox for \"MSC Seaview\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/MSC_Seaview",
+      "set": {
+        "shipClass": "Seaside-class cruise ship",
+        "shipClassId": "Q25391838"
+      }
+    },
+    {
+      "imo": "9751509",
+      "reason": "Wikipedia infobox for \"Norwegian Bliss\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Norwegian_Bliss",
+      "set": {
+        "shipClass": "Breakaway-class cruise ship",
+        "shipClassId": "Q15789743"
+      }
+    },
+    {
+      "imo": "9751511",
+      "reason": "Wikipedia infobox for \"Norwegian Encore\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Norwegian_Encore",
+      "set": {
+        "shipClass": "Breakaway-class cruise ship",
+        "shipClassId": "Q15789743"
+      }
+    },
+    {
+      "imo": "9781877",
+      "reason": "Wikipedia infobox for \"AIDAcosma\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/AIDAcosma",
+      "set": {
+        "shipClass": "Excellence-class cruise ship",
+        "shipClassId": "Q28456719"
+      }
+    },
+    {
+      "imo": "9781891",
+      "reason": "Wikipedia infobox for \"Costa Toscana\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Costa_Toscana",
+      "set": {
+        "shipClass": "Excellence-class cruise ship",
+        "shipClassId": "Q28456719"
+      }
+    },
+    {
+      "imo": "9793545",
+      "reason": "Wikipedia lists \"Golden Horizon\" in Category:Cruise ships, List of cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
+      "source": "https://en.wikipedia.org/wiki/Golden_Horizon",
+      "include": "Q43022014"
+    },
+    {
+      "imo": "9796250",
+      "reason": "Wikipedia lists \"Viking Orion\" in List of cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
+      "source": "https://en.wikipedia.org/wiki/Viking_Orion",
+      "include": "Q83650670"
+    },
+    {
+      "imo": "9802396",
+      "reason": "Wikipedia infobox for \"Sky Princess (2019)\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Sky_Princess_(2019)",
+      "set": {
+        "shipClass": "Royal-class cruise ship",
+        "shipClassId": "Q3211627"
+      }
+    },
+    {
+      "imo": "9805348",
+      "reason": "Wikipedia lists \"Resilient Lady\" in Category:Cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
+      "source": "https://en.wikipedia.org/wiki/Resilient_Lady",
+      "include": "Q113679865"
+    },
+    {
+      "imo": "9807126",
+      "reason": "Wikipedia infobox for \"Enchanted Princess\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Enchanted_Princess",
+      "set": {
+        "shipClass": "Royal-class cruise ship",
+        "shipClassId": "Q3211627"
+      }
+    },
+    {
+      "imo": "9808986",
+      "reason": "Wikipedia infobox for \"Disney Adventure\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Disney_Adventure",
+      "set": {
+        "shipClass": "Global-class cruise ship",
+        "shipClassId": "Q55612706"
+      }
+    },
+    {
+      "imo": "9814026",
+      "reason": "Wikipedia lists \"Le Lapérouse\" in Category:Ships of Compagnie du Ponant, List of cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
+      "source": "https://en.wikipedia.org/wiki/Le_Lap%C3%A9rouse",
+      "include": "Q56574101"
+    },
+    {
+      "imo": "9814038",
+      "reason": "Wikipedia lists \"Le Champlain\" in Category:Ships of Compagnie du Ponant, List of cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
+      "source": "https://en.wikipedia.org/wiki/Le_Champlain",
+      "include": "Q60754049"
+    },
+    {
+      "imo": "9814040",
+      "reason": "Wikipedia lists \"Le Bougainville\" in Category:Ships of Compagnie du Ponant, List of cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
+      "source": "https://en.wikipedia.org/wiki/Le_Bougainville",
+      "include": "Q65071578"
+    },
+    {
+      "imo": "9818709",
+      "reason": "Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Category%3AExpedition_cruise_ships",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "9824007",
+      "reason": "Wikipedia infobox for \"Norwegian Aqua\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Norwegian_Aqua",
+      "set": {
+        "shipClass": "Prima-class cruise ship",
+        "shipClassId": "Q42317734"
+      }
+    },
+    {
+      "imo": "9837420",
+      "reason": "Wikipedia infobox for \"MSC World Europa\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/MSC_World_Europa",
+      "set": {
+        "shipClass": "World-class cruise ship",
+        "shipClassId": "Q97358846"
+      }
+    },
+    {
+      "imo": "9837444",
+      "reason": "Wikipedia infobox for \"Mardi Gras (2020 ship)\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Mardi_Gras_(2020_ship)",
+      "set": {
+        "shipClass": "Excellence-class cruise ship",
+        "shipClassId": "Q28456719"
+      }
+    },
+    {
+      "imo": "9837456",
+      "reason": "Wikipedia infobox for \"Carnival Celebration\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Carnival_Celebration",
+      "set": {
+        "shipClass": "Excellence-class cruise ship",
+        "shipClassId": "Q28456719"
+      }
+    },
+    {
+      "imo": "9837925",
+      "reason": "Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Category%3AExpedition_cruise_ships",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "9837937",
+      "reason": "Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Category%3AExpedition_cruise_ships",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "9838400",
+      "reason": "Wikipedia infobox for \"Celebrity Ascent\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Celebrity_Ascent",
+      "set": {
+        "shipClass": "Edge-class cruise ship",
+        "shipClassId": "Q36847697"
+      }
+    },
+    {
+      "imo": "9838644",
+      "reason": "Wikipedia lists \"Coral Adventurer\" in Category:Cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
+      "source": "https://en.wikipedia.org/wiki/Coral_Adventurer",
+      "include": "Q104382190"
+    },
+    {
+      "imo": "9843792",
+      "reason": "Wikipedia infobox for \"MSC Seashore\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/MSC_Seashore",
+      "set": {
+        "shipClass": "Seaside-class cruise ship",
+        "shipClassId": "Q25391838"
+      }
+    },
+    {
+      "imo": "9843807",
+      "reason": "Wikipedia infobox for \"MSC Seascape\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/MSC_Seascape",
+      "set": {
+        "shipClass": "Seaside-class cruise ship",
+        "shipClassId": "Q25391838"
+      }
+    },
+    {
+      "imo": "9849693",
+      "reason": "Wikipedia infobox for \"MS Arvia\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/MS_Arvia",
+      "set": {
+        "shipClass": "Excellence-class cruise ship",
+        "shipClassId": "Q28456719"
+      }
+    },
+    {
+      "imo": "9851737",
+      "reason": "Wikipedia infobox for \"Carnival Jubilee\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Carnival_Jubilee",
+      "set": {
+        "shipClass": "Excellence-class cruise ship",
+        "shipClassId": "Q28456719"
+      }
+    },
+    {
+      "imo": "9862023",
+      "reason": "Wikipedia files this ship under Category:Expedition cruise ships.",
+      "source": "https://en.wikipedia.org/wiki/Category%3AExpedition_cruise_ships",
+      "set": {
+        "category": "expedition"
+      }
+    },
+    {
+      "imo": "9863118",
+      "reason": "Wikipedia infobox for \"Sun Princess (2024)\" gives the ship class; Wikidata has no vessel-class statement.",
+      "source": "https://en.wikipedia.org/wiki/Sun_Princess_(2024)",
+      "set": {
+        "shipClass": "Sphere-class cruise ship",
+        "shipClassId": "Q108940077"
+      }
+    },
+    {
+      "imo": "9884136",
+      "reason": "Celebrity Xcel is the fifth Edge-class ship, but its Wikidata item has no vessel-class statement, so it is missing from the Edge class's sister-ship index.",
+      "source": "https://www.wikidata.org/wiki/Q36847697",
+      "set": {
+        "shipClass": "Edge-class cruise ship",
+        "shipClassId": "Q36847697"
+      }
+    }
+  ]
+}
