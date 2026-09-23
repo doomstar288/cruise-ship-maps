@@ -177,6 +177,7 @@ export function generateEdgeClassDecks(manifest) {
           y: PORT,
           description: 'Teen hangout with games, music and activities for guests aged 13–17.',
           tags: ['Teens', 'Games'],
+          access: 'kids',
           aliases: ['Teen Club'],
         }),
         venue(2, {
@@ -334,6 +335,7 @@ export function generateEdgeClassDecks(manifest) {
           y: [0, 17],
           description: 'Kids club with age-grouped activities.',
           tags: ['Kids'],
+          access: 'kids',
           aliases: ['Kids Club'],
         }),
         venue(3, {
@@ -929,6 +931,7 @@ export function generateEdgeClassDecks(manifest) {
         y: PORT,
         description: 'Exclusive restaurant for Retreat suite guests.',
         tags: ['The Retreat', 'Suite Guests Only'],
+        access: 'suite',
         aliases: ['Luminae Restaurant'],
       })
     );
@@ -983,6 +986,7 @@ export function generateEdgeClassDecks(manifest) {
       x: [96, 134],
       description: 'Adults-only, glass-roofed pool retreat with a pool and two hot tubs.',
       tags: ['Adults Only', 'Indoor Pool'],
+      access: 'adults',
       aliases: ['Adults Pool', 'Solarium Pool'],
     }),
     venue(14, {
@@ -1006,6 +1010,7 @@ export function generateEdgeClassDecks(manifest) {
       y: [29, 39],
       description: 'Rentable cabanas on the starboard side, fronting the Magic Carpet.',
       tags: ['Cabanas', 'Starboard'],
+      access: 'paid',
       aliases: ['Cabanas'],
     }),
     magicCarpetStop(14, {
@@ -1110,6 +1115,7 @@ export function generateEdgeClassDecks(manifest) {
       x: [96, 134],
       description: 'Enlarged private lounge for suite guests with complimentary drinks and dedicated concierge.',
       tags: ['The Retreat', 'Suite Guests Only'],
+      access: 'suite',
       aliases: ['Retreat Lounge'],
     }),
     venue(15, {
@@ -1233,6 +1239,7 @@ export function generateEdgeClassDecks(manifest) {
         x: [96, 134],
         description: 'Suites-only sundeck above the Solarium.',
         tags: ['The Retreat', 'Suite Guests Only'],
+        access: 'suite',
       }),
       venue(16, {
         id: 'v16-luminae',
@@ -1244,6 +1251,7 @@ export function generateEdgeClassDecks(manifest) {
         y: [0, 24],
         description: 'Redesigned restaurant exclusively for suite guests.',
         tags: ['The Retreat', 'Suite Guests Only'],
+        access: 'suite',
         aliases: ['Luminae'],
       }),
       venue(16, {
@@ -1297,6 +1305,7 @@ export function generateEdgeClassDecks(manifest) {
         x: [96, 134],
         description: 'Suites-only sundeck above the Solarium.',
         tags: ['The Retreat', 'Suite Guests Only'],
+        access: 'suite',
         aliases: ['Retreat Sundeck'],
       }),
       venue(16, {
@@ -1309,6 +1318,7 @@ export function generateEdgeClassDecks(manifest) {
         y: [10, 29],
         description: 'Dedicated pool for suite guests.',
         tags: ['The Retreat', 'Suite Guests Only', 'Pool'],
+        access: 'suite',
       }),
       magicCarpetStop(16, {
         name: 'Magic Carpet (Dinner on the Edge)',
@@ -1370,6 +1380,7 @@ export function generateEdgeClassDecks(manifest) {
             x: [96, 150],
             description: 'Round pool, plunge pools and cabanas for suite guests.',
             tags: ['The Retreat', 'Suite Guests Only', 'Pool'],
+            access: 'suite',
             aliases: ['Retreat Sundeck'],
           }),
           venue(17, {
@@ -1381,6 +1392,7 @@ export function generateEdgeClassDecks(manifest) {
             x: [152, 176],
             description: 'Poolside bar for Retreat guests.',
             tags: ['The Retreat', 'Suite Guests Only'],
+            access: 'suite',
             aliases: ['Retreat Bar'],
           }),
         ],

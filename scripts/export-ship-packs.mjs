@@ -159,6 +159,35 @@ export function spansDecksFor(venue) {
   return decks.length ? decks : undefined;
 }
 
+// ---------------------------------------------------------------------- access
+
+/**
+ * Who may use a venue, when not every guest may:
+ * - `suite`: suite guests only (The Retreat, Luminae). Compare with `cabin.type`.
+ * - `adults`: adults only (the Solarium).
+ * - `kids`: the youth programme's clubs, for children and teens only.
+ * - `paid`: open to anyone who buys a pass or books it (thermal suites, cabanas).
+ * Public venues omit the field.
+ */
+export const ACCESS = ['suite', 'adults', 'kids', 'paid'];
+
+/** The values that keep other guests out, not just charge them. A route to a
+ *  venue without the same value must never pass through one of these. */
+export const ACCESS_BARS_ENTRY = new Set(['suite', 'adults', 'kids']);
+
+/** A record's `access`, validated; undefined for a public venue. */
+export function accessFor(venue, featureType) {
+  const authored = venue.access;
+  if (authored === undefined) return undefined;
+  if (!ACCESS.includes(authored)) {
+    throw new Error(`Venue ${venue.id} has unknown access "${authored}"`);
+  }
+  if (!ALIASABLE_TYPES.has(featureType)) {
+    throw new Error(`${venue.id} is a ${featureType}; only venue and poi features take access`);
+  }
+  return authored;
+}
+
 // --------------------------------------------------------- position confidence
 
 /**
@@ -267,6 +296,7 @@ function toFeature(venue) {
       round((bounds[0][1] + bounds[1][1]) / 2),
     ],
     tags: venue.tags?.length ? venue.tags : undefined,
+    access: accessFor(venue, featureType),
     color: venue.color,
   };
   const confidence = positionConfidenceFor(venue, featureType);

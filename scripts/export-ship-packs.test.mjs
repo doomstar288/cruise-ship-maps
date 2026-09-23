@@ -2,10 +2,12 @@ import { readFileSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
 
 import {
+  ACCESS,
   PACK_POSITION_CONFIDENCE_DEFAULTS,
   POSITION_CONFIDENCE,
   SHIPS,
   SPEC_VERSION,
+  accessFor,
   aliasesFor,
   buildPack,
   cabinMetaFor,
@@ -374,6 +376,97 @@ describe('spansDecksFor', () => {
   it('returns undefined rather than an empty list', () => {
     expect(spansDecksFor({ spansDecks: [] })).toBeUndefined();
     expect(spansDecksFor({})).toBeUndefined();
+  });
+});
+
+describe('accessFor', () => {
+  it('keeps an access authored on a guest venue', () => {
+    expect(accessFor({ id: 'v15-retreat-lounge', access: 'suite' }, 'venue')).toBe('suite');
+  });
+
+  it('returns undefined for a public venue, so the pack omits the key', () => {
+    expect(accessFor({ id: 'v4-craft-social' }, 'venue')).toBeUndefined();
+  });
+
+  it('rejects a value outside the vocabulary rather than publishing it', () => {
+    expect(() => accessFor({ id: 'v1', access: 'vip' }, 'venue')).toThrow(/unknown access "vip"/);
+    expect(ACCESS).toEqual(['suite', 'adults', 'kids', 'paid']);
+  });
+
+  it('refuses access on anything a guest does not search for', () => {
+    expect(() => accessFor({ id: 'c1', access: 'suite' }, 'cabin')).toThrow(/only venue and poi/);
+  });
+});
+
+describe('venue access across the fleet', () => {
+  const records = SHIPS.flatMap((s) => s.decks.flatMap((d) => d.venues ?? []));
+
+  it('agrees with the restriction tags on every record', () => {
+    // Tags are free text for display; `access` is what consumers act on, so the
+    // two must never disagree.
+    const TAG_ACCESS = {
+      'Suite Guests Only': 'suite',
+      'Adults Only': 'adults',
+      Kids: 'kids',
+      'Kids Club': 'kids',
+      Teens: 'kids',
+      Cabanas: 'paid',
+    };
+    const failures = [];
+    for (const v of records) {
+      for (const tag of v.tags ?? []) {
+        const expected = TAG_ACCESS[tag];
+        if (expected && v.access !== expected) failures.push(`${v.id} tagged ${tag} has access ${v.access}`);
+      }
+    }
+    expect(failures).toEqual([]);
+  });
+
+  it('publishes exactly these restricted venues, fleet-wide', () => {
+    // Blu (AquaClass) and the Concierge Lounge are left public until the pack
+    // can tell those cabins apart. The SEA Thermal Suite shares a feature with
+    // the walk-in Spa, so it stays public too.
+    const restricted = new Set(
+      records
+        .filter((v) => accessFor(v, classifyFeature(v)) !== undefined)
+        .map((v) => `${v.access}: ${v.name}`)
+    );
+    expect([...restricted].sort()).toEqual([
+      'adults: Solarium',
+      'adults: Solarium & Thalassotherapy Pool',
+      'kids: Camp at Sea',
+      'kids: The Basement',
+      'kids: XClub Teen Lounge',
+      'paid: Persian Garden',
+      'paid: Pool Club Cabanas',
+      'paid: The Alcoves',
+      'suite: Luminae',
+      'suite: Luminae at The Retreat',
+      'suite: Retreat Lower Sundeck',
+      'suite: The Retreat Bar',
+      'suite: The Retreat Lounge',
+      'suite: The Retreat Pool',
+      'suite: The Retreat Sundeck',
+    ]);
+  });
+
+  it('carries access into the published Celebrity Xcel pack, and omits it for public venues', () => {
+    const published = JSON.parse(JSON.stringify(sharedXcel()));
+    const withAccess = published.decks
+      .flatMap((d) => d.features)
+      .filter((f) => 'access' in f)
+      .map((f) => [f.id, f.access]);
+    expect(withAccess).toEqual([
+      ['v2-basement', 'kids'],
+      ['v3-camp-at-sea', 'kids'],
+      ['v14-solarium', 'adults'],
+      ['v14-cabanas', 'paid'],
+      ['v15-retreat-lounge', 'suite'],
+      ['v16-retreat-lower-sundeck', 'suite'],
+      ['v16-luminae', 'suite'],
+      ['v17-retreat-sundeck', 'suite'],
+      ['v17-retreat-bar', 'suite'],
+    ]);
   });
 });
 

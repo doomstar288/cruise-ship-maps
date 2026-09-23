@@ -226,6 +226,7 @@ export function generateSolsticeClassDecks(manifest) {
             ? 'Exclusive restaurant reserved for guests of The Retreat, featuring modern eclectic menus.'
             : 'Welcoming lobby lounge right off the Grand Foyer offering craft cocktails, wines, and beers.',
           tags: hasDeck3Luminae ? ['Suites', 'Fine Dining'] : ['Cocktails', 'Lobby'],
+          access: hasDeck3Luminae ? 'suite' : undefined,
           aliases: hasDeck3Luminae ? ['Luminae Restaurant'] : ['Passport Bar', 'Passport'],
         }),
         venue(3, {
@@ -259,6 +260,7 @@ export function generateSolsticeClassDecks(manifest) {
           y: STBD_OUTER,
           description: 'Youth activity club with age-tailored entertainment, science, technology, and arts.',
           tags: ['Kids', 'Activities'],
+          access: 'kids',
           aliases: ['Kids Club'],
         }),
         ...generateServiceStrips(3, { range: [96, 134] }),
@@ -631,6 +633,7 @@ export function generateSolsticeClassDecks(manifest) {
           y: FULL_BEAM_INNER,
           description: 'Tranquil glass-domed sanctuary for adults with a heated lap pool, whirlpool spas, and cushioned daybeds.',
           tags: ['Solarium', 'Pool', 'Adults Only'],
+          access: 'adults',
           aliases: ['Solarium', 'Solarium Pool', 'Adults Pool'],
         }),
         venue(12, {
@@ -737,6 +740,7 @@ export function generateSolsticeClassDecks(manifest) {
           y: PORT_OUTER,
           description: 'Aromatherapy steam rooms, Finnish saunas, and heated ceramic loungers.',
           tags: ['Thermal Suite', 'Sauna'],
+          access: 'paid',
         }),
         venue(14, {
           id: 'v14-fitness-center',
@@ -856,6 +860,7 @@ export function generateSolsticeClassDecks(manifest) {
         y: PORT_OUTER,
         description: 'Private cabanas set along the edge of The Lawn Club available for full-day rental.',
         tags: ['Cabanas'],
+        access: 'paid',
         aliases: ['The Alcoves'],
       })
     );

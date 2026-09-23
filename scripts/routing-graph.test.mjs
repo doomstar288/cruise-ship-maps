@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { gzipSync } from 'node:zlib';
 import { describe, it, expect } from 'vitest';
 
-import { SHIPS, SPEC_VERSION, buildPack } from './export-ship-packs.mjs';
+import { ACCESS_BARS_ENTRY, SHIPS, SPEC_VERSION, buildPack } from './export-ship-packs.mjs';
 import {
   CABIN_COVER_M,
   MAX_CORRIDOR_NODE_SPACING_M,
@@ -14,6 +14,7 @@ import {
   segmentEntersRect,
 } from './routing-graph.mjs';
 import { distanceToRing, insidePolygon, isCirculation } from './venue-entrances.mjs';
+import { createRouter } from '../src/utils/shipRouter.js';
 
 const pack = buildPack(SHIPS[0].metadata, SHIPS[0].decks);
 const graph = expandRouting(pack);
@@ -73,11 +74,12 @@ describe('routing in the published Celebrity Xcel pack', () => {
   it('is additive: specVersion stays 1 and nothing outside routing changed', () => {
     expect(pack.specVersion).toBe(SPEC_VERSION);
     expect(SPEC_VERSION).toBe(1);
-    // Recorded from main at 0b0ae00, before routing existed. Aliases, spans,
-    // confidence and entrances are all inside this hash. Update it only in a
-    // change that means to edit deck data, never to make routing pass.
+    // Recorded from main at 0b0ae00, before routing existed, and re-recorded when
+    // P7.1 added `access` (routing unchanged). Aliases, spans, confidence,
+    // entrances and access are all inside this hash. Update it only in a change
+    // that means to edit deck data, never to make routing pass.
     expect(nonRoutingHash(pack)).toBe(
-      '1c877f419de3d35ed179fdcda6d1fe0f11291f05499b3085ae39b33d8d429e13'
+      '0625496e1f9492978de27a470f7500f707d968b467af839fe8eb6b79bb6f4b13'
     );
   });
 
@@ -346,6 +348,57 @@ describe('routing in the published Celebrity Xcel pack', () => {
           MAX_CORRIDOR_NODE_SPACING_M + 0.01
         );
     }
+  });
+});
+
+describe('access restrictions on routes, across the published fleet', () => {
+  // Read from the committed packs: building all fourteen here would take minutes
+  // under coverage. The Xcel test above holds the committed pack to the build.
+  const plans = SHIPS.map(({ metadata }) =>
+    JSON.parse(readFileSync(`public/v1/ships/${metadata.id}/plan.json`, 'utf8'))
+  );
+
+  it('never routes through a suite, adults or kids area to a venue other guests may use', () => {
+    // A `paid` area may be passed (the Deck 14 Magic Carpet stop is reached along
+    // the cabana row); the other values keep guests out altogether.
+    const failures = [];
+    let restrictedCrossings = 0;
+    for (const plan of plans) {
+      const router = createRouter(plan.routing);
+      const features = plan.decks.flatMap((d) =>
+        d.features.map((f) => ({ ...f, deck: d.deckNumber }))
+      );
+      const byId = new Map(features.map((f) => [f.id, f]));
+      // Any deck with a connected lift lobby: a crossing leads into a lobby-less
+      // walk section, so every route to a venue inside it takes the same crossing.
+      const origin = plan.routing.decks
+        .map(({ deckNumber }) => ({ deck: deckNumber, elevators: true }))
+        .find((endpoint) => {
+          try {
+            router.route(endpoint, endpoint);
+            return true;
+          } catch {
+            return false;
+          }
+        });
+      for (const target of features) {
+        if (!['venue', 'poi'].includes(target.featureType) || !router.hasFeature(target.id)) continue;
+        const route = router.route(origin, { featureId: target.id });
+        if (!route) continue; // reachability has its own tests
+        for (const id of route.legs.flatMap((leg) => leg.through ?? [])) {
+          const access = byId.get(id)?.access;
+          if (!ACCESS_BARS_ENTRY.has(access)) continue;
+          restrictedCrossings += 1;
+          if (target.access !== access) {
+            failures.push(`${plan.shipId}: ${target.id} (${target.access ?? 'public'}) via ${id} (${access})`);
+          }
+        }
+      }
+    }
+    expect(failures).toEqual([]);
+    // The Retreat Bar, reached across the Retreat Sundeck, on the three ships
+    // that draw it; proves the check sees crossings at all.
+    expect(restrictedCrossings).toBeGreaterThan(0);
   });
 });
 
