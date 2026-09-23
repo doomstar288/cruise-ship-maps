@@ -1,13 +1,20 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import {
   getShipRouter,
   findCabinOfClass,
   getSampleRoutesForShip,
+  loadShipRouting,
   routeOnShip,
 } from './fleetRouting.js';
 import { generateShip, AVAILABLE_SHIPS } from '../utils/shipGenerator.js';
+import { fetchFromPublic } from '../test/packFetch.js';
 
 describe('fleetRouting', () => {
+  // Routing graphs come from the published packs, so fetch them off disk first.
+  beforeAll(() =>
+    Promise.all(AVAILABLE_SHIPS.map((ship) => loadShipRouting(ship.id, fetchFromPublic)))
+  );
+
   it('instantiates and caches a router for each available ship', () => {
     for (const ship of AVAILABLE_SHIPS) {
       const router = getShipRouter(ship.id);
