@@ -35,8 +35,9 @@ import {
   CELEBRITY_XCEL_METADATA,
   CELEBRITY_XCEL_DECKS,
 } from '../src/data/celebrityXcelData.js';
+import { generateShip } from '../src/utils/shipGenerator.js';
 import { withEntrances } from './venue-entrances.mjs';
-import { buildRouting } from './routing-graph.mjs';
+import { buildRouting, getShipRoutingConnectors } from './routing-graph.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(__dirname, '..');
@@ -343,7 +344,12 @@ export function buildPack(metadata, decks) {
     decks: decks.map(toDeck).sort((a, b) => a.deckNumber - b.deckNumber),
   };
   // Walk/lift/stairs graph derived from the exported decks (P2.1).
-  pack.routing = buildRouting(pack.decks);
+  const connectors = getShipRoutingConnectors({
+    shipId: metadata.id,
+    lengthMeters: metadata.lengthMeters,
+    decks: pack.decks,
+  });
+  pack.routing = buildRouting(pack.decks, { connectors });
 
   return { ...pack, revision: revisionOf(pack), updatedAt: new Date().toISOString() };
 }
@@ -387,8 +393,36 @@ export function indexEntryFor(pack) {
   };
 }
 
+export const SHIP_IDS = [
+  // Edge Series
+  'celebrity-xcel',
+  'celebrity-ascent',
+  'celebrity-beyond',
+  'celebrity-apex',
+  'celebrity-edge',
+
+  // Solstice Class
+  'celebrity-solstice',
+  'celebrity-equinox',
+  'celebrity-eclipse',
+  'celebrity-silhouette',
+  'celebrity-reflection',
+
+  // Millennium Class
+  'celebrity-millennium',
+  'celebrity-infinity',
+  'celebrity-summit',
+  'celebrity-constellation',
+];
+
 /** Every ship this repo can currently publish. */
-export const SHIPS = [{ metadata: CELEBRITY_XCEL_METADATA, decks: CELEBRITY_XCEL_DECKS }];
+export const SHIPS = SHIP_IDS.map((shipId) => {
+  if (shipId === 'celebrity-xcel') {
+    return { metadata: CELEBRITY_XCEL_METADATA, decks: CELEBRITY_XCEL_DECKS };
+  }
+  const { metadata, decks } = generateShip(shipId);
+  return { metadata, decks };
+});
 
 // ------------------------------------------------------------------------ main
 

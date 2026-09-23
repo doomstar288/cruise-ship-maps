@@ -1,0 +1,1010 @@
+{
+  "shipId": "celebrity-ascent",
+  "name": "Celebrity Ascent",
+  "cruiseLine": "Celebrity Cruises",
+  "shipClass": "Edge-class cruise ship",
+  "imoNumber": "9838400",
+  "lengthMeters": 327,
+  "beamMeters": 39.5,
+  "grossTonnage": 141420,
+  "inServiceYear": 2023,
+  "totalDecks": 16,
+  "guestDecks": 15,
+  "deckRange": {
+    "min": 2,
+    "max": 17
+  },
+  "deckNames": {
+    "2": "Destination Gateway & Medical",
+    "3": "Grand Plaza & Guest Services",
+    "4": "Casino & Dining",
+    "5": "Grand Plaza, Dining & Magic Carpet",
+    "6": "Staterooms & Lounges",
+    "7": "Staterooms",
+    "8": "Staterooms",
+    "9": "Staterooms",
+    "10": "Staterooms",
+    "11": "Bridge, Suites & Concierge",
+    "12": "Iconic Suites & Suite Class",
+    "14": "Pool Deck, Spa & Oceanview Café",
+    "15": "The Retreat, Rooftop Garden & Sunset Bar",
+    "16": "Luminae & Retreat Sundeck",
+    "17": "The Retreat Sundeck"
+  },
+  "cabinRanges": {
+    "3": {
+      "port": [
+        {
+          "x": [
+            96,
+            150
+          ],
+          "from": 3101,
+          "to": 3159
+        }
+      ],
+      "starboard": [
+        {
+          "x": [
+            96,
+            150
+          ],
+          "from": 3100,
+          "to": 3158
+        }
+      ]
+    },
+    "6": {
+      "port": [
+        {
+          "x": [
+            20,
+            278.6
+          ],
+          "from": 6101,
+          "to": 6327
+        }
+      ],
+      "starboard": [
+        {
+          "x": [
+            20,
+            278.6
+          ],
+          "from": 6100,
+          "to": 6300
+        }
+      ]
+    },
+    "7": {
+      "port": [
+        {
+          "x": [
+            20,
+            326.6
+          ],
+          "from": 7101,
+          "to": 7357
+        }
+      ],
+      "starboard": [
+        {
+          "x": [
+            20,
+            326.6
+          ],
+          "from": 7100,
+          "to": 7336
+        }
+      ]
+    },
+    "8": {
+      "port": [
+        {
+          "x": [
+            20,
+            326.6
+          ],
+          "from": 8101,
+          "to": 8357
+        }
+      ],
+      "starboard": [
+        {
+          "x": [
+            20,
+            326.6
+          ],
+          "from": 8100,
+          "to": 8336
+        }
+      ]
+    },
+    "9": {
+      "port": [
+        {
+          "x": [
+            20,
+            326.6
+          ],
+          "from": 9101,
+          "to": 9351
+        }
+      ],
+      "starboard": [
+        {
+          "x": [
+            20,
+            326.6
+          ],
+          "from": 9100,
+          "to": 9332
+        }
+      ]
+    },
+    "10": {
+      "port": [
+        {
+          "x": [
+            20,
+            326.6
+          ],
+          "from": 10101,
+          "to": 10349
+        }
+      ],
+      "starboard": [
+        {
+          "x": [
+            20,
+            326.6
+          ],
+          "from": 10100,
+          "to": 10330
+        }
+      ]
+    },
+    "11": {
+      "port": [
+        {
+          "x": [
+            44,
+            326.6
+          ],
+          "from": 11101,
+          "to": 11309
+        }
+      ],
+      "starboard": [
+        {
+          "x": [
+            44,
+            326.6
+          ],
+          "from": 11100,
+          "to": 11290
+        }
+      ]
+    },
+    "12": {
+      "port": [
+        {
+          "x": [
+            26,
+            326.6
+          ],
+          "from": 12101,
+          "to": 12309
+        }
+      ],
+      "starboard": [
+        {
+          "x": [
+            26,
+            326.6
+          ],
+          "from": 12100,
+          "to": 12290
+        }
+      ]
+    },
+    "15": {
+      "port": [
+        {
+          "x": [
+            42,
+            80
+          ],
+          "from": 15101,
+          "to": 15103
+        }
+      ],
+      "starboard": [
+        {
+          "x": [
+            42,
+            80
+          ],
+          "from": 15100,
+          "to": 15102
+        }
+      ]
+    }
+  },
+  "venues": [
+    {
+      "name": "Medical Center",
+      "deck": 2,
+      "category": "Guest Services",
+      "side": "center",
+      "zone": "fwd",
+      "confidence": "zone",
+      "aliases": [
+        "Medical Clinic"
+      ]
+    },
+    {
+      "name": "The Basement",
+      "deck": 2,
+      "category": "Kids & Teens",
+      "side": "port",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Teen Club"
+      ]
+    },
+    {
+      "name": "Gangway & Security",
+      "deck": 2,
+      "category": "Guest Services",
+      "side": "port",
+      "zone": "mid",
+      "confidence": "estimated",
+      "aliases": [
+        "Gangway",
+        "Security Screening"
+      ]
+    },
+    {
+      "name": "Destination Gateway",
+      "deck": 2,
+      "category": "Guest Services",
+      "side": "starboard",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Tender Platform",
+        "Tender Boarding"
+      ]
+    },
+    {
+      "name": "Magic Carpet (Tender Platform)",
+      "deck": 2,
+      "category": "Magic Carpet",
+      "side": "starboard",
+      "zone": "mid",
+      "confidence": "verified",
+      "spansDecks": [
+        2,
+        5,
+        14,
+        16
+      ],
+      "aliases": [
+        "Magic Carpet"
+      ]
+    },
+    {
+      "name": "The Theatre",
+      "deck": 3,
+      "category": "Entertainment",
+      "side": "center",
+      "zone": "fwd",
+      "confidence": "zone",
+      "spansDecks": [
+        3,
+        4,
+        5
+      ],
+      "aliases": [
+        "The Theater",
+        "Theatre",
+        "Theater"
+      ]
+    },
+    {
+      "name": "Grand Plaza",
+      "deck": 3,
+      "category": "Entertainment",
+      "side": "center",
+      "zone": "mid",
+      "confidence": "zone",
+      "spansDecks": [
+        3,
+        4,
+        5
+      ],
+      "aliases": [
+        "Grand Plaza",
+        "Grand Plaza Bar"
+      ]
+    },
+    {
+      "name": "The Martini Bar",
+      "deck": 3,
+      "category": "Bars & Lounges",
+      "side": "center",
+      "zone": "mid",
+      "confidence": "estimated",
+      "aliases": [
+        "Martini Bar"
+      ]
+    },
+    {
+      "name": "Grand Plaza Café",
+      "deck": 3,
+      "category": "Dining",
+      "side": "center",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Grand Plaza Cafe"
+      ]
+    },
+    {
+      "name": "Shore Excursions",
+      "deck": 3,
+      "category": "Guest Services",
+      "side": "starboard",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Shore Ex"
+      ]
+    },
+    {
+      "name": "Guest Relations",
+      "deck": 3,
+      "category": "Guest Services",
+      "side": "port",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Guest Services",
+        "Reception"
+      ]
+    },
+    {
+      "name": "Camp at Sea",
+      "deck": 3,
+      "category": "Kids & Teens",
+      "side": "port",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Kids Club"
+      ]
+    },
+    {
+      "name": "Concierge Lounge",
+      "deck": 3,
+      "category": "Bars & Lounges",
+      "side": "starboard",
+      "zone": "mid",
+      "confidence": "zone"
+    },
+    {
+      "name": "Normandie Restaurant",
+      "deck": 3,
+      "category": "Fine Dining",
+      "side": "port",
+      "zone": "aft",
+      "confidence": "verified",
+      "aliases": [
+        "Normandie"
+      ]
+    },
+    {
+      "name": "Tuscan Restaurant",
+      "deck": 3,
+      "category": "Fine Dining",
+      "side": "starboard",
+      "zone": "aft",
+      "confidence": "verified",
+      "aliases": [
+        "Tuscan"
+      ]
+    },
+    {
+      "name": "The Theatre (Middle Level)",
+      "deck": 4,
+      "category": "Entertainment",
+      "side": "center",
+      "zone": "fwd",
+      "confidence": "zone",
+      "spansDecks": [
+        3,
+        4,
+        5
+      ],
+      "aliases": [
+        "The Theatre"
+      ]
+    },
+    {
+      "name": "Photo Gallery & Studio",
+      "deck": 4,
+      "category": "Guest Services",
+      "side": "starboard",
+      "zone": "fwd",
+      "confidence": "zone",
+      "aliases": [
+        "Photo Gallery"
+      ]
+    },
+    {
+      "name": "Celebrity Shops",
+      "deck": 4,
+      "category": "Shopping",
+      "side": "port",
+      "zone": "fwd",
+      "confidence": "zone",
+      "aliases": [
+        "The Shops"
+      ]
+    },
+    {
+      "name": "Le Grand Bistro",
+      "deck": 4,
+      "category": "Dining",
+      "side": "starboard",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Le Grand Bistro",
+        "Le Petit Chef"
+      ]
+    },
+    {
+      "name": "Grand Plaza (Middle Level)",
+      "deck": 4,
+      "category": "Entertainment",
+      "side": "center",
+      "zone": "mid",
+      "confidence": "zone",
+      "spansDecks": [
+        3,
+        4,
+        5
+      ],
+      "aliases": [
+        "Grand Plaza"
+      ]
+    },
+    {
+      "name": "Café al Bacio",
+      "deck": 4,
+      "category": "Bars & Lounges",
+      "side": "starboard",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Cafe al Bacio",
+        "Il Bacio"
+      ]
+    },
+    {
+      "name": "Casino",
+      "deck": 4,
+      "category": "Entertainment",
+      "side": "port",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "The Casino",
+        "Celebrity Casino"
+      ]
+    },
+    {
+      "name": "The Club",
+      "deck": 4,
+      "category": "Entertainment",
+      "side": "starboard",
+      "zone": "mid",
+      "confidence": "zone",
+      "spansDecks": [
+        4,
+        5
+      ],
+      "aliases": [
+        "The Club"
+      ]
+    },
+    {
+      "name": "Cosmopolitan Restaurant",
+      "deck": 4,
+      "category": "Fine Dining",
+      "side": "port",
+      "zone": "aft",
+      "confidence": "zone",
+      "aliases": [
+        "Cosmopolitan"
+      ]
+    },
+    {
+      "name": "Cyprus Restaurant",
+      "deck": 4,
+      "category": "Fine Dining",
+      "side": "starboard",
+      "zone": "aft",
+      "confidence": "zone",
+      "aliases": [
+        "Cyprus"
+      ]
+    },
+    {
+      "name": "The Theatre (Upper Level)",
+      "deck": 5,
+      "category": "Entertainment",
+      "side": "center",
+      "zone": "fwd",
+      "confidence": "zone",
+      "spansDecks": [
+        3,
+        4,
+        5
+      ],
+      "aliases": [
+        "The Theatre"
+      ]
+    },
+    {
+      "name": "Art Gallery",
+      "deck": 5,
+      "category": "Entertainment",
+      "side": "port",
+      "zone": "fwd",
+      "confidence": "zone",
+      "aliases": [
+        "Park West Gallery"
+      ]
+    },
+    {
+      "name": "Celebrity Flagship Store",
+      "deck": 5,
+      "category": "Shopping",
+      "side": "starboard",
+      "zone": "fwd",
+      "confidence": "zone",
+      "aliases": [
+        "Flagship Store"
+      ]
+    },
+    {
+      "name": "Blu",
+      "deck": 5,
+      "category": "Fine Dining",
+      "side": "port",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Blu Restaurant"
+      ]
+    },
+    {
+      "name": "Fine Cut Steakhouse",
+      "deck": 5,
+      "category": "Fine Dining",
+      "side": "starboard",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Fine Cut"
+      ]
+    },
+    {
+      "name": "Grand Plaza (Upper Level)",
+      "deck": 5,
+      "category": "Entertainment",
+      "side": "center",
+      "zone": "mid",
+      "confidence": "zone",
+      "spansDecks": [
+        3,
+        4,
+        5
+      ],
+      "aliases": [
+        "Grand Plaza"
+      ]
+    },
+    {
+      "name": "Raw on 5",
+      "deck": 5,
+      "category": "Fine Dining",
+      "side": "starboard",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Raw on 5th",
+        "Sushi on 5"
+      ]
+    },
+    {
+      "name": "World Class Bar",
+      "deck": 5,
+      "category": "Bars & Lounges",
+      "side": "port",
+      "zone": "mid",
+      "confidence": "zone"
+    },
+    {
+      "name": "Magic Carpet (Deck 5 Dining)",
+      "deck": 5,
+      "category": "Magic Carpet",
+      "side": "starboard",
+      "zone": "mid",
+      "confidence": "verified",
+      "spansDecks": [
+        2,
+        5,
+        14,
+        16
+      ],
+      "aliases": [
+        "Magic Carpet"
+      ]
+    },
+    {
+      "name": "The Attic at The Club",
+      "deck": 5,
+      "category": "Entertainment",
+      "side": "starboard",
+      "zone": "mid",
+      "confidence": "zone",
+      "spansDecks": [
+        4,
+        5
+      ],
+      "aliases": [
+        "The Attic",
+        "The Club Upper"
+      ]
+    },
+    {
+      "name": "Navigation Bridge",
+      "deck": 11,
+      "category": "Guest Services",
+      "side": "center",
+      "zone": "fwd",
+      "confidence": "zone",
+      "aliases": [
+        "The Bridge",
+        "Bridge"
+      ]
+    },
+    {
+      "name": "The Spa & SEA Thermal Suite",
+      "deck": 14,
+      "category": "Spa & Wellness",
+      "side": "center",
+      "zone": "fwd",
+      "confidence": "zone",
+      "aliases": [
+        "The Spa",
+        "SEA Thermal Suite"
+      ]
+    },
+    {
+      "name": "Solarium",
+      "deck": 14,
+      "category": "Pools & Sun Deck",
+      "side": "center",
+      "zone": "fwd",
+      "confidence": "zone",
+      "aliases": [
+        "Adults Pool",
+        "Solarium Pool"
+      ]
+    },
+    {
+      "name": "Celebrity Pool Club",
+      "deck": 14,
+      "category": "Pools & Sun Deck",
+      "side": "center",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Main Pool",
+        "Pool Deck",
+        "Resort Deck"
+      ]
+    },
+    {
+      "name": "Pool Club Cabanas",
+      "deck": 14,
+      "category": "Pools & Sun Deck",
+      "side": "port",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Cabanas"
+      ]
+    },
+    {
+      "name": "Magic Carpet (Pool Deck)",
+      "deck": 14,
+      "category": "Magic Carpet",
+      "side": "starboard",
+      "zone": "mid",
+      "confidence": "verified",
+      "spansDecks": [
+        2,
+        5,
+        14,
+        16
+      ],
+      "aliases": [
+        "Magic Carpet",
+        "Magic Carpet Bar"
+      ]
+    },
+    {
+      "name": "Mast Grill & Bar",
+      "deck": 14,
+      "category": "Dining",
+      "side": "starboard",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Mast Grill",
+        "Mast Bar"
+      ]
+    },
+    {
+      "name": "Oceanview Café",
+      "deck": 14,
+      "category": "Dining",
+      "side": "center",
+      "zone": "aft",
+      "confidence": "zone",
+      "aliases": [
+        "Oceanview Cafe",
+        "OVC",
+        "Buffet"
+      ]
+    },
+    {
+      "name": "Il Secondo Bacio",
+      "deck": 14,
+      "category": "Bars & Lounges",
+      "side": "center",
+      "zone": "aft",
+      "confidence": "zone"
+    },
+    {
+      "name": "Oceanview Café Terrace",
+      "deck": 14,
+      "category": "Dining",
+      "side": "center",
+      "zone": "aft",
+      "confidence": "zone",
+      "aliases": [
+        "Oceanview Terrace"
+      ]
+    },
+    {
+      "name": "Aft Sun Deck",
+      "deck": 14,
+      "category": "Pools & Sun Deck",
+      "side": "center",
+      "zone": "aft",
+      "confidence": "zone"
+    },
+    {
+      "name": "The Retreat Lounge",
+      "deck": 15,
+      "category": "Suites",
+      "side": "port",
+      "zone": "fwd",
+      "confidence": "zone",
+      "aliases": [
+        "Retreat Lounge"
+      ]
+    },
+    {
+      "name": "Fitness Center",
+      "deck": 15,
+      "category": "Spa & Wellness",
+      "side": "center",
+      "zone": "fwd",
+      "confidence": "zone",
+      "aliases": [
+        "Gym",
+        "Fitness Centre"
+      ]
+    },
+    {
+      "name": "Rooftop Garden",
+      "deck": 15,
+      "category": "Pools & Sun Deck",
+      "side": "center",
+      "zone": "aft",
+      "confidence": "zone",
+      "aliases": [
+        "Rooftop Garden Grill"
+      ]
+    },
+    {
+      "name": "Sunset Bar",
+      "deck": 15,
+      "category": "Bars & Lounges",
+      "side": "center",
+      "zone": "aft",
+      "confidence": "zone",
+      "aliases": [
+        "Sunset Bar"
+      ]
+    },
+    {
+      "name": "Magic Carpet (Dinner on the Edge)",
+      "deck": 16,
+      "category": "Magic Carpet",
+      "side": "starboard",
+      "zone": "mid",
+      "confidence": "verified",
+      "spansDecks": [
+        2,
+        5,
+        14,
+        16
+      ],
+      "aliases": [
+        "Magic Carpet"
+      ]
+    },
+    {
+      "name": "Mast Bar",
+      "deck": 16,
+      "category": "Bars & Lounges",
+      "side": "starboard",
+      "zone": "mid",
+      "confidence": "zone"
+    },
+    {
+      "name": "Craft Social",
+      "deck": 4,
+      "category": "Bars & Lounges",
+      "side": "port",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Craft Social Bar"
+      ]
+    },
+    {
+      "name": "Le Voyage by Daniel Boulud",
+      "deck": 4,
+      "category": "Fine Dining",
+      "side": "port",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Le Voyage"
+      ]
+    },
+    {
+      "name": "The Annex",
+      "deck": 5,
+      "category": "Entertainment",
+      "side": "starboard",
+      "zone": "fwd",
+      "confidence": "zone",
+      "aliases": [
+        "Annex"
+      ]
+    },
+    {
+      "name": "Eden Restaurant",
+      "deck": 4,
+      "category": "Fine Dining",
+      "side": "center",
+      "zone": "aft",
+      "confidence": "zone",
+      "spansDecks": [
+        4,
+        5,
+        6
+      ],
+      "aliases": [
+        "Eden",
+        "Eden Restaurant"
+      ]
+    },
+    {
+      "name": "Eden Bar",
+      "deck": 5,
+      "category": "Bars & Lounges",
+      "side": "center",
+      "zone": "aft",
+      "confidence": "zone",
+      "spansDecks": [
+        4,
+        5,
+        6
+      ],
+      "aliases": [
+        "Eden",
+        "Eden Bar",
+        "Eden Lounge"
+      ]
+    },
+    {
+      "name": "Eden (Upper Level)",
+      "deck": 6,
+      "category": "Entertainment",
+      "side": "center",
+      "zone": "aft",
+      "confidence": "zone",
+      "spansDecks": [
+        4,
+        5,
+        6
+      ],
+      "aliases": [
+        "Eden",
+        "Eden Walkway"
+      ]
+    },
+    {
+      "name": "Retreat Lower Sundeck",
+      "deck": 16,
+      "category": "Suites",
+      "side": "center",
+      "zone": "fwd",
+      "confidence": "zone"
+    },
+    {
+      "name": "Luminae at The Retreat",
+      "deck": 16,
+      "category": "Fine Dining",
+      "side": "port",
+      "zone": "fwd",
+      "confidence": "zone",
+      "aliases": [
+        "Luminae"
+      ]
+    },
+    {
+      "name": "Glass-Walled Hot Tubs",
+      "deck": 16,
+      "category": "Pools & Sun Deck",
+      "side": "starboard",
+      "zone": "mid",
+      "confidence": "zone"
+    },
+    {
+      "name": "The Retreat Sundeck",
+      "deck": 17,
+      "category": "Suites",
+      "side": "center",
+      "zone": "fwd",
+      "confidence": "zone",
+      "aliases": [
+        "Retreat Sundeck"
+      ]
+    },
+    {
+      "name": "The Retreat Bar",
+      "deck": 17,
+      "category": "Bars & Lounges",
+      "side": "center",
+      "zone": "fwd",
+      "confidence": "zone",
+      "aliases": [
+        "Retreat Bar"
+      ]
+    }
+  ]
+}

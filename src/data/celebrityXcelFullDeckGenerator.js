@@ -87,7 +87,7 @@ const edgeVeranda = (x) => (x >= 95 && x < 186 ? 'E1' : 'E3');
 /** Magic Carpet Sky Suite directly forward of the platform's starboard track. */
 const nextToMagicCarpet = ({ x, side, row }) => side === 'Starboard' && row === 'outside' && x >= 144 && x < 154;
 
-function stateroomDeck(level, { range, typeFor, transom = true, extraBanks = [], fixedCabins = [] }) {
+function stateroomDeck(level, { range, typeFor, transom = true, extraBanks = [], fixedCabins = [], cabinRanges }) {
   const avoid = [...CORES, ...(transom ? [STERN_STAIR_X] : [])];
   const cabins = generateStaterooms(level, {
     range,
@@ -99,6 +99,7 @@ function stateroomDeck(level, { range, typeFor, transom = true, extraBanks = [],
     },
     transom: transom ? { corner: 'SS', middle: 'SV' } : undefined,
     fixedCabins,
+    cabinRanges,
   });
   return [
     ...generateCenterlineCore(level, ['fwd', 'mid', 'aft', ...(transom ? ['stern'] : []), ...extraBanks]),
@@ -209,6 +210,7 @@ export function generateAllDecks() {
         venue(3, {
           id: 'v3-theatre',
           ...partOf('theatre'),
+          positionConfidence: 'verified',
           name: 'The Theatre',
           category: 'Entertainment',
           color: C.entertainment,
@@ -300,24 +302,26 @@ export function generateAllDecks() {
           tags: ['Concierge'],
         }),
         venue(3, {
-          id: 'v3-tuscan',
-          name: 'Tuscan Restaurant',
-          category: 'Fine Dining',
-          color: C.dining,
-          x: [276, 325],
-          y: PORT,
-          description: 'Complimentary main restaurant serving Italian dishes.',
-          tags: ['Main Dining', 'Italian'],
-        }),
-        venue(3, {
           id: 'v3-normandie',
+          positionConfidence: 'verified',
           name: 'Normandie Restaurant',
           category: 'Fine Dining',
           color: C.dining,
           x: [276, 325],
-          y: STBD,
+          y: PORT,
           description: 'Complimentary main restaurant serving French-inspired cuisine.',
           tags: ['Main Dining', 'French'],
+        }),
+        venue(3, {
+          id: 'v3-tuscan',
+          positionConfidence: 'verified',
+          name: 'Tuscan Restaurant',
+          category: 'Fine Dining',
+          color: C.dining,
+          x: [276, 325],
+          y: STBD,
+          description: 'Complimentary main restaurant serving Italian dishes.',
+          tags: ['Main Dining', 'Italian'],
         }),
       ],
     })
@@ -334,6 +338,7 @@ export function generateAllDecks() {
         venue(4, {
           id: 'v4-theatre',
           ...partOf('theatre'),
+          positionConfidence: 'verified',
           name: 'The Theatre (Middle Level)',
           category: 'Entertainment',
           color: C.entertainment,
@@ -364,10 +369,12 @@ export function generateAllDecks() {
         }),
         venue(4, {
           id: 'v4-le-voyage',
+          positionConfidence: 'verified',
           name: 'Le Voyage by Daniel Boulud',
           category: 'Fine Dining',
           color: C.dining,
           x: [126, 150],
+          y: PORT,
           description: 'Specialty restaurant with a globe-trotting menu by Chef Daniel Boulud. New on Xcel.',
           tags: ['Specialty Dining', 'Daniel Boulud'],
         }),
@@ -385,6 +392,7 @@ export function generateAllDecks() {
         venue(4, {
           id: 'v4-grand-plaza',
           ...partOf('grand-plaza'),
+          positionConfidence: 'verified',
           name: 'Grand Plaza (Middle Level)',
           category: 'Entertainment',
           color: C.entertainment,
@@ -406,39 +414,41 @@ export function generateAllDecks() {
         }),
         venue(4, {
           id: 'v4-casino',
-          positionConfidence: 'estimated', // Celebrity's plan labels it midship, not aft
+          positionConfidence: 'verified',
           name: 'Casino',
           category: 'Entertainment',
           color: C.entertainment,
           x: [200, 240],
+          y: [12, 39],
           description: 'Slots and table games.',
           tags: ['Slots', 'Blackjack'],
         }),
         venue(4, {
           id: 'v4-craft-social',
-          positionConfidence: 'estimated', // Celebrity's plan labels it midship, not aft
+          positionConfidence: 'estimated',
           name: 'Craft Social',
           category: 'Bars & Lounges',
           color: C.bar,
           x: [242, 260],
-          y: PORT,
+          y: STBD,
           description: 'Craft beer and cocktail pub with sports on screen.',
           tags: ['Craft Beer', 'Sports'],
         }),
         venue(4, {
           id: 'v4-the-club',
           ...partOf('the-club'),
-          positionConfidence: 'estimated', // Celebrity's plan labels it forward-midship, not aft
+          positionConfidence: 'verified',
           name: 'The Club',
           category: 'Entertainment',
           color: C.entertainment,
           x: [242, 260],
-          y: STBD,
+          y: PORT,
           description: 'Two-level nightlife and performance venue. Lower level.',
           tags: ['Nightlife', 'Live Music'],
         }),
         venue(4, {
           id: 'v4-cosmopolitan',
+          positionConfidence: 'verified',
           name: 'Cosmopolitan Restaurant',
           category: 'Fine Dining',
           color: C.dining,
@@ -449,6 +459,7 @@ export function generateAllDecks() {
         }),
         venue(4, {
           id: 'v4-cyprus',
+          positionConfidence: 'verified',
           name: 'Cyprus Restaurant',
           category: 'Fine Dining',
           color: C.dining,
@@ -482,6 +493,7 @@ export function generateAllDecks() {
         venue(5, {
           id: 'v5-theatre',
           ...partOf('theatre'),
+          positionConfidence: 'verified',
           name: 'The Theatre (Upper Level)',
           category: 'Entertainment',
           color: C.entertainment,
@@ -517,8 +529,8 @@ export function generateAllDecks() {
           name: 'The Annex',
           category: 'Bars & Lounges',
           color: C.bar,
-          x: [116, 134],
-          y: PORT,
+          x: [116, 184],
+          y: PORT_EDGE,
           description: 'Intimate lounge space. New on Xcel.',
           tags: ['Lounge', 'New on Xcel'],
         }),
@@ -534,27 +546,6 @@ export function generateAllDecks() {
           tags: ['Shopping'],
         }),
         venue(5, {
-          id: 'v5-blu',
-          positionConfidence: 'estimated', // Celebrity's plan labels it aft, not midship
-          name: 'Blu',
-          category: 'Fine Dining',
-          color: C.dining,
-          x: [136, 150],
-          y: PORT,
-          description: 'Restaurant reserved for AquaClass guests, with a clean-eating menu.',
-          tags: ['AquaClass', 'Healthy'],
-        }),
-        venue(5, {
-          id: 'v5-fine-cut',
-          name: 'Fine Cut Steakhouse',
-          category: 'Fine Dining',
-          color: C.dining,
-          x: [152, 184],
-          y: PORT_EDGE,
-          description: 'Specialty steakhouse overlooking the Grand Plaza.',
-          tags: ['Steakhouse', 'Specialty Dining'],
-        }),
-        venue(5, {
           id: 'v5-grand-plaza',
           ...partOf('grand-plaza'),
           name: 'Grand Plaza (Upper Level)',
@@ -567,6 +558,7 @@ export function generateAllDecks() {
         }),
         venue(5, {
           id: 'v5-raw-on-5',
+          positionConfidence: 'verified',
           name: 'Raw on 5',
           category: 'Fine Dining',
           color: C.dining,
@@ -577,6 +569,7 @@ export function generateAllDecks() {
         }),
         venue(5, {
           id: 'v5-world-class-bar',
+          positionConfidence: 'verified',
           name: 'World Class Bar',
           category: 'Bars & Lounges',
           color: C.bar,
@@ -586,10 +579,33 @@ export function generateAllDecks() {
           tags: ['Cocktails', 'New on Xcel'],
         }),
         magicCarpetStop(5, {
+          positionConfidence: 'verified',
           name: 'Magic Carpet (Deck 5 Dining)',
           ...partOf('magic-carpet'),
           description: 'The cantilevered Magic Carpet docks on Deck 5 as an open-air extension of the dining venues.',
           tags: ['Cantilevered', 'Ocean Views', 'Starboard'],
+        }),
+        venue(5, {
+          id: 'v5-blu',
+          positionConfidence: 'verified',
+          name: 'Blu',
+          category: 'Fine Dining',
+          color: C.dining,
+          x: [200, 240],
+          y: PORT_EDGE,
+          description: 'Restaurant reserved for AquaClass guests, with a clean-eating menu.',
+          tags: ['AquaClass', 'Healthy'],
+        }),
+        venue(5, {
+          id: 'v5-fine-cut',
+          positionConfidence: 'verified',
+          name: 'Fine Cut Steakhouse',
+          category: 'Fine Dining',
+          color: C.dining,
+          x: [200, 240],
+          y: STBD_EDGE,
+          description: 'Specialty steakhouse with prime cuts and panoramic views.',
+          tags: ['Steakhouse', 'Specialty Dining'],
         }),
         venue(5, {
           id: 'v5-back-of-house',
@@ -597,17 +613,19 @@ export function generateAllDecks() {
           category: 'Crew & Service',
           color: C.backOfHouse,
           x: [200, 240],
+          y: CENTER,
           description: 'Main galley. Crew only.',
           tags: ['Crew Only'],
         }),
         venue(5, {
           id: 'v5-attic',
           ...partOf('the-club', { aliases: ['The Attic'] }),
-          positionConfidence: 'estimated', // Celebrity's plan labels it forward-midship, not aft
+          positionConfidence: 'verified',
           name: 'The Attic at The Club',
           category: 'Entertainment',
           color: C.entertainment,
           x: [242, 260],
+          y: PORT,
           description: 'Upper level of The Club with its own programming. New on Xcel.',
           tags: ['Nightlife', 'New on Xcel'],
         }),
@@ -656,6 +674,7 @@ export function generateAllDecks() {
         venue(6, {
           id: 'v6-bazaar',
           ...partOf('the-bazaar', { aliases: ['The Bazaar'] }),
+          positionConfidence: 'verified',
           name: 'The Bazaar (Upper Level)',
           category: 'Entertainment',
           color: C.entertainment,
@@ -774,6 +793,7 @@ export function generateAllDecks() {
         ...generateCenterlineCore(14),
         venue(14, {
           id: 'v14-solarium',
+          positionConfidence: 'verified',
           name: 'Solarium',
           category: 'Pool & Sun Deck',
           color: C.pool,
@@ -784,6 +804,7 @@ export function generateAllDecks() {
         venue(14, {
           id: 'v14-pool-club',
           aliases: ['Pool Deck', 'Resort Deck', 'Main Pool'],
+          positionConfidence: 'verified',
           name: 'Celebrity Pool Club',
           category: 'Pool & Sun Deck',
           color: C.pool,
@@ -821,6 +842,7 @@ export function generateAllDecks() {
         venue(14, {
           id: 'v14-oceanview-cafe',
           aliases: ['OVC', 'Oceanview Cafe', 'Buffet'],
+          positionConfidence: 'verified',
           name: 'Oceanview Café',
           category: 'Casual Dining',
           color: C.dining,
@@ -902,13 +924,25 @@ export function generateAllDecks() {
         }),
         venue(15, {
           id: 'v15-fitness',
-          positionConfidence: 'estimated', // sources conflict: Deck 14 vs Deck 15
+          positionConfidence: 'verified',
           name: 'Fitness Center',
           category: 'Spa & Wellness',
           color: C.spa,
           x: [136, 184],
+          y: PORT,
           description: 'Gym with cardio and weights plus Motion Studios A and B.',
           tags: ['Gym', 'Classes'],
+        }),
+        venue(15, {
+          id: 'v15-spa',
+          positionConfidence: 'verified',
+          name: 'The Spa & Salon',
+          category: 'Spa & Wellness',
+          color: C.spa,
+          x: [136, 184],
+          y: STBD,
+          description: 'Upper level of The Spa with salon, barbershop and relaxation spaces.',
+          tags: ['Spa', 'Salon'],
         }),
         venue(15, {
           id: 'v15-bora',
@@ -917,11 +951,25 @@ export function generateAllDecks() {
           category: 'Fine Dining',
           color: C.dining,
           x: [200, 224],
+          y: PORT,
           description: 'Open-air Mediterranean restaurant. New on Xcel.',
           tags: ['Mediterranean', 'Open Air', 'New on Xcel'],
         }),
         venue(15, {
+          id: 'v15-oceanview-upper',
+          aliases: ['Oceanview Cafe (Upper Seating)', 'Oceanview Cafe Upper', 'Oceanview Upper'],
+          positionConfidence: 'verified',
+          name: 'Oceanview Café (Upper Seating)',
+          category: 'Casual Dining',
+          color: C.dining,
+          x: [200, 224],
+          y: STBD,
+          description: 'Upper level seating and outdoor terrace for Oceanview Café overlooking the stern.',
+          tags: ['Buffet', 'Outdoor Seating'],
+        }),
+        venue(15, {
           id: 'v15-rooftop-garden',
+          positionConfidence: 'verified',
           name: 'Rooftop Garden',
           category: 'Outdoor & Recreation',
           color: C.pool,
@@ -931,7 +979,7 @@ export function generateAllDecks() {
         }),
         venue(15, {
           id: 'v15-sunset-bar',
-          positionConfidence: 'estimated', // sources conflict: Deck 15 only vs Decks 15–16
+          positionConfidence: 'verified',
           name: 'Sunset Bar',
           category: 'Bars & Lounges',
           color: C.bar,
@@ -974,6 +1022,7 @@ export function generateAllDecks() {
         ...generateCenterlineCore(16),
         venue(16, {
           id: 'v16-retreat-lower-sundeck',
+          positionConfidence: 'verified',
           name: 'Retreat Lower Sundeck',
           category: 'Pool & Sun Deck',
           color: C.pool,
@@ -983,7 +1032,7 @@ export function generateAllDecks() {
         }),
         venue(16, {
           id: 'v16-luminae',
-          positionConfidence: 'estimated', // Celebrity's plan labels it forward, not midship
+          positionConfidence: 'verified',
           name: 'Luminae at The Retreat',
           category: 'Fine Dining',
           color: C.dining,
@@ -1009,11 +1058,24 @@ export function generateAllDecks() {
           tags: ['Dinner on the Edge', 'Starboard'],
         }),
         venue(16, {
+          id: 'v16-mast-grill',
+          positionConfidence: 'verified',
+          name: 'Mast Grill',
+          category: 'Casual Dining',
+          color: C.dining,
+          x: [200, 250],
+          y: PORT,
+          description: 'Poolside grill for burgers and hot dogs, overlooking the pool deck.',
+          tags: ['Grill', 'Poolside'],
+        }),
+        venue(16, {
           id: 'v16-mast-bar',
+          positionConfidence: 'verified',
           name: 'Mast Bar',
           category: 'Bars & Lounges',
           color: C.bar,
           x: [200, 250],
+          y: STBD,
           description: 'Top-deck bar beside the jogging track.',
           tags: ['Bar', 'Jogging Track'],
         }),
@@ -1031,7 +1093,7 @@ export function generateAllDecks() {
         ...generateCenterlineCore(17, ['fwd']),
         venue(17, {
           id: 'v17-retreat-sundeck',
-          positionConfidence: 'estimated', // Celebrity's plan labels it forward of the elevators
+          positionConfidence: 'verified',
           name: 'The Retreat Sundeck',
           category: 'Pool & Sun Deck',
           color: C.pool,

@@ -5,8 +5,10 @@ import {
   clampToHull,
   describeLocation,
   generateHullOutline,
+  generateStaterooms,
   hullHalfWidth,
   isInsideHull,
+  numberCabins,
 } from './deckPlanDataPipeline';
 
 describe('hullHalfWidth', () => {
@@ -70,5 +72,84 @@ describe('describeLocation', () => {
     expect(describeLocation([30, 5])).toBe('Forward · Port side');
     expect(describeLocation([160, CENTERLINE_Y])).toBe('Midship · Centerline');
     expect(describeLocation([300, 43])).toBe('Aft · Starboard side (outboard)');
+  });
+});
+
+describe('numberCabins and cabin parity', () => {
+  const sampleCabins = [
+    { code: 'E1', side: 'Port', row: 'outside', bounds: [[50, 0], [53, 5]] },
+    { code: 'E1', side: 'Port', row: 'outside', bounds: [[54, 0], [57, 5]] },
+    { code: 'E1', side: 'Port', row: 'outside', bounds: [[58, 0], [61, 5]] },
+    { code: 'E1', side: 'Starboard', row: 'outside', bounds: [[50, 34], [53, 39]] },
+    { code: 'E1', side: 'Starboard', row: 'outside', bounds: [[54, 34], [57, 39]] },
+    { code: 'E1', side: 'Starboard', row: 'outside', bounds: [[58, 34], [61, 39]] },
+  ];
+
+  it('assigns odd numbers to port and even numbers to starboard by default', () => {
+    const numbered = numberCabins(8, sampleCabins);
+    const port = numbered.filter((c) => c.side === 'Port');
+    const starboard = numbered.filter((c) => c.side === 'Starboard');
+
+    expect(port.map((c) => Number(c.label))).toEqual([8101, 8103, 8105]);
+    expect(starboard.map((c) => Number(c.label))).toEqual([8100, 8102, 8104]);
+
+    for (const c of port) {
+      expect(Number(c.label) % 2).toBe(1);
+    }
+    for (const c of starboard) {
+      expect(Number(c.label) % 2).toBe(0);
+    }
+  });
+
+  it('supports custom cabinRanges for fore/mid/aft segments', () => {
+    const cabinRanges = {
+      port: [{ x: [50, 56], from: 8151, to: 8199 }],
+      starboard: [{ x: [50, 56], from: 8150, to: 8198 }],
+    };
+    const numbered = numberCabins(8, sampleCabins, cabinRanges);
+    const port = numbered.filter((c) => c.side === 'Port');
+    const starboard = numbered.filter((c) => c.side === 'Starboard');
+
+    // First two cabins are in [50, 56], third cabin is at x=59.5 (outside range, falls back to sequence)
+    expect(port[0].label).toBe('8151');
+    expect(port[1].label).toBe('8153');
+    expect(port[2].label).toBe('8155');
+
+    expect(starboard[0].label).toBe('8150');
+    expect(starboard[1].label).toBe('8152');
+    expect(starboard[2].label).toBe('8154');
+  });
+
+  it('preserves ada accessible and connecting stateroom properties', () => {
+    const withFlags = [
+      { code: 'E1', side: 'Port', row: 'outside', bounds: [[50, 0], [53, 5]], ada: true },
+      {
+        code: 'E1',
+        side: 'Port',
+        row: 'outside',
+        bounds: [[54, 0], [57, 5]],
+        connecting: 'c8-8105',
+      },
+    ];
+    const numbered = numberCabins(8, withFlags);
+    expect(numbered[0].ada).toBe(true);
+    expect(numbered[1].connecting).toBe('c8-8105');
+  });
+
+  it('generateStaterooms applies odd-port / even-starboard parity and forwards cabinRanges', () => {
+    const staterooms = generateStaterooms(9, {
+      range: [100, 110],
+      typeFor: () => 'E1',
+      cabinRanges: {
+        port: [{ x: [95, 115], from: 9201, to: 9250 }],
+        starboard: [{ x: [95, 115], from: 9200, to: 9250 }],
+      },
+    });
+    expect(staterooms.length).toBeGreaterThan(0);
+    for (const c of staterooms) {
+      const num = Number(c.label);
+      expect(num % 2).toBe(c.side === 'Port' ? 1 : 0);
+      expect(num).toBeGreaterThanOrEqual(9200);
+    }
   });
 });

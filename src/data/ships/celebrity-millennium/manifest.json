@@ -1,0 +1,751 @@
+{
+  "shipId": "celebrity-millennium",
+  "name": "Celebrity Millennium",
+  "cruiseLine": "Celebrity Cruises",
+  "shipClass": "Millennium-class cruise ship",
+  "imoNumber": "9189419",
+  "lengthMeters": 294,
+  "beamMeters": 32.2,
+  "grossTonnage": 90963,
+  "inServiceYear": 2000,
+  "totalDecks": 12,
+  "guestDecks": 11,
+  "deckRange": {
+    "min": 2,
+    "max": 12
+  },
+  "deckNames": {
+    "2": "Medical Center & Services",
+    "3": "Celebrity Theater & Staterooms",
+    "4": "Casino, Rendezvous & Dining",
+    "5": "Specialty Dining & Galleria Boutiques",
+    "6": "Penthouse Suites & Staterooms",
+    "7": "Staterooms & Suites",
+    "8": "Staterooms & Suites",
+    "9": "AquaClass & Staterooms",
+    "10": "Resort Pool, Solarium & Buffet",
+    "11": "Sky Lounge, Camp at Sea & Sunset Bar",
+    "12": "The Retreat Sundeck & Sports Court"
+  },
+  "cabinRanges": {
+    "3": {
+      "port": [
+        {
+          "x": [
+            166,
+            256
+          ],
+          "from": 3101,
+          "to": 3165
+        }
+      ],
+      "starboard": [
+        {
+          "x": [
+            166,
+            256
+          ],
+          "from": 3100,
+          "to": 3164
+        }
+      ]
+    },
+    "6": {
+      "port": [
+        {
+          "x": [
+            16,
+            276
+          ],
+          "from": 6101,
+          "to": 6185
+        }
+      ],
+      "starboard": [
+        {
+          "x": [
+            16,
+            276
+          ],
+          "from": 6100,
+          "to": 6184
+        }
+      ]
+    },
+    "7": {
+      "port": [
+        {
+          "x": [
+            16,
+            276
+          ],
+          "from": 7101,
+          "to": 7195
+        }
+      ],
+      "starboard": [
+        {
+          "x": [
+            16,
+            276
+          ],
+          "from": 7100,
+          "to": 7194
+        }
+      ]
+    },
+    "8": {
+      "port": [
+        {
+          "x": [
+            16,
+            276
+          ],
+          "from": 8101,
+          "to": 8195
+        }
+      ],
+      "starboard": [
+        {
+          "x": [
+            16,
+            276
+          ],
+          "from": 8100,
+          "to": 8194
+        }
+      ]
+    },
+    "9": {
+      "port": [
+        {
+          "x": [
+            16,
+            276
+          ],
+          "from": 9101,
+          "to": 9195
+        }
+      ],
+      "starboard": [
+        {
+          "x": [
+            16,
+            276
+          ],
+          "from": 9100,
+          "to": 9194
+        }
+      ]
+    }
+  },
+  "venues": [
+    {
+      "name": "Medical Center",
+      "deck": 2,
+      "category": "Guest Services",
+      "side": "center",
+      "zone": "fwd",
+      "confidence": "zone",
+      "aliases": [
+        "Medical Clinic"
+      ]
+    },
+    {
+      "name": "Gangway & Security",
+      "deck": 2,
+      "category": "Guest Services",
+      "side": "port",
+      "zone": "mid",
+      "confidence": "estimated",
+      "aliases": [
+        "Gangway",
+        "Security Screening"
+      ]
+    },
+    {
+      "name": "Crew & Technical Areas",
+      "deck": 2,
+      "category": "Crew & Service",
+      "side": "center",
+      "zone": "aft",
+      "confidence": "zone",
+      "hideLabel": true
+    },
+    {
+      "name": "Provision Stores",
+      "deck": 2,
+      "category": "Crew & Service",
+      "side": "center",
+      "zone": "aft",
+      "confidence": "zone",
+      "hideLabel": true
+    },
+    {
+      "name": "Celebrity Theater (Lower Level)",
+      "deck": 3,
+      "category": "Entertainment",
+      "side": "center",
+      "zone": "fwd",
+      "confidence": "zone",
+      "spansDecks": [
+        3,
+        4,
+        5
+      ],
+      "aliases": [
+        "Celebrity Theater",
+        "The Theater",
+        "Celebrity Theatre"
+      ]
+    },
+    {
+      "name": "Grand Foyer (Lower Level)",
+      "deck": 3,
+      "category": "Entertainment",
+      "side": "center",
+      "zone": "mid",
+      "confidence": "zone",
+      "spansDecks": [
+        3,
+        4,
+        5
+      ],
+      "aliases": [
+        "Grand Foyer",
+        "Atrium"
+      ]
+    },
+    {
+      "name": "Guest Relations",
+      "deck": 3,
+      "category": "Guest Services",
+      "side": "port",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Guest Services",
+        "Reception"
+      ]
+    },
+    {
+      "name": "Shore Excursions Desk",
+      "deck": 3,
+      "category": "Guest Services",
+      "side": "starboard",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Shore Ex",
+        "Shore Excursions"
+      ]
+    },
+    {
+      "name": "Ocean View Stateroom 3101",
+      "deck": 3,
+      "category": "Staterooms",
+      "side": "port",
+      "zone": "mid",
+      "confidence": "zone"
+    },
+    {
+      "name": "Inside Stateroom 3102",
+      "deck": 3,
+      "category": "Staterooms",
+      "side": "starboard",
+      "zone": "mid",
+      "confidence": "zone"
+    },
+    {
+      "name": "Future Cruise Vacations",
+      "deck": 3,
+      "category": "Guest Services",
+      "side": "starboard",
+      "zone": "mid",
+      "confidence": "zone"
+    },
+    {
+      "name": "Celebrity Theater (Orchestra)",
+      "deck": 4,
+      "category": "Entertainment",
+      "side": "center",
+      "zone": "fwd",
+      "confidence": "zone",
+      "spansDecks": [
+        3,
+        4,
+        5
+      ],
+      "aliases": [
+        "Celebrity Theater",
+        "Orchestra Level"
+      ]
+    },
+    {
+      "name": "Cinema & Conference Center",
+      "deck": 4,
+      "category": "Entertainment",
+      "side": "port",
+      "zone": "fwd",
+      "confidence": "zone",
+      "aliases": [
+        "Cinema"
+      ]
+    },
+    {
+      "name": "Fortunes Casino",
+      "deck": 4,
+      "category": "Entertainment",
+      "side": "center",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Casino",
+        "The Casino"
+      ]
+    },
+    {
+      "name": "Casino Bar",
+      "deck": 4,
+      "category": "Bars & Lounges",
+      "side": "port",
+      "zone": "mid",
+      "confidence": "zone"
+    },
+    {
+      "name": "Grand Foyer (Middle Level)",
+      "deck": 4,
+      "category": "Entertainment",
+      "side": "center",
+      "zone": "mid",
+      "confidence": "zone",
+      "spansDecks": [
+        3,
+        4,
+        5
+      ],
+      "aliases": [
+        "Grand Foyer"
+      ]
+    },
+    {
+      "name": "Martini Bar",
+      "deck": 4,
+      "category": "Bars & Lounges",
+      "side": "port",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "The Martini Bar"
+      ]
+    },
+    {
+      "name": "Rendezvous Lounge",
+      "deck": 4,
+      "category": "Bars & Lounges",
+      "side": "starboard",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Rendezvous"
+      ]
+    },
+    {
+      "name": "Photo Gallery & Studio",
+      "deck": 4,
+      "category": "Guest Services",
+      "side": "center",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Photo Gallery"
+      ]
+    },
+    {
+      "name": "Metropolitan Restaurant (Lower Level)",
+      "deck": 4,
+      "category": "Fine Dining",
+      "side": "center",
+      "zone": "aft",
+      "confidence": "verified",
+      "spansDecks": [
+        4,
+        5
+      ],
+      "aliases": [
+        "Metropolitan Restaurant",
+        "Main Restaurant",
+        "Main Dining Room"
+      ]
+    },
+    {
+      "name": "Celebrity Theater (Balcony)",
+      "deck": 5,
+      "category": "Entertainment",
+      "side": "center",
+      "zone": "fwd",
+      "confidence": "zone",
+      "spansDecks": [
+        3,
+        4,
+        5
+      ],
+      "aliases": [
+        "Celebrity Theater",
+        "Balcony Level"
+      ]
+    },
+    {
+      "name": "Galleria Boutiques",
+      "deck": 5,
+      "category": "Shopping",
+      "side": "port",
+      "zone": "fwd",
+      "confidence": "zone",
+      "aliases": [
+        "The Shops",
+        "Boutiques"
+      ]
+    },
+    {
+      "name": "Art Gallery",
+      "deck": 5,
+      "category": "Entertainment",
+      "side": "starboard",
+      "zone": "fwd",
+      "confidence": "zone",
+      "aliases": [
+        "Park West Gallery"
+      ]
+    },
+    {
+      "name": "Grand Foyer (Upper Level)",
+      "deck": 5,
+      "category": "Entertainment",
+      "side": "center",
+      "zone": "mid",
+      "confidence": "zone",
+      "spansDecks": [
+        3,
+        4,
+        5
+      ],
+      "aliases": [
+        "Grand Foyer"
+      ]
+    },
+    {
+      "name": "Café al Bacio & Gelateria",
+      "deck": 5,
+      "category": "Dining",
+      "side": "port",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Cafe al Bacio",
+        "Gelateria"
+      ]
+    },
+    {
+      "name": "Blu",
+      "deck": 5,
+      "category": "Fine Dining",
+      "side": "port",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Blu Restaurant"
+      ]
+    },
+    {
+      "name": "Tuscan Grille",
+      "deck": 5,
+      "category": "Fine Dining",
+      "side": "starboard",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Tuscan",
+        "Specialty Restaurant"
+      ]
+    },
+    {
+      "name": "Cellar Masters",
+      "deck": 5,
+      "category": "Bars & Lounges",
+      "side": "starboard",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Wine Bar"
+      ]
+    },
+    {
+      "name": "Metropolitan Restaurant (Upper Level)",
+      "deck": 5,
+      "category": "Fine Dining",
+      "side": "center",
+      "zone": "aft",
+      "confidence": "verified",
+      "spansDecks": [
+        4,
+        5
+      ],
+      "aliases": [
+        "Metropolitan Restaurant",
+        "Main Restaurant Upper"
+      ]
+    },
+    {
+      "name": "Penthouse Suite 6148",
+      "deck": 6,
+      "category": "Suites",
+      "side": "port",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Penthouse Suite"
+      ]
+    },
+    {
+      "name": "Royal Suite 6146",
+      "deck": 6,
+      "category": "Suites",
+      "side": "starboard",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Royal Suite"
+      ]
+    },
+    {
+      "name": "Celebrity Suite 6101",
+      "deck": 6,
+      "category": "Suites",
+      "side": "port",
+      "zone": "mid",
+      "confidence": "zone"
+    },
+    {
+      "name": "Sky Suite 7101",
+      "deck": 7,
+      "category": "Suites",
+      "side": "port",
+      "zone": "mid",
+      "confidence": "zone"
+    },
+    {
+      "name": "Concierge Class 8101",
+      "deck": 8,
+      "category": "Staterooms",
+      "side": "port",
+      "zone": "mid",
+      "confidence": "zone"
+    },
+    {
+      "name": "AquaClass 9101",
+      "deck": 9,
+      "category": "Staterooms",
+      "side": "port",
+      "zone": "mid",
+      "confidence": "zone"
+    },
+    {
+      "name": "The Spa & Fitness Center",
+      "deck": 10,
+      "category": "Spa & Wellness",
+      "side": "center",
+      "zone": "fwd",
+      "confidence": "zone",
+      "aliases": [
+        "The Spa",
+        "Canyon Ranch",
+        "Gym",
+        "Fitness Center"
+      ]
+    },
+    {
+      "name": "Persian Garden",
+      "deck": 10,
+      "category": "Spa & Wellness",
+      "side": "port",
+      "zone": "fwd",
+      "confidence": "zone"
+    },
+    {
+      "name": "Solarium & Thalassotherapy Pool",
+      "deck": 10,
+      "category": "Pools & Sun Deck",
+      "side": "center",
+      "zone": "fwd",
+      "confidence": "zone",
+      "aliases": [
+        "Thalassotherapy Pool",
+        "Solarium",
+        "Adults Pool"
+      ]
+    },
+    {
+      "name": "AquaSpa Café",
+      "deck": 10,
+      "category": "Casual Dining",
+      "side": "port",
+      "zone": "fwd",
+      "confidence": "zone",
+      "aliases": [
+        "AquaSpa Cafe"
+      ]
+    },
+    {
+      "name": "Main Resort Pool",
+      "deck": 10,
+      "category": "Pools & Sun Deck",
+      "side": "center",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Main Pool",
+        "Pool Deck"
+      ]
+    },
+    {
+      "name": "Pool Bar",
+      "deck": 10,
+      "category": "Bars & Lounges",
+      "side": "port",
+      "zone": "mid",
+      "confidence": "zone"
+    },
+    {
+      "name": "Mast Bar & Grill",
+      "deck": 10,
+      "category": "Casual Dining",
+      "side": "starboard",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Mast Grill",
+        "Mast Bar"
+      ]
+    },
+    {
+      "name": "Oceanview Café & Grill",
+      "deck": 10,
+      "category": "Dining",
+      "side": "center",
+      "zone": "aft",
+      "confidence": "zone",
+      "aliases": [
+        "Oceanview Cafe",
+        "Buffet",
+        "OVC"
+      ]
+    },
+    {
+      "name": "Oceanview Bar & Terrace",
+      "deck": 10,
+      "category": "Bars & Lounges",
+      "side": "center",
+      "zone": "aft",
+      "confidence": "zone",
+      "aliases": [
+        "Aft Terrace"
+      ]
+    },
+    {
+      "name": "Cosmos Lounge",
+      "deck": 11,
+      "category": "Bars & Lounges",
+      "side": "center",
+      "zone": "fwd",
+      "confidence": "zone",
+      "aliases": [
+        "Observation Lounge",
+        "Sky Lounge",
+        "Panoramic Lounge"
+      ]
+    },
+    {
+      "name": "Jogging Track",
+      "deck": 11,
+      "category": "Sports",
+      "side": "center",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Running Track"
+      ]
+    },
+    {
+      "name": "Camp at Sea",
+      "deck": 11,
+      "category": "Kids & Teens",
+      "side": "port",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "Kids Club",
+        "Fun Factory"
+      ]
+    },
+    {
+      "name": "XClub Teen Lounge",
+      "deck": 11,
+      "category": "Kids & Teens",
+      "side": "starboard",
+      "zone": "mid",
+      "confidence": "zone",
+      "aliases": [
+        "XClub",
+        "Teen Club"
+      ]
+    },
+    {
+      "name": "Rooftop Terrace",
+      "deck": 11,
+      "category": "Entertainment",
+      "side": "center",
+      "zone": "aft",
+      "confidence": "zone",
+      "aliases": [
+        "Aft Terrace",
+        "Movie Screen"
+      ]
+    },
+    {
+      "name": "Sunset Bar",
+      "deck": 11,
+      "category": "Bars & Lounges",
+      "side": "center",
+      "zone": "aft",
+      "confidence": "zone",
+      "aliases": [
+        "Aft Sunset Bar"
+      ]
+    },
+    {
+      "name": "The Retreat Sundeck",
+      "deck": 12,
+      "category": "Suites",
+      "side": "center",
+      "zone": "fwd",
+      "confidence": "zone",
+      "aliases": [
+        "Retreat Sundeck",
+        "Suite Sundeck"
+      ]
+    },
+    {
+      "name": "Sports Court",
+      "deck": 12,
+      "category": "Sports",
+      "side": "center",
+      "zone": "aft",
+      "confidence": "zone",
+      "aliases": [
+        "Basketball Court",
+        "Sport Court"
+      ]
+    }
+  ]
+}

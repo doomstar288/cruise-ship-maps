@@ -124,7 +124,7 @@ describe('real-ship layout', () => {
     expect(sunsetBar.center[0]).toBeGreaterThan(280);
   });
 
-  it('numbers cabins with the deck prefix, even to port and odd to starboard', () => {
+  it('numbers cabins with the deck prefix, odd to port and even to starboard', () => {
     for (const deck of CELEBRITY_XCEL_DECKS) {
       const cabins = deck.venues.filter((v) => v.cabinClass);
       const numbers = cabins.map((c) => Number(c.label));
@@ -132,7 +132,7 @@ describe('real-ship layout', () => {
       for (const cabin of cabins) {
         expect(cabin.label.startsWith(String(deck.level))).toBe(true);
         if (cabin.cabinClass === 'EV') continue; // Edge Villas keep their published numbers.
-        expect(Number(cabin.label) % 2, cabin.id).toBe(cabin.side === 'Port' ? 0 : 1);
+        expect(Number(cabin.label) % 2, cabin.id).toBe(cabin.side === 'Port' ? 1 : 0);
       }
     }
   });

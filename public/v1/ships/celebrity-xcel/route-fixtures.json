@@ -1,7 +1,7 @@
 {
   "specVersion": 1,
   "shipId": "celebrity-xcel",
-  "recordedAgainstRevision": "c2b64fbc5010",
+  "recordedAgainstRevision": "223dda36fe31",
   "costModel": {
     "walkingSpeedMps": 1.1,
     "elevatorBoardS": 60,
@@ -30,8 +30,8 @@
       },
       "stepFree": false,
       "expected": {
-        "walkM": 145.7,
-        "timeS": 232.5,
+        "walkM": 145.34,
+        "timeS": 232.1,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -101,8 +101,8 @@
       },
       "stepFree": false,
       "expected": {
-        "walkM": 42.53,
-        "timeS": 68.7,
+        "walkM": 41.25,
+        "timeS": 67.5,
         "deckChanges": [
           {
             "mode": "stairs",
@@ -180,8 +180,8 @@
       },
       "stepFree": false,
       "expected": {
-        "walkM": 63.97,
-        "timeS": 58.2,
+        "walkM": 93.14,
+        "timeS": 84.7,
         "deckChanges": [],
         "through": []
       }
@@ -197,8 +197,8 @@
       },
       "stepFree": true,
       "expected": {
-        "walkM": 183.22,
-        "timeS": 302.6,
+        "walkM": 219.45,
+        "timeS": 335.5,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -316,8 +316,8 @@
       },
       "stepFree": true,
       "expected": {
-        "walkM": 231.48,
-        "timeS": 326.4,
+        "walkM": 231.84,
+        "timeS": 326.8,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -341,8 +341,8 @@
       },
       "stepFree": false,
       "expected": {
-        "walkM": 313.03,
-        "timeS": 284.6,
+        "walkM": 300.15,
+        "timeS": 272.9,
         "deckChanges": [],
         "through": []
       }

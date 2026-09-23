@@ -5,8 +5,10 @@ import DeckMapViewer from './components/DeckMapViewer';
 import CabinInspectorModal from './components/CabinInspectorModal';
 import ApiInspectorModal from './components/ApiInspectorModal';
 import MultiSourceInspectorModal from './components/MultiSourceInspectorModal';
-import { CELEBRITY_XCEL_DECKS, CELEBRITY_XCEL_METADATA } from './data/celebrityXcelData';
-import { SAMPLE_ROUTE_SPECS, routeFor } from './data/celebrityXcelRoutes';
+import RouteBuilderPanel from './components/RouteBuilderPanel';
+import SearchCommandPalette from './components/SearchCommandPalette';
+import { AVAILABLE_SHIPS, generateShip } from './utils/shipGenerator';
+import { getSampleRoutesForShip, routeOnShip } from './data/fleetRouting';
 import { VENUE_COLORS } from './utils/deckPlanDataPipeline';
 import { Search, Navigation, ChevronRight, X, ChevronLeft, CheckCircle2 } from 'lucide-react';
 import './styles/design-system.css';
@@ -25,29 +27,41 @@ const CATEGORIES = [
   { label: 'Pools & Sun Deck', key: 'POOL & SUN DECK', color: VENUE_COLORS.pool },
 ];
 
-const deckByLevel = (level) => CELEBRITY_XCEL_DECKS.find((d) => d.level === level);
-
 const startsCollapsed = () =>
   typeof window !== 'undefined' && window.matchMedia?.('(max-width: 1024px)').matches;
 
 export default function App() {
-  const [currentDeck, setCurrentDeck] = useState(() => deckByLevel(5)); // Grand Plaza & Magic Carpet
+  const [selectedShipId, setSelectedShipId] = useState('celebrity-xcel');
+  const shipData = useMemo(() => generateShip(selectedShipId), [selectedShipId]);
+  const currentShip = shipData.metadata;
+  const shipDecks = shipData.decks;
+
+  const [currentDeckLevel, setCurrentDeckLevel] = useState(5);
+  const currentDeck = useMemo(() => {
+    return (
+      shipDecks.find((d) => d.level === currentDeckLevel) ||
+      shipDecks.find((d) => d.level === 5) ||
+      shipDecks[0]
+    );
+  }, [shipDecks, currentDeckLevel]);
+
   const [selectedVenue, setSelectedVenue] = useState(null);
   const [isUpscaledMode, setIsUpscaledMode] = useState(false);
   const [activeFilter, setActiveFilter] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
   const [showApiInspector, setShowApiInspector] = useState(false);
   const [showAccuracyInspector, setShowAccuracyInspector] = useState(false);
+  const [isSearchPaletteOpen, setIsSearchPaletteOpen] = useState(false);
   const [routeSpec, setRouteSpec] = useState(null);
   const [stepFree, setStepFree] = useState(false);
   const [isDockCollapsed, setIsDockCollapsed] = useState(startsCollapsed);
 
   const allVenuesList = useMemo(
     () =>
-      CELEBRITY_XCEL_DECKS.flatMap((d) =>
+      shipDecks.flatMap((d) =>
         d.venues.filter((v) => !v.hideLabel).map((v) => ({ ...v, deck: d }))
       ),
-    []
+    [shipDecks]
   );
 
   const filteredSearchResults = useMemo(() => {
@@ -61,40 +75,54 @@ export default function App() {
     );
   }, [allVenuesList, searchQuery]);
 
-  const sampleRoutes = useMemo(() => SAMPLE_ROUTE_SPECS.map((spec) => routeFor(spec, { stepFree })), [stepFree]);
+  const sampleRoutes = useMemo(
+    () => getSampleRoutesForShip(selectedShipId, shipDecks, { stepFree }),
+    [selectedShipId, shipDecks, stepFree]
+  );
 
-  // Re-routed when the step-free toggle changes; null when an end isn't routable.
+  // Re-routed when ship, step-free toggle, or spec changes; null when an end isn't routable.
   const activeRoute = useMemo(() => {
     if (!routeSpec) return null;
     try {
-      return routeFor(routeSpec, { stepFree });
+      return routeOnShip(selectedShipId, shipDecks, routeSpec, { stepFree });
     } catch {
       return null;
     }
-  }, [routeSpec, stepFree]);
+  }, [selectedShipId, shipDecks, routeSpec, stepFree]);
 
   const selectVenue = useCallback((venue) => setSelectedVenue(venue), []);
   const toggleUpscale = useCallback(() => setIsUpscaledMode((on) => !on), []);
 
-  const goToDeck = (level) => {
-    const deck = deckByLevel(level);
-    if (deck) setCurrentDeck(deck);
+  const goToDeck = useCallback((level) => {
+    setCurrentDeckLevel(level);
+  }, []);
+
+  const handleSelectShip = (newShipId) => {
+    if (newShipId === selectedShipId) return;
+    setSelectedShipId(newShipId);
+    const newShipData = generateShip(newShipId);
+    const defaultDeck = newShipData.decks.find((d) => d.level === 5) || newShipData.decks[0];
+    setCurrentDeckLevel(defaultDeck.level);
+    setSelectedVenue(null);
+    setSearchQuery('');
+    setRouteSpec(null);
   };
 
   const handleSelectSearchResult = (item) => {
-    setCurrentDeck(item.deck);
+    setCurrentDeckLevel(item.deck.level);
     setSelectedVenue(item);
     setSearchQuery('');
   };
 
   const handleStartWayfinding = (venue) => {
+    const targetDeck = venue.deckNumber || currentDeck.level;
     const spec = {
       id: `to-${venue.id}`,
       from: { deck: currentDeck.level },
-      to: { deck: currentDeck.level, venueId: venue.id },
+      to: { deck: targetDeck, venueId: venue.id },
     };
     try {
-      routeFor(spec, { stepFree });
+      routeOnShip(selectedShipId, shipDecks, spec, { stepFree });
     } catch {
       // Crew space and other features off the routing graph have no route.
       setRouteSpec(null);
@@ -105,16 +133,57 @@ export default function App() {
     setIsDockCollapsed(false);
   };
 
-  const routeDecks = activeRoute?.decks ?? [];
+  const handleRouteFromHere = (venue) => {
+    const fromDeck = venue.deckNumber || currentDeck.level;
+    setRouteSpec((prev) => ({
+      id: `from-${venue.id}`,
+      from: { deck: fromDeck, venueId: venue.id },
+      to: prev?.to ?? null,
+    }));
+    setSelectedVenue(null);
+    setIsDockCollapsed(false);
+  };
+
+  const handleSearchSelectVenue = useCallback((venue) => {
+    const deckLvl = venue.deckNumber ?? venue.deckLevel ?? venue.deck?.level;
+    if (deckLvl) {
+      setCurrentDeckLevel(deckLvl);
+    }
+    setSelectedVenue(venue);
+    setIsSearchPaletteOpen(false);
+  }, []);
+
+  const handleSearchRouteToVenue = useCallback((venue) => {
+    const targetDeck = venue.deckNumber ?? venue.deckLevel ?? venue.deck?.level ?? currentDeck.level;
+    setCurrentDeckLevel(targetDeck);
+    setSelectedVenue(venue);
+    setRouteSpec({
+      id: `to-${venue.id}`,
+      from: { deck: currentDeck.level },
+      to: { deck: targetDeck, venueId: venue.id },
+    });
+    setIsSearchPaletteOpen(false);
+    setIsDockCollapsed(false);
+  }, [currentDeck.level]);
+
+  const handleSearchGoToDeck = useCallback((deckLevel) => {
+    setCurrentDeckLevel(deckLevel);
+    setSelectedVenue(null);
+    setIsSearchPaletteOpen(false);
+  }, []);
 
   return (
     <div className="app-container">
       {/* Top Navbar */}
       <HeaderNavbar
+        currentShip={currentShip}
+        availableShips={AVAILABLE_SHIPS}
+        onSelectShip={handleSelectShip}
         onOpenApiInspector={() => setShowApiInspector(true)}
         onOpenAccuracyInspector={() => setShowAccuracyInspector(true)}
         isUpscaledMode={isUpscaledMode}
         onToggleUpscale={toggleUpscale}
+        onOpenSearch={() => setIsSearchPaletteOpen(true)}
       />
 
       {/* Main Viewport Workspace */}
@@ -137,7 +206,7 @@ export default function App() {
                 Search the ship
               </span>
               <span className="ship-badge" style={{ fontSize: '0.68rem', padding: '2px 8px' }}>
-                IMO {CELEBRITY_XCEL_METADATA.imoNumber}
+                IMO {currentShip.imoNumber}
               </span>
             </div>
 
@@ -214,64 +283,50 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Wayfinding Presets & Active Guidance */}
+                {/* Wayfinding & Custom Route Builder */}
                 <div>
-                  <div className="filter-section-title">Directions</div>
-                  {activeRoute && (
-                    <div className="route-card">
-                      <div className="route-card-header">
-                        <span>{activeRoute.name}</span>
-                        <button onClick={() => setRouteSpec(null)} aria-label="Clear route">
-                          <X size={14} />
-                        </button>
-                      </div>
-                      <div className="res-sub" style={{ marginBottom: '8px' }}>
-                        ~{activeRoute.distanceMeters} m walk • about {activeRoute.estimatedMinutes} min incl. lifts
-                      </div>
-                      <ol>
-                        {activeRoute.steps.map((step, idx) => (
-                          <li key={idx}>{step}</li>
-                        ))}
-                      </ol>
-                      {routeDecks.length > 1 && (
-                        <div className="route-deck-buttons">
-                          {routeDecks.map((level) => (
-                            <button
-                              key={level}
-                              className={`filter-chip ${currentDeck.level === level ? 'active' : ''}`}
-                              onClick={() => goToDeck(level)}
-                            >
-                              View Deck {level}
-                            </button>
-                          ))}
-                        </div>
-                      )}
+                  <div className="filter-section-title">Wayfinding & Routes</div>
+                  <RouteBuilderPanel
+                    decks={shipDecks}
+                    currentDeck={currentDeck}
+                    activeRoute={activeRoute}
+                    routeSpec={routeSpec}
+                    onBuildRoute={(spec) => {
+                      setRouteSpec(spec);
+                      setIsDockCollapsed(false);
+                    }}
+                    onClearRoute={() => setRouteSpec(null)}
+                    stepFree={stepFree}
+                    onToggleStepFree={(sf) => setStepFree(sf)}
+                    onGoToDeck={goToDeck}
+                  />
+
+                  {/* Preset Sample Routes */}
+                  <div style={{ marginTop: '14px' }}>
+                    <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '6px' }}>
+                      Popular Routes
                     </div>
-                  )}
-                  <label className="step-free-toggle">
-                    <input type="checkbox" checked={stepFree} onChange={(e) => setStepFree(e.target.checked)} />
-                    Step-free (elevators only, no stairs)
-                  </label>
-                  <div className="search-results-list">
-                    {sampleRoutes.map((route) => (
-                      <button
-                        key={route.id}
-                        className={`search-result-card ${activeRoute?.id === route.id ? 'active' : ''}`}
-                        onClick={() => {
-                          goToDeck(route.origin.deck);
-                          setRouteSpec(SAMPLE_ROUTE_SPECS.find((spec) => spec.id === route.id));
-                        }}
-                      >
-                        <div style={{ textAlign: 'left' }}>
-                          <div className="res-title" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <Navigation size={14} color="var(--accent-cyan)" /> {route.name}
+                    <div className="search-results-list">
+                      {sampleRoutes.map((route) => (
+                        <button
+                          key={route.id}
+                          className={`search-result-card ${activeRoute?.id === route.id ? 'active' : ''}`}
+                          onClick={() => {
+                            goToDeck(route.origin.deck);
+                            setRouteSpec(route.spec);
+                          }}
+                        >
+                          <div style={{ textAlign: 'left' }}>
+                            <div className="res-title" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <Navigation size={14} color="var(--accent-cyan)" /> {route.name}
+                            </div>
+                            <div className="res-sub">
+                              Deck {route.origin.deck} → Deck {route.destination.deck} • ~{route.estimatedMinutes} min
+                            </div>
                           </div>
-                          <div className="res-sub">
-                            Deck {route.origin.deck} → Deck {route.destination.deck} • ~{route.estimatedMinutes} min
-                          </div>
-                        </div>
-                      </button>
-                    ))}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
@@ -295,13 +350,13 @@ export default function App() {
                     Ship at a glance
                   </div>
                   <div style={{ fontSize: '0.85rem', color: 'var(--text-primary)', margin: '4px 0', fontWeight: 700 }}>
-                    {CELEBRITY_XCEL_METADATA.name} ({CELEBRITY_XCEL_METADATA.shipClass})
+                    {currentShip.name} ({currentShip.shipClass})
                   </div>
                   <div style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px', marginTop: '6px' }}>
-                    <span>Length: <strong>{CELEBRITY_XCEL_METADATA.lengthMeters} m</strong></span>
-                    <span>Beam: <strong>{CELEBRITY_XCEL_METADATA.beamMeters} m</strong></span>
-                    <span>Guests: <strong>{CELEBRITY_XCEL_METADATA.maxPassengers.toLocaleString()}</strong></span>
-                    <span>Guest decks: <strong>{CELEBRITY_XCEL_METADATA.guestDecks}</strong></span>
+                    <span>Length: <strong>{currentShip.lengthMeters} m</strong></span>
+                    <span>Beam: <strong>{currentShip.beamMeters} m</strong></span>
+                    <span>Guests: <strong>{(currentShip.maxPassengers || 3200).toLocaleString()}</strong></span>
+                    <span>Guest decks: <strong>{currentShip.guestDecks}</strong></span>
                   </div>
                 </div>
               </>
@@ -312,10 +367,10 @@ export default function App() {
         {/* Center Interactive Map Viewer Canvas */}
         <div className="map-stage">
           <DeckSwitcher
-            decks={CELEBRITY_XCEL_DECKS}
+            decks={shipDecks}
             currentDeck={currentDeck}
             onSelectDeck={(deck) => {
-              setCurrentDeck(deck);
+              setCurrentDeckLevel(deck.level);
               setSelectedVenue(null);
             }}
           />
@@ -339,12 +394,14 @@ export default function App() {
           deck={currentDeck}
           onClose={() => setSelectedVenue(null)}
           onStartWayfinding={handleStartWayfinding}
+          onRouteFromHere={handleRouteFromHere}
         />
       )}
 
       {showApiInspector && (
         <ApiInspectorModal
           currentDeck={currentDeck}
+          currentShip={currentShip}
           onClose={() => setShowApiInspector(false)}
         />
       )}
@@ -352,9 +409,27 @@ export default function App() {
       {showAccuracyInspector && (
         <MultiSourceInspectorModal
           currentDeck={currentDeck}
+          currentShip={currentShip}
           onClose={() => setShowAccuracyInspector(false)}
         />
       )}
+
+      {/* Global Search & Command Palette (Cmd+K / /) */}
+      <SearchCommandPalette
+        isOpen={isSearchPaletteOpen}
+        onClose={() => setIsSearchPaletteOpen(false)}
+        onOpen={() => setIsSearchPaletteOpen(true)}
+        currentShip={currentShip}
+        shipDecks={shipDecks}
+        availableShips={AVAILABLE_SHIPS}
+        onSelectShip={(shipId) => {
+          handleSelectShip(shipId);
+          setIsSearchPaletteOpen(false);
+        }}
+        onSelectVenue={handleSearchSelectVenue}
+        onRouteToVenue={handleSearchRouteToVenue}
+        onGoToDeck={handleSearchGoToDeck}
+      />
     </div>
   );
 }

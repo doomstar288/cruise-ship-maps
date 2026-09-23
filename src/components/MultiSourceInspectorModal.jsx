@@ -3,7 +3,9 @@ import { X, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { ACCURACY_SOURCES } from '../utils/multiSourceDataConsensus';
 import { CELEBRITY_XCEL_METADATA } from '../data/celebrityXcelData';
 
-export default function MultiSourceInspectorModal({ currentDeck, onClose }) {
+export default function MultiSourceInspectorModal({ currentDeck, onClose, currentShip = CELEBRITY_XCEL_METADATA }) {
+  const ship = currentShip ?? CELEBRITY_XCEL_METADATA;
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-card" style={{ maxWidth: '720px' }} onClick={(e) => e.stopPropagation()}>
@@ -16,7 +18,7 @@ export default function MultiSourceInspectorModal({ currentDeck, onClose }) {
             <div>
               <h3 style={{ fontSize: '1.15rem', color: 'var(--text-primary)' }}>Multi-Source Map Accuracy Engine</h3>
               <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
-                Cross-Referenced Accuracy Verification for {CELEBRITY_XCEL_METADATA.name} ({currentDeck.name})
+                Cross-Referenced Accuracy Verification for {ship.name} ({currentDeck.name})
               </div>
             </div>
           </div>
