@@ -262,7 +262,8 @@ export default function SearchCommandPalette({
       onGoToDeck?.(match.deck.level);
     }
     if (match.venue) {
-      onSelectVenue?.(match.venue, match.deck);
+      // Attach the deck so callers get the cabin's own deck, not the one on screen.
+      onSelectVenue?.({ ...match.venue, deck: match.deck }, match.deck);
     }
     onClose?.();
   }, [query, shipDecks, onGoToDeck, onSelectVenue, onClose]);
@@ -271,7 +272,7 @@ export default function SearchCommandPalette({
     saveRecentSearch(query);
     const match = findCabinInDecks(shipDecks, query);
     if (match.venue) {
-      onRouteToVenue?.(match.venue, match.deck);
+      onRouteToVenue?.({ ...match.venue, deck: match.deck }, match.deck);
     } else if (match.deck) {
       onGoToDeck?.(match.deck.level);
     }

@@ -1,56 +1,92 @@
 /**
  * Fleet Routing Engine.
  *
- * Dynamically provides Dijkstra routing graphs, sample routes, and custom
- * point-to-point wayfinding for all published ships in the fleet.
+ * Provides Dijkstra routing graphs, sample routes, and custom point-to-point
+ * wayfinding for the published ships in the fleet.
+ *
+ * A ship's routing graph lives inside its Ship Map Pack, which is served from
+ * `public/v1/ships/<shipId>/plan.json` rather than bundled: the packs total
+ * several megabytes and only the ~4 % of each one under `routing` is used
+ * here, so bundling them would cost the whole fleet's deck geometry on every
+ * first paint. Callers `await loadShipRouting(shipId)` once, then route
+ * synchronously against the cached graph.
  */
-
-import xcelPlan from '../../public/v1/ships/celebrity-xcel/plan.json' with { type: 'json' };
-import ascentPlan from '../../public/v1/ships/celebrity-ascent/plan.json' with { type: 'json' };
-import beyondPlan from '../../public/v1/ships/celebrity-beyond/plan.json' with { type: 'json' };
-import apexPlan from '../../public/v1/ships/celebrity-apex/plan.json' with { type: 'json' };
-import edgePlan from '../../public/v1/ships/celebrity-edge/plan.json' with { type: 'json' };
-import solsticePlan from '../../public/v1/ships/celebrity-solstice/plan.json' with { type: 'json' };
-import equinoxPlan from '../../public/v1/ships/celebrity-equinox/plan.json' with { type: 'json' };
-import eclipsePlan from '../../public/v1/ships/celebrity-eclipse/plan.json' with { type: 'json' };
-import silhouettePlan from '../../public/v1/ships/celebrity-silhouette/plan.json' with { type: 'json' };
-import reflectionPlan from '../../public/v1/ships/celebrity-reflection/plan.json' with { type: 'json' };
-import millenniumPlan from '../../public/v1/ships/celebrity-millennium/plan.json' with { type: 'json' };
-import infinityPlan from '../../public/v1/ships/celebrity-infinity/plan.json' with { type: 'json' };
-import summitPlan from '../../public/v1/ships/celebrity-summit/plan.json' with { type: 'json' };
-import constellationPlan from '../../public/v1/ships/celebrity-constellation/plan.json' with { type: 'json' };
 
 import { createRouter } from '../utils/shipRouter.js';
 import { buildRoute } from '../utils/wayfinding.js';
 
-const ROUTING_PLANS = {
-  'celebrity-xcel': xcelPlan.routing,
-  'celebrity-ascent': ascentPlan.routing,
-  'celebrity-beyond': beyondPlan.routing,
-  'celebrity-apex': apexPlan.routing,
-  'celebrity-edge': edgePlan.routing,
-  'celebrity-solstice': solsticePlan.routing,
-  'celebrity-equinox': equinoxPlan.routing,
-  'celebrity-eclipse': eclipsePlan.routing,
-  'celebrity-silhouette': silhouettePlan.routing,
-  'celebrity-reflection': reflectionPlan.routing,
-  'celebrity-millennium': millenniumPlan.routing,
-  'celebrity-infinity': infinityPlan.routing,
-  'celebrity-summit': summitPlan.routing,
-  'celebrity-constellation': constellationPlan.routing,
-};
-
 const ROUTERS = new Map();
+const IN_FLIGHT = new Map();
+
+/** @returns {string} the pack URL, resolved against Vite's BASE_URL. */
+function packUrl(shipId) {
+  const base = import.meta.env?.BASE_URL ?? './';
+  return `${base.endsWith('/') ? base : `${base}/`}v1/ships/${shipId}/plan.json`;
+}
 
 /**
- * Returns a cached router for the specified vessel.
+ * Fetches a ship's pack and caches a router over its routing graph. Repeat
+ * calls reuse the cache, and concurrent calls share one request.
+ *
+ * @param {string} shipId
+ * @param {typeof fetch} [fetchImpl] test seam
+ * @returns {Promise<object>} the cached router
  */
-export function getShipRouter(shipId = 'celebrity-xcel') {
-  if (!ROUTERS.has(shipId)) {
-    const routing = ROUTING_PLANS[shipId] ?? xcelPlan.routing;
-    ROUTERS.set(shipId, createRouter(routing));
+export async function loadShipRouting(shipId, fetchImpl = globalThis.fetch) {
+  if (ROUTERS.has(shipId)) return ROUTERS.get(shipId);
+  if (IN_FLIGHT.has(shipId)) return IN_FLIGHT.get(shipId);
+
+  const request = fetchImpl(packUrl(shipId))
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Failed to load pack for "${shipId}" (${response.status})`);
+      }
+      return response.json();
+    })
+    .then((pack) => {
+      if (!pack?.routing) {
+        throw new Error(`Pack for "${shipId}" carries no routing graph`);
+      }
+      const router = createRouter(pack.routing);
+      ROUTERS.set(shipId, router);
+      IN_FLIGHT.delete(shipId);
+      return router;
+    })
+    .catch((error) => {
+      IN_FLIGHT.delete(shipId);
+      throw error;
+    });
+
+  IN_FLIGHT.set(shipId, request);
+  return request;
+}
+
+/**
+ * Returns the loaded router for a vessel.
+ *
+ * Throws rather than falling back to another ship's graph: pairing one ship's
+ * decks with another's routing graph yields confident, wrong directions.
+ *
+ * @param {string} shipId
+ * @returns {object} the cached router
+ */
+export function getShipRouter(shipId) {
+  const router = ROUTERS.get(shipId);
+  if (!router) {
+    throw new Error(`Routing for "${shipId}" is not loaded; await loadShipRouting() first.`);
   }
-  return ROUTERS.get(shipId);
+  return router;
+}
+
+/** @returns {boolean} whether this ship's routing graph is ready to route on. */
+export function isShipRoutingLoaded(shipId) {
+  return ROUTERS.has(shipId);
+}
+
+/** Test seam: drops every cached router. */
+export function resetShipRoutingCache() {
+  ROUTERS.clear();
+  IN_FLIGHT.clear();
 }
 
 /**

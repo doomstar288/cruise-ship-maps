@@ -149,4 +149,18 @@ describe('SearchCommandPalette', () => {
     fireEvent.keyDown(dialog, { key: 'Escape' });
     expect(mockClose).toHaveBeenCalledTimes(2);
   });
+
+  it('hands the cabin\'s own deck to the route callback, not the deck on screen', () => {
+    // A cabin the guest searches for while looking at some other deck: the
+    // callback payload has to carry Deck 10, or App falls back to what is shown.
+    const deck10 = xcel.decks.find((d) => d.level === 10);
+    const cabin = deck10.venues.find((v) => v.cabinClass);
+    renderPalette();
+
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: String(cabin.label) } });
+    fireEvent.click(screen.getByRole('button', { name: /Route To Here/i }));
+
+    const [venueArg] = mockRouteToVenue.mock.calls[0];
+    expect(venueArg.deck?.level).toBe(10);
+  });
 });
