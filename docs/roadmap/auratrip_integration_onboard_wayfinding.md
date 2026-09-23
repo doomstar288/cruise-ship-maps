@@ -333,6 +333,48 @@ offline after first load.
 - **REST mode:** only if a live service adds value beyond static packs; routing stays
   on-device regardless.
 
+### Phase 7 — Planner enhancements  `M–L` · both repos · proposed 2026-09-23
+
+Phases 0–5 answer "where is it and when do I leave?". Phase 7 answers the next questions:
+can I get in, is it open, how do I get off the ship, and what's nearest. Priority order;
+P7.1 and P7.3 first. Maps tasks are pack fields and router options; AuraTrip tasks sit
+under [AuraTrip epic #209](https://github.com/doomstar288/big-trip-planner/issues/209).
+
+| # | Maps | AuraTrip |
+|---|---|---|
+| P7.1 | [#52](https://github.com/doomstar288/cruise-ship-maps/issues/52) `access` field | [#210](https://github.com/doomstar288/big-trip-planner/issues/210) warnings |
+| P7.2 | [#53](https://github.com/doomstar288/cruise-ship-maps/issues/53) hours and booking facts | [#211](https://github.com/doomstar288/big-trip-planner/issues/211) chips and "usually closed" |
+| P7.3 | [#54](https://github.com/doomstar288/cruise-ship-maps/issues/54) tag port exits, fixtures | [#212](https://github.com/doomstar288/big-trip-planner/issues/212) gangway, tender and meeting-point walk times |
+| P7.4 | [#55](https://github.com/doomstar288/cruise-ship-maps/issues/55) muster stations, no-lifts option | [#213](https://github.com/doomstar288/big-trip-planner/issues/213) stairs-only muster route |
+| P7.5 | [#56](https://github.com/doomstar288/cruise-ship-maps/issues/56) `routeToNearest` | [#214](https://github.com/doomstar288/big-trip-planner/issues/214) "Nearest…" |
+| P7.6 | — | [#215](https://github.com/doomstar288/big-trip-planner/issues/215) fill gaps in the day |
+| P7.7 | — | [#216](https://github.com/doomstar288/big-trip-planner/issues/216) rendezvous for 3+ cabins |
+| P7.8 | — | [#217](https://github.com/doomstar288/big-trip-planner/issues/217) daily walking summary |
+
+- **P7.1 Access restrictions.** "Suite Guests Only" and "Adults Only" exist only as free-text
+  `tags`, so a stateroom guest gets directions to the Retreat Bar with no warning. Add
+  `access: "suite" | "adults" | "kids" | "paid"`, compared against the pack's `cabin.type`.
+  The router needs no change today; the one restricted `through` edge (Retreat Bar via the
+  Retreat Sundeck) leads to a venue with the same access, and a test keeps it that way.
+- **P7.2 Hours and booking facts.** `hours`, `reservationRequired`, `fee`, `dressCode`, as
+  typical facts from public sources. The daily program always wins, and the copy says
+  "usually".
+- **P7.3 Port-day exits.** AuraTrip already has all-aboard alerts and a gangway/tender panel,
+  but finds the exit by name and gives no walk time. Tag the gangway and tender platform in
+  the pack, and route to them and to excursion meeting venues. The all-aboard deadline is
+  about the pier, so the onboard walk is shown beside it, not subtracted from it.
+- **P7.4 Muster.** Stations are assigned per cabin by the line and entered from the SeaPass;
+  neither repo infers one. Add `muster_station` features and an `avoidLifts` router option,
+  because the emergency route is stairs only. Where a cabin can't reach a station without
+  lifts, that's a graph gap to fix, never a lift fallback.
+- **P7.5 Nearest.** One Dijkstra run that stops at the first candidate, with fixtures, so
+  both routers agree.
+- **P7.6–P7.8** are AuraTrip-only and build on routes the agenda already computes.
+
+**Accept when:** each maps task's fields are documented in `ship_map_pack.md` and stay within
+the P2.3 size budget. New router options ship with route fixtures that pass in both repos.
+AuraTrip tasks are browser-verified at 1280 and 375 px and work offline.
+
 ---
 
 ## 5. Suggested PR sequence
@@ -374,7 +416,8 @@ in parallel with Phase 2, because it only needs names and aliases, not routes.
 2. ~~Is "Previous agenda item" the right default origin, or "My cabin"?~~ **Previous agenda
    item**, falling back to the cabin (2026-09-17, P5.2).
 3. Do we want the maps site itself to accept a daily program (paste → routes), or keep that
-   experience AuraTrip-only? *Still open.*
+   experience AuraTrip-only? *Still open*, tracked in
+   [#60](https://github.com/doomstar288/cruise-ship-maps/issues/60). The recommendation there is AuraTrip-only.
 
 ---
 
