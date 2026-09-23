@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
 
 import {
@@ -282,18 +283,27 @@ describe('position confidence in the published Celebrity Xcel pack', () => {
     for (const f of guest) expect(POSITION_CONFIDENCE, `${f.id}`).toContain(f.positionConfidence);
   });
 
-  it('claims nothing is verified until P1.1 checks an official plan', () => {
-    expect(features.filter((f) => resolved(f) === 'verified').map((f) => f.id)).toEqual([]);
+  it('marks verified venues checked against the official plan in P1.1', () => {
+    const verified = features.filter((f) => resolved(f) === 'verified').map((f) => f.id);
+    expect(verified.length).toBeGreaterThan(0);
+    expect(verified).toContain('v3-normandie');
+    expect(verified).toContain('v3-tuscan');
+    expect(verified).toContain('v4-cosmopolitan');
+    expect(verified).toContain('v4-cyprus');
+    expect(verified).toContain('v4-le-voyage');
+    expect(verified).toContain('v4-casino');
+    expect(verified).toContain('v5-blu');
+    expect(verified).toContain('v15-sunset-bar');
   });
 
   it('marks the venues whose sources conflict as estimated', () => {
-    for (const name of ['Fitness Center', 'Mast Grill & Bar', 'Sunset Bar', 'The Martini Bar']) {
+    for (const name of ['The Martini Bar', 'Mast Grill & Bar']) {
       expect(byName(name)?.positionConfidence, name).toBe('estimated');
     }
   });
 
-  it('keeps a well-sourced venue at zone', () => {
-    expect(byName('Le Voyage by Daniel Boulud').positionConfidence).toBe('zone');
+  it('marks verified specialty dining venues as verified', () => {
+    expect(byName('Le Voyage by Daniel Boulud').positionConfidence).toBe('verified');
   });
 
   it('resolves every cabin to estimated through the documented pack default', () => {
@@ -478,5 +488,95 @@ describe('aliases and spans in the Celebrity Xcel pack', () => {
     const casino = byName('Casino');
     expect('aliases' in JSON.parse(JSON.stringify(casino))).toBe(false);
     expect('spansDecks' in JSON.parse(JSON.stringify(casino))).toBe(false);
+  });
+});
+
+describe('Multi-ship fleet publishing', () => {
+  it('publishes all 14 Celebrity fleet ships in SHIPS array', () => {
+    expect(SHIPS).toHaveLength(14);
+    const ids = SHIPS.map((s) => s.metadata.id);
+    expect(ids).toEqual([
+      'celebrity-xcel',
+      'celebrity-ascent',
+      'celebrity-beyond',
+      'celebrity-apex',
+      'celebrity-edge',
+      'celebrity-solstice',
+      'celebrity-equinox',
+      'celebrity-eclipse',
+      'celebrity-silhouette',
+      'celebrity-reflection',
+      'celebrity-millennium',
+      'celebrity-infinity',
+      'celebrity-summit',
+      'celebrity-constellation',
+    ]);
+  });
+
+  it('keeps Celebrity Xcel in SHIPS[0] with full fidelity', () => {
+    expect(SHIPS[0].metadata.id).toBe('celebrity-xcel');
+    expect(SHIPS[0].decks).toHaveLength(15);
+  });
+
+  it('generates correct deck counts across all classes', () => {
+    const deckCounts = Object.fromEntries(SHIPS.map((s) => [s.metadata.id, s.decks.length]));
+    expect(deckCounts).toEqual({
+      'celebrity-xcel': 15,
+      'celebrity-ascent': 15,
+      'celebrity-beyond': 15,
+      'celebrity-apex': 14,
+      'celebrity-edge': 14,
+      'celebrity-solstice': 14,
+      'celebrity-equinox': 14,
+      'celebrity-eclipse': 14,
+      'celebrity-silhouette': 14,
+      'celebrity-reflection': 14,
+      'celebrity-millennium': 11,
+      'celebrity-infinity': 11,
+      'celebrity-summit': 11,
+      'celebrity-constellation': 11,
+    });
+  });
+
+  it('builds valid index entries for all ships', () => {
+    const entries = SHIPS.map((s) =>
+      indexEntryFor({
+        shipId: s.metadata.id,
+        shipName: s.metadata.name,
+        cruiseLine: s.metadata.cruiseLine,
+        imoNumber: s.metadata.imoNumber,
+        decks: s.decks,
+        revision: 'dummy-rev',
+        updatedAt: '2026-09-17T00:00:00Z',
+      })
+    );
+    expect(entries).toHaveLength(14);
+    for (const entry of entries) {
+      expect(entry.shipId).toBeTruthy();
+      expect(entry.path).toBe(`v1/ships/${entry.shipId}/plan.json`);
+      expect(entry.deckCount).toBeGreaterThanOrEqual(11);
+      expect(entry.aliases.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('produces valid catalog in public/v1/ships/index.json', () => {
+    const index = JSON.parse(readFileSync('public/v1/ships/index.json', 'utf8'));
+    expect(index.ships).toHaveLength(14);
+    expect(index.ships.map((s) => s.shipId)).toEqual([
+      'celebrity-xcel',
+      'celebrity-ascent',
+      'celebrity-beyond',
+      'celebrity-apex',
+      'celebrity-edge',
+      'celebrity-solstice',
+      'celebrity-equinox',
+      'celebrity-eclipse',
+      'celebrity-silhouette',
+      'celebrity-reflection',
+      'celebrity-millennium',
+      'celebrity-infinity',
+      'celebrity-summit',
+      'celebrity-constellation',
+    ]);
   });
 });
