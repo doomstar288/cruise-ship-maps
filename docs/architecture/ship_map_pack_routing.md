@@ -228,6 +228,12 @@ with its reason. Each is a documented modelling decision, not geometry:
 The tests hold this list to exactly what's needed. Removing any one connector must leave a venue
 unreachable, and `through` is only allowed on connector edges.
 
+**Restricted areas.** A route never crosses a feature whose `access` is `suite`, `adults` or `kids`
+unless its destination has the same `access`. Today that crossing is only the Retreat Bar, reached
+across the Retreat Sundeck, and both are suite-only. `paid` doesn't keep anyone out, so a route may
+pass one: the Deck 14 Magic Carpet stop is reached along the cabana row. The fleet-wide test in
+`scripts/routing-graph.test.mjs` checks every venue on every published ship.
+
 ## Elevator bank service
 
 Derived from which elevator features each deck draws (a core the deck's hull can't hold isn't

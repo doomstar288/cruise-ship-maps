@@ -37,6 +37,7 @@ doesn't know, and must treat every optional field as possibly absent.
 | `aliases` | Optional `string[]`. Other names guests and daily programs use, e.g. `"OVC"` for Oceanview Café or `"The Theater"` for The Theatre. Includes accent-free spellings (`"Oceanview Cafe"`). Only on `venue` and `poi`. |
 | `spansDecks` | Optional `number[]`, ascending. Every deck a multi-deck venue occupies, set on **each** of its per-deck features, so any level leads to the whole span. Always includes the feature's own deck. |
 | `positionConfidence` | Optional `"verified"`, `"zone"` or `"estimated"`: how far to trust where the feature is drawn. Omitted when it equals the pack default for its type. See [position confidence](./ship_map_pack_position_confidence.md). |
+| `access` | Optional. Who may use the venue, when not every guest may: `"suite"` (suite guests only, e.g. The Retreat and Luminae; compare with the guest's `cabin.type`), `"adults"` (e.g. the Solarium), `"kids"` (youth clubs, for children and teens only) or `"paid"` (open to anyone with a pass or booking, e.g. Persian Garden, cabanas). Omitted for public venues. Only on `venue` and `poi`. `tags` stay free text for display; act on `access`. A consumer should ignore values it doesn't know. |
 | `entrances` | Optional `[[x, y], …]`, metres in pack coordinates. Doors of large venues, on corridor-facing edges; route to the nearest one and keep the pin at `center`. Only on `venue`. See [venue entrances](./ship_map_pack_entrances.md). |
 
 An empty `aliases` or `spansDecks` is omitted, never emitted as `[]`.
