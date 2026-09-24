@@ -38,6 +38,7 @@ doesn't know, and must treat every optional field as possibly absent.
 | `spansDecks` | Optional `number[]`, ascending. Every deck a multi-deck venue occupies, set on **each** of its per-deck features, so any level leads to the whole span. Always includes the feature's own deck. |
 | `positionConfidence` | Optional `"verified"`, `"zone"` or `"estimated"`: how far to trust where the feature is drawn. Omitted when it equals the pack default for its type. See [position confidence](./ship_map_pack_position_confidence.md). |
 | `access` | Optional. Who may use the venue, when not every guest may: `"suite"` (suite guests only, e.g. The Retreat and Luminae; compare with the guest's `cabin.type`), `"adults"` (e.g. the Solarium), `"kids"` (youth clubs, for children and teens only) or `"paid"` (open to anyone with a pass or booking, e.g. Persian Garden, cabanas). Omitted for public venues. Only on `venue` and `poi`. `tags` stay free text for display; act on `access`. A consumer should ignore values it doesn't know. |
+| `portExit` | Optional. Where guests leave the ship in port: `"gangway"` when it is alongside, or `"tender"` where guests step onto the tenders when it is at anchor (the Deck 2 Magic Carpet stop on Edge-series ships). Only on the exit itself, never on the lounge or desk beside it: Destination Gateway, where guests wait for tenders, and Shore Excursions have none. Route to it for port-day walk times instead of matching names. A pack may have several of either or none (Millennium-class packs have no tender exit), so pick the nearest. No public source places a gangway, so every `gangway` is `positionConfidence: "estimated"`: when the daily program names the gangway's deck, it wins. Only on `venue` and `poi`. A consumer should ignore values it doesn't know. |
 | `entrances` | Optional `[[x, y], …]`, metres in pack coordinates. Doors of large venues, on corridor-facing edges; route to the nearest one and keep the pin at `center`. Only on `venue`. See [venue entrances](./ship_map_pack_entrances.md). |
 
 An empty `aliases` or `spansDecks` is omitted, never emitted as `[]`.
@@ -50,7 +51,9 @@ For example, The Theatre is `The Theatre` (Deck 3), `The Theatre (Middle Level)`
 The levels that aren't named plainly "The Theatre" also carry `"The Theatre"` as an alias.
 
 To resolve free text to a venue, match `name` and `aliases`. Collect every feature that shares
-the matched alias and span, then pick a level, e.g. the one nearest the guest.
+the matched alias and span, then pick a level, e.g. the one nearest the guest. An alias that only
+one level carries names that level: `"Tender Platform"` is always the Deck 2 Magic Carpet stop,
+whichever stop is nearest the guest.
 
 Aliases are unique within a ship. An alias never equals another venue's name or alias,
 ignoring case and accents. The only exception is levels of the same venue, which share them.

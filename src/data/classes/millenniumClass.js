@@ -149,6 +149,8 @@ export function generateMillenniumClassDecks(manifest) {
         ...generateCenterlineCore(2),
         venue(2, {
           id: 'v2-gangway',
+          // Not in any published source; public deck plans list cabins on Deck 2.
+          positionConfidence: 'estimated',
           name: 'Gangway & Security',
           category: 'Guest Services',
           color: C.service,
@@ -156,7 +158,8 @@ export function generateMillenniumClassDecks(manifest) {
           y: PORT_OUTER,
           description: 'Port side embarkation gangway and security screening checkpoint.',
           tags: ['Gangway', 'Security'],
-          aliases: ['Gangway', 'Security Screening'],
+          portExit: 'gangway',
+          aliases: ['Gangway', 'Security Screening', 'Disembarkation'],
         }),
         venue(2, {
           id: 'v2-crew-tech',
