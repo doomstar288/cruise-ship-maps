@@ -4,6 +4,7 @@ import { describe, it, expect } from 'vitest';
 import {
   ACCESS,
   PACK_POSITION_CONFIDENCE_DEFAULTS,
+  PORT_EXITS,
   POSITION_CONFIDENCE,
   SHIPS,
   SPEC_VERSION,
@@ -16,6 +17,7 @@ import {
   featureAliasesFor,
   foldName,
   indexEntryFor,
+  portExitFor,
   positionConfidenceFor,
   reconcileIndexTimestamp,
   reconcilePackTimestamp,
@@ -466,6 +468,102 @@ describe('venue access across the fleet', () => {
       ['v16-luminae', 'suite'],
       ['v17-retreat-sundeck', 'suite'],
       ['v17-retreat-bar', 'suite'],
+    ]);
+  });
+});
+
+describe('portExitFor', () => {
+  it('keeps a port exit authored on a guest venue', () => {
+    expect(portExitFor({ id: 'v2-gangway', portExit: 'gangway' }, 'venue')).toBe('gangway');
+    expect(portExitFor({ id: 'v2-magic-carpet', portExit: 'tender' }, 'venue')).toBe('tender');
+  });
+
+  it('returns undefined for anything that is not an exit, so the pack omits the key', () => {
+    expect(portExitFor({ id: 'v2-destination-gateway' }, 'venue')).toBeUndefined();
+  });
+
+  it('rejects a value outside the vocabulary rather than publishing it', () => {
+    expect(() => portExitFor({ id: 'v1', portExit: 'pier' }, 'venue')).toThrow(/unknown portExit "pier"/);
+    expect(PORT_EXITS).toEqual(['gangway', 'tender']);
+  });
+
+  it('refuses a port exit on anything a guest does not search for', () => {
+    for (const type of ['corridor', 'cabin', 'elevator', 'stairwell', 'muster_station']) {
+      expect(() => portExitFor({ id: 'x', portExit: 'gangway' }, type)).toThrow(/only venue and poi/);
+    }
+  });
+});
+
+describe('port exits across the fleet', () => {
+  const ships = SHIPS.map(({ metadata, decks }) => ({
+    shipId: metadata.id,
+    records: decks.flatMap((d) => d.venues ?? []),
+  }));
+
+  it('tags the gangway and the tender platform, and nothing beside them, on every ship', () => {
+    // Destination Gateway, where guests wait for tenders, and Shore Excursions are
+    // not exits. Millennium-class generators draw no tender exit. No public source
+    // places a gangway, or the Solstice-class tender station, so those are estimated.
+    const exits = Object.fromEntries(
+      ships.map(({ shipId, records }) => [
+        shipId,
+        records
+          .filter((v) => portExitFor(v, classifyFeature(v)) !== undefined)
+          .map((v) => `${v.portExit}: ${v.id} (${positionConfidenceFor(v, 'venue')})`),
+      ])
+    );
+    const EDGE = ['gangway: v2-gangway (estimated)', 'tender: v2-magic-carpet (zone)'];
+    const SOLSTICE = ['gangway: v2-gangway (estimated)', 'tender: v2-tender-station (estimated)'];
+    const MILLENNIUM = ['gangway: v2-gangway (estimated)'];
+    expect(exits).toEqual({
+      'celebrity-xcel': EDGE,
+      'celebrity-ascent': EDGE,
+      'celebrity-beyond': EDGE,
+      'celebrity-apex': EDGE,
+      'celebrity-edge': EDGE,
+      'celebrity-solstice': SOLSTICE,
+      'celebrity-equinox': SOLSTICE,
+      'celebrity-eclipse': SOLSTICE,
+      'celebrity-silhouette': SOLSTICE,
+      'celebrity-reflection': SOLSTICE,
+      'celebrity-millennium': MILLENNIUM,
+      'celebrity-infinity': MILLENNIUM,
+      'celebrity-summit': MILLENNIUM,
+      'celebrity-constellation': MILLENNIUM,
+    });
+  });
+
+  it('gives the port-day names to the exit alone, on every ship', () => {
+    // A resolver must land these on the exit, not on a lounge or another Magic
+    // Carpet stop. "Tender Pier" is left out: the pier is ashore, where the last
+    // tender leaves from, so no feature on board answers to it.
+    const NAMES = { gangway: ['Gangway', 'Disembarkation'], tender: ['Tender Platform'] };
+    const failures = [];
+    for (const { shipId, records } of ships) {
+      for (const [kind, names] of Object.entries(NAMES)) {
+        const expected = records.filter((v) => v.portExit === kind).map((v) => v.id);
+        for (const name of names) {
+          const owners = records
+            .filter((v) => [v.name, ...(v.aliases ?? [])].some((n) => foldName(n) === foldName(name)))
+            .map((v) => v.id);
+          if (owners.join() !== expected.join()) failures.push(`${shipId} "${name}": ${owners.join() || 'none'}`);
+        }
+      }
+      const pier = records.filter((v) => [v.name, ...(v.aliases ?? [])].some((n) => foldName(n) === 'tender pier'));
+      if (pier.length) failures.push(`${shipId} "Tender Pier": ${pier.map((v) => v.id).join()}`);
+    }
+    expect(failures).toEqual([]);
+  });
+
+  it('carries portExit into the published Celebrity Xcel pack, and omits it elsewhere', () => {
+    const published = JSON.parse(JSON.stringify(sharedXcel()));
+    const exits = published.decks
+      .flatMap((d) => d.features)
+      .filter((f) => 'portExit' in f)
+      .map((f) => [f.id, f.portExit, f.aliases]);
+    expect(exits).toEqual([
+      ['v2-gangway', 'gangway', ['Gangway', 'Disembarkation']],
+      ['v2-magic-carpet', 'tender', ['Magic Carpet', 'Magic Carpet Bar', 'Tender Platform']],
     ]);
   });
 });

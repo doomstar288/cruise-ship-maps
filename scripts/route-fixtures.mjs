@@ -136,6 +136,86 @@ export const ROUTE_FIXTURE_CASES = {
       from: cabin('c8-8100'),
       to: cabin('c8-8337'),
     },
+    // Port exits (P7.3): cabins on three decks to each `portExit`, each with a
+    // step-free twin. Both exits are reached only from Deck 2's midship lobby.
+    {
+      id: 'cabin-3-to-gangway-2',
+      description: 'Aft along Deck 3 to the midship core, then one flight down to the gangway',
+      from: cabin('c3-3100'),
+      to: venue('v2-gangway'),
+    },
+    {
+      id: 'cabin-3-to-gangway-2-step-free',
+      description: 'The same trip step-free: the midship lift down one deck',
+      from: cabin('c3-3100'),
+      to: venue('v2-gangway'),
+      stepFree: true,
+    },
+    {
+      id: 'cabin-3-to-tender-platform-2',
+      description: 'One flight down at midship, then through Destination Gateway onto the Magic Carpet',
+      from: cabin('c3-3100'),
+      to: venue('v2-magic-carpet'),
+    },
+    {
+      id: 'cabin-3-to-tender-platform-2-step-free',
+      description: 'The same trip step-free: the midship lift down one deck',
+      from: cabin('c3-3100'),
+      to: venue('v2-magic-carpet'),
+      stepFree: true,
+    },
+    {
+      id: 'aft-cabin-8-to-gangway-2',
+      description: 'Past the aft lifts, whose Deck 2 stop opens onto crew space, to the midship lift',
+      from: cabin('c8-8337'),
+      to: venue('v2-gangway'),
+    },
+    {
+      id: 'aft-cabin-8-to-gangway-2-step-free',
+      description: 'The same trip step-free: it takes no stairs anyway',
+      from: cabin('c8-8337'),
+      to: venue('v2-gangway'),
+      stepFree: true,
+    },
+    {
+      id: 'aft-cabin-8-to-tender-platform-2',
+      description: 'The midship lift down, then through Destination Gateway onto the Magic Carpet',
+      from: cabin('c8-8337'),
+      to: venue('v2-magic-carpet'),
+    },
+    {
+      id: 'aft-cabin-8-to-tender-platform-2-step-free',
+      description: 'The same trip step-free: it takes no stairs anyway',
+      from: cabin('c8-8337'),
+      to: venue('v2-magic-carpet'),
+      stepFree: true,
+    },
+    {
+      id: 'edge-villa-15-to-gangway-2',
+      description: "Deck 2's forward lobby doesn't reach the gangway: lift to Deck 3, aft, one flight down",
+      from: cabin('c15-15100'),
+      to: venue('v2-gangway'),
+    },
+    {
+      id: 'edge-villa-15-to-gangway-2-step-free',
+      description: 'The same trip step-free: two lift rides',
+      from: cabin('c15-15100'),
+      to: venue('v2-gangway'),
+      stepFree: true,
+    },
+    {
+      id: 'edge-villa-15-to-tender-platform-2',
+      description: 'Lift to Deck 3, aft, one flight down, then through Destination Gateway',
+      from: cabin('c15-15100'),
+      to: venue('v2-magic-carpet'),
+    },
+    {
+      id: 'edge-villa-15-to-tender-platform-2-step-free',
+      description: 'The same trip step-free: two lift rides',
+      from: cabin('c15-15100'),
+      to: venue('v2-magic-carpet'),
+      stepFree: true,
+    },
   ],
 };
 

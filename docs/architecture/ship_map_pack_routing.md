@@ -152,9 +152,12 @@ between this repo and ports.
 - A `cabinId` end means "that cabin's pack `center`, snapped".
 - A port passes a case when `deckChanges` and `through` (sorted, de-duplicated) match exactly,
   and `walkM` and `timeS` are each within `max(abs, rel × expected)`.
-- The 14 Xcel cases cover walking only, stairs vs lifts (with step-free twins), consecutive
+- The 26 Xcel cases cover walking only, stairs vs lifts (with step-free twins), consecutive
   flights, Deck 12 → 14, lift-only walk sections on one deck, every connector kind, the long
   Edge Villa snap, and cabin to cabin.
+- Since P7.3, 12 of them go to the port exits (`portExit`): from cabins on Decks 3, 8 and 15 to
+  the gangway and the tender platform, each with a step-free twin (`cabin-3-to-gangway-2` …
+  `edge-villa-15-to-tender-platform-2-step-free`).
 
 **The file is recorded, not re-exported.** `scripts/route-fixtures.test.mjs` runs the router
 against the committed pack and fails when a result leaves tolerance. So a layout, graph or router
@@ -234,6 +237,13 @@ across the Retreat Sundeck, and both are suite-only. `paid` doesn't keep anyone 
 pass one: the Deck 14 Magic Carpet stop is reached along the cabana row. The fleet-wide test in
 `scripts/routing-graph.test.mjs` checks every venue on every published ship.
 
+**Port exits.** On every published ship, every cabin reaches every `portExit` feature, with and
+without stairs. The same test file routes every one of those pairs. On Xcel both exits are in
+Deck 2's midship walk section, so every route arrives by the midship lifts or stairs. The
+tender exit on Edge-series ships is the Deck 2 Magic Carpet stop, reached through Destination
+Gateway on the connector above. The graph counts that link as a walk. A 2018 account of Celebrity
+Edge describes a short stairway there with a stairlift, so a wheelchair route depends on that lift.
+
 ## Elevator bank service
 
 Derived from which elevator features each deck draws (a core the deck's hull can't hold isn't
@@ -281,6 +291,7 @@ the consumer prefers.
   exactly the table above, and stairs are never step-free.
 - Every walk section on every deck contains an elevator lobby.
 - From every elevator lobby, every door on the ship is reachable **without stairs**.
+- On every published ship, every cabin reaches every port exit, with and without stairs.
 - Every connector is necessary.
 - The cabin snap distances and node spacing above hold.
 - Size budget, below.

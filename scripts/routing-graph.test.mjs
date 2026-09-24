@@ -75,11 +75,13 @@ describe('routing in the published Celebrity Xcel pack', () => {
     expect(pack.specVersion).toBe(SPEC_VERSION);
     expect(SPEC_VERSION).toBe(1);
     // Recorded from main at 0b0ae00, before routing existed, and re-recorded when
-    // P7.1 added `access` (routing unchanged). Aliases, spans, confidence,
-    // entrances and access are all inside this hash. Update it only in a change
-    // that means to edit deck data, never to make routing pass.
+    // P7.1 added `access` and when P7.3 tagged the gangway and tender platform with
+    // `portExit` and their port-day aliases (routing unchanged both times). Aliases,
+    // spans, confidence, entrances, access and port exits are all inside this hash.
+    // Update it only in a change that means to edit deck data, never to make
+    // routing pass.
     expect(nonRoutingHash(pack)).toBe(
-      '0625496e1f9492978de27a470f7500f707d968b467af839fe8eb6b79bb6f4b13'
+      '92b9c4de178c17467d83dd336140e2af6b920f82e76cae54c445fa30676cb871'
     );
   });
 
@@ -351,13 +353,13 @@ describe('routing in the published Celebrity Xcel pack', () => {
   });
 });
 
-describe('access restrictions on routes, across the published fleet', () => {
-  // Read from the committed packs: building all fourteen here would take minutes
-  // under coverage. The Xcel test above holds the committed pack to the build.
-  const plans = SHIPS.map(({ metadata }) =>
-    JSON.parse(readFileSync(`public/v1/ships/${metadata.id}/plan.json`, 'utf8'))
-  );
+// The fleet-wide tests read the committed packs: building all fourteen here would
+// take minutes under coverage. The Xcel test above holds the committed pack to the build.
+const plans = SHIPS.map(({ metadata }) =>
+  JSON.parse(readFileSync(`public/v1/ships/${metadata.id}/plan.json`, 'utf8'))
+);
 
+describe('access restrictions on routes, across the published fleet', () => {
   it('never routes through a suite, adults or kids area to a venue other guests may use', () => {
     // A `paid` area may be passed (the Deck 14 Magic Carpet stop is reached along
     // the cabana row); the other values keep guests out altogether.
@@ -400,6 +402,37 @@ describe('access restrictions on routes, across the published fleet', () => {
     // that draw it; proves the check sees crossings at all.
     expect(restrictedCrossings).toBeGreaterThan(0);
   });
+});
+
+describe('port exits, across the published fleet', () => {
+  // Port-day walk times start from the guest's cabin, so every cabin needs a route
+  // to every exit, and a step-free one too. A cabin that can't reach one is a gap
+  // in the graph to fix, never a case to skip.
+  it.each(plans.map((plan) => [plan.shipId, plan]))(
+    '%s: every cabin reaches every port exit, step-free included',
+    (_shipId, plan) => {
+      const router = createRouter(plan.routing);
+      const exits = plan.decks.flatMap((d) => d.features.filter((f) => f.portExit));
+      expect(exits.map((f) => f.portExit)).toContain('gangway');
+      const cabins = plan.decks.flatMap((d) =>
+        d.features
+          .filter((f) => f.featureType === 'cabin')
+          .map((f) => ({ deck: d.deckNumber, at: f.center, cabinId: f.id }))
+      );
+      expect(cabins.length).toBeGreaterThan(0);
+      const unreached = [];
+      for (const exit of exits) {
+        for (const cabin of cabins) {
+          for (const stepFree of [false, true]) {
+            if (!router.route(cabin, { featureId: exit.id }, { stepFree })) {
+              unreached.push(`${cabin.cabinId} → ${exit.id}${stepFree ? ' (step-free)' : ''}`);
+            }
+          }
+        }
+      }
+      expect(unreached).toEqual([]);
+    }
+  );
 });
 
 describe('pack size budget', () => {

@@ -188,6 +188,30 @@ export function accessFor(venue, featureType) {
   return authored;
 }
 
+// ------------------------------------------------------------------ port exits
+
+/**
+ * Where guests leave the ship in port:
+ * - `gangway`: the gangway, when the ship is alongside.
+ * - `tender`: where guests step onto the tenders, when it is at anchor.
+ * Only on the exit itself, never on the lounge or desk beside it (Destination
+ * Gateway, where guests wait for tenders; Shore Excursions).
+ */
+export const PORT_EXITS = ['gangway', 'tender'];
+
+/** A record's `portExit`, validated; undefined for anything that isn't an exit. */
+export function portExitFor(venue, featureType) {
+  const authored = venue.portExit;
+  if (authored === undefined) return undefined;
+  if (!PORT_EXITS.includes(authored)) {
+    throw new Error(`Venue ${venue.id} has unknown portExit "${authored}"`);
+  }
+  if (!ALIASABLE_TYPES.has(featureType)) {
+    throw new Error(`${venue.id} is a ${featureType}; only venue and poi features take portExit`);
+  }
+  return authored;
+}
+
 // --------------------------------------------------------- position confidence
 
 /**
@@ -297,6 +321,7 @@ function toFeature(venue) {
     ],
     tags: venue.tags?.length ? venue.tags : undefined,
     access: accessFor(venue, featureType),
+    portExit: portExitFor(venue, featureType),
     color: venue.color,
   };
   const confidence = positionConfidenceFor(venue, featureType);
