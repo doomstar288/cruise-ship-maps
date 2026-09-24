@@ -1,7 +1,7 @@
 {
   "specVersion": 1,
   "shipId": "celebrity-xcel",
-  "recordedAgainstRevision": "f3fed18ba034",
+  "recordedAgainstRevision": "545235a6be0e",
   "costModel": {
     "walkingSpeedMps": 1.1,
     "elevatorBoardS": 60,
@@ -345,6 +345,314 @@
         "timeS": 272.9,
         "deckChanges": [],
         "through": []
+      }
+    },
+    {
+      "id": "cabin-3-to-gangway-2",
+      "description": "Aft along Deck 3 to the midship core, then one flight down to the gangway",
+      "from": {
+        "cabinId": "c3-3100"
+      },
+      "to": {
+        "featureId": "v2-gangway"
+      },
+      "stepFree": false,
+      "expected": {
+        "walkM": 120.45,
+        "timeS": 139.5,
+        "deckChanges": [
+          {
+            "mode": "stairs",
+            "fromDeck": 3,
+            "toDeck": 2
+          }
+        ],
+        "through": []
+      }
+    },
+    {
+      "id": "cabin-3-to-gangway-2-step-free",
+      "description": "The same trip step-free: the midship lift down one deck",
+      "from": {
+        "cabinId": "c3-3100"
+      },
+      "to": {
+        "featureId": "v2-gangway"
+      },
+      "stepFree": true,
+      "expected": {
+        "walkM": 120.45,
+        "timeS": 177.5,
+        "deckChanges": [
+          {
+            "mode": "elevator",
+            "fromDeck": 3,
+            "toDeck": 2
+          }
+        ],
+        "through": []
+      }
+    },
+    {
+      "id": "cabin-3-to-tender-platform-2",
+      "description": "One flight down at midship, then through Destination Gateway onto the Magic Carpet",
+      "from": {
+        "cabinId": "c3-3100"
+      },
+      "to": {
+        "featureId": "v2-magic-carpet"
+      },
+      "stepFree": false,
+      "expected": {
+        "walkM": 149.96,
+        "timeS": 166.3,
+        "deckChanges": [
+          {
+            "mode": "stairs",
+            "fromDeck": 3,
+            "toDeck": 2
+          }
+        ],
+        "through": [
+          "v2-destination-gateway"
+        ]
+      }
+    },
+    {
+      "id": "cabin-3-to-tender-platform-2-step-free",
+      "description": "The same trip step-free: the midship lift down one deck",
+      "from": {
+        "cabinId": "c3-3100"
+      },
+      "to": {
+        "featureId": "v2-magic-carpet"
+      },
+      "stepFree": true,
+      "expected": {
+        "walkM": 149.96,
+        "timeS": 204.3,
+        "deckChanges": [
+          {
+            "mode": "elevator",
+            "fromDeck": 3,
+            "toDeck": 2
+          }
+        ],
+        "through": [
+          "v2-destination-gateway"
+        ]
+      }
+    },
+    {
+      "id": "aft-cabin-8-to-gangway-2",
+      "description": "Past the aft lifts, whose Deck 2 stop opens onto crew space, to the midship lift",
+      "from": {
+        "cabinId": "c8-8337"
+      },
+      "to": {
+        "featureId": "v2-gangway"
+      },
+      "stepFree": false,
+      "expected": {
+        "walkM": 142.51,
+        "timeS": 237.6,
+        "deckChanges": [
+          {
+            "mode": "elevator",
+            "fromDeck": 8,
+            "toDeck": 2
+          }
+        ],
+        "through": []
+      }
+    },
+    {
+      "id": "aft-cabin-8-to-gangway-2-step-free",
+      "description": "The same trip step-free: it takes no stairs anyway",
+      "from": {
+        "cabinId": "c8-8337"
+      },
+      "to": {
+        "featureId": "v2-gangway"
+      },
+      "stepFree": true,
+      "expected": {
+        "walkM": 142.51,
+        "timeS": 237.6,
+        "deckChanges": [
+          {
+            "mode": "elevator",
+            "fromDeck": 8,
+            "toDeck": 2
+          }
+        ],
+        "through": []
+      }
+    },
+    {
+      "id": "aft-cabin-8-to-tender-platform-2",
+      "description": "The midship lift down, then through Destination Gateway onto the Magic Carpet",
+      "from": {
+        "cabinId": "c8-8337"
+      },
+      "to": {
+        "featureId": "v2-magic-carpet"
+      },
+      "stepFree": false,
+      "expected": {
+        "walkM": 172.02,
+        "timeS": 264.4,
+        "deckChanges": [
+          {
+            "mode": "elevator",
+            "fromDeck": 8,
+            "toDeck": 2
+          }
+        ],
+        "through": [
+          "v2-destination-gateway"
+        ]
+      }
+    },
+    {
+      "id": "aft-cabin-8-to-tender-platform-2-step-free",
+      "description": "The same trip step-free: it takes no stairs anyway",
+      "from": {
+        "cabinId": "c8-8337"
+      },
+      "to": {
+        "featureId": "v2-magic-carpet"
+      },
+      "stepFree": true,
+      "expected": {
+        "walkM": 172.02,
+        "timeS": 264.4,
+        "deckChanges": [
+          {
+            "mode": "elevator",
+            "fromDeck": 8,
+            "toDeck": 2
+          }
+        ],
+        "through": [
+          "v2-destination-gateway"
+        ]
+      }
+    },
+    {
+      "id": "edge-villa-15-to-gangway-2",
+      "description": "Deck 2's forward lobby doesn't reach the gangway: lift to Deck 3, aft, one flight down",
+      "from": {
+        "cabinId": "c15-15100"
+      },
+      "to": {
+        "featureId": "v2-gangway"
+      },
+      "stepFree": false,
+      "expected": {
+        "walkM": 183.19,
+        "timeS": 344.5,
+        "deckChanges": [
+          {
+            "mode": "elevator",
+            "fromDeck": 15,
+            "toDeck": 3
+          },
+          {
+            "mode": "stairs",
+            "fromDeck": 3,
+            "toDeck": 2
+          }
+        ],
+        "through": []
+      }
+    },
+    {
+      "id": "edge-villa-15-to-gangway-2-step-free",
+      "description": "The same trip step-free: two lift rides",
+      "from": {
+        "cabinId": "c15-15100"
+      },
+      "to": {
+        "featureId": "v2-gangway"
+      },
+      "stepFree": true,
+      "expected": {
+        "walkM": 183.19,
+        "timeS": 382.5,
+        "deckChanges": [
+          {
+            "mode": "elevator",
+            "fromDeck": 15,
+            "toDeck": 3
+          },
+          {
+            "mode": "elevator",
+            "fromDeck": 3,
+            "toDeck": 2
+          }
+        ],
+        "through": []
+      }
+    },
+    {
+      "id": "edge-villa-15-to-tender-platform-2",
+      "description": "Lift to Deck 3, aft, one flight down, then through Destination Gateway",
+      "from": {
+        "cabinId": "c15-15100"
+      },
+      "to": {
+        "featureId": "v2-magic-carpet"
+      },
+      "stepFree": false,
+      "expected": {
+        "walkM": 212.7,
+        "timeS": 371.4,
+        "deckChanges": [
+          {
+            "mode": "elevator",
+            "fromDeck": 15,
+            "toDeck": 3
+          },
+          {
+            "mode": "stairs",
+            "fromDeck": 3,
+            "toDeck": 2
+          }
+        ],
+        "through": [
+          "v2-destination-gateway"
+        ]
+      }
+    },
+    {
+      "id": "edge-villa-15-to-tender-platform-2-step-free",
+      "description": "The same trip step-free: two lift rides",
+      "from": {
+        "cabinId": "c15-15100"
+      },
+      "to": {
+        "featureId": "v2-magic-carpet"
+      },
+      "stepFree": true,
+      "expected": {
+        "walkM": 212.7,
+        "timeS": 409.4,
+        "deckChanges": [
+          {
+            "mode": "elevator",
+            "fromDeck": 15,
+            "toDeck": 3
+          },
+          {
+            "mode": "elevator",
+            "fromDeck": 3,
+            "toDeck": 2
+          }
+        ],
+        "through": [
+          "v2-destination-gateway"
+        ]
       }
     }
   ],

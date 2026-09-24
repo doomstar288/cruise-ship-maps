@@ -192,7 +192,7 @@ export function generateEdgeClassDecks(manifest) {
         }),
         venue(2, {
           id: 'v2-gangway',
-          positionConfidence: 'estimated',
+          positionConfidence: 'estimated', // not in any published source
           name: 'Gangway & Security',
           category: 'Guest Services',
           color: C.service,
@@ -200,7 +200,8 @@ export function generateEdgeClassDecks(manifest) {
           y: PORT,
           description: 'Embarkation gangway and security screening.',
           tags: ['Gangway', 'Embarkation'],
-          aliases: ['Gangway', 'Security Screening'],
+          portExit: 'gangway',
+          aliases: ['Gangway', 'Security Screening', 'Disembarkation'],
         }),
         venue(2, {
           id: 'v2-destination-gateway',
@@ -211,13 +212,16 @@ export function generateEdgeClassDecks(manifest) {
           y: STBD,
           description: 'Tender lounge where guests board shore tenders from the Magic Carpet.',
           tags: ['Tender', 'Shore Excursions'],
-          aliases: ['Tender Platform', 'Tender Boarding'],
+          // "Tender Platform" is the Magic Carpet beside it, where the tenders are boarded.
+          aliases: ['Tender Boarding'],
         }),
         magicCarpetStop(2, {
           name: 'Magic Carpet (Tender Platform)',
-          ...partOf('magic-carpet'),
+          ...partOf('magic-carpet', { aliases: ['Tender Platform'] }),
           description: 'At Deck 2 the Magic Carpet becomes a tender embarkation platform for Destination Gateway.',
           tags: ['Tender Platform', 'Starboard'],
+          // Guests wait in Destination Gateway and board the tenders from here.
+          portExit: 'tender',
         }),
         venue(2, {
           id: 'v2-crew-aft',
