@@ -333,7 +333,7 @@ offline after first load.
 - **REST mode:** only if a live service adds value beyond static packs; routing stays
   on-device regardless.
 
-### Phase 7 — Planner enhancements  `M–L` · both repos · proposed 2026-09-23
+### Phase 7 — Planner enhancements  `M–L` · both repos · ◐ P7.1 shipped 2026-09-23
 
 Phases 0–5 answer "where is it and when do I leave?". Phase 7 answers the next questions:
 can I get in, is it open, how do I get off the ship, and what's nearest. Priority order;
@@ -342,11 +342,11 @@ under [AuraTrip epic #209](https://github.com/doomstar288/big-trip-planner/issue
 
 | # | Maps | AuraTrip |
 |---|---|---|
-| P7.1 | [#52](https://github.com/doomstar288/cruise-ship-maps/issues/52) `access` field | [#210](https://github.com/doomstar288/big-trip-planner/issues/210) warnings |
+| P7.1 | ✅ [#62](https://github.com/doomstar288/cruise-ship-maps/pull/62) `access` field, 15 venues fleet-wide | ✅ [AuraTrip #218](https://github.com/doomstar288/big-trip-planner/pull/218) agenda and viewer warnings, rendezvous filter |
 | P7.2 | [#53](https://github.com/doomstar288/cruise-ship-maps/issues/53) hours and booking facts | [#211](https://github.com/doomstar288/big-trip-planner/issues/211) chips and "usually closed" |
 | P7.3 | [#54](https://github.com/doomstar288/cruise-ship-maps/issues/54) tag port exits, fixtures | [#212](https://github.com/doomstar288/big-trip-planner/issues/212) gangway, tender and meeting-point walk times |
 | P7.4 | [#55](https://github.com/doomstar288/cruise-ship-maps/issues/55) muster stations, no-lifts option | [#213](https://github.com/doomstar288/big-trip-planner/issues/213) stairs-only muster route |
-| P7.5 | [#56](https://github.com/doomstar288/cruise-ship-maps/issues/56) `routeToNearest` | [#214](https://github.com/doomstar288/big-trip-planner/issues/214) "Nearest…" |
+| P7.5 | [#56](https://github.com/doomstar288/cruise-ship-maps/issues/56) `routeToNearest`, restroom POIs if sourced | [#214](https://github.com/doomstar288/big-trip-planner/issues/214) fix and extend Find Nearest |
 | P7.6 | — | [#215](https://github.com/doomstar288/big-trip-planner/issues/215) fill gaps in the day |
 | P7.7 | — | [#216](https://github.com/doomstar288/big-trip-planner/issues/216) rendezvous for 3+ cabins |
 | P7.8 | — | [#217](https://github.com/doomstar288/big-trip-planner/issues/217) daily walking summary |
@@ -356,6 +356,9 @@ under [AuraTrip epic #209](https://github.com/doomstar288/big-trip-planner/issue
   `access: "suite" | "adults" | "kids" | "paid"`, compared against the pack's `cabin.type`.
   The router needs no change today; the one restricted `through` edge (Retreat Bar via the
   Retreat Sundeck) leads to a venue with the same access, and a test keeps it that way.
+  *Shipped:* a stateroom guest gets "Suite guests only, and stateroom 10175 isn't a suite."; a
+  suite guest gets nothing; age and pass rules are labels only. Blu (AquaClass), the Concierge
+  Lounge and the SEA Thermal Suite stay public until the pack can tell those guests apart.
 - **P7.2 Hours and booking facts.** `hours`, `reservationRequired`, `fee`, `dressCode`, as
   typical facts from public sources. The daily program always wins, and the copy says
   "usually".
@@ -367,8 +370,13 @@ under [AuraTrip epic #209](https://github.com/doomstar288/big-trip-planner/issue
   neither repo infers one. Add `muster_station` features and an `avoidLifts` router option,
   because the emergency route is stairs only. Where a cabin can't reach a station without
   lifts, that's a graph gap to fix, never a lift fallback.
-- **P7.5 Nearest.** One Dijkstra run that stops at the first candidate, with fixtures, so
-  both routers agree.
+- **P7.5 Nearest.** *Rescoped 2026-09-23:* AuraTrip already ships "Find Nearest"
+  (`utils/findNearest.ts`). It ignores `access` (from a stateroom it suggests the Retreat
+  Lounge as the nearest bar), guesses restrooms at every lift lobby, shows an untied "~N min"
+  without a cabin, and routes once per candidate. Maps adds `routeToNearest` (one Dijkstra run
+  that stops at the first candidate, with fixtures, so both routers agree) and restroom POIs
+  where a public source exists. AuraTrip fixes access first, then the fallback and restroom
+  wording, and adds agenda-row origins.
 - **P7.6–P7.8** are AuraTrip-only and build on routes the agenda already computes.
 
 **Accept when:** each maps task's fields are documented in `ship_map_pack.md` and stay within
