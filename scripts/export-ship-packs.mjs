@@ -58,6 +58,8 @@ const ELEVATOR_PATTERN = /\b(elevator|lift)\b/i;
 const STAIR_PATTERN = /\b(stair|stairwell|stairs)\b/i;
 const MUSTER_PATTERN = /\b(muster|assembly station|lifeboat)\b/i;
 const CABIN_CATEGORY = /^(staterooms?|suites?)$/i;
+/** Public restrooms are points of interest, not venues (P7.5). */
+export const RESTROOM_CATEGORY = 'Restrooms';
 /** Crew and back-of-house space: category "Crew & Service", or a name like
  *  "Crew & Technical Areas" / "Provision Stores". Tags are deliberately not read:
  *  the Navigation Bridge is also tagged "Crew Only" but is a named landmark. */
@@ -84,6 +86,7 @@ export function classifyFeature(venue) {
   if (STAIR_PATTERN.test(haystack)) return 'stairwell';
   if (MUSTER_PATTERN.test(haystack)) return 'muster_station';
   if (CABIN_CATEGORY.test(venue.category ?? '')) return 'cabin';
+  if (venue.category === RESTROOM_CATEGORY) return 'poi';
   // Crew strips and back-of-house blocks are emitted as `corridor`, not dropped:
   // consumers (AuraTrip) still draw corridors as circulation, so the deck keeps
   // its real footprint, but only venue/poi/muster_station are listed in search.

@@ -1,7 +1,7 @@
 {
   "specVersion": 1,
   "shipId": "celebrity-xcel",
-  "recordedAgainstRevision": "545235a6be0e",
+  "recordedAgainstRevision": "e22ca4ccb618",
   "costModel": {
     "walkingSpeedMps": 1.1,
     "elevatorBoardS": 60,
@@ -55,8 +55,8 @@
       },
       "stepFree": false,
       "expected": {
-        "walkM": 264.42,
-        "timeS": 300.4,
+        "walkM": 264.12,
+        "timeS": 300.1,
         "deckChanges": [
           {
             "mode": "stairs",
@@ -78,8 +78,8 @@
       },
       "stepFree": true,
       "expected": {
-        "walkM": 264.42,
-        "timeS": 316.4,
+        "walkM": 264.12,
+        "timeS": 316.1,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -101,8 +101,8 @@
       },
       "stepFree": false,
       "expected": {
-        "walkM": 41.25,
-        "timeS": 67.5,
+        "walkM": 42.52,
+        "timeS": 68.7,
         "deckChanges": [
           {
             "mode": "stairs",
@@ -124,8 +124,8 @@
       },
       "stepFree": false,
       "expected": {
-        "walkM": 144.28,
-        "timeS": 221.2,
+        "walkM": 145.55,
+        "timeS": 222.3,
         "deckChanges": [
           {
             "mode": "stairs",
@@ -152,8 +152,8 @@
       },
       "stepFree": true,
       "expected": {
-        "walkM": 144.28,
-        "timeS": 275.2,
+        "walkM": 145.55,
+        "timeS": 276.3,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -180,8 +180,8 @@
       },
       "stepFree": false,
       "expected": {
-        "walkM": 93.14,
-        "timeS": 84.7,
+        "walkM": 93.11,
+        "timeS": 84.6,
         "deckChanges": [],
         "through": []
       }
@@ -197,8 +197,8 @@
       },
       "stepFree": true,
       "expected": {
-        "walkM": 219.45,
-        "timeS": 335.5,
+        "walkM": 220.69,
+        "timeS": 336.6,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -263,8 +263,8 @@
       },
       "stepFree": true,
       "expected": {
-        "walkM": 234.03,
-        "timeS": 364.8,
+        "walkM": 233.73,
+        "timeS": 364.5,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -653,6 +653,352 @@
         "through": [
           "v2-destination-gateway"
         ]
+      }
+    }
+  ],
+  "nearest": [
+    {
+      "id": "nearest-bar-from-cabin-10",
+      "description": "A stateroom guest's nearest public bar is six decks up, by lift",
+      "from": {
+        "cabinId": "c10-10175"
+      },
+      "candidates": [
+        "v3-martini-bar",
+        "v4-craft-social",
+        "v5-annex",
+        "v5-world-class-bar",
+        "v15-sunset-bar",
+        "v16-mast-bar"
+      ],
+      "stepFree": false,
+      "expected": {
+        "featureId": "v16-mast-bar",
+        "walkM": 105.73,
+        "timeS": 196.1,
+        "deckChanges": [
+          {
+            "mode": "elevator",
+            "fromDeck": 10,
+            "toDeck": 16
+          }
+        ],
+        "through": []
+      }
+    },
+    {
+      "id": "nearest-bar-from-suite-12",
+      "description": "A suite guest may use the Retreat, so the list includes it, and it wins",
+      "from": {
+        "cabinId": "c12-12100"
+      },
+      "candidates": [
+        "v3-martini-bar",
+        "v4-craft-social",
+        "v5-annex",
+        "v5-world-class-bar",
+        "v15-sunset-bar",
+        "v16-mast-bar",
+        "v15-retreat-lounge",
+        "v17-retreat-bar"
+      ],
+      "stepFree": false,
+      "expected": {
+        "featureId": "v15-retreat-lounge",
+        "walkM": 85.81,
+        "timeS": 138,
+        "deckChanges": [
+          {
+            "mode": "stairs",
+            "fromDeck": 12,
+            "toDeck": 15
+          }
+        ],
+        "through": []
+      }
+    },
+    {
+      "id": "nearest-bar-from-cabin-6",
+      "description": "One flight down to World Class Bar",
+      "from": {
+        "cabinId": "c6-6100"
+      },
+      "candidates": [
+        "v3-martini-bar",
+        "v4-craft-social",
+        "v5-annex",
+        "v5-world-class-bar",
+        "v15-sunset-bar",
+        "v16-mast-bar"
+      ],
+      "stepFree": false,
+      "expected": {
+        "featureId": "v5-world-class-bar",
+        "walkM": 215.45,
+        "timeS": 225.9,
+        "deckChanges": [
+          {
+            "mode": "stairs",
+            "fromDeck": 6,
+            "toDeck": 5
+          }
+        ],
+        "through": []
+      }
+    },
+    {
+      "id": "nearest-bar-from-cabin-6-step-free",
+      "description": "Step-free changes the winner: the lift down to the Martini Bar",
+      "from": {
+        "cabinId": "c6-6100"
+      },
+      "candidates": [
+        "v3-martini-bar",
+        "v4-craft-social",
+        "v5-annex",
+        "v5-world-class-bar",
+        "v15-sunset-bar",
+        "v16-mast-bar"
+      ],
+      "stepFree": true,
+      "expected": {
+        "featureId": "v3-martini-bar",
+        "walkM": 182.47,
+        "timeS": 249.9,
+        "deckChanges": [
+          {
+            "mode": "elevator",
+            "fromDeck": 6,
+            "toDeck": 3
+          }
+        ],
+        "through": []
+      }
+    },
+    {
+      "id": "nearest-bar-from-le-voyage-4",
+      "description": "From a venue: up the stairs beats walking to Craft Social",
+      "from": {
+        "featureId": "v4-le-voyage"
+      },
+      "candidates": [
+        "v3-martini-bar",
+        "v4-craft-social",
+        "v5-annex",
+        "v5-world-class-bar",
+        "v15-sunset-bar",
+        "v16-mast-bar"
+      ],
+      "stepFree": false,
+      "expected": {
+        "featureId": "v5-world-class-bar",
+        "walkM": 106.16,
+        "timeS": 126.5,
+        "deckChanges": [
+          {
+            "mode": "stairs",
+            "fromDeck": 4,
+            "toDeck": 5
+          }
+        ],
+        "through": []
+      }
+    },
+    {
+      "id": "nearest-bar-from-le-voyage-4-step-free",
+      "description": "Step-free, the winner is on the same deck",
+      "from": {
+        "featureId": "v4-le-voyage"
+      },
+      "candidates": [
+        "v3-martini-bar",
+        "v4-craft-social",
+        "v5-annex",
+        "v5-world-class-bar",
+        "v15-sunset-bar",
+        "v16-mast-bar"
+      ],
+      "stepFree": true,
+      "expected": {
+        "featureId": "v4-craft-social",
+        "walkM": 164.66,
+        "timeS": 149.7,
+        "deckChanges": [],
+        "through": []
+      }
+    },
+    {
+      "id": "nearest-restroom-from-cabin-10",
+      "description": "None on Deck 10, so the nearest of the 13 restrooms is four decks up by lift",
+      "from": {
+        "cabinId": "c10-10175"
+      },
+      "candidates": [
+        "restrooms-mid-2",
+        "restrooms-aft-3",
+        "restrooms-fwd-4",
+        "restrooms-mid-4",
+        "restrooms-aft-4",
+        "restrooms-fwd-5",
+        "restrooms-mid-5",
+        "restrooms-aft-5",
+        "restrooms-fwd-port-14",
+        "restrooms-fwd-stbd-14",
+        "restrooms-mid-port-14",
+        "restrooms-mid-stbd-14",
+        "restrooms-aft-15"
+      ],
+      "stepFree": false,
+      "expected": {
+        "featureId": "restrooms-fwd-port-14",
+        "walkM": 61.77,
+        "timeS": 140.2,
+        "deckChanges": [
+          {
+            "mode": "elevator",
+            "fromDeck": 10,
+            "toDeck": 14
+          }
+        ],
+        "through": []
+      }
+    },
+    {
+      "id": "nearest-lift-from-cabin-10",
+      "description": "Every lift lobby on the ship: the nearest is a walk along the corridor",
+      "from": {
+        "cabinId": "c10-10175"
+      },
+      "candidates": [
+        "elev-fwd-2",
+        "elev-fwd-3",
+        "elev-fwd-4",
+        "elev-fwd-5",
+        "elev-fwd-6",
+        "elev-fwd-7",
+        "elev-fwd-8",
+        "elev-fwd-9",
+        "elev-fwd-10",
+        "elev-fwd-11",
+        "elev-fwd-12",
+        "elev-fwd-14",
+        "elev-fwd-15",
+        "elev-fwd-16",
+        "elev-fwd-17",
+        "elev-mid-2",
+        "elev-mid-3",
+        "elev-mid-4",
+        "elev-mid-5",
+        "elev-mid-6",
+        "elev-mid-7",
+        "elev-mid-8",
+        "elev-mid-9",
+        "elev-mid-10",
+        "elev-mid-11",
+        "elev-mid-12",
+        "elev-mid-14",
+        "elev-mid-15",
+        "elev-mid-16",
+        "elev-aft-2",
+        "elev-aft-3",
+        "elev-aft-4",
+        "elev-aft-5",
+        "elev-aft-6",
+        "elev-aft-7",
+        "elev-aft-8",
+        "elev-aft-9",
+        "elev-aft-10",
+        "elev-aft-11",
+        "elev-aft-12",
+        "elev-aft-14",
+        "elev-aft-15"
+      ],
+      "stepFree": false,
+      "expected": {
+        "featureId": "elev-fwd-10",
+        "walkM": 48.37,
+        "timeS": 44,
+        "deckChanges": [],
+        "through": []
+      }
+    },
+    {
+      "id": "nearest-fine-dining-from-lifts-5",
+      "description": "Raw on 5 wins by one second, inside the time tolerance, so ranking must be exact",
+      "from": {
+        "deck": 5,
+        "elevators": true
+      },
+      "candidates": [
+        "v3-normandie",
+        "v3-tuscan",
+        "v4-le-voyage",
+        "v4-le-grand-bistro",
+        "v4-cosmopolitan",
+        "v4-cyprus",
+        "v4-mosaic",
+        "v5-raw-on-5",
+        "v5-blu",
+        "v5-fine-cut",
+        "v15-bora"
+      ],
+      "stepFree": false,
+      "expected": {
+        "featureId": "v5-raw-on-5",
+        "walkM": 38.52,
+        "timeS": 35,
+        "deckChanges": [],
+        "through": []
+      }
+    },
+    {
+      "id": "nearest-lift-tie-up-listed-first",
+      "description": "A tie: one flight up or down costs the same, so the candidate listed first wins",
+      "from": {
+        "featureId": "elev-fwd-5"
+      },
+      "candidates": [
+        "elev-fwd-6",
+        "elev-fwd-4"
+      ],
+      "stepFree": false,
+      "expected": {
+        "featureId": "elev-fwd-6",
+        "walkM": 0,
+        "timeS": 30,
+        "deckChanges": [
+          {
+            "mode": "stairs",
+            "fromDeck": 5,
+            "toDeck": 6
+          }
+        ],
+        "through": []
+      }
+    },
+    {
+      "id": "nearest-lift-tie-down-listed-first",
+      "description": "The same tie listed the other way round",
+      "from": {
+        "featureId": "elev-fwd-5"
+      },
+      "candidates": [
+        "elev-fwd-4",
+        "elev-fwd-6"
+      ],
+      "stepFree": false,
+      "expected": {
+        "featureId": "elev-fwd-4",
+        "walkM": 0,
+        "timeS": 30,
+        "deckChanges": [
+          {
+            "mode": "stairs",
+            "fromDeck": 5,
+            "toDeck": 4
+          }
+        ],
+        "through": []
       }
     }
   ]

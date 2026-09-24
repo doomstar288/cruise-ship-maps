@@ -213,3 +213,65 @@ describe('createRouter().route', () => {
     );
   });
 });
+
+describe('createRouter().routeToNearest', () => {
+  it('returns the cheapest candidate and the route route() gives to it', () => {
+    const from = { featureId: 'lift-a-1' };
+    // The bar is one lift ride up (68 s) and a 70 m walk; the rooftop is two rides up and 320 m.
+    const nearest = router.routeToNearest(from, ['rooftop', 'bar']);
+    expect(nearest.featureId).toBe('bar');
+    expect(nearest.route).toEqual(router.route(from, { featureId: 'bar' }));
+    expect(nearest.route.deckChanges).toEqual([{ mode: 'elevator', fromDeck: 1, toDeck: 2 }]);
+    expect(nearest.route.timeS).toBe(138);
+  });
+
+  it('breaks a tie by list order, not by where the candidates sit in the graph', () => {
+    // One lift ride down or up: both 68 s from Deck 2.
+    const from = { featureId: 'lift-a-2' };
+    const down = router.routeToNearest(from, ['lift-a-1', 'lift-a-4']);
+    const up = router.routeToNearest(from, ['lift-a-4', 'lift-a-1']);
+    expect([down.featureId, up.featureId]).toEqual(['lift-a-1', 'lift-a-4']);
+    expect(down.route.timeS).toBe(68);
+    expect(up.route).toEqual(router.route(from, { featureId: 'lift-a-4' }));
+  });
+
+  it('honours stepFree, which can change the winner', () => {
+    const from = { featureId: 'stair-1' };
+    const candidates = ['stair-2', 'lift-a-1'];
+    expect(router.routeToNearest(from, candidates).featureId).toBe('stair-2');
+    const stepFree = router.routeToNearest(from, candidates, { stepFree: true });
+    expect(stepFree.featureId).toBe('lift-a-1');
+    expect(stepFree.route).toEqual(
+      router.route(from, { featureId: 'lift-a-1' }, { stepFree: true })
+    );
+  });
+
+  it('takes a venue at its nearest door and snaps a point origin, as route() does', () => {
+    const from = { deck: 2, at: [72, 3] };
+    const nearest = router.routeToNearest(from, ['bar', 'far-venue']);
+    expect(nearest.featureId).toBe('bar');
+    expect(nearest.route).toEqual(router.route(from, { featureId: 'bar' }));
+    expect(nearest.route.destination.node).toBe('2:4');
+  });
+
+  it('counts an origin that is also a candidate, at no cost', () => {
+    const nearest = router.routeToNearest({ featureId: 'bar' }, ['lift-a-2', 'bar']);
+    expect(nearest.featureId).toBe('bar');
+    expect(nearest.route).toMatchObject({ walkM: 0, timeS: 0, legs: [], deckChanges: [] });
+  });
+
+  it('skips unreachable candidates, returns null when none is left, and throws off the graph', () => {
+    const island = createRouter({
+      ...routing,
+      decks: routing.decks.map((d) => (d.deckNumber === 4 ? { ...d, walk: [] } : d)),
+    });
+    const from = { featureId: 'lift-a-1' };
+    expect(island.routeToNearest(from, ['rooftop', 'bar']).featureId).toBe('bar');
+    expect(island.routeToNearest(from, ['rooftop'])).toBeNull();
+    expect(router.routeToNearest(from, [])).toBeNull();
+    expect(router.routeToNearest(from, ['bar', 'bar']).featureId).toBe('bar');
+    expect(() => router.routeToNearest(from, ['bar', 'nowhere'])).toThrow(
+      /nowhere is not on the routing graph/
+    );
+  });
+});

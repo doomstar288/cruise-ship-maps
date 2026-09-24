@@ -79,6 +79,65 @@ const partOf = (venueGroup, { aliases = [] } = {}) => ({
   aliases: [...VENUE_GROUPS[venueGroup].aliases, ...aliases],
 });
 
+// ---------------------------------------------------------------------- restrooms
+
+/**
+ * Public restrooms (roadmap P7.5), from the "GENTS", "LADIES" and "WC" labels on
+ * Celebrity's own deck plan, https://www.celebritycruises.com/cruise-ships/celebrity-xcel/deck-plans
+ * (read 2026-09-24). Facts only: each label's deck, fore/aft zone and side, and
+ * what it sits beside (`where`, which is published). Nothing is traced.
+ *
+ * The rectangles are this repo's: open space in the right zone and side, picked
+ * from the spots that leave the rest of the deck's walk graph as it was. A new
+ * wall moves the corridor centrelines around it, so a careless spot can lengthen
+ * trips that never go near the restroom. With these, no walk between two other
+ * features on these decks moves by more than 5 m. They keep the default `zone`.
+ *
+ * Left out: the changing rooms inside The Spa (Deck 14); a WC by the Deck 15
+ * forward lifts that may belong to The Retreat Lounge; Deck 16's three WCs (two in
+ * or beside The Retreat, one aft where this layout has no walkway); and The Retreat
+ * Sundeck's own (Deck 17, suite-only). Decks 6–12 have none.
+ */
+const RESTROOMS = {
+  2: [{ id: 'restrooms-mid-2', rooms: 'WC', x: [189.5, 194.5], y: [0, 4.4], where: 'by the midship elevators, port side' }],
+  3: [{ id: 'restrooms-aft-3', x: [264, 272], y: [34.6, 39], where: 'aft on the starboard side, forward of Tuscan Grille' }],
+  4: [
+    { id: 'restrooms-fwd-4', x: [79, 87], y: [30, 34], where: 'forward on the starboard side, between The Theatre and the forward elevators' },
+    { id: 'restrooms-mid-4', x: [135, 143], y: [34.6, 39], where: 'midship on the starboard side, across from Le Voyage' },
+    { id: 'restrooms-aft-4', x: [264, 272], y: [34.6, 39], where: 'aft on the starboard side, forward of Cyprus' },
+  ],
+  5: [
+    { id: 'restrooms-fwd-5', x: [70, 78], y: [0, 4.4], where: 'forward on the port side, between The Theatre and the forward elevators' },
+    { id: 'restrooms-mid-5', x: [134, 142], y: [30, 33], where: 'midship on the starboard side, forward of the midship elevators' },
+    { id: 'restrooms-aft-5', x: [264, 272], y: [0, 4.4], where: 'aft on the port side, by the entrance to The Bazaar' },
+  ],
+  14: [
+    { id: 'restrooms-fwd-port-14', rooms: 'Gents', x: [86, 90], y: [6, 9], where: 'on the port side of the forward elevators' },
+    { id: 'restrooms-fwd-stbd-14', rooms: 'Ladies', x: [86, 90], y: [35.6, 39], where: 'on the starboard side of the forward elevators' },
+    { id: 'restrooms-mid-port-14', rooms: 'Gents', x: [196, 200], y: [0, 4.4], where: 'on the port side of the midship elevators' },
+    { id: 'restrooms-mid-stbd-14', rooms: 'Ladies', x: [196, 200], y: [34.6, 39], where: 'on the starboard side of the midship elevators' },
+  ],
+  15: [{ id: 'restrooms-aft-15', x: [264, 272], y: [34.6, 39], where: 'aft on the starboard side, across from Bora' }],
+};
+
+/** Deck `level`'s restrooms, as `poi` records (the exporter keys on the category). */
+function restroomsOn(level) {
+  return (RESTROOMS[level] ?? []).map(({ id, rooms = 'Ladies and gents', x, y, where }) => {
+    const pair = rooms === 'Ladies and gents';
+    return venue(level, {
+      id,
+      name: rooms === 'WC' ? 'Restroom' : pair ? 'Restrooms' : `Restroom (${rooms})`,
+      category: 'Restrooms',
+      color: C.service,
+      // Rectangles that reach the hull are trimmed to its margin.
+      x,
+      y,
+      description: `${rooms === 'WC' ? 'A WC' : `${rooms} restroom${pair ? 's' : ''}`}, ${where}.`,
+      tags: ['Restroom', ...(pair ? ['Ladies', 'Gents'] : [rooms])],
+    });
+  });
+}
+
 // ---------------------------------------------------------------- stateroom decks
 
 /** Standard mid/aft veranda cabin, with Prime Edge through the midship section. */
@@ -200,6 +259,7 @@ export function generateAllDecks() {
           tags: ['Crew Only'],
           hideLabel: true,
         }),
+        ...restroomsOn(2),
       ],
     })
   );
@@ -329,6 +389,7 @@ export function generateAllDecks() {
           description: 'Complimentary main restaurant serving Italian dishes.',
           tags: ['Main Dining', 'Italian'],
         }),
+        ...restroomsOn(3),
       ],
     })
   );
@@ -484,6 +545,7 @@ export function generateAllDecks() {
           description: 'Restaurant on the lower level of The Bazaar, the triple-height aft space that replaced Eden on Xcel.',
           tags: ['The Bazaar', 'New on Xcel'],
         }),
+        ...restroomsOn(4),
       ],
     })
   );
@@ -655,6 +717,7 @@ export function generateAllDecks() {
           description: 'Casual café in The Bazaar with two outdoor seating areas.',
           tags: ['The Bazaar', 'New on Xcel'],
         }),
+        ...restroomsOn(5),
       ],
     })
   );
@@ -891,6 +954,7 @@ export function generateAllDecks() {
           description: 'Open deck loungers at the stern.',
           tags: ['Sun Deck'],
         }),
+        ...restroomsOn(14),
       ],
     })
   );
@@ -996,6 +1060,7 @@ export function generateAllDecks() {
           description: 'Open-air bar at the stern, twice the size of the Edge-class original, with wake views.',
           tags: ['Wake Views', 'Cocktails'],
         }),
+        ...restroomsOn(15),
       ],
     })
   );
