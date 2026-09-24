@@ -139,6 +139,50 @@ export const ROUTE_FIXTURE_CASES = {
   ],
 };
 
+/**
+ * `avoidLifts` cases (P7.4), published as `avoidLiftsRoutes` beside `routes`.
+ * They stay out of `routes[]` on purpose: a port runs every `routes[]` entry
+ * with `stepFree` alone, so it would fail these until it has the option. Each
+ * is recorded with `avoidLifts: true`. Step-free as well leaves only walking,
+ * so `expected: null` (no route, never a fallback) is allowed only then.
+ */
+export const AVOID_LIFTS_FIXTURE_CASES = {
+  'celebrity-xcel': [
+    {
+      id: 'cabin-10-to-magic-carpet-5-no-lifts',
+      description: 'Five flights down the same core instead of the lift: still one deck change',
+      from: cabin('c10-10175'),
+      to: venue('v5-magic-carpet'),
+    },
+    {
+      id: 'cabin-8-to-magic-carpet-16-no-lifts',
+      description: 'Seven flights up where the lift is quicker; Deck 12 to 14 is one flight',
+      from: cabin('c8-8100'),
+      to: venue('v16-magic-carpet'),
+    },
+    {
+      id: 'le-voyage-to-theatre-4-no-lifts',
+      description: 'Same deck, different walk sections: down the stairs and back up',
+      from: venue('v4-le-voyage'),
+      to: venue('v4-theatre'),
+    },
+    {
+      id: 'le-voyage-to-theatre-4-step-free-no-lifts',
+      description: 'Step-free without lifts: no route to another walk section, so null',
+      from: venue('v4-le-voyage'),
+      to: venue('v4-theatre'),
+      stepFree: true,
+    },
+    {
+      id: 'le-voyage-to-casino-4-step-free-no-lifts',
+      description: 'Step-free without lifts within one walk section: walking only',
+      from: venue('v4-le-voyage'),
+      to: venue('v4-casino'),
+      stepFree: true,
+    },
+  ],
+};
+
 /** A fixture endpoint as a router endpoint. Cabins snap from their pack centre. */
 export function routerEndpoint(pack, endpoint) {
   if (!endpoint.cabinId) return endpoint;
@@ -152,8 +196,11 @@ export function routerEndpoint(pack, endpoint) {
 const throughOf = (route) => [...new Set(route.legs.flatMap((leg) => leg.through ?? []))].sort();
 
 /** Route one case, in the shape its `expected` block records. */
-export function runFixture(router, pack, { from, to, stepFree = false }) {
-  const route = router.route(routerEndpoint(pack, from), routerEndpoint(pack, to), { stepFree });
+export function runFixture(router, pack, { from, to, stepFree = false, avoidLifts = false }) {
+  const route = router.route(routerEndpoint(pack, from), routerEndpoint(pack, to), {
+    stepFree,
+    avoidLifts,
+  });
   if (!route) return null;
   return {
     walkM: route.walkM,
@@ -166,7 +213,11 @@ export function runFixture(router, pack, { from, to, stepFree = false }) {
 export const withinTolerance = (actual, expected, { abs, rel }) =>
   Math.abs(actual - expected) <= Math.max(abs, rel * Math.abs(expected));
 
-export function recordRouteFixtures(pack, cases = ROUTE_FIXTURE_CASES[pack.shipId]) {
+export function recordRouteFixtures(
+  pack,
+  cases = ROUTE_FIXTURE_CASES[pack.shipId],
+  avoidLiftsCases = AVOID_LIFTS_FIXTURE_CASES[pack.shipId] ?? []
+) {
   if (!cases) throw new Error(`No route fixture cases for ${pack.shipId}`);
   const router = createRouter(pack.routing);
   return {
@@ -180,6 +231,12 @@ export function recordRouteFixtures(pack, cases = ROUTE_FIXTURE_CASES[pack.shipI
       if (!expected) throw new Error(`Fixture ${c.id} has no route`);
       return { ...c, stepFree: c.stepFree ?? false, expected };
     }),
+    avoidLiftsRoutes: avoidLiftsCases.map((c) => {
+      const fixture = { ...c, stepFree: c.stepFree ?? false, avoidLifts: true };
+      const expected = runFixture(router, pack, fixture);
+      if (!expected && !fixture.stepFree) throw new Error(`Fixture ${c.id} has no route`);
+      return { ...fixture, expected };
+    }),
   };
 }
 
@@ -189,7 +246,8 @@ async function main() {
     const fixtures = recordRouteFixtures(pack);
     await writeFile(fixturesPath(shipId), `${JSON.stringify(fixtures, null, 2)}\n`);
     console.log(
-      `${shipId}: recorded ${fixtures.routes.length} route fixtures against rev ${pack.revision}`
+      `${shipId}: recorded ${fixtures.routes.length} route fixtures and ` +
+        `${fixtures.avoidLiftsRoutes.length} avoidLifts fixtures against rev ${pack.revision}`
     );
   }
 }

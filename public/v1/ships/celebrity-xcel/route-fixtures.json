@@ -1,7 +1,7 @@
 {
   "specVersion": 1,
   "shipId": "celebrity-xcel",
-  "recordedAgainstRevision": "223dda36fe31",
+  "recordedAgainstRevision": "f3fed18ba034",
   "costModel": {
     "walkingSpeedMps": 1.1,
     "elevatorBoardS": 60,
@@ -343,6 +343,120 @@
       "expected": {
         "walkM": 300.15,
         "timeS": 272.9,
+        "deckChanges": [],
+        "through": []
+      }
+    }
+  ],
+  "avoidLiftsRoutes": [
+    {
+      "id": "cabin-10-to-magic-carpet-5-no-lifts",
+      "description": "Five flights down the same core instead of the lift: still one deck change",
+      "from": {
+        "cabinId": "c10-10175"
+      },
+      "to": {
+        "featureId": "v5-magic-carpet"
+      },
+      "stepFree": false,
+      "avoidLifts": true,
+      "expected": {
+        "walkM": 145.34,
+        "timeS": 282.1,
+        "deckChanges": [
+          {
+            "mode": "stairs",
+            "fromDeck": 10,
+            "toDeck": 5
+          }
+        ],
+        "through": [
+          "v5-world-class-bar"
+        ]
+      }
+    },
+    {
+      "id": "cabin-8-to-magic-carpet-16-no-lifts",
+      "description": "Seven flights up where the lift is quicker; Deck 12 to 14 is one flight",
+      "from": {
+        "cabinId": "c8-8100"
+      },
+      "to": {
+        "featureId": "v16-magic-carpet"
+      },
+      "stepFree": false,
+      "avoidLifts": true,
+      "expected": {
+        "walkM": 231.84,
+        "timeS": 420.8,
+        "deckChanges": [
+          {
+            "mode": "stairs",
+            "fromDeck": 8,
+            "toDeck": 16
+          }
+        ],
+        "through": [
+          "v16-hot-tubs"
+        ]
+      }
+    },
+    {
+      "id": "le-voyage-to-theatre-4-no-lifts",
+      "description": "Same deck, different walk sections: down the stairs and back up",
+      "from": {
+        "featureId": "v4-le-voyage"
+      },
+      "to": {
+        "featureId": "v4-theatre"
+      },
+      "stepFree": false,
+      "avoidLifts": true,
+      "expected": {
+        "walkM": 219.45,
+        "timeS": 259.5,
+        "deckChanges": [
+          {
+            "mode": "stairs",
+            "fromDeck": 4,
+            "toDeck": 3
+          },
+          {
+            "mode": "stairs",
+            "fromDeck": 3,
+            "toDeck": 4
+          }
+        ],
+        "through": []
+      }
+    },
+    {
+      "id": "le-voyage-to-theatre-4-step-free-no-lifts",
+      "description": "Step-free without lifts: no route to another walk section, so null",
+      "from": {
+        "featureId": "v4-le-voyage"
+      },
+      "to": {
+        "featureId": "v4-theatre"
+      },
+      "stepFree": true,
+      "avoidLifts": true,
+      "expected": null
+    },
+    {
+      "id": "le-voyage-to-casino-4-step-free-no-lifts",
+      "description": "Step-free without lifts within one walk section: walking only",
+      "from": {
+        "featureId": "v4-le-voyage"
+      },
+      "to": {
+        "featureId": "v4-casino"
+      },
+      "stepFree": true,
+      "avoidLifts": true,
+      "expected": {
+        "walkM": 93.14,
+        "timeS": 84.7,
         "deckChanges": [],
         "through": []
       }

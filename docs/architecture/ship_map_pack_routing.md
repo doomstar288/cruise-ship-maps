@@ -115,8 +115,24 @@ recorded with it, and AuraTrip's TypeScript port must match it.
 | `stairs` | `stairsPerLevelS` (30) × `decks` |
 
 The lift numbers are guesses (see the roadmap's risks). They make stairs win for one or two decks
-and lifts win from three. `stepFree: true` drops stairs edges. Ties go to the lower node index, so
-a route is deterministic.
+and lifts win from three. Ties go to the lower node index, so a route is deterministic.
+
+**Options.**
+
+| Option | Leaves out | For |
+| --- | --- | --- |
+| `stepFree: true` | `stairs` edges | Step-free directions. |
+| `avoidLifts: true` | `elevator` edges | A muster route: stairs only, never a lift. |
+
+With both, only `walk` edges are left, so a trip to another deck or another walk section has no
+route. The router returns `null` then. It never falls back to stairs or lifts: a caller that ruled
+both out must be told there is no route.
+
+**The Magic Carpet counts as a lift.** It is a moving platform, and no way out in an emergency, so
+a stairs-only route must never ride it. Today the graph has no ride between its stops: each stop is
+a venue on its own deck, reached on foot, so no route rides it, with or without `avoidLifts`. If a
+pack ever adds the ride, it must be an `elevators[]` bank, which `avoidLifts` leaves out. The tests
+hold the graph to that.
 
 **Result.** `walkM` (walk edges plus snaps), `timeS`, and `legs` in order: `walk` legs (`deck`,
 `points`, `lengthM`, `through`) and `elevator`/`stairs` legs (`fromDeck`, `toDeck`, `from`/`to`
@@ -145,6 +161,17 @@ between this repo and ports.
       "stepFree": false,
       "expected": { "walkM": 46.44, "timeS": 42.2, "deckChanges": [], "through": ["v5-bazaar-market"] }
     }
+  ],
+  "avoidLiftsRoutes": [
+    {
+      "id": "le-voyage-to-theatre-4-step-free-no-lifts",
+      "description": "…",
+      "from": { "featureId": "v4-le-voyage" },
+      "to": { "featureId": "v4-theatre" },
+      "stepFree": true,
+      "avoidLifts": true,
+      "expected": null                              // no route, and no fallback
+    }
   ]
 }
 ```
@@ -156,6 +183,18 @@ between this repo and ports.
   flights, Deck 12 → 14, lift-only walk sections on one deck, every connector kind, the long
   Edge Villa snap, and cabin to cabin.
 
+**`avoidLiftsRoutes`** holds the `avoidLifts` cases (P7.4). An entry has the same shape as a
+`routes[]` entry, plus `"avoidLifts": true`: route it with `{ stepFree, avoidLifts }`.
+
+- They are kept out of `routes[]` on purpose. A port runs every `routes[]` entry with `stepFree`
+  alone, so it would fail them until it has the option. Each new router option gets its own
+  top-level array the same way.
+- `expected: null` means the port must find no route, not fall back. Only a case that is also
+  step-free may have it.
+- The 5 Xcel cases cover stairs where a lift would be quicker, Deck 12 → 14 by stairs, two walk
+  sections of one deck joined by stairs, and step-free without lifts: a walk within one walk
+  section, and no route beyond it.
+
 **The file is recorded, not re-exported.** `scripts/route-fixtures.test.mjs` runs the router
 against the committed pack and fails when a result leaves tolerance. So a layout, graph or router
 change shows up as a failing test instead of a quiet diff. When the change is intended (e.g.
@@ -165,7 +204,7 @@ P1.1 moves venues), re-record and say why in the PR:
 npm run record:route-fixtures
 ```
 
-The cases live in `ROUTE_FIXTURE_CASES` in
+The cases live in `ROUTE_FIXTURE_CASES` and `AVOID_LIFTS_FIXTURE_CASES` in
 [`scripts/route-fixtures.mjs`](../../scripts/route-fixtures.mjs).
 
 ## How it is built
@@ -211,6 +250,9 @@ some decks into sections between elevator cores:
 The graph keeps those sections as they are drawn. **Every walk section contains an elevator
 lobby.** A same-deck trip between two sections goes via a lift, or via stairs if the consumer
 allows them. That will change when the layout does (P1.1).
+
+Every lobby is also a stair landing, so stairs join the same sections the lifts do. A stairs-only
+route reaches every section, on every published ship.
 
 ### Connectors
 
@@ -281,6 +323,10 @@ the consumer prefers.
   exactly the table above, and stairs are never step-free.
 - Every walk section on every deck contains an elevator lobby.
 - From every elevator lobby, every door on the ship is reachable **without stairs**.
+- From every cabin, where it snaps, every guest venue on the ship is reachable **without lifts**.
+  This holds on all 14 published ships. A gap here is a missing stair link to fix, never a reason
+  to fall back to a lift.
+- Only an `elevator` edge may join the Magic Carpet's stops across decks.
 - Every connector is necessary.
 - The cabin snap distances and node spacing above hold.
 - Size budget, below.
