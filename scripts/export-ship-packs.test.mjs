@@ -3,6 +3,8 @@ import { describe, it, expect } from 'vitest';
 
 import {
   ACCESS,
+  DRESS_CODES,
+  FEES,
   PACK_POSITION_CONFIDENCE_DEFAULTS,
   PORT_EXITS,
   POSITION_CONFIDENCE,
@@ -10,12 +12,14 @@ import {
   SPEC_VERSION,
   accessFor,
   aliasesFor,
+  bookingFactsFor,
   buildPack,
   cabinMetaFor,
   classifyFeature,
   computeExtent,
   featureAliasesFor,
   foldName,
+  hoursFor,
   indexEntryFor,
   portExitFor,
   positionConfidenceFor,
@@ -24,6 +28,7 @@ import {
   revisionOf,
   spansDecksFor,
 } from './export-ship-packs.mjs';
+import { FILTER_KEYS, getFilterKey } from '../src/utils/venueTaxonomy.js';
 
 const xcel = () => buildPack(SHIPS[0].metadata, SHIPS[0].decks);
 // Building a pack rasterizes every deck for the routing graph (seconds under coverage),
@@ -565,6 +570,133 @@ describe('port exits across the fleet', () => {
       ['v2-gangway', 'gangway', ['Gangway', 'Disembarkation']],
       ['v2-magic-carpet', 'tender', ['Magic Carpet', 'Magic Carpet Bar', 'Tender Platform']],
     ]);
+  });
+});
+
+describe('hoursFor', () => {
+  const hours = (authored) => hoursFor({ id: 'v1', hours: authored }, 'venue');
+
+  it('keeps the windows authored on a guest venue', () => {
+    expect(hours([['07:00', '10:30'], ['18:00', '21:30']])).toEqual([['07:00', '10:30'], ['18:00', '21:30']]);
+  });
+
+  it('accepts a last window that runs past midnight', () => {
+    expect(hours([['06:00', '11:00'], ['21:00', '02:00']])).toEqual([['06:00', '11:00'], ['21:00', '02:00']]);
+    expect(hours([['21:00', '06:00']])).toEqual([['21:00', '06:00']]);
+  });
+
+  it('writes a close at midnight as 24:00, and all day as 00:00 to 24:00', () => {
+    expect(hours([['06:30', '24:00']])).toEqual([['06:30', '24:00']]);
+    expect(hours([['00:00', '24:00']])).toEqual([['00:00', '24:00']]);
+  });
+
+  it('returns undefined when the record has none, so the pack omits the key', () => {
+    expect(hoursFor({ id: 'v1' }, 'venue')).toBeUndefined();
+  });
+
+  it.each([
+    ['a string', '07:00-10:30', /list of \[open, close\] windows/],
+    ['an empty list', [], /list of \[open, close\] windows/],
+    ['a window without a close', [['07:00']], /not an \[open, close\] pair/],
+    ['a window with three times', [['07:00', '10:30', '12:00']], /not an \[open, close\] pair/],
+    ['an unpadded hour', [['7:00', '10:30']], /"7:00" is not an HH:MM opening time/],
+    ['minute 60', [['07:60', '10:30']], /"07:60" is not an HH:MM opening time/],
+    ['numbers', [[700, 1030]], /"700" is not an HH:MM opening time/],
+    ['hour 25', [['07:00', '25:00']], /"25:00" is not an HH:MM closing time/],
+    ['24:00 as an opening', [['24:00', '02:00']], /"24:00" is not an HH:MM opening time/],
+    ['00:00 as a close', [['18:00', '00:00']], /close at midnight as "24:00"/],
+    ['a window that closes as it opens', [['09:00', '09:00']], /opens and closes at 09:00/],
+    ['windows out of order', [['12:00', '14:00'], ['07:00', '09:00']], /opening order/],
+    ['overlapping windows', [['07:00', '10:30'], ['10:00', '14:00']], /must not overlap or touch/],
+    ['touching windows', [['07:30', '10:30'], ['10:30', '14:00']], /must not overlap or touch/],
+    ['an all-day window with another', [['00:00', '24:00'], ['06:00', '07:00']], /must not overlap or touch/],
+    ['a past-midnight window that is not last', [['21:00', '02:00'], ['06:00', '11:00']], /only the last window/],
+    ['a night that runs into the morning', [['06:00', '11:00'], ['21:00', '07:00']], /runs into the first one the next day/],
+  ])('rejects %s rather than publishing it', (_label, authored, message) => {
+    expect(() => hours(authored)).toThrow(message);
+  });
+
+  it('refuses hours on anything a guest does not search for', () => {
+    expect(() => hoursFor({ id: 'c1', hours: [['07:00', '10:30']] }, 'cabin')).toThrow(/only venue and poi/);
+  });
+});
+
+describe('bookingFactsFor', () => {
+  it('keeps the facts a record authors and omits the rest', () => {
+    expect(bookingFactsFor({ id: 'v1', reservationRequired: true, fee: 'surcharge', dressCode: 'smart casual' }, 'venue')).toEqual({
+      reservationRequired: true,
+      fee: 'surcharge',
+      dressCode: 'smart casual',
+    });
+    expect(bookingFactsFor({ id: 'v1', reservationRequired: false }, 'venue')).toEqual({ reservationRequired: false });
+    expect(bookingFactsFor({ id: 'v1' }, 'venue')).toEqual({});
+  });
+
+  it('rejects values outside the vocabulary rather than publishing them', () => {
+    expect(() => bookingFactsFor({ id: 'v1', reservationRequired: 'yes' }, 'venue')).toThrow(/expected true or false/);
+    expect(() => bookingFactsFor({ id: 'v1', fee: 'free' }, 'venue')).toThrow(/unknown fee "free"/);
+    expect(() => bookingFactsFor({ id: 'v1', dressCode: 'formal' }, 'venue')).toThrow(/unknown dressCode "formal"/);
+    expect(FEES).toEqual(['included', 'surcharge', 'a la carte']);
+    expect(DRESS_CODES).toEqual(['casual', 'smart casual']);
+  });
+
+  it('refuses booking facts on anything a guest does not search for', () => {
+    expect(() => bookingFactsFor({ id: 'c1', fee: 'included' }, 'corridor')).toThrow(/only venue and poi/);
+  });
+});
+
+describe('hours and booking facts across the fleet', () => {
+  const records = SHIPS.flatMap(({ metadata, decks }) =>
+    decks.flatMap((d) => (d.venues ?? []).map((v) => ({ ship: metadata.id, ...v })))
+  );
+  const published = JSON.parse(JSON.stringify(sharedXcel()));
+  const features = published.decks.flatMap((d) => d.features);
+  const byId = (id) => features.find((f) => f.id === id);
+  const FACT_KEYS = ['hours', 'reservationRequired', 'fee', 'dressCode'];
+
+  it('validates on every record in every ship, not only the Xcel pack built here', () => {
+    for (const v of records) {
+      expect(() => hoursFor(v, classifyFeature(v)), v.id).not.toThrow();
+      expect(() => bookingFactsFor(v, classifyFeature(v)), v.id).not.toThrow();
+    }
+  });
+
+  it('gives every Celebrity Xcel dining venue hours and reservationRequired, except the one no source covers', () => {
+    // Xcel's printed programs, Celebrity's pages and reviews never mention a
+    // Grand Plaza Café. Celebrity's Edge FAQ lists one on Celebrity Edge only.
+    const dining = features.filter(
+      (f) => ['venue', 'poi'].includes(f.featureType) && getFilterKey(f) === FILTER_KEYS.DINING
+    );
+    expect(dining.length).toBeGreaterThan(20);
+    const missing = dining.filter((f) => !f.hours || typeof f.reservationRequired !== 'boolean').map((f) => f.id);
+    expect(missing).toEqual(['v3-plaza-cafe']);
+  });
+
+  it('publishes the sourced facts in the Celebrity Xcel pack, and omits them where none is sourced', () => {
+    expect(byId('v3-normandie')).toMatchObject({
+      hours: [['17:30', '21:00']],
+      reservationRequired: false,
+      fee: 'included',
+      dressCode: 'smart casual',
+    });
+    expect(byId('v4-cosmopolitan').hours).toEqual([['07:30', '09:00'], ['12:00', '13:30'], ['17:30', '21:00']]);
+    expect(byId('v15-bora')).toMatchObject({ reservationRequired: true, fee: 'surcharge' });
+    expect(byId('v5-raw-on-5')).toMatchObject({ reservationRequired: false, fee: 'a la carte' });
+    expect(byId('v14-il-secondo-bacio').hours).toEqual([['06:00', '01:00']]);
+    expect(byId('v14-oceanview-cafe').hours).toEqual([['00:00', '24:00']]);
+    for (const id of ['v3-plaza-cafe', 'v3-martini-bar', 'v3-theatre']) {
+      expect(FACT_KEYS.filter((key) => key in byId(id)), id).toEqual([]);
+    }
+    // 21 dining venues, and the bars and other venues whose hours are sourced.
+    expect(features.filter((f) => 'hours' in f)).toHaveLength(43);
+  });
+
+  it('gives no other ship any of these facts until a source for that ship or class does', () => {
+    // Xcel's hours are its own programs' and must never be copied to a sister ship.
+    const elsewhere = records
+      .filter((v) => v.ship !== 'celebrity-xcel' && FACT_KEYS.some((key) => v[key] !== undefined))
+      .map((v) => `${v.ship}: ${v.id}`);
+    expect(elsewhere).toEqual([]);
   });
 });
 
