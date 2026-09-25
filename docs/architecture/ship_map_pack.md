@@ -59,6 +59,30 @@ Aliases are unique within a ship. An alias never equals another venue's name or 
 ignoring case and accents. The only exception is levels of the same venue, which share them.
 The exporter tests enforce this.
 
+### Restrooms
+
+Roadmap task P7.5. Public restrooms are `poi` features with `category: "Restrooms"`. Find them
+by category, not by name.
+
+| Field | Value |
+| --- | --- |
+| `name` | `"Restrooms"` for a ladies' and gents' pair, `"Restroom (Gents)"` or `"Restroom (Ladies)"` for one room, `"Restroom"` for a WC. |
+| `tags` | Always `"Restroom"`, plus `"Ladies"` and `"Gents"`, one of them, or `"WC"`. |
+| `description` | Where Celebrity's plan puts it, e.g. "between The Theatre and the forward elevators". |
+| `positionConfidence` | `"zone"`: deck, fore/aft zone and side are Celebrity's; the rectangle is this repo's. |
+| `access` | Never set. Only public restrooms are published. |
+
+Each one is a "GENTS", "LADIES" or "WC" label on
+[Celebrity's own deck plan](https://www.celebritycruises.com/cruise-ships/celebrity-xcel/deck-plans),
+recorded as facts only (deck, zone, side, and what it's beside). Nothing is traced. They are
+drawn in open space, at spots chosen so that no walk between two other features moves by more
+than 5 m (see the Xcel generator). Routing gives each a door like any other `poi`.
+
+Only Celebrity Xcel has them so far: 13 on Decks 2–5, 14 and 15. Restrooms inside a venue (The
+Spa's changing rooms) or in suite-only space (The Retreat, Decks 15–17) are left out, and there
+are none on the stateroom decks. **A ship with no `Restrooms` features has no sourced restrooms.**
+Don't present a guess, such as "restrooms by the lifts", as if it were one.
+
 ## Consuming a pack in this app
 
 Packs are **served, not bundled**. `src/data/fleetRouting.js` fetches

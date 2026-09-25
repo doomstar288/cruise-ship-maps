@@ -235,6 +235,68 @@ export function createRouter(routing, costs = ROUTE_COSTS) {
     return describe(path, via, start, end, from, to);
   }
 
+  /**
+   * The nearest of several features, in one run: `{ featureId, route }`, or null when no
+   * candidate is reachable. `route` is exactly what `route(from, { featureId })` returns.
+   * `candidates` are feature ids, each on the graph; filter them (by `access`, say) first.
+   *
+   * The search stops once it settles the cheapest candidate door or landing. Ties (within
+   * EPS) go to the candidate listed first, so the answer is the one you get by routing to
+   * each candidate in turn and keeping the first cheapest.
+   */
+  function routeToNearest(from, candidates, { stepFree = false } = {}) {
+    const rank = new Int32Array(nodes.length).fill(-1);
+    const listed = [];
+    for (const id of candidates) {
+      const found = featureNodes.get(id);
+      if (!found) throw new Error(`${id} is not on the routing graph`);
+      if (rank[found[0]] !== -1) continue;
+      for (const node of found) rank[node] = listed.length;
+      listed.push(id);
+    }
+
+    const sources = resolve(from);
+    const cost = new Float64Array(nodes.length).fill(Infinity);
+    const via = new Array(nodes.length).fill(null);
+    const heap = new Heap();
+    for (const { node, snapM } of sources) {
+      const c = snapM / speed;
+      if (c < cost[node]) {
+        cost[node] = c;
+        heap.push([c, node]);
+      }
+    }
+    // Relaxes exactly as route() does, so the winner's path is the one route() finds.
+    let best = null;
+    while (heap.size > 0) {
+      const [c, node] = heap.pop();
+      if (c > cost[node] + EPS) continue;
+      // Past the winner's cost, so every door tied with it is settled.
+      if (best && c > cost[best.node] + EPS) break;
+      const r = rank[node];
+      if (r !== -1 && (!best || r < best.rank || (r === best.rank && node < best.node))) {
+        best = { node, rank: r };
+      }
+      for (const { to: next, edge } of adjacency[node]) {
+        if (stepFree && edge.kind === 'stairs') continue;
+        const nc = c + edgeCost(edge);
+        if (nc < cost[next] - EPS || (Math.abs(nc - cost[next]) <= EPS && node < via[next]?.node)) {
+          cost[next] = nc;
+          via[next] = { node, edge };
+          heap.push([nc, next]);
+        }
+      }
+    }
+    if (!best) return null;
+
+    const featureId = listed[best.rank];
+    const end = { node: best.node, snapM: 0, total: cost[best.node] };
+    const path = [end.node];
+    while (via[path[0]]) path.unshift(via[path[0]].node);
+    const start = sources.find((s) => s.node === path[0]);
+    return { featureId, route: describe(path, via, start, end, from, { featureId }) };
+  }
+
   function describe(path, via, start, end, from, to) {
     const legs = [];
     let walkM = start.snapM + end.snapM;
@@ -330,7 +392,7 @@ export function createRouter(routing, costs = ROUTE_COSTS) {
     };
   }
 
-  return { route, hasFeature: (id) => featureNodes.has(id), nodes, edges };
+  return { route, routeToNearest, hasFeature: (id) => featureNodes.has(id), nodes, edges };
 }
 
 const round2 = (n) => Math.round(n * 100) / 100;

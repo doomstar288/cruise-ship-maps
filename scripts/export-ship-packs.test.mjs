@@ -6,6 +6,7 @@ import {
   PACK_POSITION_CONFIDENCE_DEFAULTS,
   PORT_EXITS,
   POSITION_CONFIDENCE,
+  RESTROOM_CATEGORY,
   SHIPS,
   SPEC_VERSION,
   accessFor,
@@ -24,6 +25,7 @@ import {
   revisionOf,
   spansDecksFor,
 } from './export-ship-packs.mjs';
+import { describeLocation } from '../src/utils/deckPlanDataPipeline.js';
 
 const xcel = () => buildPack(SHIPS[0].metadata, SHIPS[0].decks);
 // Building a pack rasterizes every deck for the routing graph (seconds under coverage),
@@ -59,6 +61,14 @@ describe('classifyFeature', () => {
     expect(classifyFeature({ name: 'Crew & Technical Areas' })).toBe('corridor');
     expect(classifyFeature({ name: 'Provision Stores' })).toBe('corridor');
     expect(classifyFeature({ name: 'Decorative strip', category: 'Pool & Sun Deck', hideLabel: true })).toBe('corridor');
+  });
+
+  it('lists public restrooms as points of interest', () => {
+    expect(
+      classifyFeature({ name: 'Restrooms', category: RESTROOM_CATEGORY, tags: ['Restroom', 'Ladies', 'Gents'] })
+    ).toBe('poi');
+    // Only the category counts: a venue that merely mentions one stays a venue.
+    expect(classifyFeature({ name: 'Spa', category: 'Spa & Wellness', tags: ['Restroom'] })).toBe('venue');
   });
 
   it('falls back to venue for everything else', () => {
@@ -564,6 +574,64 @@ describe('port exits across the fleet', () => {
     expect(exits).toEqual([
       ['v2-gangway', 'gangway', ['Gangway', 'Disembarkation']],
       ['v2-magic-carpet', 'tender', ['Magic Carpet', 'Magic Carpet Bar', 'Tender Platform']],
+    ]);
+  });
+});
+
+describe('restrooms', () => {
+  it('publishes exactly the restrooms Celebrity labels on its Xcel deck plan, and none on other ships', () => {
+    // Each is cited in the Xcel generator. Other ships have no sourced restrooms yet.
+    const restrooms = SHIPS.flatMap(({ metadata, decks }) =>
+      decks.flatMap((d) =>
+        (d.venues ?? []).filter((v) => v.category === RESTROOM_CATEGORY).map((v) => `${metadata.id} ${v.id}`)
+      )
+    );
+    expect(restrooms).toEqual([
+      'celebrity-xcel restrooms-mid-2',
+      'celebrity-xcel restrooms-aft-3',
+      'celebrity-xcel restrooms-fwd-4',
+      'celebrity-xcel restrooms-mid-4',
+      'celebrity-xcel restrooms-aft-4',
+      'celebrity-xcel restrooms-fwd-5',
+      'celebrity-xcel restrooms-mid-5',
+      'celebrity-xcel restrooms-aft-5',
+      'celebrity-xcel restrooms-fwd-port-14',
+      'celebrity-xcel restrooms-fwd-stbd-14',
+      'celebrity-xcel restrooms-mid-port-14',
+      'celebrity-xcel restrooms-mid-stbd-14',
+      'celebrity-xcel restrooms-aft-15',
+    ]);
+  });
+
+  it('publishes them as public points of interest a consumer can find by category', () => {
+    const published = sharedXcel().decks.flatMap((d) =>
+      d.features.filter((f) => f.category === RESTROOM_CATEGORY).map((f) => ({ ...f, deck: d.deckNumber }))
+    );
+    expect(published).toHaveLength(13);
+    for (const f of published) {
+      expect(f.featureType, f.id).toBe('poi');
+      expect(f.access, f.id).toBeUndefined();
+      expect(f.tags, f.id).toContain('Restroom');
+      // Deck and zone are Celebrity's; the spot is drawn here, so no finer claim.
+      expect(f.positionConfidence, f.id).toBe('zone');
+      expect(f.id.endsWith(`-${f.deck}`), f.id).toBe(true);
+    }
+    // Each is drawn in the zone and on the side where Celebrity's plan labels it.
+    const zoneOf = (f) => describeLocation(f.center).split(' · ')[0].toLowerCase();
+    expect(published.map((f) => `${f.deck} ${zoneOf(f)} ${f.center[1] < 19.5 ? 'port' : 'stbd'}`)).toEqual([
+      '2 midship port',
+      '3 aft stbd',
+      '4 forward stbd',
+      '4 midship stbd',
+      '4 aft stbd',
+      '5 forward port',
+      '5 midship stbd',
+      '5 aft port',
+      '14 forward port',
+      '14 forward stbd',
+      '14 midship port',
+      '14 midship stbd',
+      '15 aft stbd',
     ]);
   });
 });
