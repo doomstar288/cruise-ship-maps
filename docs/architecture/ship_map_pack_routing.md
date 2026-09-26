@@ -140,6 +140,41 @@ feature ids, `levels`, and `bank` for lifts). Consecutive stairs flights merge i
 `deckChanges` is `[{ mode, fromDeck, toDeck }]`, one entry per non-walk leg. A same-deck trip
 between walk sections has two.
 
+### Nearest of several: `routeToNearest`
+
+Roadmap task P7.5. "Nearest bar", "nearest lift" and the like need one route, to whichever
+candidate is cheapest to reach. Routing to each candidate in turn costs one full search per
+candidate. `routeToNearest` does it in one.
+
+```js
+// Stateroom 6100's centre, the public bars, step-free:
+const nearest = router.routeToNearest({ deck: 6, at: [21.8, 25.99] }, publicBars, { stepFree: true });
+// → { featureId: 'v3-martini-bar', route: { walkM: 182.47, timeS: 249.9, legs, … } }
+```
+
+- `from` is any endpoint in the table above. `candidates` are feature ids: venues (all their
+  doors count), elevators or stairwells (their landing). Each must be on the graph, or it throws,
+  as `route` does. Listing one twice is harmless.
+- **Filter first.** The router doesn't read `access`, hours or categories. The caller picks the
+  candidates, e.g. public bars for a stateroom guest, plus the Retreat for a suite guest, or
+  every [restroom](./ship_map_pack.md#restrooms) (`category: "Restrooms"`).
+- It is one Dijkstra run from `from`. It stops once it settles the cheapest candidate's door or
+  landing, and any other door tied with it.
+- It returns `{ featureId, route }`. `route` is exactly what `route(from, { featureId })`
+  returns for the winner, with the same fields as above. It returns `null` when no candidate is
+  reachable, or the list is empty.
+- `stepFree` and `avoidLifts` work as they do for `route`: a stairs-only "nearest" never rides a
+  lift, and with both only walking is left.
+- **Cheapest** means least time, unrounded: the cost the search minimises, not `timeS`, which
+  is rounded to 0.1 s.
+- **Ties** (within 10⁻⁹ s) go to the candidate **listed first**. Within one venue, the nearest
+  door wins, and equal doors go to the lower node index, as in `route`.
+- So the answer equals routing to each candidate in list order and keeping the first one with
+  the least time. `scripts/route-fixtures.test.mjs` checks this over 400 seeded origins and
+  candidate lists on the published pack (every fifth one without lifts), and the `nearest`
+  fixtures pin it for ports.
+- An origin that is also a candidate wins at 0 s. Leave it out to find the next one.
+
 ## Route fixtures
 
 `v1/ships/<id>/route-fixtures.json` is published beside the pack. It is the routing contract
@@ -172,6 +207,21 @@ between this repo and ports.
       "avoidLifts": true,
       "expected": null                              // no route, and no fallback
     }
+  ],
+  "nearest": [
+    {
+      "id": "nearest-bar-from-cabin-6-step-free",
+      "description": "…",
+      "from": { "cabinId": "c6-6100" },
+      "candidates": ["v3-martini-bar", "v4-craft-social", "…"],
+      "stepFree": true,                       // and "avoidLifts": true on a no-lifts case
+      "expected": {
+        "featureId": "v3-martini-bar",
+        "walkM": 182.47, "timeS": 249.9,
+        "deckChanges": [{ "mode": "elevator", "fromDeck": 6, "toDeck": 3 }],
+        "through": []
+      }
+    }
   ]
 }
 ```
@@ -198,6 +248,19 @@ between this repo and ports.
   sections of one deck joined by stairs, and step-free without lifts: a walk within one walk
   section, and no route beyond it.
 
+**`nearest`** holds [`routeToNearest`](#nearest-of-several-routetonearest) cases, in their own
+array because a port runs every `routes[]` entry through `route()`. New router options get their
+own array the same way; plain routes stay in `routes[]`.
+
+- A port passes a `nearest` case when `featureId` matches exactly and the rest passes as above.
+- A case with `"avoidLifts": true` is routed with `{ stepFree, avoidLifts }`, like an
+  `avoidLiftsRoutes` entry.
+- The 12 Xcel cases cover cabin, venue and lobby origins; winners on other decks; step-free
+  changing the winner; a suite guest whose list includes the Retreat; all 13 restrooms; all 42
+  lift lobbies; a winner one second ahead (inside the time tolerance, so ranking must be exact);
+  a tie that list order decides, listed both ways round; and the public bars from stateroom
+  10175 by stairs only.
+
 **The file is recorded, not re-exported.** `scripts/route-fixtures.test.mjs` runs the router
 against the committed pack and fails when a result leaves tolerance. So a layout, graph or router
 change shows up as a failing test instead of a quiet diff. When the change is intended (e.g.
@@ -207,7 +270,7 @@ P1.1 moves venues), re-record and say why in the PR:
 npm run record:route-fixtures
 ```
 
-The cases live in `ROUTE_FIXTURE_CASES` and `AVOID_LIFTS_FIXTURE_CASES` in
+The cases live in `ROUTE_FIXTURE_CASES`, `AVOID_LIFTS_FIXTURE_CASES` and `NEAREST_FIXTURE_CASES` in
 [`scripts/route-fixtures.mjs`](../../scripts/route-fixtures.mjs).
 
 ## How it is built
