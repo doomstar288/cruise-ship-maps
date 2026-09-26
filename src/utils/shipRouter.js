@@ -186,9 +186,11 @@ export function createRouter(routing, costs = ROUTE_COSTS) {
 
   /**
    * Cheapest route between two endpoints, or null when none exists.
-   * `stepFree: true` leaves out stairs.
+   * `stepFree: true` leaves out stairs. `avoidLifts: true` leaves out lifts, for
+   * a muster route (stairs only). With both, only walking is left, so a trip to
+   * another deck or walk section is null: never fall back to either.
    */
-  function route(from, to, { stepFree = false } = {}) {
+  function route(from, to, { stepFree = false, avoidLifts = false } = {}) {
     const sources = resolve(from);
     const targets = resolve(to);
     const cost = new Float64Array(nodes.length).fill(Infinity);
@@ -206,6 +208,7 @@ export function createRouter(routing, costs = ROUTE_COSTS) {
       if (c > cost[node] + EPS) continue;
       for (const { to: next, edge } of adjacency[node]) {
         if (stepFree && edge.kind === 'stairs') continue;
+        if (avoidLifts && edge.kind === 'elevator') continue;
         const nc = c + edgeCost(edge);
         if (nc < cost[next] - EPS || (Math.abs(nc - cost[next]) <= EPS && node < via[next]?.node)) {
           cost[next] = nc;
@@ -242,9 +245,10 @@ export function createRouter(routing, costs = ROUTE_COSTS) {
    *
    * The search stops once it settles the cheapest candidate door or landing. Ties (within
    * EPS) go to the candidate listed first, so the answer is the one you get by routing to
-   * each candidate in turn and keeping the first cheapest.
+   * each candidate in turn and keeping the first cheapest. `stepFree` and `avoidLifts`
+   * leave out stairs and lifts exactly as they do for route().
    */
-  function routeToNearest(from, candidates, { stepFree = false } = {}) {
+  function routeToNearest(from, candidates, { stepFree = false, avoidLifts = false } = {}) {
     const rank = new Int32Array(nodes.length).fill(-1);
     const listed = [];
     for (const id of candidates) {
@@ -279,6 +283,7 @@ export function createRouter(routing, costs = ROUTE_COSTS) {
       }
       for (const { to: next, edge } of adjacency[node]) {
         if (stepFree && edge.kind === 'stairs') continue;
+        if (avoidLifts && edge.kind === 'elevator') continue;
         const nc = c + edgeCost(edge);
         if (nc < cost[next] - EPS || (Math.abs(nc - cost[next]) <= EPS && node < via[next]?.node)) {
           cost[next] = nc;

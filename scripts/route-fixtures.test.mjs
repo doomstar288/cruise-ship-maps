@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest';
 
 import { ROUTE_COSTS, createRouter } from '../src/utils/shipRouter.js';
 import {
+  AVOID_LIFTS_FIXTURE_CASES,
   FIXTURE_TOLERANCE,
   NEAREST_FIXTURE_CASES,
   ROUTE_FIXTURE_CASES,
@@ -18,7 +19,7 @@ import {
  * Exact least time from `from` to every node: a plain O(n²) Dijkstra that shares no code
  * with the router, following the cost table in ship_map_pack_routing.md.
  */
-function exactTimes({ nodes, edges }, speed, from, stepFree) {
+function exactTimes({ nodes, edges }, speed, from, stepFree, avoidLifts = false) {
   const index = new Map(nodes.map((n, i) => [n.key, i]));
   const links = nodes.map(() => []);
   for (const edge of edges) {
@@ -29,8 +30,9 @@ function exactTimes({ nodes, edges }, speed, from, stepFree) {
           ? ROUTE_COSTS.elevatorBoardS + ROUTE_COSTS.elevatorPerLevelS * edge.decks
           : ROUTE_COSTS.stairsPerLevelS * edge.decks;
     const [a, b] = [index.get(edge.from), index.get(edge.to)];
-    links[a].push({ to: b, s, stairs: edge.kind === 'stairs' });
-    links[b].push({ to: a, s, stairs: edge.kind === 'stairs' });
+    const [stairs, lift] = [edge.kind === 'stairs', edge.kind === 'elevator'];
+    links[a].push({ to: b, s, stairs, lift });
+    links[b].push({ to: a, s, stairs, lift });
   }
   const time = nodes.map(() => Infinity);
   if (from.featureId !== undefined) {
@@ -59,8 +61,8 @@ function exactTimes({ nodes, edges }, speed, from, stepFree) {
     }
     if (u === -1) return time;
     done[u] = true;
-    for (const { to, s, stairs } of links[u]) {
-      if (!(stepFree && stairs)) time[to] = Math.min(time[to], time[u] + s);
+    for (const { to, s, stairs, lift } of links[u]) {
+      if (!(stepFree && stairs) && !(avoidLifts && lift)) time[to] = Math.min(time[to], time[u] + s);
     }
   }
 }
@@ -70,11 +72,11 @@ function exactTimes({ nodes, edges }, speed, from, stepFree) {
  * cheapest. route() rounds timeS to 0.1 s, too coarse to rank near-equal candidates, so
  * they're ranked by exact time instead, after checking it agrees with route().
  */
-function routeToEach(router, speed, from, candidates, stepFree) {
-  const time = exactTimes(router, speed, from, stepFree);
+function routeToEach(router, speed, from, candidates, stepFree, avoidLifts = false) {
+  const time = exactTimes(router, speed, from, stepFree, avoidLifts);
   let best = null;
   for (const featureId of candidates) {
-    const route = router.route(from, { featureId }, { stepFree });
+    const route = router.route(from, { featureId }, { stepFree, avoidLifts });
     const exact = Math.min(
       ...router.nodes.flatMap((n, i) => (n.featureId === featureId ? [time[i]] : []))
     );
@@ -104,7 +106,10 @@ describe.each(Object.keys(ROUTE_FIXTURE_CASES))('route fixtures for %s', (shipId
   const router = createRouter(pack.routing);
   const speed = pack.routing.walkingSpeedMps;
   const cases = ROUTE_FIXTURE_CASES[shipId];
+  const avoidLiftsCases = AVOID_LIFTS_FIXTURE_CASES[shipId] ?? [];
   const nearestCases = NEAREST_FIXTURE_CASES[shipId] ?? [];
+  /** Every route() case: `routes[]` and the `avoidLiftsRoutes` option cases. */
+  const everyFixture = [...fixtures.routes, ...fixtures.avoidLiftsRoutes];
 
   /** A port passes a case when changes and `through` match and lengths are within tolerance. */
   const expectMatch = (actual, expected) => {
@@ -130,10 +135,16 @@ describe.each(Object.keys(ROUTE_FIXTURE_CASES))('route fixtures for %s', (shipId
     expect(fixtures.routes.map(({ expected: _expected, ...c }) => c)).toEqual(
       cases.map((c) => ({ ...c, stepFree: c.stepFree ?? false }))
     );
+    // Option cases live in their own arrays, so a port without the option still
+    // passes every `routes[]` entry.
+    expect(fixtures.avoidLiftsRoutes.map(({ expected: _expected, ...c }) => c)).toEqual(
+      avoidLiftsCases.map((c) => ({ ...c, stepFree: c.stepFree ?? false, avoidLifts: true }))
+    );
+    expect(fixtures.routes.some((r) => 'avoidLifts' in r)).toBe(false);
     expect(fixtures.nearest.map(({ expected: _expected, ...c }) => c)).toEqual(
       nearestCases.map((c) => ({ ...c, stepFree: c.stepFree ?? false }))
     );
-    const ids = [...fixtures.routes, ...fixtures.nearest].map((r) => r.id);
+    const ids = [...everyFixture, ...fixtures.nearest].map((r) => r.id);
     expect(new Set(ids).size).toBe(ids.length);
   });
 
@@ -143,17 +154,24 @@ describe.each(Object.keys(ROUTE_FIXTURE_CASES))('route fixtures for %s', (shipId
       else if (end.cabinId) expect(routerEndpoint(pack, end).at).toHaveLength(2);
       else expect(end.elevators).toBe(true);
     };
-    for (const { from, to } of fixtures.routes) [from, to].forEach(expectEnd);
+    for (const { from, to } of everyFixture) [from, to].forEach(expectEnd);
     for (const { from, candidates } of fixtures.nearest) {
       expectEnd(from);
       for (const featureId of candidates) expectEnd({ featureId });
     }
   });
 
-  it.each(fixtures.routes.map((r) => [r.id, r]))(
+  it.each(everyFixture.map((r) => [r.id, r]))(
     '%s matches the router within tolerance',
     (id, fixture) => {
-      expectMatch(runFixture(router, pack, fixture), fixture.expected);
+      const actual = runFixture(router, pack, fixture);
+      // Only an avoidLifts case that is step-free too may have no route.
+      if (fixture.expected === null) {
+        expect(fixture.avoidLifts && fixture.stepFree).toBe(true);
+        expect(actual).toBeNull();
+        return;
+      }
+      expectMatch(actual, fixture.expected);
     }
   );
 
@@ -167,10 +185,12 @@ describe.each(Object.keys(ROUTE_FIXTURE_CASES))('route fixtures for %s', (shipId
   );
 
   it('makes each nearest winner the cheapest candidate, ties going to the one listed first', () => {
-    for (const { id, from, candidates, stepFree } of fixtures.nearest) {
+    for (const { id, from, candidates, stepFree, avoidLifts = false } of fixtures.nearest) {
       const origin = routerEndpoint(pack, from);
-      const nearest = router.routeToNearest(origin, candidates, { stepFree });
-      expect(nearest, id).toEqual(routeToEach(router, speed, origin, candidates, stepFree));
+      const nearest = router.routeToNearest(origin, candidates, { stepFree, avoidLifts });
+      expect(nearest, id).toEqual(
+        routeToEach(router, speed, origin, candidates, stepFree, avoidLifts)
+      );
     }
   });
 
@@ -225,21 +245,24 @@ describe.each(Object.keys(ROUTE_FIXTURE_CASES))('route fixtures for %s', (shipId
       },
     ];
 
-    const seen = { offDeck: 0, ties: 0, stepFree: 0 };
+    const seen = { offDeck: 0, ties: 0, stepFree: 0, noLifts: 0 };
     for (let i = 0; i < 400; i += 1) {
       const { from, candidates } = trials[i % trials.length]();
       const stepFree = random() < 0.5;
-      const nearest = router.routeToNearest(from, candidates, { stepFree });
-      const reference = routeToEach(router, speed, from, candidates, stepFree);
-      expect(nearest, JSON.stringify({ from, candidates, stepFree })).toEqual(reference);
+      // Every fifth trial also leaves out lifts. It's chosen by index, not drawn, so the
+      // seeded draws above are the same as without it.
+      const avoidLifts = i % 5 === 2;
+      const options = { stepFree, avoidLifts };
+      const nearest = router.routeToNearest(from, candidates, options);
+      const reference = routeToEach(router, speed, from, candidates, stepFree, avoidLifts);
+      expect(nearest, JSON.stringify({ from, candidates, ...options })).toEqual(reference);
       if (!nearest) continue;
       const { origin, destination, timeS } = nearest.route;
       if (origin.deck !== destination.deck) seen.offDeck += 1;
       if (stepFree) seen.stepFree += 1;
+      if (avoidLifts) seen.noLifts += 1;
       const tied = new Set(
-        candidates.filter(
-          (id) => router.route(from, { featureId: id }, { stepFree })?.timeS === timeS
-        )
+        candidates.filter((id) => router.route(from, { featureId: id }, options)?.timeS === timeS)
       );
       if (tied.size > 1) seen.ties += 1;
     }
@@ -247,7 +270,10 @@ describe.each(Object.keys(ROUTE_FIXTURE_CASES))('route fixtures for %s', (shipId
     expect(seen.offDeck).toBeGreaterThan(200);
     expect(seen.stepFree).toBeGreaterThan(150);
     expect(seen.ties).toBeGreaterThan(50);
-  });
+    expect(seen.noLifts).toBeGreaterThan(40);
+    // 400 Dijkstra runs plus the reference's route() per candidate: seconds under coverage
+    // on a CI runner, past Vitest's 5 s default.
+  }, 60_000);
 
   it('covers every kind of trip a port has to get right', () => {
     const all = fixtures.routes;
@@ -327,10 +353,10 @@ describe.each(Object.keys(ROUTE_FIXTURE_CASES))('route fixtures for %s', (shipId
     expect(all.some((n) => [...n.candidates].sort().join() === restrooms.join())).toBe(true);
     // A runner-up slower, but within the time tolerance: only exact ranking picks the winner.
     expect(
-      all.some(({ from, candidates, stepFree, expected }) => {
+      all.some(({ from, candidates, stepFree, avoidLifts = false, expected }) => {
         const origin = routerEndpoint(pack, from);
         return candidates.some((featureId) => {
-          const other = router.route(origin, { featureId }, { stepFree });
+          const other = router.route(origin, { featureId }, { stepFree, avoidLifts });
           return (
             other?.timeS > expected.timeS &&
             withinTolerance(other.timeS, expected.timeS, fixtures.tolerance.timeS)
@@ -348,5 +374,54 @@ describe.each(Object.keys(ROUTE_FIXTURE_CASES))('route fixtures for %s', (shipId
         expect(plain.expected.timeS).toBeLessThanOrEqual(twin.expected.timeS);
       }
     }
+  });
+
+  it('never takes a lift in a no-lifts nearest case, and is never quicker for it', () => {
+    const noLifts = fixtures.nearest.filter((n) => n.avoidLifts);
+    expect(noLifts.length).toBeGreaterThan(0);
+    for (const fixture of noLifts) {
+      const { expected } = fixture;
+      expect(
+        expected.deckChanges.every((c) => c.mode === 'stairs'),
+        fixture.id
+      ).toBe(true);
+      const withLifts = runNearestFixture(router, pack, { ...fixture, avoidLifts: false });
+      expect(expected.timeS, fixture.id).toBeGreaterThanOrEqual(withLifts.timeS);
+    }
+  });
+
+  it('never takes a lift when avoiding lifts, and is never quicker for it', () => {
+    let liftWouldWin = 0;
+    for (const fixture of fixtures.avoidLiftsRoutes.filter((r) => r.expected)) {
+      const { expected } = fixture;
+      expect(
+        expected.deckChanges.every((c) => c.mode === 'stairs'),
+        fixture.id
+      ).toBe(true);
+      const unrestricted = runFixture(router, pack, { from: fixture.from, to: fixture.to });
+      expect(expected.timeS, fixture.id).toBeGreaterThanOrEqual(unrestricted.timeS);
+      if (unrestricted.deckChanges.some((c) => c.mode === 'elevator')) liftWouldWin += 1;
+    }
+    expect(liftWouldWin).toBeGreaterThan(0);
+  });
+
+  it('covers every kind of avoidLifts trip a port has to get right', () => {
+    const all = fixtures.avoidLiftsRoutes;
+    const changes = (r) => r.expected?.deckChanges ?? [];
+    // Deck 12 to 14 by stairs is one flight.
+    expect(
+      all.some((r) =>
+        changes(r).some(
+          (c) => Math.min(c.fromDeck, c.toDeck) <= 12 && Math.max(c.fromDeck, c.toDeck) >= 14
+        )
+      )
+    ).toBe(true);
+    // Same deck, different walk sections: out by the stairs and back.
+    expect(
+      all.some((r) => changes(r).length === 2 && changes(r)[0].fromDeck === changes(r)[1].toDeck)
+    ).toBe(true);
+    // Step-free as well: a walk within one walk section, and no route beyond it.
+    expect(all.some((r) => r.stepFree && r.expected && changes(r).length === 0)).toBe(true);
+    expect(all.some((r) => r.stepFree && r.expected === null)).toBe(true);
   });
 });

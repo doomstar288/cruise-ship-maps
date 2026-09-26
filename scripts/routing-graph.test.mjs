@@ -55,6 +55,40 @@ function reachable(start, use = () => true, edges = graph.edges) {
   return seen;
 }
 
+/**
+ * Guest venues some cabins can't reach once lifts are out (stairs and walking
+ * only, as for a muster drill), one line per group of cabins; [] when every
+ * cabin reaches every venue. A cabin starts where the router snaps it: the
+ * nearest corridor node on its deck, the first in node order on a tie.
+ */
+function cutOffWithoutLifts(plan, { nodes, edges } = expandRouting(plan)) {
+  const noLifts = (e) => e.kind !== 'elevator';
+  const doors = nodes.filter((n) => n.kind === 'entrance');
+  const venues = plan.decks.flatMap((d) => d.features.filter(isRoutableTarget).map((f) => f.id));
+  const areas = [];
+  for (const deck of plan.decks) {
+    const corridor = nodes.filter((n) => n.deck === deck.deckNumber && n.kind === 'corridor');
+    for (const cabin of deck.features.filter((f) => f.featureType === 'cabin')) {
+      const snap = corridor.reduce((best, n) =>
+        dist(n.at, cabin.center) < dist(best.at, cabin.center) - 1e-9 ? n : best
+      );
+      let area = areas.find(({ seen }) => seen.has(snap.key));
+      if (!area) {
+        const seen = reachable(snap.key, noLifts, edges);
+        const reached = new Set(doors.filter((d) => seen.has(d.key)).map((d) => d.featureId));
+        area = { seen, cabins: [], missing: venues.filter((id) => !reached.has(id)) };
+        areas.push(area);
+      }
+      area.cabins.push(cabin.id);
+    }
+  }
+  return areas
+    .filter(({ missing }) => missing.length)
+    .map(
+      ({ cabins, missing }) => `${cabins.length} cabins from ${cabins[0]}: ${missing.join(', ')}`
+    );
+}
+
 /** Hash of everything in a pack except `routing`, `revision` and `updatedAt`. */
 const nonRoutingHash = ({ routing: _r, revision: _v, updatedAt: _u, ...rest }) =>
   createHash('sha256').update(JSON.stringify(rest)).digest('hex');
@@ -75,14 +109,15 @@ describe('routing in the published Celebrity Xcel pack', () => {
     expect(pack.specVersion).toBe(SPEC_VERSION);
     expect(SPEC_VERSION).toBe(1);
     // Recorded from main at 0b0ae00, before routing existed, and re-recorded when
-    // P7.1 added `access` and when P7.3 tagged the gangway and tender platform with
-    // `portExit` and their port-day aliases (routing unchanged both times), and when
-    // P7.5 added the 13 restroom `poi` features on Decks 2–5, 14 and 15. Aliases,
-    // spans, confidence, entrances, access, port exits and restrooms are all inside
-    // this hash. Update it only in a change that means to edit deck data, never to
-    // make routing pass.
+    // P7.1 added `access`, when P7.3 tagged the gangway and tender platform with
+    // `portExit` and their port-day aliases, and when P7.2 added hours and booking
+    // facts (routing unchanged each time), and when P7.5 added the 13 restroom `poi`
+    // features on Decks 2–5, 14 and 15. Aliases, spans, confidence, entrances,
+    // access, port exits, hours, reservationRequired, fee, dressCode and restrooms
+    // are all inside this hash. Update it only in a change that means to edit deck
+    // data, never to make routing pass.
     expect(nonRoutingHash(pack)).toBe(
-      '48e9d89b9ef83cdb2da9ab7a234ab7d243792c68df75e0cde3f39a42cca9312c'
+      '17b94a7d183c10c5707c66180da55880743d8fda7ac1cc99b7d7918ba39b6609'
     );
   });
 
@@ -299,6 +334,30 @@ describe('routing in the published Celebrity Xcel pack', () => {
     }
   });
 
+  it('reaches every guest venue from every cabin without lifts', () => {
+    // Stairs only, the muster rule. Lifts join the walk sections of Decks 2, 4,
+    // 5 and 14–16, but every section's lobby also has stairs, so no section
+    // needs a lift. A gap here is a missing stair link, never a lift fallback.
+    expect(cutOffWithoutLifts(pack, graph)).toEqual([]);
+  });
+
+  it('counts the Magic Carpet as a lift: only a lift edge may join its stops', () => {
+    // A moving platform is no way out in an emergency, so avoidLifts must never
+    // ride it. Today each stop is a venue reached on foot on its own deck.
+    const stops = new Set(
+      pack.decks
+        .flatMap((d) => d.features.filter((f) => f.category === 'Magic Carpet'))
+        .map((f) => f.id)
+    );
+    expect(stops.size).toBe(4);
+    const links = graph.edges.filter((e) =>
+      [e.from, e.to].some((key) => stops.has(byKey.get(key).featureId))
+    );
+    expect(links.length).toBeGreaterThan(0);
+    const offDeck = links.filter((e) => byKey.get(e.from).deck !== byKey.get(e.to).deck);
+    expect(offDeck.filter((e) => e.kind !== 'elevator')).toEqual([]);
+  });
+
   // Rebuilds the whole graph once per connector: seconds each under coverage on CI.
   it('needs every connector: removing any one leaves a venue unreachable', () => {
     for (const connector of ROUTING_CONNECTORS) {
@@ -453,6 +512,17 @@ describe('port exits, across the published fleet', () => {
       }
       expect(unreached).toEqual([]);
       expect(routerDisagrees).toEqual([]);
+    }
+  );
+});
+
+describe('stairs-only routes, across the published fleet', () => {
+  // The muster rule: stairs only, never a lift. A cabin cut off from a venue is a
+  // missing stair link to fix, never a reason to fall back to a lift.
+  it.each(plans.map((plan) => [plan.shipId, plan]))(
+    '%s: every cabin reaches every guest venue without lifts',
+    (_shipId, plan) => {
+      expect(cutOffWithoutLifts(plan)).toEqual([]);
     }
   );
 });
