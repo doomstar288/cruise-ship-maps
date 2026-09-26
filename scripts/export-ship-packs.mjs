@@ -212,6 +212,96 @@ export function portExitFor(venue, featureType) {
   return authored;
 }
 
+// ------------------------------------------------------ hours and booking facts
+//
+// Typical facts for planning a visit: when a venue is usually open, whether it's
+// booked ahead, what the food costs and the usual dress code. The day's printed
+// program always wins over them.
+
+/** What food costs a guest who may use the venue (`access` says who may):
+ *  in the fare, a cover charge per person, or priced per item. */
+export const FEES = ['included', 'surcharge', 'a la carte'];
+
+/** A venue's usual dress code. The program's attire for the evening wins. */
+export const DRESS_CODES = ['casual', 'smart casual'];
+
+const CLOCK = /^([01]\d|2[0-3]):[0-5]\d$/;
+const DAY_MINUTES = 24 * 60;
+const minutesOf = (time) => Number(time.slice(0, 2)) * 60 + Number(time.slice(3));
+
+/**
+ * A record's typical opening windows, validated; undefined when it has none.
+ *
+ * `[[open, close], …]` in ship's time, 24-hour "HH:MM", in opening order. A window
+ * whose close is earlier than its open runs past midnight (`["21:00", "02:00"]`);
+ * only the last window may, and it must close before the first one opens. Midnight
+ * as a close is "24:00", never "00:00", and `[["00:00", "24:00"]]` is open all day.
+ * Windows never overlap or touch: touching windows are one window.
+ */
+export function hoursFor(venue, featureType) {
+  const authored = venue.hours;
+  if (authored === undefined) return undefined;
+  if (!ALIASABLE_TYPES.has(featureType)) {
+    throw new Error(`${venue.id} is a ${featureType}; only venue and poi features take hours`);
+  }
+  const reject = (why) => {
+    throw new Error(`Venue ${venue.id} has malformed hours: ${why}`);
+  };
+  if (!Array.isArray(authored) || authored.length === 0) reject('expected a list of [open, close] windows');
+  if (authored.length === 1 && authored[0]?.[0] === '00:00' && authored[0]?.[1] === '24:00') {
+    return [['00:00', '24:00']];
+  }
+
+  let previousClose = -1;
+  authored.forEach((window, i) => {
+    if (!Array.isArray(window) || window.length !== 2) reject(`window ${i + 1} is not an [open, close] pair`);
+    const [open, close] = window;
+    if (typeof open !== 'string' || !CLOCK.test(open)) reject(`"${open}" is not an HH:MM opening time`);
+    if (typeof close !== 'string' || !(CLOCK.test(close) || close === '24:00')) {
+      reject(`"${close}" is not an HH:MM closing time`);
+    }
+    if (close === '00:00') reject('write a close at midnight as "24:00"');
+    const start = minutesOf(open);
+    let end = minutesOf(close);
+    if (end === start) reject(`window ${i + 1} opens and closes at ${open}`);
+    if (end < start) {
+      if (i !== authored.length - 1) reject('only the last window may run past midnight');
+      end += DAY_MINUTES;
+    }
+    if (start <= previousClose) reject('windows must be in opening order and must not overlap or touch');
+    previousClose = end;
+  });
+  if (previousClose >= minutesOf(authored[0][0]) + DAY_MINUTES) {
+    reject('the last window runs into the first one the next day');
+  }
+  return authored.map(([open, close]) => [open, close]);
+}
+
+/** A record's `reservationRequired`, `fee` and `dressCode`, validated. Only the
+ *  facts it authors come back, so the pack omits the rest. */
+export function bookingFactsFor(venue, featureType) {
+  const facts = {};
+  const { reservationRequired, fee, dressCode } = venue;
+  if (reservationRequired !== undefined) {
+    if (typeof reservationRequired !== 'boolean') {
+      throw new Error(`Venue ${venue.id} has reservationRequired "${reservationRequired}"; expected true or false`);
+    }
+    facts.reservationRequired = reservationRequired;
+  }
+  if (fee !== undefined) {
+    if (!FEES.includes(fee)) throw new Error(`Venue ${venue.id} has unknown fee "${fee}"`);
+    facts.fee = fee;
+  }
+  if (dressCode !== undefined) {
+    if (!DRESS_CODES.includes(dressCode)) throw new Error(`Venue ${venue.id} has unknown dressCode "${dressCode}"`);
+    facts.dressCode = dressCode;
+  }
+  if (Object.keys(facts).length && !ALIASABLE_TYPES.has(featureType)) {
+    throw new Error(`${venue.id} is a ${featureType}; only venue and poi features take booking facts`);
+  }
+  return facts;
+}
+
 // --------------------------------------------------------- position confidence
 
 /**
@@ -322,6 +412,8 @@ function toFeature(venue) {
     tags: venue.tags?.length ? venue.tags : undefined,
     access: accessFor(venue, featureType),
     portExit: portExitFor(venue, featureType),
+    hours: hoursFor(venue, featureType),
+    ...bookingFactsFor(venue, featureType),
     color: venue.color,
   };
   const confidence = positionConfidenceFor(venue, featureType);

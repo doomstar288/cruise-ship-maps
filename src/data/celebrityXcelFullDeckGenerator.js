@@ -79,6 +79,31 @@ const partOf = (venueGroup, { aliases = [] } = {}) => ({
   aliases: [...VENUE_GROUPS[venueGroup].aliases, ...aliases],
 });
 
+// ------------------------------------------------ typical hours and booking facts
+
+// `hours` is the union of the windows Xcel's printed daily program (Celebrity
+// Today's "Dine & Drink" and "Opening Hours") gave a venue on the sea and port
+// days of the 4–11 January 2026 sailing, in ship's time, so a time outside every
+// window is one when the venue is usually closed. Embarkation and disembarkation
+// days are left out. `reservationRequired`, `fee` and `dressCode` come from the
+// same program, Celebrity's venue pages and FAQs, and reviews. The day's program
+// always wins. Each fact's source is cited in the PR that closed #53; a venue no
+// source covers has no facts.
+
+const ALL_DAY = [['00:00', '24:00']];
+
+/** Select Dining Anytime dinner in all four main restaurants. */
+const MAIN_RESTAURANT = { hours: [['17:30', '21:00']], reservationRequired: false, fee: 'included', dressCode: 'smart casual' };
+
+/** Oceanview Café and its seating areas: coffee, tea and juices around the clock. */
+const OCEANVIEW_CAFE = { hours: ALL_DAY, reservationRequired: false, fee: 'included', dressCode: 'casual' };
+
+/** One pool-deck grill, drawn on both Deck 14 and Deck 16 until P1.1 settles where it is. */
+const MAST_GRILL = { hours: [['11:30', '18:00']], reservationRequired: false, fee: 'included', dressCode: 'casual' };
+
+/** The Spa, salon and SEA Thermal Suite, on both of The Spa's levels. */
+const THE_SPA = { hours: [['08:00', '22:00']] };
+
 // ---------------------------------------------------------------- stateroom decks
 
 /** Standard mid/aft veranda cabin, with Prime Edge through the midship section. */
@@ -127,6 +152,7 @@ export function generateAllDecks() {
           x: [58, 80],
           description: 'Shipboard medical center staffed by physicians and nurses, near the forward elevators.',
           tags: ['Medical', 'First Aid'],
+          hours: [['08:00', '11:00'], ['16:00', '19:00']],
         }),
         ...generateCenterlineCore(2),
         venue(2, {
@@ -139,6 +165,7 @@ export function generateAllDecks() {
           description: 'Teen hangout with games, music and activities for guests aged 13–17.',
           tags: ['Teens', 'Games'],
           access: 'kids',
+          hours: [['10:00', '12:00'], ['14:00', '17:00'], ['20:00', '23:00']],
         }),
         venue(2, {
           id: 'v2-crew-fwd',
@@ -273,6 +300,7 @@ export function generateAllDecks() {
           y: [0, 17],
           description: 'Book and manage shore excursions.',
           tags: ['Excursions'],
+          hours: [['09:00', '21:00']],
         }),
         venue(3, {
           id: 'v3-guest-relations',
@@ -283,6 +311,7 @@ export function generateAllDecks() {
           y: [22, 39],
           description: 'Guest services desk for onboard accounts and questions.',
           tags: ['Services', 'Help Desk'],
+          hours: ALL_DAY,
         }),
         venue(3, {
           id: 'v3-camp-at-sea',
@@ -295,6 +324,7 @@ export function generateAllDecks() {
           description: 'Kids club with age-grouped activities.',
           tags: ['Kids'],
           access: 'kids',
+          hours: [['09:00', '12:00'], ['14:00', '17:00'], ['19:00', '22:00']],
         }),
         venue(3, {
           id: 'v3-concierge-lounge',
@@ -306,6 +336,7 @@ export function generateAllDecks() {
           y: [22, 39],
           description: 'Lounge and desk for Concierge Class guests.',
           tags: ['Concierge'],
+          hours: [['08:00', '20:00']],
         }),
         venue(3, {
           id: 'v3-normandie',
@@ -317,6 +348,7 @@ export function generateAllDecks() {
           y: PORT,
           description: 'Complimentary main restaurant serving French-inspired cuisine.',
           tags: ['Main Dining', 'French'],
+          ...MAIN_RESTAURANT,
         }),
         venue(3, {
           id: 'v3-tuscan',
@@ -328,6 +360,7 @@ export function generateAllDecks() {
           y: STBD,
           description: 'Complimentary main restaurant serving Italian dishes.',
           tags: ['Main Dining', 'Italian'],
+          ...MAIN_RESTAURANT,
         }),
       ],
     })
@@ -362,6 +395,7 @@ export function generateAllDecks() {
           y: PORT,
           description: 'Portrait studio and photo gallery.',
           tags: ['Photos'],
+          hours: [['09:00', '22:00']],
         }),
         venue(4, {
           id: 'v4-shops',
@@ -372,6 +406,7 @@ export function generateAllDecks() {
           y: STBD,
           description: 'Duty-free boutiques, jewelry and watches.',
           tags: ['Shopping'],
+          hours: [['10:00', '23:00']],
         }),
         venue(4, {
           id: 'v4-le-voyage',
@@ -383,6 +418,10 @@ export function generateAllDecks() {
           y: PORT,
           description: 'Specialty restaurant with a globe-trotting menu by Chef Daniel Boulud. New on Xcel.',
           tags: ['Specialty Dining', 'Daniel Boulud'],
+          hours: [['17:30', '21:00']],
+          reservationRequired: true,
+          fee: 'surcharge',
+          dressCode: 'smart casual',
         }),
         venue(4, {
           id: 'v4-le-grand-bistro',
@@ -394,6 +433,11 @@ export function generateAllDecks() {
           y: PORT_EDGE,
           description: 'French bistro on the Grand Plaza; hosts Le Petit Chef animated dining at night.',
           tags: ['French', 'Le Petit Chef'],
+          // Lunch, then Le Petit Chef's two dinner seatings at 5:30 and 7:30 PM.
+          hours: [['12:00', '13:30'], ['17:30', '19:30']],
+          reservationRequired: true,
+          fee: 'surcharge',
+          dressCode: 'smart casual',
         }),
         venue(4, {
           id: 'v4-grand-plaza',
@@ -417,6 +461,8 @@ export function generateAllDecks() {
           y: STBD_EDGE,
           description: 'Italian-style café serving espresso, gelato and pastries.',
           tags: ['Coffee', 'Gelato'],
+          hours: [['06:30', '24:00']],
+          reservationRequired: false,
         }),
         venue(4, {
           id: 'v4-casino',
@@ -439,6 +485,8 @@ export function generateAllDecks() {
           y: STBD,
           description: 'Craft beer and cocktail pub with sports on screen.',
           tags: ['Craft Beer', 'Sports'],
+          hours: [['09:00', '01:00']],
+          fee: 'a la carte',
         }),
         venue(4, {
           id: 'v4-the-club',
@@ -462,6 +510,9 @@ export function generateAllDecks() {
           y: PORT,
           description: 'Complimentary main restaurant with a contemporary menu.',
           tags: ['Main Dining'],
+          ...MAIN_RESTAURANT,
+          // The one main restaurant that also serves breakfast, and lunch on sea days.
+          hours: [['07:30', '09:00'], ['12:00', '13:30'], ['17:30', '21:00']],
         }),
         venue(4, {
           id: 'v4-cyprus',
@@ -473,6 +524,7 @@ export function generateAllDecks() {
           y: STBD,
           description: 'Complimentary main restaurant with Greek and Mediterranean dishes.',
           tags: ['Main Dining', 'Mediterranean'],
+          ...MAIN_RESTAURANT,
         }),
         venue(4, {
           id: 'v4-mosaic',
@@ -483,6 +535,10 @@ export function generateAllDecks() {
           x: [298, 327],
           description: 'Restaurant on the lower level of The Bazaar, the triple-height aft space that replaced Eden on Xcel.',
           tags: ['The Bazaar', 'New on Xcel'],
+          hours: [['17:30', '20:30']],
+          reservationRequired: true,
+          fee: 'surcharge',
+          dressCode: 'smart casual',
         }),
       ],
     })
@@ -528,6 +584,7 @@ export function generateAllDecks() {
           y: STBD,
           description: 'Celebrity-branded boutique. New on Xcel.',
           tags: ['Shopping', 'New on Xcel'],
+          hours: ALL_DAY, // the museum never closes; the store keeps shorter hours
         }),
         venue(5, {
           id: 'v5-annex',
@@ -572,6 +629,10 @@ export function generateAllDecks() {
           y: STBD_EDGE,
           description: 'Raw bar with oysters, crudo and sushi, beside the Magic Carpet.',
           tags: ['Seafood', 'Sushi'],
+          hours: [['12:00', '14:00'], ['17:30', '21:00']],
+          reservationRequired: false,
+          fee: 'a la carte',
+          dressCode: 'smart casual',
         }),
         venue(5, {
           id: 'v5-world-class-bar',
@@ -583,6 +644,7 @@ export function generateAllDecks() {
           y: STBD_EDGE,
           description: 'Mixology bar — the first in the fleet, new on Xcel.',
           tags: ['Cocktails', 'New on Xcel'],
+          hours: [['16:00', '24:00']],
         }),
         magicCarpetStop(5, {
           positionConfidence: 'verified',
@@ -590,6 +652,10 @@ export function generateAllDecks() {
           ...partOf('magic-carpet'),
           description: 'The cantilevered Magic Carpet docks on Deck 5 as an open-air extension of the dining venues.',
           tags: ['Cantilevered', 'Ocean Views', 'Starboard'],
+          // Evenings only. By day it moves to Deck 14 or 16, which varies too much to record.
+          hours: [['18:00', '21:30']],
+          fee: 'a la carte',
+          dressCode: 'casual',
         }),
         venue(5, {
           id: 'v5-blu',
@@ -601,6 +667,10 @@ export function generateAllDecks() {
           y: PORT_EDGE,
           description: 'Restaurant reserved for AquaClass guests, with a clean-eating menu.',
           tags: ['AquaClass', 'Healthy'],
+          hours: [['07:30', '09:00'], ['17:30', '21:00']],
+          reservationRequired: false,
+          fee: 'included',
+          dressCode: 'smart casual',
         }),
         venue(5, {
           id: 'v5-fine-cut',
@@ -612,6 +682,10 @@ export function generateAllDecks() {
           y: STBD_EDGE,
           description: 'Specialty steakhouse with prime cuts and panoramic views.',
           tags: ['Steakhouse', 'Specialty Dining'],
+          hours: [['12:00', '13:30'], ['17:30', '21:00']], // lunch on sea days
+          reservationRequired: true,
+          fee: 'surcharge',
+          dressCode: 'smart casual',
         }),
         venue(5, {
           id: 'v5-back-of-house',
@@ -634,6 +708,7 @@ export function generateAllDecks() {
           y: PORT,
           description: 'Upper level of The Club with its own programming. New on Xcel.',
           tags: ['Nightlife', 'New on Xcel'],
+          hours: ALL_DAY,
         }),
         venue(5, {
           id: 'v5-bazaar-market',
@@ -644,6 +719,8 @@ export function generateAllDecks() {
           x: [276, 304],
           description: 'Market-style dining, crafts and festival entertainment on The Bazaar’s middle level.',
           tags: ['The Bazaar', 'New on Xcel'],
+          hours: [['10:00', '23:00']],
+          reservationRequired: false,
         }),
         venue(5, {
           id: 'v5-spice-cafe',
@@ -654,6 +731,9 @@ export function generateAllDecks() {
           x: [306, 327],
           description: 'Casual café in The Bazaar with two outdoor seating areas.',
           tags: ['The Bazaar', 'New on Xcel'],
+          hours: [['07:30', '10:30'], ['11:30', '16:00']], // lunch runs into afternoon snacks on sea days
+          reservationRequired: false,
+          fee: 'included',
         }),
       ],
     })
@@ -795,6 +875,7 @@ export function generateAllDecks() {
           x: [36, 80],
           description: 'Full-service spa with the SEA Thermal Suite, including the new Hydra Room, salon and Spa Café.',
           tags: ['Spa', 'Thermal Suite', 'Hydra Room'],
+          ...THE_SPA,
         }),
         ...generateCenterlineCore(14),
         venue(14, {
@@ -807,6 +888,7 @@ export function generateAllDecks() {
           description: 'Adults-only, glass-roofed pool retreat with a pool and two hot tubs.',
           tags: ['Adults Only', 'Indoor Pool'],
           access: 'adults',
+          hours: [['07:00', '23:00']],
         }),
         venue(14, {
           id: 'v14-pool-club',
@@ -819,6 +901,7 @@ export function generateAllDecks() {
           y: [0, 28],
           description: 'Main resort deck with a 23 m lap pool, a giant LED screen and two-deck-high martini-glass hot tubs.',
           tags: ['Main Pool', 'Martini Glass Hot Tubs'],
+          hours: [['07:00', '23:00']],
         }),
         venue(14, {
           id: 'v14-cabanas',
@@ -846,6 +929,7 @@ export function generateAllDecks() {
           x: [200, 214],
           description: 'Poolside grill for burgers and hot dogs.',
           tags: ['Grill', 'Poolside'],
+          ...MAST_GRILL,
         }),
         venue(14, {
           id: 'v14-oceanview-cafe',
@@ -857,6 +941,7 @@ export function generateAllDecks() {
           x: [216, 260],
           description: 'Marketplace-style buffet with international stations.',
           tags: ['Buffet'],
+          ...OCEANVIEW_CAFE,
         }),
         venue(14, {
           id: 'v14-il-secondo-bacio',
@@ -867,6 +952,8 @@ export function generateAllDecks() {
           y: PORT,
           description: 'Gelato and coffee bar beside Oceanview Café.',
           tags: ['Gelato', 'Coffee'],
+          hours: [['06:00', '01:00']],
+          reservationRequired: false,
         }),
         venue(14, {
           id: 'v14-cafe-terrace',
@@ -879,6 +966,7 @@ export function generateAllDecks() {
           y: STBD,
           description: 'Outdoor seating overlooking the wake.',
           tags: ['Al Fresco'],
+          ...OCEANVIEW_CAFE,
         }),
         venue(14, {
           id: 'v14-aft-sundeck',
@@ -930,6 +1018,7 @@ export function generateAllDecks() {
           description: 'Enlarged private lounge for suite guests with complimentary drinks and a dedicated concierge.',
           tags: ['The Retreat', 'Suite Guests Only'],
           access: 'suite',
+          hours: ALL_DAY,
         }),
         venue(15, {
           id: 'v15-fitness',
@@ -941,6 +1030,7 @@ export function generateAllDecks() {
           y: PORT,
           description: 'Gym with cardio and weights plus Motion Studios A and B.',
           tags: ['Gym', 'Classes'],
+          hours: ALL_DAY,
         }),
         venue(15, {
           id: 'v15-spa',
@@ -952,6 +1042,7 @@ export function generateAllDecks() {
           y: STBD,
           description: 'Upper level of The Spa with salon, barbershop and relaxation spaces.',
           tags: ['Spa', 'Salon'],
+          ...THE_SPA,
         }),
         venue(15, {
           id: 'v15-bora',
@@ -963,6 +1054,10 @@ export function generateAllDecks() {
           y: PORT,
           description: 'Open-air Mediterranean restaurant. New on Xcel.',
           tags: ['Mediterranean', 'Open Air', 'New on Xcel'],
+          hours: [['10:30', '13:00'], ['18:00', '20:30']], // brunch and dinner
+          reservationRequired: true,
+          fee: 'surcharge',
+          dressCode: 'smart casual',
         }),
         venue(15, {
           id: 'v15-oceanview-upper',
@@ -975,6 +1070,7 @@ export function generateAllDecks() {
           y: STBD,
           description: 'Upper level seating and outdoor terrace for Oceanview Café overlooking the stern.',
           tags: ['Buffet', 'Outdoor Seating'],
+          ...OCEANVIEW_CAFE,
         }),
         venue(15, {
           id: 'v15-rooftop-garden',
@@ -995,6 +1091,7 @@ export function generateAllDecks() {
           x: [276, 318],
           description: 'Open-air bar at the stern, twice the size of the Edge-class original, with wake views.',
           tags: ['Wake Views', 'Cocktails'],
+          hours: [['10:00', '24:00']],
         }),
       ],
     })
@@ -1051,6 +1148,10 @@ export function generateAllDecks() {
           description: 'Redesigned restaurant exclusively for suite guests.',
           tags: ['The Retreat', 'Suite Guests Only'],
           access: 'suite',
+          hours: [['07:30', '09:00'], ['12:00', '13:30'], ['17:30', '21:00']], // lunch on sea days
+          reservationRequired: false,
+          fee: 'included',
+          dressCode: 'smart casual',
         }),
         venue(16, {
           id: 'v16-hot-tubs',
@@ -1078,6 +1179,7 @@ export function generateAllDecks() {
           y: PORT,
           description: 'Poolside grill for burgers and hot dogs, overlooking the pool deck.',
           tags: ['Grill', 'Poolside'],
+          ...MAST_GRILL,
         }),
         venue(16, {
           id: 'v16-mast-bar',
@@ -1089,6 +1191,7 @@ export function generateAllDecks() {
           y: STBD,
           description: 'Top-deck bar beside the jogging track.',
           tags: ['Bar', 'Jogging Track'],
+          hours: [['10:00', '18:00']],
         }),
       ],
     })
@@ -1112,6 +1215,7 @@ export function generateAllDecks() {
           description: 'Round pool, two cantilevered plunge pools, cabanas and premium loungers for suite guests.',
           tags: ['The Retreat', 'Suite Guests Only', 'Pool'],
           access: 'suite',
+          hours: ALL_DAY,
         }),
         venue(17, {
           id: 'v17-retreat-bar',
