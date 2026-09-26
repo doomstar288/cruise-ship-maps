@@ -162,6 +162,32 @@ describe('createRouter().route', () => {
     expect(route.deckChanges).toEqual([{ mode: 'elevator', fromDeck: 1, toDeck: 4 }]);
   });
 
+  it('never uses lifts when avoiding them, even where a lift is quicker', () => {
+    const from = { featureId: 'lift-a-1' };
+    const to = { featureId: 'lift-a-4' };
+    expect(router.route(from, to, { avoidLifts: false })).toEqual(router.route(from, to));
+    const route = router.route(from, to, { avoidLifts: true });
+    expect(route.legs.some((l) => l.kind === 'elevator')).toBe(false);
+    expect(route.deckChanges).toEqual([{ mode: 'stairs', fromDeck: 1, toDeck: 4 }]);
+    // Along Deck 1 to the stairs, two flights up, and back along Deck 4.
+    expect(route.walkM).toBe(200);
+    expect(route.timeS).toBe(200 + 2 * ROUTE_COSTS.stairsPerLevelS);
+  });
+
+  it('returns null, never a lift, when only a lift reaches the target', () => {
+    // Deck 2's x = 200 section has lift bank b and no stairs.
+    const [from, to] = [{ featureId: 'bar' }, { featureId: 'far-venue' }];
+    expect(router.route(from, to)).not.toBeNull();
+    expect(router.route(from, to, { avoidLifts: true })).toBeNull();
+  });
+
+  it('only walks when step-free and avoiding lifts, so another deck is out of reach', () => {
+    const both = { stepFree: true, avoidLifts: true };
+    const walk = router.route({ featureId: 'lift-a-2' }, { featureId: 'bar' }, both);
+    expect(walk).toMatchObject({ walkM: 70, deckChanges: [] });
+    expect(router.route({ featureId: 'lift-a-1' }, { featureId: 'lift-a-4' }, both)).toBeNull();
+  });
+
   it('reaches a lift-only walk section on the same deck via another deck', () => {
     const route = router.route(
       { featureId: 'bar' },
