@@ -37,7 +37,7 @@ Open [http://localhost:8765](http://localhost:8765) in your browser.
 
 - [`docs/design/design_guide.md`](./docs/design/design_guide.md): Design tokens, HSL color palette, typography scale, and glassmorphism specs.
 - [`docs/design/deck_plan_viewer_spec.md`](./docs/design/deck_plan_viewer_spec.md): Interactive map controls, LOD thresholds, and mobile drawer specs.
-- [`docs/architecture/ship_map_pack.md`](./docs/architecture/ship_map_pack.md): Ship Map Pack v1, the static JSON trip planners consume, including feature `aliases` and `spansDecks`.
+- [`docs/architecture/ship_map_pack.md`](./docs/architecture/ship_map_pack.md): Ship Map Pack v1, the static JSON trip planners consume, including feature `aliases` and `spansDecks`, how this app fetches packs rather than bundling them, and the app bundle size budget.
 - [`docs/architecture/system_architecture_and_scaling.md`](./docs/architecture/system_architecture_and_scaling.md): PostGIS DDL schema, Cruise Deck GeoJSON extension, and OpenAPI 3.1 REST API specification.
 - [`docs/scrum/agile_framework_and_backlog.md`](./docs/scrum/agile_framework_and_backlog.md): Open-source dual-track Scrum framework and Epic user stories.
 - [`docs/qa/qa_peer_review.md`](./docs/qa/qa_peer_review.md): QA & accessibility peer review audit report.

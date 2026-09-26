@@ -138,6 +138,7 @@ export function generateAllDecks() {
           y: PORT,
           description: 'Teen hangout with games, music and activities for guests aged 13–17.',
           tags: ['Teens', 'Games'],
+          access: 'kids',
         }),
         venue(2, {
           id: 'v2-crew-fwd',
@@ -151,6 +152,7 @@ export function generateAllDecks() {
         }),
         venue(2, {
           id: 'v2-gangway',
+          aliases: ['Gangway', 'Disembarkation'],
           positionConfidence: 'estimated', // not in any published source
           name: 'Gangway & Security',
           category: 'Guest Services',
@@ -159,6 +161,7 @@ export function generateAllDecks() {
           y: PORT,
           description: 'Embarkation gangway and security screening.',
           tags: ['Gangway', 'Embarkation'],
+          portExit: 'gangway',
         }),
         venue(2, {
           id: 'v2-destination-gateway',
@@ -172,9 +175,11 @@ export function generateAllDecks() {
         }),
         magicCarpetStop(2, {
           name: 'Magic Carpet (Tender Platform)',
-          ...partOf('magic-carpet'),
+          ...partOf('magic-carpet', { aliases: ['Tender Platform'] }),
           description: 'At Deck 2 the Magic Carpet becomes a tender embarkation platform for Destination Gateway.',
           tags: ['Tender Platform', 'Starboard'],
+          // Guests wait in Destination Gateway and board the tenders from here.
+          portExit: 'tender',
         }),
         venue(2, {
           id: 'v2-crew-aft',
@@ -289,6 +294,7 @@ export function generateAllDecks() {
           y: [0, 17],
           description: 'Kids club with age-grouped activities.',
           tags: ['Kids'],
+          access: 'kids',
         }),
         venue(3, {
           id: 'v3-concierge-lounge',
@@ -800,6 +806,7 @@ export function generateAllDecks() {
           x: [96, 134],
           description: 'Adults-only, glass-roofed pool retreat with a pool and two hot tubs.',
           tags: ['Adults Only', 'Indoor Pool'],
+          access: 'adults',
         }),
         venue(14, {
           id: 'v14-pool-club',
@@ -822,6 +829,7 @@ export function generateAllDecks() {
           y: [29, 39],
           description: 'Rentable cabanas on the starboard side, fronting the Magic Carpet.',
           tags: ['Cabanas', 'Starboard'],
+          access: 'paid',
         }),
         magicCarpetStop(14, {
           name: 'Magic Carpet (Pool Deck)',
@@ -921,6 +929,7 @@ export function generateAllDecks() {
           x: [96, 134],
           description: 'Enlarged private lounge for suite guests with complimentary drinks and a dedicated concierge.',
           tags: ['The Retreat', 'Suite Guests Only'],
+          access: 'suite',
         }),
         venue(15, {
           id: 'v15-fitness',
@@ -1029,6 +1038,7 @@ export function generateAllDecks() {
           x: [96, 134],
           description: 'Suites-only sundeck above the Solarium.',
           tags: ['The Retreat', 'Suite Guests Only'],
+          access: 'suite',
         }),
         venue(16, {
           id: 'v16-luminae',
@@ -1040,6 +1050,7 @@ export function generateAllDecks() {
           y: [0, 24],
           description: 'Redesigned restaurant exclusively for suite guests.',
           tags: ['The Retreat', 'Suite Guests Only'],
+          access: 'suite',
         }),
         venue(16, {
           id: 'v16-hot-tubs',
@@ -1100,6 +1111,7 @@ export function generateAllDecks() {
           x: [96, 150],
           description: 'Round pool, two cantilevered plunge pools, cabanas and premium loungers for suite guests.',
           tags: ['The Retreat', 'Suite Guests Only', 'Pool'],
+          access: 'suite',
         }),
         venue(17, {
           id: 'v17-retreat-bar',
@@ -1110,6 +1122,7 @@ export function generateAllDecks() {
           x: [152, 176],
           description: 'Poolside bar for Retreat guests.',
           tags: ['The Retreat', 'Suite Guests Only'],
+          access: 'suite',
         }),
       ],
     })

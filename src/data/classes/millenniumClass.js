@@ -149,6 +149,8 @@ export function generateMillenniumClassDecks(manifest) {
         ...generateCenterlineCore(2),
         venue(2, {
           id: 'v2-gangway',
+          // Not in any published source; public deck plans list cabins on Deck 2.
+          positionConfidence: 'estimated',
           name: 'Gangway & Security',
           category: 'Guest Services',
           color: C.service,
@@ -156,7 +158,8 @@ export function generateMillenniumClassDecks(manifest) {
           y: PORT_OUTER,
           description: 'Port side embarkation gangway and security screening checkpoint.',
           tags: ['Gangway', 'Security'],
-          aliases: ['Gangway', 'Security Screening'],
+          portExit: 'gangway',
+          aliases: ['Gangway', 'Security Screening', 'Disembarkation'],
         }),
         venue(2, {
           id: 'v2-crew-tech',
@@ -540,6 +543,7 @@ export function generateMillenniumClassDecks(manifest) {
           y: PORT_OUTER,
           description: 'Thermal suite with steam rooms, dry saunas, and heated ceramic relaxation loungers.',
           tags: ['Thermal Suite', 'Sauna'],
+          access: 'paid',
         }),
         ...generateCenterlineCore(10),
         venue(10, {
@@ -551,6 +555,7 @@ export function generateMillenniumClassDecks(manifest) {
           y: FULL_BEAM_INNER,
           description: 'Signature glass-canopied adult retreat featuring Millennium Class iconic Thalassotherapy seawater pool with hydro-massage jets.',
           tags: ['Solarium', 'Adults Only', 'Thalassotherapy'],
+          access: 'adults',
           aliases: ['Thalassotherapy Pool', 'Solarium', 'Adults Pool'],
         }),
         venue(10, {
@@ -662,6 +667,7 @@ export function generateMillenniumClassDecks(manifest) {
           y: PORT_OUTER,
           description: 'Dedicated youth center featuring interactive gaming, arts and crafts, STEM activities, and scavenger hunts.',
           tags: ['Kids Club'],
+          access: 'kids',
           aliases: ['Camp at Sea', 'Kids Club', 'Fun Factory'],
         }),
         venue(11, {
@@ -673,6 +679,7 @@ export function generateMillenniumClassDecks(manifest) {
           y: STBD_OUTER,
           description: 'Exclusive hangout for teens aged 13–17 with video consoles, foosball, music, and late-night teen parties.',
           tags: ['Teens'],
+          access: 'kids',
           aliases: ['XClub', 'Teen Club'],
         }),
         venue(11, {
@@ -717,6 +724,7 @@ export function generateMillenniumClassDecks(manifest) {
           y: [6, 26.2],
           description: 'Exclusive private sundeck reserved for suite guests, featuring luxury loungers, dedicated concierge, and poolside cocktails.',
           tags: ['Suites', 'Retreat', 'Sundeck'],
+          access: 'suite',
           aliases: ['The Retreat Sundeck', 'Retreat Sundeck'],
         }),
         ...generateCenterlineCore(12, ['fwd']),

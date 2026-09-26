@@ -159,6 +159,59 @@ export function spansDecksFor(venue) {
   return decks.length ? decks : undefined;
 }
 
+// ---------------------------------------------------------------------- access
+
+/**
+ * Who may use a venue, when not every guest may:
+ * - `suite`: suite guests only (The Retreat, Luminae). Compare with `cabin.type`.
+ * - `adults`: adults only (the Solarium).
+ * - `kids`: the youth programme's clubs, for children and teens only.
+ * - `paid`: open to anyone who buys a pass or books it (thermal suites, cabanas).
+ * Public venues omit the field.
+ */
+export const ACCESS = ['suite', 'adults', 'kids', 'paid'];
+
+/** The values that keep other guests out, not just charge them. A route to a
+ *  venue without the same value must never pass through one of these. */
+export const ACCESS_BARS_ENTRY = new Set(['suite', 'adults', 'kids']);
+
+/** A record's `access`, validated; undefined for a public venue. */
+export function accessFor(venue, featureType) {
+  const authored = venue.access;
+  if (authored === undefined) return undefined;
+  if (!ACCESS.includes(authored)) {
+    throw new Error(`Venue ${venue.id} has unknown access "${authored}"`);
+  }
+  if (!ALIASABLE_TYPES.has(featureType)) {
+    throw new Error(`${venue.id} is a ${featureType}; only venue and poi features take access`);
+  }
+  return authored;
+}
+
+// ------------------------------------------------------------------ port exits
+
+/**
+ * Where guests leave the ship in port:
+ * - `gangway`: the gangway, when the ship is alongside.
+ * - `tender`: where guests step onto the tenders, when it is at anchor.
+ * Only on the exit itself, never on the lounge or desk beside it (Destination
+ * Gateway, where guests wait for tenders; Shore Excursions).
+ */
+export const PORT_EXITS = ['gangway', 'tender'];
+
+/** A record's `portExit`, validated; undefined for anything that isn't an exit. */
+export function portExitFor(venue, featureType) {
+  const authored = venue.portExit;
+  if (authored === undefined) return undefined;
+  if (!PORT_EXITS.includes(authored)) {
+    throw new Error(`Venue ${venue.id} has unknown portExit "${authored}"`);
+  }
+  if (!ALIASABLE_TYPES.has(featureType)) {
+    throw new Error(`${venue.id} is a ${featureType}; only venue and poi features take portExit`);
+  }
+  return authored;
+}
+
 // --------------------------------------------------------- position confidence
 
 /**
@@ -267,6 +320,8 @@ function toFeature(venue) {
       round((bounds[0][1] + bounds[1][1]) / 2),
     ],
     tags: venue.tags?.length ? venue.tags : undefined,
+    access: accessFor(venue, featureType),
+    portExit: portExitFor(venue, featureType),
     color: venue.color,
   };
   const confidence = positionConfidenceFor(venue, featureType);

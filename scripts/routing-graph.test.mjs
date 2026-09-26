@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { gzipSync } from 'node:zlib';
 import { describe, it, expect } from 'vitest';
 
-import { SHIPS, SPEC_VERSION, buildPack } from './export-ship-packs.mjs';
+import { ACCESS_BARS_ENTRY, SHIPS, SPEC_VERSION, buildPack } from './export-ship-packs.mjs';
 import {
   CABIN_COVER_M,
   MAX_CORRIDOR_NODE_SPACING_M,
@@ -14,6 +14,7 @@ import {
   segmentEntersRect,
 } from './routing-graph.mjs';
 import { distanceToRing, insidePolygon, isCirculation } from './venue-entrances.mjs';
+import { createRouter } from '../src/utils/shipRouter.js';
 
 const pack = buildPack(SHIPS[0].metadata, SHIPS[0].decks);
 const graph = expandRouting(pack);
@@ -29,10 +30,10 @@ const rectOf = ({ bounds: [[x1, y1], [x2, y2]] }) => ({
   y2: Math.max(y1, y2),
 });
 
-/** Keys reachable from `start` over edges that `use` accepts. */
-function reachable(start, use = () => true) {
+/** Keys reachable from `start` over edges that `use` accepts (the Xcel graph's, by default). */
+function reachable(start, use = () => true, edges = graph.edges) {
   const adjacency = new Map();
-  for (const e of graph.edges.filter(use)) {
+  for (const e of edges.filter(use)) {
     for (const [a, b] of [
       [e.from, e.to],
       [e.to, e.from],
@@ -73,11 +74,14 @@ describe('routing in the published Celebrity Xcel pack', () => {
   it('is additive: specVersion stays 1 and nothing outside routing changed', () => {
     expect(pack.specVersion).toBe(SPEC_VERSION);
     expect(SPEC_VERSION).toBe(1);
-    // Recorded from main at 0b0ae00, before routing existed. Aliases, spans,
-    // confidence and entrances are all inside this hash. Update it only in a
-    // change that means to edit deck data, never to make routing pass.
+    // Recorded from main at 0b0ae00, before routing existed, and re-recorded when
+    // P7.1 added `access` and when P7.3 tagged the gangway and tender platform with
+    // `portExit` and their port-day aliases (routing unchanged both times). Aliases,
+    // spans, confidence, entrances, access and port exits are all inside this hash.
+    // Update it only in a change that means to edit deck data, never to make
+    // routing pass.
     expect(nonRoutingHash(pack)).toBe(
-      '1c877f419de3d35ed179fdcda6d1fe0f11291f05499b3085ae39b33d8d429e13'
+      '92b9c4de178c17467d83dd336140e2af6b920f82e76cae54c445fa30676cb871'
     );
   });
 
@@ -347,6 +351,109 @@ describe('routing in the published Celebrity Xcel pack', () => {
         );
     }
   });
+});
+
+// The fleet-wide tests read the committed packs: building all fourteen here would
+// take minutes under coverage. The Xcel test above holds the committed pack to the build.
+const plans = SHIPS.map(({ metadata }) =>
+  JSON.parse(readFileSync(`public/v1/ships/${metadata.id}/plan.json`, 'utf8'))
+);
+
+describe('access restrictions on routes, across the published fleet', () => {
+  it('never routes through a suite, adults or kids area to a venue other guests may use', () => {
+    // A `paid` area may be passed (the Deck 14 Magic Carpet stop is reached along
+    // the cabana row); the other values keep guests out altogether.
+    const failures = [];
+    let restrictedCrossings = 0;
+    for (const plan of plans) {
+      const router = createRouter(plan.routing);
+      const features = plan.decks.flatMap((d) =>
+        d.features.map((f) => ({ ...f, deck: d.deckNumber }))
+      );
+      const byId = new Map(features.map((f) => [f.id, f]));
+      // Any deck with a connected lift lobby: a crossing leads into a lobby-less
+      // walk section, so every route to a venue inside it takes the same crossing.
+      const origin = plan.routing.decks
+        .map(({ deckNumber }) => ({ deck: deckNumber, elevators: true }))
+        .find((endpoint) => {
+          try {
+            router.route(endpoint, endpoint);
+            return true;
+          } catch {
+            return false;
+          }
+        });
+      for (const target of features) {
+        if (!['venue', 'poi'].includes(target.featureType) || !router.hasFeature(target.id)) continue;
+        const route = router.route(origin, { featureId: target.id });
+        if (!route) continue; // reachability has its own tests
+        for (const id of route.legs.flatMap((leg) => leg.through ?? [])) {
+          const access = byId.get(id)?.access;
+          if (!ACCESS_BARS_ENTRY.has(access)) continue;
+          restrictedCrossings += 1;
+          if (target.access !== access) {
+            failures.push(`${plan.shipId}: ${target.id} (${target.access ?? 'public'}) via ${id} (${access})`);
+          }
+        }
+      }
+    }
+    expect(failures).toEqual([]);
+    // The Retreat Bar, reached across the Retreat Sundeck, on the three ships
+    // that draw it; proves the check sees crossings at all.
+    expect(restrictedCrossings).toBeGreaterThan(0);
+  });
+});
+
+describe('port exits, across the published fleet', () => {
+  // Port-day walk times start from the guest's cabin, so every cabin needs a route
+  // to every exit, and a step-free one too. A cabin that can't reach one is a gap
+  // in the graph to fix, never a case to skip. Routing every pair (~66,000 routes)
+  // timed out under coverage on CI, so this searches once from each exit and
+  // checks each cabin's snap node; real routes from a cabin per deck confirm it.
+  it.each(plans.map((plan) => [plan.shipId, plan]))(
+    '%s: every cabin reaches every port exit, step-free included',
+    (_shipId, plan) => {
+      const { nodes, edges } = expandRouting(plan);
+      const router = createRouter(plan.routing);
+      const exits = plan.decks.flatMap((d) => d.features.filter((f) => f.portExit));
+      expect(exits.map((f) => f.portExit)).toContain('gangway');
+      // The snap rule: the nearest corridor node on the cabin's deck, the first in
+      // node order on a tie, as the router picks it.
+      const cabins = plan.decks.flatMap((d) => {
+        const corridor = nodes.filter((n) => n.deck === d.deckNumber && n.kind === 'corridor');
+        return d.features
+          .filter((f) => f.featureType === 'cabin')
+          .map((f) => ({
+            id: f.id,
+            deck: d.deckNumber,
+            at: f.center,
+            node: corridor.reduce((best, n) =>
+              dist(n.at, f.center) < dist(best.at, f.center) - 1e-9 ? n : best
+            ).key,
+          }));
+      });
+      expect(cabins.length).toBeGreaterThan(0);
+      const firstOnDeck = cabins.filter((c, i) => i === 0 || cabins[i - 1].deck !== c.deck);
+      const unreached = [];
+      const routerDisagrees = [];
+      for (const exit of exits) {
+        const doors = nodes.filter((n) => n.featureId === exit.id);
+        expect(doors.length, exit.id).toBeGreaterThan(0);
+        for (const stepFree of [false, true]) {
+          const trip = (cabin) => `${cabin.id} → ${exit.id}${stepFree ? ' (step-free)' : ''}`;
+          const use = (e) => !stepFree || e.kind !== 'stairs';
+          const seen = new Set(doors.flatMap((n) => [...reachable(n.key, use, edges)]));
+          for (const cabin of cabins) if (!seen.has(cabin.node)) unreached.push(trip(cabin));
+          for (const cabin of firstOnDeck) {
+            const origin = router.route(cabin, { featureId: exit.id }, { stepFree })?.origin.node;
+            if (origin !== cabin.node) routerDisagrees.push(`${trip(cabin)}: ${origin ?? 'no route'}`);
+          }
+        }
+      }
+      expect(unreached).toEqual([]);
+      expect(routerDisagrees).toEqual([]);
+    }
+  );
 });
 
 describe('pack size budget', () => {
