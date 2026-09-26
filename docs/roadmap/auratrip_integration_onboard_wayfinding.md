@@ -333,7 +333,7 @@ offline after first load.
 - **REST mode:** only if a live service adds value beyond static packs; routing stays
   on-device regardless.
 
-### Phase 7 — Planner enhancements  `M–L` · both repos · ◐ P7.1 shipped 2026-09-23
+### Phase 7 — Planner enhancements  `M–L` · both repos · ◐ maps side shipped 2026-09-26 except muster stations · AuraTrip P7.1, P7.7, P7.8 shipped
 
 Phases 0–5 answer "where is it and when do I leave?". Phase 7 answers the next questions:
 can I get in, is it open, how do I get off the ship, and what's nearest. Priority order;
@@ -343,13 +343,13 @@ under [AuraTrip epic #209](https://github.com/doomstar288/big-trip-planner/issue
 | # | Maps | AuraTrip |
 |---|---|---|
 | P7.1 | ✅ [#62](https://github.com/doomstar288/cruise-ship-maps/pull/62) `access` field, 15 venues fleet-wide | ✅ [AuraTrip #218](https://github.com/doomstar288/big-trip-planner/pull/218) agenda and viewer warnings, rendezvous filter |
-| P7.2 | [#53](https://github.com/doomstar288/cruise-ship-maps/issues/53) hours and booking facts | [#211](https://github.com/doomstar288/big-trip-planner/issues/211) chips and "usually closed" |
-| P7.3 | [#54](https://github.com/doomstar288/cruise-ship-maps/issues/54) tag port exits, fixtures | [#212](https://github.com/doomstar288/big-trip-planner/issues/212) gangway, tender and meeting-point walk times |
-| P7.4 | [#55](https://github.com/doomstar288/cruise-ship-maps/issues/55) muster stations, no-lifts option | [#213](https://github.com/doomstar288/big-trip-planner/issues/213) stairs-only muster route |
-| P7.5 | [#56](https://github.com/doomstar288/cruise-ship-maps/issues/56) `routeToNearest`, restroom POIs if sourced | [#214](https://github.com/doomstar288/big-trip-planner/issues/214) fix and extend Find Nearest |
+| P7.2 | ✅ [#67](https://github.com/doomstar288/cruise-ship-maps/pull/67) typical hours and booking facts, 43 Xcel venues | [#211](https://github.com/doomstar288/big-trip-planner/issues/211) chips and "usually closed" |
+| P7.3 | ✅ [#65](https://github.com/doomstar288/cruise-ship-maps/pull/65) `portExit` on 24 exits fleet-wide, 12 exit fixtures | [#212](https://github.com/doomstar288/big-trip-planner/issues/212) gangway, tender and meeting-point walk times |
+| P7.4 | ◐ [#64](https://github.com/doomstar288/cruise-ship-maps/pull/64) `avoidLifts` option and fixtures; muster stations unsourced ([#55](https://github.com/doomstar288/cruise-ship-maps/issues/55)) | [#213](https://github.com/doomstar288/big-trip-planner/issues/213) stairs-only muster route |
+| P7.5 | ✅ [#68](https://github.com/doomstar288/cruise-ship-maps/pull/68) `routeToNearest` and fixtures, 13 sourced Xcel restrooms | ◐ [AuraTrip #220](https://github.com/doomstar288/big-trip-planner/pull/220) access, [#225](https://github.com/doomstar288/big-trip-planner/pull/225) measured times, top 3, agenda origins; router swap open ([#214](https://github.com/doomstar288/big-trip-planner/issues/214)) |
 | P7.6 | — | [#215](https://github.com/doomstar288/big-trip-planner/issues/215) fill gaps in the day |
-| P7.7 | — | [#216](https://github.com/doomstar288/big-trip-planner/issues/216) rendezvous for 3+ cabins |
-| P7.8 | — | [#217](https://github.com/doomstar288/big-trip-planner/issues/217) daily walking summary |
+| P7.7 | — | ✅ [AuraTrip #229](https://github.com/doomstar288/big-trip-planner/pull/229) party cabins, meetups saved to the agenda |
+| P7.8 | — | ✅ [AuraTrip #234](https://github.com/doomstar288/big-trip-planner/pull/234) daily walking summary |
 
 - **P7.1 Access restrictions.** "Suite Guests Only" and "Adults Only" exist only as free-text
   `tags`, so a stateroom guest gets directions to the Retreat Bar with no warning. Add
@@ -361,26 +361,46 @@ under [AuraTrip epic #209](https://github.com/doomstar288/big-trip-planner/issue
   Lounge and the SEA Thermal Suite stay public until the pack can tell those guests apart.
 - **P7.2 Hours and booking facts.** `hours`, `reservationRequired`, `fee`, `dressCode`, as
   typical facts from public sources. The daily program always wins, and the copy says
-  "usually".
+  "usually". *Shipped (maps):* 43 Xcel venues, from one sailing's printed Celebrity Today (the
+  union of its sea and port days' windows). Every dining venue has `hours` and
+  `reservationRequired` except the Grand Plaza Café, which no source covers. A close at midnight
+  is `"24:00"`. Other ships get facts only when a source for that ship or class exists.
 - **P7.3 Port-day exits.** AuraTrip already has all-aboard alerts and a gangway/tender panel,
   but finds the exit by name and gives no walk time. Tag the gangway and tender platform in
   the pack, and route to them and to excursion meeting venues. The all-aboard deadline is
   about the pier, so the onboard walk is shown beside it, not subtracted from it.
+  *Shipped (maps):* `portExit` on the gangway (all 14 ships) and the tender exit (the Deck 2
+  Magic Carpet on the Edge series, the tender station on the Solstice class), with port-day
+  aliases and 12 exit fixtures, each with a step-free twin. Destination Gateway is the waiting
+  lounge, not the exit. Millennium class has no sourced tender exit.
 - **P7.4 Muster.** Stations are assigned per cabin by the line and entered from the SeaPass;
   neither repo infers one. Add `muster_station` features and an `avoidLifts` router option,
   because the emergency route is stairs only. Where a cabin can't reach a station without
-  lifts, that's a graph gap to fix, never a lift fallback.
+  lifts, that's a graph gap to fix, never a lift fallback. *Shipped (maps, router half):*
+  `avoidLifts` leaves out lift edges, and the Magic Carpet counts as a lift. Every cabin reaches
+  every guest venue without lifts on all 14 ships. With `stepFree` too, only walking is left,
+  and a trip off the walk section has no route (never a fallback). No public source names
+  Xcel's stations, so there are no `muster_station` features yet; #55 stays open.
 - **P7.5 Nearest.** *Rescoped 2026-09-23:* AuraTrip already ships "Find Nearest"
   (`utils/findNearest.ts`). It ignores `access` (from a stateroom it suggests the Retreat
   Lounge as the nearest bar), guesses restrooms at every lift lobby, shows an untied "~N min"
   without a cabin, and routes once per candidate. Maps adds `routeToNearest` (one Dijkstra run
   that stops at the first candidate, with fixtures, so both routers agree) and restroom POIs
   where a public source exists. AuraTrip fixes access first, then the fallback and restroom
-  wording, and adds agenda-row origins.
+  wording, and adds agenda-row origins. *Shipped:* maps `routeToNearest` (ties go to the
+  candidate listed first; it honours `stepFree` and `avoidLifts`) and 13 public Xcel restrooms
+  from the GENTS/LADIES/WC labels on Celebrity's own deck plan. AuraTrip shows a time only for a
+  route walked from the traveller, offers the best three, and adds "Nearest…" to agenda rows.
+  Still open: swapping AuraTrip's per-candidate loop for `routeToNearest`.
 - **P7.6–P7.8** are AuraTrip-only and build on routes the agenda already computes.
+  *Shipped:* P7.7 keeps the party's cabins with the trip, finds meetups for all of them and
+  saves one to the agenda with a leave-by reminder. P7.8 adds an approximate daily walking line
+  to each agenda day. P7.6 waits for AuraTrip's P7.2 hours.
 
 **Accept when:** each maps task's fields are documented in `ship_map_pack.md` and stay within
-the P2.3 size budget. New router options ship with route fixtures that pass in both repos.
+the P2.3 size budget. New router options ship with route fixtures that pass in both repos,
+in their own top-level array (`avoidLiftsRoutes`, `nearest`), so a port passes `routes[]`
+before it has the option.
 AuraTrip tasks are browser-verified at 1280 and 375 px and work offline.
 
 ---
@@ -423,9 +443,10 @@ in parallel with Phase 2, because it only needs names and aliases, not routes.
    plans?~~ **Both** (2026-09-17, P5.0).
 2. ~~Is "Previous agenda item" the right default origin, or "My cabin"?~~ **Previous agenda
    item**, falling back to the cabin (2026-09-17, P5.2).
-3. Do we want the maps site itself to accept a daily program (paste → routes), or keep that
-   experience AuraTrip-only? *Still open*, tracked in
-   [#60](https://github.com/doomstar288/cruise-ship-maps/issues/60). The recommendation there is AuraTrip-only.
+3. ~~Do we want the maps site itself to accept a daily program (paste → routes), or keep that
+   experience AuraTrip-only?~~ **AuraTrip-only** (2026-09-23,
+   [#60](https://github.com/doomstar288/cruise-ship-maps/issues/60)). The maps site stays a
+   producer, data preview and routing demo; the parser and venue resolver live only in AuraTrip.
 
 ---
 
