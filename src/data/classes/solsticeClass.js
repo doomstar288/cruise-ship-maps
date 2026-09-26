@@ -139,6 +139,7 @@ export function generateSolsticeClassDecks(manifest) {
         ...generateCenterlineCore(2),
         venue(2, {
           id: 'v2-gangway',
+          positionConfidence: 'estimated', // not in any published source
           name: 'Gangway & Security',
           category: 'Guest Services',
           color: C.service,
@@ -146,10 +147,12 @@ export function generateSolsticeClassDecks(manifest) {
           y: PORT_OUTER,
           description: 'Port side embarkation gangway and security checkpoint.',
           tags: ['Gangway', 'Security'],
-          aliases: ['Gangway', 'Security Screening'],
+          portExit: 'gangway',
+          aliases: ['Gangway', 'Security Screening', 'Disembarkation'],
         }),
         venue(2, {
           id: 'v2-tender-station',
+          positionConfidence: 'estimated', // not in any published source
           name: 'Tender Boarding Station',
           category: 'Guest Services',
           color: C.service,
@@ -157,6 +160,7 @@ export function generateSolsticeClassDecks(manifest) {
           y: STBD_OUTER,
           description: 'Starboard tender boarding station for port tender operations.',
           tags: ['Tender'],
+          portExit: 'tender',
           aliases: ['Tender Platform'],
         }),
         venue(2, {

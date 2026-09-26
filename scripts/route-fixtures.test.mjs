@@ -89,6 +89,19 @@ describe.each(Object.keys(ROUTE_FIXTURE_CASES))('route fixtures for %s', (shipId
     ).toBe(true);
   });
 
+  it('routes to every port exit from cabins on three decks, each with a step-free twin', () => {
+    const exits = pack.decks.flatMap((d) => d.features.filter((f) => f.portExit).map((f) => f.id));
+    expect(exits.length).toBeGreaterThan(0);
+    for (const exit of exits) {
+      const plain = fixtures.routes.filter((r) => r.to.featureId === exit && r.from.cabinId && !r.stepFree);
+      expect(new Set(plain.map((r) => routerEndpoint(pack, r.from).deck)).size, exit).toBeGreaterThanOrEqual(3);
+      for (const r of plain) {
+        const twin = fixtures.routes.find((t) => t.id === `${r.id}-step-free`);
+        expect(twin, r.id).toMatchObject({ from: r.from, to: r.to, stepFree: true });
+      }
+    }
+  });
+
   it('holds a step-free twin to never be cheaper than its stairs-allowed trip', () => {
     for (const twin of fixtures.routes.filter((r) => r.stepFree)) {
       const plain = fixtures.routes.find((r) => r.id === twin.id.replace(/-step-free$/, ''));

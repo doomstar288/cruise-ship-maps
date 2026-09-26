@@ -152,6 +152,7 @@ export function generateAllDecks() {
         }),
         venue(2, {
           id: 'v2-gangway',
+          aliases: ['Gangway', 'Disembarkation'],
           positionConfidence: 'estimated', // not in any published source
           name: 'Gangway & Security',
           category: 'Guest Services',
@@ -160,6 +161,7 @@ export function generateAllDecks() {
           y: PORT,
           description: 'Embarkation gangway and security screening.',
           tags: ['Gangway', 'Embarkation'],
+          portExit: 'gangway',
         }),
         venue(2, {
           id: 'v2-destination-gateway',
@@ -173,9 +175,11 @@ export function generateAllDecks() {
         }),
         magicCarpetStop(2, {
           name: 'Magic Carpet (Tender Platform)',
-          ...partOf('magic-carpet'),
+          ...partOf('magic-carpet', { aliases: ['Tender Platform'] }),
           description: 'At Deck 2 the Magic Carpet becomes a tender embarkation platform for Destination Gateway.',
           tags: ['Tender Platform', 'Starboard'],
+          // Guests wait in Destination Gateway and board the tenders from here.
+          portExit: 'tender',
         }),
         venue(2, {
           id: 'v2-crew-aft',
