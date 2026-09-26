@@ -111,12 +111,13 @@ describe('routing in the published Celebrity Xcel pack', () => {
     // Recorded from main at 0b0ae00, before routing existed, and re-recorded when
     // P7.1 added `access`, when P7.3 tagged the gangway and tender platform with
     // `portExit` and their port-day aliases, and when P7.2 added hours and booking
-    // facts (routing unchanged each time). Aliases, spans, confidence, entrances,
-    // access, port exits, hours, reservationRequired, fee and dressCode are all
-    // inside this hash. Update it only in a change that means to edit deck data,
-    // never to make routing pass.
+    // facts (routing unchanged each time), and when P7.5 added the 13 restroom `poi`
+    // features on Decks 2–5, 14 and 15. Aliases, spans, confidence, entrances,
+    // access, port exits, hours, reservationRequired, fee, dressCode and restrooms
+    // are all inside this hash. Update it only in a change that means to edit deck
+    // data, never to make routing pass.
     expect(nonRoutingHash(pack)).toBe(
-      '014095fa9634d6bb11e6a57a9c28cc10c5fa824579f27f5cf3d63cb974b77891'
+      '17b94a7d183c10c5707c66180da55880743d8fda7ac1cc99b7d7918ba39b6609'
     );
   });
 
