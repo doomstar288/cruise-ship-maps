@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest';
 
 import { ROUTE_COSTS, createRouter } from '../src/utils/shipRouter.js';
 import {
+  AVOID_LIFTS_FIXTURE_CASES,
   FIXTURE_TOLERANCE,
   ROUTE_FIXTURE_CASES,
   fixturesPath,
@@ -18,6 +19,8 @@ describe.each(Object.keys(ROUTE_FIXTURE_CASES))('route fixtures for %s', (shipId
   const fixtures = JSON.parse(readFileSync(fixturesPath(shipId), 'utf8'));
   const router = createRouter(pack.routing);
   const cases = ROUTE_FIXTURE_CASES[shipId];
+  const avoidLiftsCases = AVOID_LIFTS_FIXTURE_CASES[shipId] ?? [];
+  const everyFixture = [...fixtures.routes, ...fixtures.avoidLiftsRoutes];
 
   it('records the cases, cost model and tolerances this repo defines', () => {
     expect(fixtures).toMatchObject({ specVersion: 1, shipId, tolerance: FIXTURE_TOLERANCE });
@@ -28,11 +31,17 @@ describe.each(Object.keys(ROUTE_FIXTURE_CASES))('route fixtures for %s', (shipId
     expect(fixtures.routes.map(({ expected: _expected, ...c }) => c)).toEqual(
       cases.map((c) => ({ ...c, stepFree: c.stepFree ?? false }))
     );
-    expect(new Set(fixtures.routes.map((r) => r.id)).size).toBe(fixtures.routes.length);
+    // Option cases live in their own array, so a port without the option still
+    // passes every `routes[]` entry.
+    expect(fixtures.avoidLiftsRoutes.map(({ expected: _expected, ...c }) => c)).toEqual(
+      avoidLiftsCases.map((c) => ({ ...c, stepFree: c.stepFree ?? false, avoidLifts: true }))
+    );
+    expect(fixtures.routes.some((r) => 'avoidLifts' in r)).toBe(false);
+    expect(new Set(everyFixture.map((r) => r.id)).size).toBe(everyFixture.length);
   });
 
   it('names ends that exist in the pack', () => {
-    for (const { from, to } of fixtures.routes) {
+    for (const { from, to } of everyFixture) {
       for (const end of [from, to]) {
         if (end.featureId) expect(router.hasFeature(end.featureId)).toBe(true);
         else if (end.cabinId) expect(routerEndpoint(pack, end).at).toHaveLength(2);
@@ -41,12 +50,18 @@ describe.each(Object.keys(ROUTE_FIXTURE_CASES))('route fixtures for %s', (shipId
     }
   });
 
-  it.each(fixtures.routes.map((r) => [r.id, r]))(
+  it.each(everyFixture.map((r) => [r.id, r]))(
     '%s matches the router within tolerance',
     (id, fixture) => {
       const actual = runFixture(router, pack, fixture);
-      expect(actual).not.toBeNull();
       const { expected } = fixture;
+      // Only an avoidLifts case that is step-free too may have no route.
+      if (expected === null) {
+        expect(fixture.avoidLifts && fixture.stepFree).toBe(true);
+        expect(actual).toBeNull();
+        return;
+      }
+      expect(actual).not.toBeNull();
       expect(actual.deckChanges).toEqual(expected.deckChanges);
       expect(actual.through).toEqual(expected.through);
       expect(
@@ -108,5 +123,40 @@ describe.each(Object.keys(ROUTE_FIXTURE_CASES))('route fixtures for %s', (shipId
       if (!plain) continue;
       expect(plain.expected.timeS).toBeLessThanOrEqual(twin.expected.timeS);
     }
+  });
+
+  it('never takes a lift when avoiding lifts, and is never quicker for it', () => {
+    let liftWouldWin = 0;
+    for (const fixture of fixtures.avoidLiftsRoutes.filter((r) => r.expected)) {
+      const { expected } = fixture;
+      expect(
+        expected.deckChanges.every((c) => c.mode === 'stairs'),
+        fixture.id
+      ).toBe(true);
+      const unrestricted = runFixture(router, pack, { from: fixture.from, to: fixture.to });
+      expect(expected.timeS, fixture.id).toBeGreaterThanOrEqual(unrestricted.timeS);
+      if (unrestricted.deckChanges.some((c) => c.mode === 'elevator')) liftWouldWin += 1;
+    }
+    expect(liftWouldWin).toBeGreaterThan(0);
+  });
+
+  it('covers every kind of avoidLifts trip a port has to get right', () => {
+    const all = fixtures.avoidLiftsRoutes;
+    const changes = (r) => r.expected?.deckChanges ?? [];
+    // Deck 12 to 14 by stairs is one flight.
+    expect(
+      all.some((r) =>
+        changes(r).some(
+          (c) => Math.min(c.fromDeck, c.toDeck) <= 12 && Math.max(c.fromDeck, c.toDeck) >= 14
+        )
+      )
+    ).toBe(true);
+    // Same deck, different walk sections: out by the stairs and back.
+    expect(
+      all.some((r) => changes(r).length === 2 && changes(r)[0].fromDeck === changes(r)[1].toDeck)
+    ).toBe(true);
+    // Step-free as well: a walk within one walk section, and no route beyond it.
+    expect(all.some((r) => r.stepFree && r.expected && changes(r).length === 0)).toBe(true);
+    expect(all.some((r) => r.stepFree && r.expected === null)).toBe(true);
   });
 });
