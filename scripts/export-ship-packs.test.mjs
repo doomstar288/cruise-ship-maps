@@ -38,8 +38,11 @@ const xcel = () => buildPack(SHIPS[0].metadata, SHIPS[0].decks);
 // rather than inside a test's time limit. None of them mutate it.
 const sharedPack = xcel();
 const sharedXcel = () => sharedPack;
-// The one test that needs two independent exports builds twice.
-const TWO_BUILDS_TIMEOUT_MS = 60_000;
+// The one test that needs two independent exports builds twice. The limit is
+// generous because the cost is real and grows with the pack: two builds under
+// coverage take ~20s locally but 60.5s on a CI runner (2026-09-28), which left
+// the previous 60s limit failing on nothing but a slower runner.
+const TWO_BUILDS_TIMEOUT_MS = 180_000;
 
 describe('classifyFeature', () => {
   it('reads vertical circulation out of the tags, not the category', () => {

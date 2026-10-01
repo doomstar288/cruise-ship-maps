@@ -8,6 +8,14 @@ name: Refresh fleet registry
 # ships returned, or a major line losing a quarter of its fleet). That fails
 # this run instead of opening a PR; the run summary shows what tripped. If the
 # change is genuine, re-run manually with "allow_large_change" ticked.
+#
+# The PR is opened with a GitHub App token, because GitHub never triggers
+# workflows for a PR created with the built-in GITHUB_TOKEN — the required
+# status checks would never run and the PR could never be merged. Setup:
+# install an app with contents:write + pull-requests:write on this repo, then
+# set the FLEET_BOT_APP_ID variable and FLEET_BOT_PRIVATE_KEY secret. Without
+# them the job still runs and still pushes the branch, falling back to
+# GITHUB_TOKEN (so the PR opens, but its checks stay pending).
 
 on:
   schedule:
@@ -33,6 +41,16 @@ jobs:
     name: Re-seed from Wikidata
     runs-on: ubuntu-latest
     steps:
+      # `vars` is readable in an `if`, so the app id lives in a variable and
+      # only the private key is a secret.
+      - name: Mint a GitHub App token
+        id: app-token
+        if: vars.FLEET_BOT_APP_ID != ''
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.FLEET_BOT_APP_ID }}
+          private-key: ${{ secrets.FLEET_BOT_PRIVATE_KEY }}
+
       - name: Checkout
         uses: actions/checkout@v7
 
@@ -79,6 +97,7 @@ jobs:
       - name: Open PR if the registry changed
         uses: peter-evans/create-pull-request@v8
         with:
+          token: ${{ steps.app-token.outputs.token || github.token }}
           branch: chore/refresh-fleet-registry
           base: main
           title: 'chore(data): refresh fleet registry from Wikidata'
