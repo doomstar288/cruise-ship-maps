@@ -25,7 +25,8 @@ Output: `public/data/fleet-registry.json` (served at runtime rather than
 bundled, so the catalogue can grow without inflating the app bundle).
 
 A scheduled workflow (`.github/workflows/refresh-fleet.yml`) re-runs this weekly
-and opens a PR when the data changes, so updates arrive as reviewable diffs.
+and opens a PR when the data changes, so updates arrive as reviewable diffs
+(see [Automation setup](#automation-setup) for the token it needs).
 
 ## Keeping it current
 
@@ -220,6 +221,34 @@ override as stale.
 A weekly workflow (`.github/workflows/fleet-gaps.yml`) runs the check and keeps
 a single `fleet-gaps` tracking issue up to date, with the QuickStatements file
 as a build artifact.
+
+## Automation setup
+
+Two settings the refresh workflow depends on, both one-time:
+
+1. **Allow Actions to open PRs** — Settings → Actions → General → Workflow
+   permissions → *Allow GitHub Actions to create and approve pull requests*.
+   Without it the run fails at the last step having already pushed its branch.
+2. **A GitHub App token.** GitHub never triggers workflows for a PR created
+   with the built-in `GITHUB_TOKEN`, to stop workflows triggering themselves.
+   Since `main` requires status checks, such a PR can never become mergeable —
+   the checks simply never run. A PR opened with an app token behaves like a
+   human's and gets its checks.
+
+   Install a GitHub App on the repository with **contents: write** and
+   **pull-requests: write**, then set:
+
+   | Where | Name | Value |
+   | --- | --- | --- |
+   | Settings → Secrets and variables → Actions → Variables | `FLEET_BOT_APP_ID` | the app's ID |
+   | Settings → Secrets and variables → Actions → Secrets | `FLEET_BOT_PRIVATE_KEY` | the app's private key (full PEM) |
+
+   The workflow falls back to `GITHUB_TOKEN` when the variable is unset, so it
+   keeps running before the app exists — the PR opens, but its checks stay
+   pending and it cannot be merged without an admin override.
+
+An app token is not needed for `fleet-gaps.yml`: it only writes an issue, and
+issues have no status checks to run.
 
 ## Scope and limits
 
