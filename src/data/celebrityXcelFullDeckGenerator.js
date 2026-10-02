@@ -574,6 +574,7 @@ export function generateAllDecks() {
           ...MAIN_RESTAURANT,
           // The one main restaurant that also serves breakfast, and lunch on sea days.
           hours: [['07:30', '09:00'], ['12:00', '13:30'], ['17:30', '21:00']],
+          hoursByDay: { sea: [['07:30', '09:00'], ['12:00', '13:30'], ['17:30', '21:00']], port: [['07:30', '09:00'], ['17:30', '21:00']] },
         }),
         venue(4, {
           id: 'v4-cyprus',
@@ -745,6 +746,7 @@ export function generateAllDecks() {
           description: 'Specialty steakhouse with prime cuts and panoramic views.',
           tags: ['Steakhouse', 'Specialty Dining'],
           hours: [['12:00', '13:30'], ['17:30', '21:00']], // lunch on sea days
+          hoursByDay: { sea: [['12:00', '13:30'], ['17:30', '21:00']], port: [['17:30', '21:00']] },
           reservationRequired: true,
           fee: 'surcharge',
           dressCode: 'smart casual',
@@ -1119,6 +1121,8 @@ export function generateAllDecks() {
           description: 'Open-air Mediterranean restaurant. New on Xcel.',
           tags: ['Mediterranean', 'Open Air', 'New on Xcel'],
           hours: [['10:30', '13:00'], ['18:00', '20:30']], // brunch and dinner
+          // Brunch 10:30–1:00 on sea days, 11:00–12:00 on port days.
+          hoursByDay: { sea: [['10:30', '13:00'], ['18:00', '20:30']], port: [['11:00', '12:00'], ['18:00', '20:30']] },
           reservationRequired: true,
           fee: 'surcharge',
           dressCode: 'smart casual',
@@ -1214,6 +1218,7 @@ export function generateAllDecks() {
           tags: ['The Retreat', 'Suite Guests Only'],
           access: 'suite',
           hours: [['07:30', '09:00'], ['12:00', '13:30'], ['17:30', '21:00']], // lunch on sea days
+          hoursByDay: { sea: [['07:30', '09:00'], ['12:00', '13:30'], ['17:30', '21:00']], port: [['07:30', '09:00'], ['17:30', '21:00']] },
           reservationRequired: false,
           fee: 'included',
           dressCode: 'smart casual',
