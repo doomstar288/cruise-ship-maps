@@ -57,6 +57,31 @@ The exporter rejects anything else. `hoursFor` in
 [`scripts/export-ship-packs.mjs`](../../scripts/export-ship-packs.mjs) has the rules, and
 `scripts/export-ship-packs.test.mjs` has an example of each malformed case.
 
+## Hours by day type
+
+`hours` blends sea days and port days, and some services run on one only. `hoursByDay` gives the
+windows for each day type where a sailing's programs differ:
+
+```json
+"hours": [["07:30", "09:00"], ["12:00", "13:30"], ["17:30", "21:00"]],
+"hoursByDay": {
+  "sea": [["07:30", "09:00"], ["12:00", "13:30"], ["17:30", "21:00"]],
+  "port": [["07:30", "09:00"], ["17:30", "21:00"]]
+}
+```
+
+- Each day type uses the window format above. `sea` is a day at sea, `port` a day the ship is
+  in port. Embarkation and disembarkation days are left out, as for `hours`.
+- `hours` stays the union, so a consumer that ignores `hoursByDay` behaves as before. The
+  exporter requires `hours` and that every day-type window sits inside one of its windows.
+- A day type that isn't there is **not known**: use `hours`. It never means closed. A venue
+  whose hours don't differ by day type has no `hoursByDay`.
+- Only authored from a source that says which day type a window is for. Where the printed
+  program gives a range that varies from port to port (Market at The Bazaar opens from 4:30,
+  5:30 or 8:30 PM on port days), there is no single port window, so the venue keeps just `hours`.
+- A consumer picks `hoursByDay[type] ?? hours` from the day's type, then says "usually" as
+  before. The day's program still wins.
+
 ## What "typical" means
 
 For a ship, `hours` is the union of the windows its printed daily program gave the venue on
@@ -75,7 +100,9 @@ Not recorded:
 
 Only Celebrity Xcel has these facts so far. Its hours come from the "Dine & Drink" and
 "Opening Hours" pages of Celebrity Today for the 4–11 January 2026 sailing (three sea days,
-three port days). The booking facts come from the same program, Celebrity's venue pages and
+three port days). `hoursByDay` is on four of them, where the program says a window is for one day type:
+Cosmopolitan, Fine Cut and Luminae serve lunch on sea days only, and Bora's brunch is 10:30–1:00
+on sea days and 11:00–12:00 in port. The booking facts come from the same program, Celebrity's venue pages and
 FAQs, and reviews. The pull request for P7.2 cites a source for every fact.
 
 Every Xcel dining venue has `hours` and `reservationRequired` except Grand Plaza Café, which no

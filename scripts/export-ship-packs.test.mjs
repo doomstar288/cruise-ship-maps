@@ -21,6 +21,7 @@ import {
   featureAliasesFor,
   foldName,
   hoursFor,
+  hoursByDayFor,
   indexEntryFor,
   portExitFor,
   positionConfidenceFor,
@@ -658,6 +659,51 @@ describe('bookingFactsFor', () => {
   });
 });
 
+describe('hoursByDayFor', () => {
+  const union = [['07:30', '09:00'], ['12:00', '13:30'], ['17:30', '21:00']];
+  const byDay = (hoursByDay, hours = union) => hoursByDayFor({ id: 'v1', hours, hoursByDay }, 'venue');
+
+  it('keeps the day types authored, in the hours format', () => {
+    expect(byDay({ sea: union, port: [['07:30', '09:00'], ['17:30', '21:00']] })).toEqual({
+      sea: union,
+      port: [['07:30', '09:00'], ['17:30', '21:00']],
+    });
+    // One day type is allowed: the other is "not known", not "closed".
+    expect(byDay({ port: [['17:30', '21:00']] })).toEqual({ port: [['17:30', '21:00']] });
+  });
+
+  it('allows a window past midnight and an all-day union', () => {
+    expect(byDay({ sea: [['21:00', '02:00']] }, [['09:00', '03:00']])).toEqual({ sea: [['21:00', '02:00']] });
+    expect(byDay({ port: [['10:00', '12:00']] }, [['00:00', '24:00']])).toEqual({ port: [['10:00', '12:00']] });
+  });
+
+  it('is undefined when a record has none', () => {
+    expect(hoursByDayFor({ id: 'v1', hours: union }, 'venue')).toBeUndefined();
+  });
+
+  it.each([
+    ['not an object', ['sea'], /expected \{ sea, port \}/],
+    ['null', null, /expected \{ sea, port \}/],
+    ['empty', {}, /at least one of sea or port/],
+    ['an unknown day type', { tender: [['17:30', '21:00']] }, /unknown day type "tender"/],
+    ['windows that are not a list', { sea: 'noon' }, /malformed hours/],
+    ['a malformed window', { sea: [['5:30', '21:00']] }, /not an HH:MM opening time/],
+    ['overlapping windows', { sea: [['17:30', '19:00'], ['18:00', '21:00']] }, /must not overlap/],
+    ['a window outside hours', { port: [['16:00', '17:00']] }, /port window 16:00–17:00 is outside hours/],
+    ['a window straddling two hours windows', { sea: [['08:00', '13:00']] }, /outside hours/],
+  ])('rejects %s', (_label, authored, message) => {
+    expect(() => byDay(authored)).toThrow(message);
+  });
+
+  it('needs hours, the union of its day types', () => {
+    expect(() => hoursByDayFor({ id: 'v1', hoursByDay: { sea: union } }, 'venue')).toThrow(/needs hours/);
+  });
+
+  it('refuses day-type hours on anything a guest does not search for', () => {
+    expect(() => hoursByDayFor({ id: 'c1', hours: union, hoursByDay: { sea: union } }, 'cabin')).toThrow(/only venue and poi/);
+  });
+});
+
 describe('hours and booking facts across the fleet', () => {
   const records = SHIPS.flatMap(({ metadata, decks }) =>
     decks.flatMap((d) => (d.venues ?? []).map((v) => ({ ship: metadata.id, ...v })))
@@ -665,12 +711,13 @@ describe('hours and booking facts across the fleet', () => {
   const published = JSON.parse(JSON.stringify(sharedXcel()));
   const features = published.decks.flatMap((d) => d.features);
   const byId = (id) => features.find((f) => f.id === id);
-  const FACT_KEYS = ['hours', 'reservationRequired', 'fee', 'dressCode'];
+  const FACT_KEYS = ['hours', 'hoursByDay', 'reservationRequired', 'fee', 'dressCode'];
 
   it('validates on every record in every ship, not only the Xcel pack built here', () => {
     for (const v of records) {
       expect(() => hoursFor(v, classifyFeature(v)), v.id).not.toThrow();
       expect(() => bookingFactsFor(v, classifyFeature(v)), v.id).not.toThrow();
+      expect(() => hoursByDayFor(v, classifyFeature(v)), v.id).not.toThrow();
     }
   });
 
@@ -702,6 +749,25 @@ describe('hours and booking facts across the fleet', () => {
     }
     // 21 dining venues, and the bars and other venues whose hours are sourced.
     expect(features.filter((f) => 'hours' in f)).toHaveLength(43);
+  });
+
+  it('splits hours by sea and port day only where the sailing\'s programs say they differ', () => {
+    // Lunch is sea-day only at Cosmopolitan, Fine Cut and Luminae; Bora's brunch is
+    // 10:30–1:00 at sea and 11:00–12:00 in port. Every other venue keeps the union.
+    expect(features.filter((f) => 'hoursByDay' in f).map((f) => f.id).sort()).toEqual([
+      'v15-bora',
+      'v16-luminae',
+      'v4-cosmopolitan',
+      'v5-fine-cut',
+    ]);
+    expect(byId('v4-cosmopolitan').hoursByDay).toEqual({
+      sea: [['07:30', '09:00'], ['12:00', '13:30'], ['17:30', '21:00']],
+      port: [['07:30', '09:00'], ['17:30', '21:00']],
+    });
+    expect(byId('v5-fine-cut').hoursByDay.port).toEqual([['17:30', '21:00']]);
+    expect(byId('v15-bora').hoursByDay.port).toEqual([['11:00', '12:00'], ['18:00', '20:30']]);
+    // `hours` stays the union, so a consumer that ignores the split behaves as before.
+    expect(byId('v4-cosmopolitan').hours).toEqual([['07:30', '09:00'], ['12:00', '13:30'], ['17:30', '21:00']]);
   });
 
   it('gives no other ship any of these facts until a source for that ship or class does', () => {

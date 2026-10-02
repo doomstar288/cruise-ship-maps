@@ -280,6 +280,56 @@ export function hoursFor(venue, featureType) {
   return authored.map(([open, close]) => [open, close]);
 }
 
+/** The day types a venue's hours can differ by. */
+export const HOURS_DAY_TYPES = ['sea', 'port'];
+
+/**
+ * A record's typical opening windows by day type, validated; undefined when it has none.
+ *
+ * `{ sea?, port? }`, each in the `hours` format. `hours` stays the union of the sailing's
+ * days, so a consumer that ignores this still works; a day type left out is "not known"
+ * (use `hours`), never "closed". It needs `hours`, and each window must sit inside one of
+ * its windows.
+ */
+export function hoursByDayFor(venue, featureType) {
+  const authored = venue.hoursByDay;
+  if (authored === undefined) return undefined;
+  if (!ALIASABLE_TYPES.has(featureType)) {
+    throw new Error(`${venue.id} is a ${featureType}; only venue and poi features take hoursByDay`);
+  }
+  const reject = (why) => {
+    throw new Error(`Venue ${venue.id} has malformed hoursByDay: ${why}`);
+  };
+  if (authored === null || typeof authored !== 'object' || Array.isArray(authored)) {
+    reject('expected { sea, port } with a list of windows for each');
+  }
+  const keys = Object.keys(authored);
+  if (keys.length === 0) reject('expected at least one of sea or port');
+  const unknown = keys.find((key) => !HOURS_DAY_TYPES.includes(key));
+  if (unknown !== undefined) reject(`unknown day type "${unknown}"`);
+  const union = hoursFor(venue, featureType);
+  if (!union) reject('it needs hours, the union of its day types');
+
+  const span = ([open, close]) => {
+    const start = minutesOf(open);
+    const end = minutesOf(close);
+    return [start, end < start ? end + DAY_MINUTES : end];
+  };
+  const spans = union.map(span);
+  const out = {};
+  for (const type of HOURS_DAY_TYPES) {
+    if (authored[type] === undefined) continue;
+    const windows = hoursFor({ id: `${venue.id} hoursByDay.${type}`, hours: authored[type] }, featureType);
+    for (const window of windows) {
+      const [start, end] = span(window);
+      const inside = spans.some(([from, to]) => [0, DAY_MINUTES].some((shift) => start + shift >= from && end + shift <= to));
+      if (!inside) reject(`${type} window ${window[0]}–${window[1]} is outside hours`);
+    }
+    out[type] = windows;
+  }
+  return out;
+}
+
 /** A record's `reservationRequired`, `fee` and `dressCode`, validated. Only the
  *  facts it authors come back, so the pack omits the rest. */
 export function bookingFactsFor(venue, featureType) {
@@ -416,6 +466,7 @@ function toFeature(venue) {
     access: accessFor(venue, featureType),
     portExit: portExitFor(venue, featureType),
     hours: hoursFor(venue, featureType),
+    hoursByDay: hoursByDayFor(venue, featureType),
     ...bookingFactsFor(venue, featureType),
     color: venue.color,
   };
