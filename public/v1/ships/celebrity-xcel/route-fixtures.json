@@ -1,7 +1,7 @@
 {
   "specVersion": 1,
   "shipId": "celebrity-xcel",
-  "recordedAgainstRevision": "8930a04a5130",
+  "recordedAgainstRevision": "ffc11f6bac97",
   "costModel": {
     "walkingSpeedMps": 1.1,
     "elevatorBoardS": 60,
