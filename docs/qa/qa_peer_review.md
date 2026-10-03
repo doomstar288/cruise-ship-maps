@@ -14,14 +14,14 @@ A rigorous, critical Quality Assurance (QA) and Accessibility (a11y) audit was p
 While the application features modern aesthetic styling ("Luxury Nautical Dark Mode / Oceanic Obsidian" theme), the implementation exhibits **severe accessibility deficiencies**, **WCAG 2.1 AA color contrast failures**, **sub-12px font legibility violations**, **complete absence of visible keyboard focus rings**, **unaccessible custom interactive elements**, and **inadequate mobile touch target sizes**.
 
 ### Source Files Audited
-- [`src/styles/design-system.css`](file:///Users/matthewclark/programing%20projects/Cruise%20Ship%20Maps/src/styles/design-system.css)
-- [`src/App.jsx`](file:///Users/matthewclark/programing%20projects/Cruise%20Ship%20Maps/src/App.jsx)
-- [`src/components/HeaderNavbar.jsx`](file:///Users/matthewclark/programing%20projects/Cruise%20Ship%20Maps/src/components/HeaderNavbar.jsx)
-- [`src/components/DeckSwitcher.jsx`](file:///Users/matthewclark/programing%20projects/Cruise%20Ship%20Maps/src/components/DeckSwitcher.jsx)
-- [`src/components/DeckMapViewer.jsx`](file:///Users/matthewclark/programing%20projects/Cruise%20Ship%20Maps/src/components/DeckMapViewer.jsx)
-- [`src/components/CabinInspectorModal.jsx`](file:///Users/matthewclark/programing%20projects/Cruise%20Ship%20Maps/src/components/CabinInspectorModal.jsx)
-- [`src/components/ApiInspectorModal.jsx`](file:///Users/matthewclark/programing%20projects/Cruise%20Ship%20Maps/src/components/ApiInspectorModal.jsx)
-- [`index.html`](file:///Users/matthewclark/programing%20projects/Cruise%20Ship%20Maps/index.html)
+- [`src/styles/design-system.css`](../../src/styles/design-system.css)
+- [`src/App.jsx`](../../src/App.jsx)
+- [`src/components/HeaderNavbar.jsx`](../../src/components/HeaderNavbar.jsx)
+- [`src/components/DeckSwitcher.jsx`](../../src/components/DeckSwitcher.jsx)
+- [`src/components/DeckMapViewer.jsx`](../../src/components/DeckMapViewer.jsx)
+- [`src/components/CabinInspectorModal.jsx`](../../src/components/CabinInspectorModal.jsx)
+- [`src/components/ApiInspectorModal.jsx`](../../src/components/ApiInspectorModal.jsx)
+- [`index.html`](../../index.html)
 
 ---
 
