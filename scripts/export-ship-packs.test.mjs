@@ -320,7 +320,8 @@ describe('position confidence in the published Celebrity Xcel pack', () => {
   });
 
   it('marks the venues whose sources conflict as estimated', () => {
-    for (const name of ['The Martini Bar', 'Mast Grill & Bar']) {
+    // Mast Grill resolved to Deck 14 via official Celebrity Xcel deck-fourteen.svg (P1.1 / #18).
+    for (const name of ['The Martini Bar']) {
       expect(byName(name)?.positionConfidence, name).toBe('estimated');
     }
   });
@@ -747,8 +748,9 @@ describe('hours and booking facts across the fleet', () => {
     for (const id of ['v3-plaza-cafe', 'v3-martini-bar', 'v3-theatre']) {
       expect(FACT_KEYS.filter((key) => key in byId(id)), id).toEqual([]);
     }
-    // 21 dining venues, and the bars and other venues whose hours are sourced.
-    expect(features.filter((f) => 'hours' in f)).toHaveLength(43);
+    // 20 dining venues with hours (deck-16 Mast Grill removed; grill is Deck 14 only),
+    // and the bars and other venues whose hours are sourced.
+    expect(features.filter((f) => 'hours' in f)).toHaveLength(42);
   });
 
   it('splits hours by sea and port day only where the sailing\'s programs say they differ', () => {

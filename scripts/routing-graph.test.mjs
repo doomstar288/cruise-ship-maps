@@ -113,12 +113,14 @@ describe('routing in the published Celebrity Xcel pack', () => {
     // `portExit` and their port-day aliases, and when P7.2 added hours and booking
     // facts (routing unchanged each time), and when P7.5 added the 13 restroom `poi`
     // features on Decks 2–5, 14 and 15, and when hoursByDay split four venues' hours by sea
-    // and port day (routing unchanged). Aliases, spans, confidence, entrances,
+    // and port day (routing unchanged), and when P1.1 (#18) moved Shore Excursions to
+    // Deck 4 and dropped the erroneous Deck 16 Mast Grill using official Celebrity
+    // Xcel deck-plan SVGs. Aliases, spans, confidence, entrances,
     // access, port exits, hours, hoursByDay, reservationRequired, fee, dressCode and restrooms
     // are all inside this hash. Update it only in a change that means to edit deck
     // data, never to make routing pass.
     expect(nonRoutingHash(pack)).toBe(
-      '34abdbe47c54c643a91aa6c6b94654ce10ea7227bdb8efce65a1bda24cc41da6'
+      'ca755c727ebb6ac0a9b85d8459bcbaa49840e3831799884d6591e4b223f6f486'
     );
   });
 
