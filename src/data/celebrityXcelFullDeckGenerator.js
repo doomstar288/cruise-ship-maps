@@ -98,7 +98,10 @@ const MAIN_RESTAURANT = { hours: [['17:30', '21:00']], reservationRequired: fals
 /** Oceanview Café and its seating areas: coffee, tea and juices around the clock. */
 const OCEANVIEW_CAFE = { hours: ALL_DAY, reservationRequired: false, fee: 'included', dressCode: 'casual' };
 
-/** One pool-deck grill, drawn on both Deck 14 and Deck 16 until P1.1 settles where it is. */
+/** Pool-deck grill on Deck 14. Official Celebrity Xcel deck-fourteen.svg (profile 2331)
+ *  labels MAST GRILL there; deck-sixteen.svg labels MAST BAR, not Mast Grill:
+ *  https://www.celebritycruises.com/content/dam/rcg/cel/resources/deck-plans/ship/celebrity-xcel/2331/decks/deck-fourteen.svg
+ */
 const MAST_GRILL = { hours: [['11:30', '18:00']], reservationRequired: false, fee: 'included', dressCode: 'casual' };
 
 /** The Spa, salon and SEA Thermal Suite, on both of The Spa's levels. */
@@ -351,18 +354,6 @@ export function generateAllDecks() {
           tags: ['Coffee', 'Snacks'],
         }),
         venue(3, {
-          id: 'v3-shore-excursions',
-          positionConfidence: 'estimated', // sources conflict: Deck 3 vs Deck 4
-          name: 'Shore Excursions',
-          category: 'Guest Services',
-          color: C.service,
-          x: [200, 224],
-          y: [0, 17],
-          description: 'Book and manage shore excursions.',
-          tags: ['Excursions'],
-          hours: [['09:00', '21:00']],
-        }),
-        venue(3, {
           id: 'v3-guest-relations',
           name: 'Guest Relations',
           category: 'Guest Services',
@@ -433,7 +424,7 @@ export function generateAllDecks() {
       title: 'Casino, Dining & The Bazaar',
       category: 'Dining & Nightlife',
       description:
-        'The Theatre (middle level), Le Voyage by Daniel Boulud, Le Grand Bistro and Café al Bacio on the Grand Plaza, the Casino, Craft Social, The Club, Cosmopolitan and Cyprus restaurants, and The Bazaar’s lower level with Mosaic aft.',
+        'The Theatre (middle level), Le Voyage by Daniel Boulud, Le Grand Bistro and Café al Bacio on the Grand Plaza, Shore Excursions, the Casino, Craft Social, The Club, Cosmopolitan and Cyprus restaurants, and The Bazaar’s lower level with Mosaic aft.',
       venues: [
         venue(4, {
           id: 'v4-theatre',
@@ -524,6 +515,21 @@ export function generateAllDecks() {
           tags: ['Coffee', 'Gelato'],
           hours: [['06:30', '24:00']],
           reservationRequired: false,
+        }),
+        venue(4, {
+          id: 'v4-shore-excursions',
+          // Official Celebrity Xcel deck-four.svg (profile 2331) labels "Shore & Ship"
+          // + "Excursions" on deck 4 (not deck 3):
+          // https://www.celebritycruises.com/content/dam/rcg/cel/resources/deck-plans/ship/celebrity-xcel/2331/decks/deck-four.svg
+          // Interactive plans: https://www.celebritycruises.com/cruise-ships/celebrity-xcel/deck-plans
+          name: 'Shore Excursions',
+          category: 'Guest Services',
+          color: C.service,
+          x: [200, 224],
+          y: [0, 11],
+          description: 'Book and manage shore excursions.',
+          tags: ['Excursions'],
+          hours: [['09:00', '21:00']],
         }),
         venue(4, {
           id: 'v4-casino',
@@ -987,7 +993,8 @@ export function generateAllDecks() {
         }),
         venue(14, {
           id: 'v14-mast-grill',
-          positionConfidence: 'estimated', // sources conflict: Deck 14 vs Deck 16
+          // Official Celebrity Xcel deck-fourteen.svg (profile 2331) labels MAST GRILL on deck 14
+          // (deck 16 is MAST BAR): https://www.celebritycruises.com/content/dam/rcg/cel/resources/deck-plans/ship/celebrity-xcel/2331/decks/deck-fourteen.svg
           name: 'Mast Grill & Bar',
           category: 'Casual Dining',
           color: C.dining,
@@ -1238,18 +1245,6 @@ export function generateAllDecks() {
           ...partOf('magic-carpet'),
           description: 'The Magic Carpet’s highest stop, used for “Dinner on the Edge” and sail-away events.',
           tags: ['Dinner on the Edge', 'Starboard'],
-        }),
-        venue(16, {
-          id: 'v16-mast-grill',
-          positionConfidence: 'verified',
-          name: 'Mast Grill',
-          category: 'Casual Dining',
-          color: C.dining,
-          x: [200, 250],
-          y: PORT,
-          description: 'Poolside grill for burgers and hot dogs, overlooking the pool deck.',
-          tags: ['Grill', 'Poolside'],
-          ...MAST_GRILL,
         }),
         venue(16, {
           id: 'v16-mast-bar',

@@ -386,7 +386,7 @@ const COMMON_EDGE_VENUES = [
   },
   {
     name: 'Shore Excursions',
-    deck: 3,
+    deck: 4,
     category: 'Guest Services',
     side: 'starboard',
     zone: 'mid',
