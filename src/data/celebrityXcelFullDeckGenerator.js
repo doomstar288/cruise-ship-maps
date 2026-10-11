@@ -333,7 +333,9 @@ export function generateAllDecks() {
         venue(3, {
           id: 'v3-martini-bar',
           aliases: ['Martini Bar'],
-          positionConfidence: 'estimated', // sources conflict: Deck 2 vs Deck 3
+          // Official Celebrity Xcel deck-three.svg (profile 2331) labels MARTINI BAR midship at the
+          // Grand Plaza; deck-two.svg has no Martini Bar. Resolves the Deck 2 vs 3 conflict (#18):
+          // https://www.celebritycruises.com/content/dam/rcg/cel/resources/deck-plans/ship/celebrity-xcel/2331/decks/deck-three.svg
           name: 'The Martini Bar',
           category: 'Bars & Lounges',
           color: C.bar,
