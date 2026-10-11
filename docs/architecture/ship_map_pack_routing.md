@@ -330,15 +330,14 @@ with its reason. Each is a documented modelling decision, not geometry:
 | 4 | Mosaic at The Bazaar | Along the 0.4 m seam between Cosmopolitan and Cyprus, standing in for the walkway between two dining rooms. Crosses nothing. |
 | 5 | Spice Café | `through` Market at The Bazaar: both are in the same open Bazaar hall. |
 | 14 | Aft Sun Deck | Along the 0.4 m seam at the edge of the Oceanview Café Terrace. Crosses nothing. |
-| 17 | The Retreat Bar | `through` the Retreat Sundeck it serves. |
 | 2, 5, 14, 16 | Magic Carpet stops | `through` the venue each stop extends (Destination Gateway, World Class Bar, Pool Club Cabanas, Glass-Walled Hot Tubs), ending at a projected door on the hull edge. |
 
 The tests hold this list to exactly what's needed. Removing any one connector must leave a venue
 unreachable, and `through` is only allowed on connector edges.
 
 **Restricted areas.** A route never crosses a feature whose `access` is `suite`, `adults` or `kids`
-unless its destination has the same `access`. Today that crossing is only the Retreat Bar, reached
-across the Retreat Sundeck, and both are suite-only. `paid` doesn't keep anyone out, so a route may
+unless its destination has the same `access`. Today no route crosses one: the Retreat Bar used to
+be reached across the Retreat Sundeck, until Celebrity's plan moved it beside the lifts. `paid` doesn't keep anyone out, so a route may
 pass one: the Deck 14 Magic Carpet stop is reached along the cabana row. The fleet-wide test in
 `scripts/routing-graph.test.mjs` checks every venue on every published ship.
 
@@ -358,7 +357,7 @@ drawn). Not every bank serves every deck.
 | --- | --- |
 | `fwd` | 2–12, 14–17 |
 | `mid` | 2–12, 14–16 |
-| `aft` | 2–12, 14–15 |
+| `aft` | 2, 4–12, 14–15 (not 3: Celebrity's plan has the main restaurants across the ship there) |
 | Aft stairwell (`stairs-aft`, stairs only) | 7–12 |
 
 Every elevator core also has stairs between neighbouring served decks. Elevator and stairwell
@@ -408,14 +407,20 @@ the consumer prefers.
 ## Size
 
 The budget is **≤ 15 % gzipped growth** of `plan.json` over a recorded baseline,
-`scripts/pack-size-baseline.json`: `main` before routing, 59,100 bytes gzipped (Node `zlib`
-default level). The exporter's summary line prints raw and gzipped size before → after on every
+`scripts/pack-size-baseline.json`: `main` before Xcel's staterooms took Celebrity's real numbers
+and positions, 65,635 bytes gzipped (Node `zlib` default level; it was 59,100 B, `main` before
+routing, until then). The exporter's summary line prints raw and gzipped size before → after on every
 run.
 
 | `plan.json` | Raw | Gzipped |
 | --- | --- | --- |
 | Before routing | 619,443 B | 59,100 B |
 | With routing | 640,790 B (+3.4 %) | 63,547 B (+7.5 %) |
+| Before official stateroom positions (new baseline) | 650,883 B | 65,635 B |
+| With official stateroom positions | 699,812 B (+7.5 %) | 71,408 B (+8.8 %) |
+
+Celebrity's own numbering and spacing make the cabin rows irregular: their bounds compress less
+and the walk graph needs more corridor nodes beside them (routing 5.2 → 7.4 KB gzipped).
 
 The first draft used plain objects (`{ "id", "deck", "at", "kind" }` nodes and `{ "from", "to",
 "kind", "lengthM" }` edges, with pairwise elevator edges). It came to about 13 KB gzipped, +22 %.

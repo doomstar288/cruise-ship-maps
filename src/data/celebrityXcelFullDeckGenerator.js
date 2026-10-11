@@ -6,15 +6,16 @@
 // it unset when deck and fore/aft zone trace to a published source (the exporter
 // defaults guest venues to "zone"). Set "estimated", with the reason alongside,
 // when sources conflict, no source places the venue, or Celebrity's own plan
-// puts it in a different zone than drawn here. Nothing is "verified" until P1.1
-// checks deck, zone and side against an official plan.
+// puts it in a different zone than drawn here. "verified" means deck, zone and side
+// were checked against Celebrity's official deck plan SVGs (profile 2331, see
+// docs/research/official_deck_plan_svgs.md). Stateroom numbers and positions come
+// from those plans too, via ships/celebrity-xcel/official-facts.json.
 
 import {
   CORE_STATIONS,
   MAGIC_CARPET_X,
   STERN_STAIR_X,
   VENUE_COLORS as C,
-  clampToHull,
   generateCenterlineCore,
   generateHullOutline,
   generateServiceStrips,
@@ -22,6 +23,7 @@ import {
   magicCarpetStop,
   placeVenue,
 } from '../utils/deckPlanDataPipeline.js';
+import officialFacts from './ships/celebrity-xcel/official-facts.json' with { type: 'json' };
 
 // Across-ship bands (y, metres from the port hull).
 const PORT = [0, 19.3];
@@ -31,6 +33,28 @@ const STBD_EDGE = [27.5, 39];
 const CENTER = [12, 27];
 
 const CORES = [CORE_STATIONS.fwd.x, CORE_STATIONS.mid.x, CORE_STATIONS.aft.x];
+
+const SHIP_LENGTH = 327;
+
+/**
+ * Celebrity's own staterooms for a deck: every number on its official plan, the side and
+ * row (hull or inside) it's on, and where along the ship (bow-to-stern fraction × ship
+ * length), from `ships/celebrity-xcel/official-facts.json` (scripts/official-deck-svg.mjs).
+ * Stateroom decks draw one cabin per official number at that spot, so every number in the
+ * pack is real and none is missing; the cabin's shape is still synthetic.
+ */
+function officialCabins(level) {
+  const facts = officialFacts.decks.find((d) => d.deckNumber === level);
+  if (!facts) return undefined;
+  return ['port', 'starboard'].flatMap((side) =>
+    facts.cabins[side].map(({ number, t, row }) => ({
+      number,
+      side: side === 'port' ? 'Port' : 'Starboard',
+      row,
+      x: t * SHIP_LENGTH,
+    }))
+  );
+}
 
 function deck(level, { title, category, description, venues }) {
   return {
@@ -127,8 +151,23 @@ const THE_SPA = { hours: [['08:00', '22:00']] };
  * Sundeck's own (Deck 17, suite-only). Decks 6–12 have none.
  */
 const RESTROOMS = {
-  2: [{ id: 'restrooms-mid-2', rooms: 'WC', x: [189.5, 194.5], y: [0, 4.4], where: 'by the midship elevators, port side' }],
-  3: [{ id: 'restrooms-aft-3', x: [264, 272], y: [34.6, 39], where: 'aft on the starboard side, forward of Tuscan Grille' }],
+  2: [
+    {
+      id: 'restrooms-mid-2',
+      rooms: 'WC',
+      x: [189.5, 194.5],
+      y: [0, 4.4],
+      where: 'by the midship elevators, port side',
+    },
+  ],
+  3: [
+    {
+      id: 'restrooms-aft-3',
+      x: [241, 249],
+      y: [34.6, 39],
+      where: 'aft on the starboard side, forward of Tuscan Grille',
+    },
+  ],
   4: [
     { id: 'restrooms-fwd-4', x: [79, 87], y: [30, 34], where: 'forward on the starboard side, between The Theatre and the forward elevators' },
     { id: 'restrooms-mid-4', x: [135, 143], y: [34.6, 39], where: 'midship on the starboard side, across from Le Voyage' },
@@ -174,7 +213,17 @@ const edgeVeranda = (x) => (x >= 95 && x < 186 ? 'E1' : 'E3');
 /** Magic Carpet Sky Suite directly forward of the platform's starboard track. */
 const nextToMagicCarpet = ({ x, side, row }) => side === 'Starboard' && row === 'outside' && x >= 144 && x < 154;
 
-function stateroomDeck(level, { range, typeFor, transom = true, extraBanks = [], fixedCabins = [], cabinRanges }) {
+/** Half-beam that still fits a hull cabin, a corridor and half a service strip. */
+const NARROW_STRIP_HALF_BEAM = 15;
+
+/** Whether a cabin reaches into the centreline service strip's band. */
+const crossesStrip = ({ bounds }) => bounds[1][1] > 15.8 && bounds[0][1] < 23.2;
+
+function stateroomDeck(
+  level,
+  { range, typeFor, transom = true, extraBanks = [], fixedCabins = [], cabinRanges }
+) {
+  const placed = officialCabins(level);
   const avoid = [...CORES, ...(transom ? [STERN_STAIR_X] : [])];
   const cabins = generateStaterooms(level, {
     range,
@@ -187,10 +236,28 @@ function stateroomDeck(level, { range, typeFor, transom = true, extraBanks = [],
     transom: transom ? { corner: 'SS', middle: 'SV' } : undefined,
     fixedCabins,
     cabinRanges,
+    placed,
+  });
+  // The official plans put no inside cabins in the narrowing bow, so the service strips
+  // run on into it, wherever no inside cabin crosses them, to keep a corridor beside each
+  // hull row.
+  const strips = generateServiceStrips(level, {
+    range,
+    avoid: [
+      ...avoid,
+      ...cabins.filter(crossesStrip).map(({ bounds }) => [bounds[0][0], bounds[1][0]]),
+    ],
+    minHalfBeam: placed ? NARROW_STRIP_HALF_BEAM : undefined,
   });
   return [
-    ...generateCenterlineCore(level, ['fwd', 'mid', 'aft', ...(transom ? ['stern'] : []), ...extraBanks]),
-    ...generateServiceStrips(level, { range, avoid }),
+    ...generateCenterlineCore(level, [
+      'fwd',
+      'mid',
+      'aft',
+      ...(transom ? ['stern'] : []),
+      ...extraBanks,
+    ]),
+    ...strips,
     ...cabins,
   ];
 }
@@ -254,6 +321,7 @@ export function generateAllDecks() {
         }),
         venue(2, {
           id: 'v2-destination-gateway',
+          positionConfidence: 'verified',
           name: 'Destination Gateway',
           category: 'Guest Services',
           color: C.service,
@@ -295,12 +363,16 @@ export function generateAllDecks() {
   );
 
   // Deck 3 — Theatre (lower), Grand Plaza (lower), Martini Bar, guest services, two main restaurants.
+  // Layout follows Celebrity's deck-three.svg (profile 2331): staterooms line both sides from
+  // the Theatre aft to the restaurants, Camp at Sea sits on the centreline just aft of the
+  // forward elevators, and Guest Relations and the Concierge Lounge sit forward of the
+  // midship elevators.
   decks.push(
     deck(3, {
       title: 'Grand Plaza & Guest Services',
       category: 'Public Venues & Staterooms',
       description:
-        'The Theatre (lower level) forward, the Grand Plaza with its circular Martini Bar, Guest Relations, Camp at Sea, inside and oceanview staterooms, and the Tuscan and Normandie restaurants aft.',
+        'The Theatre (lower level) forward, Camp at Sea, oceanview and inside staterooms along both sides, the Grand Plaza with its circular Martini Bar, Guest Relations and the Concierge Lounge, and the Tuscan and Normandie restaurants aft.',
       venues: [
         venue(3, {
           id: 'v3-theatre',
@@ -309,25 +381,31 @@ export function generateAllDecks() {
           name: 'The Theatre',
           category: 'Entertainment',
           color: C.entertainment,
-          x: [24, 78],
-          description: 'Three-deck main theater (Decks 3–5) with a 360° stage and production shows. Lower level entrance.',
+          x: [24, 66],
+          description:
+            'Three-deck main theater (Decks 3–5) with a 360° stage and production shows. Lower level entrance.',
           tags: ['Shows', 'Lower Level'],
         }),
-        ...generateCenterlineCore(3),
-        ...generateServiceStrips(3, { range: [96, 150] }),
+        // No aft elevators here: the restaurants run across the ship (deck-three.svg).
+        ...generateCenterlineCore(3, ['fwd', 'mid']),
+        // Service rooms and a stairwell aft of the midship elevators, as on deck-three.svg.
+        ...generateServiceStrips(3, { range: [112, 240], avoid: [[146, 199]] }),
         ...generateStaterooms(3, {
-          range: [96, 150],
           typeFor: ({ row }) => (row === 'outside' ? 'O2' : 'I2'),
+          avoid: [CORE_STATIONS.fwd.x, CORE_STATIONS.mid.x],
+          placed: officialCabins(3),
         }),
         venue(3, {
           id: 'v3-grand-plaza',
           ...partOf('grand-plaza'),
+          positionConfidence: 'verified',
           name: 'Grand Plaza',
           category: 'Entertainment',
           color: C.entertainment,
-          x: [152, 184],
-          y: [7, 32],
-          description: 'The ship’s three-deck social hub beneath a kinetic chandelier. Lower level.',
+          x: [151, 176],
+          y: [9, 30],
+          description:
+            'The ship’s three-deck social hub beneath a kinetic chandelier. Lower level.',
           tags: ['Atrium', 'Live Music'],
         }),
         venue(3, {
@@ -336,58 +414,74 @@ export function generateAllDecks() {
           // Official Celebrity Xcel deck-three.svg (profile 2331) labels MARTINI BAR midship at the
           // Grand Plaza; deck-two.svg has no Martini Bar. Resolves the Deck 2 vs 3 conflict (#18):
           // https://www.celebritycruises.com/content/dam/rcg/cel/resources/deck-plans/ship/celebrity-xcel/2331/decks/deck-three.svg
+          positionConfidence: 'verified',
           name: 'The Martini Bar',
           category: 'Bars & Lounges',
           color: C.bar,
-          x: [162, 176],
+          x: [157, 169],
           y: [14, 25],
           description: 'Full-circle bar at the center of the Grand Plaza, known for its flair bartenders.',
           tags: ['Cocktails', 'Grand Plaza'],
         }),
         venue(3, {
           id: 'v3-plaza-cafe',
+          positionConfidence: 'estimated', // not labelled on Celebrity's deck-three.svg
           aliases: ['Grand Plaza Cafe'],
           name: 'Grand Plaza Café',
           category: 'Casual Dining',
           color: C.dining,
-          x: [152, 172],
-          y: [32.5, 39],
+          x: [145, 151],
+          y: [20, 30],
           description: 'Coffee, pastries and light bites on the Grand Plaza.',
           tags: ['Coffee', 'Snacks'],
         }),
         venue(3, {
           id: 'v3-guest-relations',
+          positionConfidence: 'verified',
           name: 'Guest Relations',
           category: 'Guest Services',
           color: C.service,
-          x: [200, 224],
-          y: [22, 39],
+          x: [182, 194],
+          y: [0, 8],
           description: 'Guest services desk for onboard accounts and questions.',
           tags: ['Services', 'Help Desk'],
           hours: ALL_DAY,
         }),
         venue(3, {
+          id: 'v3-back-of-house-fwd',
+          name: 'Service Area',
+          category: 'Crew & Service',
+          color: C.backOfHouse,
+          // deck-three.svg fills the centreline between The Theatre and the forward
+          // elevators with a stairwell and service rooms, corridors running down both sides.
+          x: [69, 81],
+          y: [10, 29],
+          description: 'Stairwell and service rooms behind The Theatre. Crew only.',
+          tags: ['Crew Only'],
+        }),
+        venue(3, {
           id: 'v3-camp-at-sea',
-          positionConfidence: 'estimated', // Celebrity's plan labels it forward, not aft
+          positionConfidence: 'verified',
           name: 'Camp at Sea',
           category: 'Kids & Teens',
           color: C.entertainment,
-          x: [226, 260],
-          y: [0, 17],
-          description: 'Kids club with age-grouped activities.',
+          x: [95, 109],
+          y: [9, 30],
+          description: 'Kids club with age-grouped activities, just aft of the forward elevators.',
           tags: ['Kids'],
           access: 'kids',
           hours: [['09:00', '12:00'], ['14:00', '17:00'], ['19:00', '22:00']],
         }),
         venue(3, {
           id: 'v3-concierge-lounge',
-          positionConfidence: 'estimated', // Celebrity's plan labels it midship, not aft
+          positionConfidence: 'verified',
           name: 'Concierge Lounge',
           category: 'Guest Services',
           color: C.service,
-          x: [226, 260],
-          y: [22, 39],
-          description: 'Lounge and desk for Concierge Class guests.',
+          x: [176, 186],
+          y: [9, 22],
+          description:
+            'Lounge and desk for Concierge Class guests, forward of the midship elevators.',
           tags: ['Concierge'],
           hours: [['08:00', '20:00']],
         }),
@@ -397,7 +491,7 @@ export function generateAllDecks() {
           name: 'Normandie Restaurant',
           category: 'Fine Dining',
           color: C.dining,
-          x: [276, 325],
+          x: [244, 295],
           y: PORT,
           description: 'Complimentary main restaurant serving French-inspired cuisine.',
           tags: ['Main Dining', 'French'],
@@ -409,7 +503,7 @@ export function generateAllDecks() {
           name: 'Tuscan Restaurant',
           category: 'Fine Dining',
           color: C.dining,
-          x: [276, 325],
+          x: [250, 295],
           y: STBD,
           description: 'Complimentary main restaurant serving Italian dishes.',
           tags: ['Main Dining', 'Italian'],
@@ -446,7 +540,7 @@ export function generateAllDecks() {
           category: 'Shopping & Galleries',
           color: C.shopping,
           x: [96, 124],
-          y: PORT,
+          y: PORT_EDGE,
           description: 'Portrait studio and photo gallery.',
           tags: ['Photos'],
           hours: [['09:00', '22:00']],
@@ -457,10 +551,23 @@ export function generateAllDecks() {
           category: 'Shopping & Galleries',
           color: C.shopping,
           x: [96, 124],
-          y: STBD,
+          y: STBD_EDGE,
           description: 'Duty-free boutiques, jewelry and watches.',
           tags: ['Shopping'],
           hours: [['10:00', '23:00']],
+        }),
+        venue(4, {
+          id: 'v4-the-club',
+          ...partOf('the-club'),
+          positionConfidence: 'verified',
+          name: 'The Club',
+          category: 'Entertainment',
+          color: C.entertainment,
+          // deck-four.svg labels THE CLUB midship, forward of Le Voyage, across the centreline.
+          x: [96, 124],
+          y: CENTER,
+          description: 'Two-level nightlife and performance venue. Lower level.',
+          tags: ['Nightlife', 'Live Music'],
         }),
         venue(4, {
           id: 'v4-le-voyage',
@@ -480,10 +587,11 @@ export function generateAllDecks() {
         venue(4, {
           id: 'v4-le-grand-bistro',
           aliases: ['Le Bistro', 'Le Petit Chef'],
+          positionConfidence: 'verified',
           name: 'Le Grand Bistro',
           category: 'Fine Dining',
           color: C.dining,
-          x: [152, 184],
+          x: [152, 172],
           y: PORT_EDGE,
           description: 'French bistro on the Grand Plaza; hosts Le Petit Chef animated dining at night.',
           tags: ['French', 'Le Petit Chef'],
@@ -492,6 +600,20 @@ export function generateAllDecks() {
           reservationRequired: true,
           fee: 'surcharge',
           dressCode: 'smart casual',
+        }),
+        venue(4, {
+          id: 'v4-craft-social',
+          positionConfidence: 'verified',
+          name: 'Craft Social',
+          category: 'Bars & Lounges',
+          color: C.bar,
+          // deck-four.svg labels CRAFT SOCIAL and its bar on the port side of the Grand Plaza.
+          x: [174, 184],
+          y: PORT_EDGE,
+          description: 'Craft beer and cocktail pub with sports on screen.',
+          tags: ['Craft Beer', 'Sports'],
+          hours: [['09:00', '01:00']],
+          fee: 'a la carte',
         }),
         venue(4, {
           id: 'v4-grand-plaza',
@@ -508,6 +630,7 @@ export function generateAllDecks() {
         venue(4, {
           id: 'v4-cafe-al-bacio',
           aliases: ['Cafe al Bacio'],
+          positionConfidence: 'verified',
           name: 'Café al Bacio',
           category: 'Casual Dining',
           color: C.dining,
@@ -539,35 +662,11 @@ export function generateAllDecks() {
           name: 'Casino',
           category: 'Entertainment',
           color: C.entertainment,
-          x: [200, 240],
-          y: [12, 39],
+          // deck-four.svg labels THE CASINO on both sides at the midship elevators.
+          x: [200, 228],
+          y: [13, 39], // a corridor runs aft past Shore Excursions
           description: 'Slots and table games.',
           tags: ['Slots', 'Blackjack'],
-        }),
-        venue(4, {
-          id: 'v4-craft-social',
-          positionConfidence: 'estimated',
-          name: 'Craft Social',
-          category: 'Bars & Lounges',
-          color: C.bar,
-          x: [242, 260],
-          y: STBD,
-          description: 'Craft beer and cocktail pub with sports on screen.',
-          tags: ['Craft Beer', 'Sports'],
-          hours: [['09:00', '01:00']],
-          fee: 'a la carte',
-        }),
-        venue(4, {
-          id: 'v4-the-club',
-          ...partOf('the-club'),
-          positionConfidence: 'verified',
-          name: 'The Club',
-          category: 'Entertainment',
-          color: C.entertainment,
-          x: [242, 260],
-          y: PORT,
-          description: 'Two-level nightlife and performance venue. Lower level.',
-          tags: ['Nightlife', 'Live Music'],
         }),
         venue(4, {
           id: 'v4-cosmopolitan',
@@ -641,21 +740,23 @@ export function generateAllDecks() {
           category: 'Shopping & Galleries',
           color: C.shopping,
           x: [96, 114],
-          y: PORT,
+          y: PORT_EDGE,
           description: 'Fine art collection and auctions.',
           tags: ['Art'],
         }),
         venue(5, {
-          id: 'v5-flagship-store',
-          positionConfidence: 'estimated', // Celebrity's plan labels it midship, not forward
-          name: 'Celebrity Flagship Store',
-          category: 'Shopping & Galleries',
-          color: C.shopping,
+          id: 'v5-attic',
+          ...partOf('the-club', { aliases: ['The Attic'] }),
+          positionConfidence: 'verified',
+          name: 'The Attic at The Club',
+          category: 'Entertainment',
+          color: C.entertainment,
+          // deck-five.svg labels ATTIC AT THE CLUB midship over The Club, beside the Art Gallery.
           x: [96, 114],
-          y: STBD,
-          description: 'Celebrity-branded boutique. New on Xcel.',
-          tags: ['Shopping', 'New on Xcel'],
-          hours: ALL_DAY, // the museum never closes; the store keeps shorter hours
+          y: CENTER,
+          description: 'Upper level of The Club with its own programming. New on Xcel.',
+          tags: ['Nightlife', 'New on Xcel'],
+          hours: ALL_DAY,
         }),
         venue(5, {
           id: 'v5-annex',
@@ -663,7 +764,7 @@ export function generateAllDecks() {
           name: 'The Annex',
           category: 'Bars & Lounges',
           color: C.bar,
-          x: [116, 184],
+          x: [126, 150],
           y: PORT_EDGE,
           description: 'Intimate lounge space. New on Xcel.',
           tags: ['Lounge', 'New on Xcel'],
@@ -678,6 +779,32 @@ export function generateAllDecks() {
           y: STBD,
           description: 'Luxury retail boutiques.',
           tags: ['Shopping'],
+        }),
+        venue(5, {
+          id: 'v5-fine-cut',
+          positionConfidence: 'verified',
+          name: 'Fine Cut Steakhouse',
+          category: 'Fine Dining',
+          color: C.dining,
+          // deck-five.svg labels FINE CUT STEAKHOUSE on the port side of the Grand Plaza.
+          x: [152, 174],
+          y: PORT_EDGE,
+          description: 'Specialty steakhouse with prime cuts and panoramic views.',
+          tags: ['Steakhouse', 'Specialty Dining'],
+          hours: [
+            ['12:00', '13:30'],
+            ['17:30', '21:00'],
+          ], // lunch on sea days
+          hoursByDay: {
+            sea: [
+              ['12:00', '13:30'],
+              ['17:30', '21:00'],
+            ],
+            port: [['17:30', '21:00']],
+          },
+          reservationRequired: true,
+          fee: 'surcharge',
+          dressCode: 'smart casual',
         }),
         venue(5, {
           id: 'v5-grand-plaza',
@@ -729,34 +856,31 @@ export function generateAllDecks() {
           dressCode: 'casual',
         }),
         venue(5, {
+          id: 'v5-flagship-store',
+          name: 'Celebrity Flagship Store',
+          category: 'Shopping & Galleries',
+          color: C.shopping,
+          // deck-five.svg labels CELEBRITY FLAGSHIP and its store on the port side, just
+          // forward of the midship elevators.
+          x: [176, 184],
+          y: PORT_EDGE,
+          description: 'Celebrity-branded boutique. New on Xcel.',
+          tags: ['Shopping', 'New on Xcel'],
+          hours: ALL_DAY, // the museum never closes; the store keeps shorter hours
+        }),
+        venue(5, {
           id: 'v5-blu',
           positionConfidence: 'verified',
           name: 'Blu',
           category: 'Fine Dining',
           color: C.dining,
-          x: [200, 240],
-          y: PORT_EDGE,
+          x: [242, 260],
+          y: PORT,
           description: 'Restaurant reserved for AquaClass guests, with a clean-eating menu.',
           tags: ['AquaClass', 'Healthy'],
           hours: [['07:30', '09:00'], ['17:30', '21:00']],
           reservationRequired: false,
           fee: 'included',
-          dressCode: 'smart casual',
-        }),
-        venue(5, {
-          id: 'v5-fine-cut',
-          positionConfidence: 'verified',
-          name: 'Fine Cut Steakhouse',
-          category: 'Fine Dining',
-          color: C.dining,
-          x: [200, 240],
-          y: STBD_EDGE,
-          description: 'Specialty steakhouse with prime cuts and panoramic views.',
-          tags: ['Steakhouse', 'Specialty Dining'],
-          hours: [['12:00', '13:30'], ['17:30', '21:00']], // lunch on sea days
-          hoursByDay: { sea: [['12:00', '13:30'], ['17:30', '21:00']], port: [['17:30', '21:00']] },
-          reservationRequired: true,
-          fee: 'surcharge',
           dressCode: 'smart casual',
         }),
         venue(5, {
@@ -768,19 +892,6 @@ export function generateAllDecks() {
           y: CENTER,
           description: 'Main galley. Crew only.',
           tags: ['Crew Only'],
-        }),
-        venue(5, {
-          id: 'v5-attic',
-          ...partOf('the-club', { aliases: ['The Attic'] }),
-          positionConfidence: 'verified',
-          name: 'The Attic at The Club',
-          category: 'Entertainment',
-          color: C.entertainment,
-          x: [242, 260],
-          y: PORT,
-          description: 'Upper level of The Club with its own programming. New on Xcel.',
-          tags: ['Nightlife', 'New on Xcel'],
-          hours: ALL_DAY,
         }),
         venue(5, {
           id: 'v5-bazaar-market',
@@ -821,7 +932,7 @@ export function generateAllDecks() {
         'Panoramic Oceanview staterooms forward, Edge Singles and Infinite Veranda staterooms, Magic Carpet Sky Suites, and the upper level of The Bazaar aft.',
       venues: [
         ...stateroomDeck(6, {
-          range: [0, 280],
+          range: [0, 302], // the Bazaar starts aft of the last staterooms
           transom: false,
           typeFor: ({ x, side, row }) => {
             if (row === 'inside') return 'I2';
@@ -837,8 +948,9 @@ export function generateAllDecks() {
           name: 'The Bazaar (Upper Level)',
           category: 'Entertainment',
           color: C.entertainment,
-          x: [284, 327],
-          description: 'Top level of the triple-height Bazaar: workshops, lessons and destination-inspired entertainment.',
+          x: [304, 327], // aft of the last staterooms on deck-six.svg
+          description:
+            'Top level of the triple-height Bazaar: workshops, lessons and destination-inspired entertainment.',
           tags: ['The Bazaar', 'New on Xcel'],
         }),
       ],
@@ -905,12 +1017,6 @@ export function generateAllDecks() {
   );
 
   // Deck 12 — Iconic Suites above the bridge, Royal and Penthouse Suites forward.
-  const iconic = (side, y) => ({
-    code: 'IC',
-    side,
-    row: 'outside',
-    bounds: clampToHull(12, [26, 46], y),
-  });
   decks.push(
     deck(12, {
       title: 'Iconic Suites & Suite Class',
@@ -919,8 +1025,8 @@ export function generateAllDecks() {
         'The two Iconic Suites above the navigation bridge, Royal Suites forward to port and Penthouse Suites forward to starboard, Celebrity Suites, Sky Suites, Concierge Class and Sunset Verandas.',
       venues: stateroomDeck(12, {
         range: [48, 319],
-        fixedCabins: [iconic('Port', PORT), iconic('Starboard', STBD)],
         typeFor: ({ x, side, row }) => {
+          if (x < 46) return 'IC'; // the two Iconic Suites above the bridge
           if (row === 'inside') return x < 81 ? null : 'I2';
           if (x < 60) return side === 'Port' ? 'RS' : 'PS';
           if (x < 81) return 'CS';
@@ -1059,13 +1165,6 @@ export function generateAllDecks() {
   );
 
   // Deck 15 — Edge Villas and The Retreat Lounge forward, fitness, Rooftop Garden, Sunset Bar aft.
-  const villa = (number, side, x) => ({
-    code: 'EV',
-    number,
-    side,
-    row: 'outside',
-    bounds: clampToHull(15, x, side === 'Port' ? PORT : STBD),
-  });
   decks.push(
     deck(15, {
       title: 'The Retreat, Rooftop Garden & Sunset Bar',
@@ -1073,19 +1172,23 @@ export function generateAllDecks() {
       description:
         'Edge Villas and the suites-only Retreat Lounge forward, the Fitness Center, Bora, the Rooftop Garden and Grill, and the doubled-in-size Sunset Bar at the stern.',
       venues: [
-        ...generateStaterooms(15, {
-          range: [0, 0],
-          typeFor: () => null,
-          fixedCabins: [
-            villa(15100, 'Port', [42, 61]),
-            villa(15102, 'Port', [61, 80]),
-            villa(15104, 'Starboard', [42, 61]),
-            villa(15106, 'Starboard', [61, 80]),
-          ],
-        }),
+        ...generateStaterooms(15, { typeFor: () => 'EV', placed: officialCabins(15) }),
         ...generateCenterlineCore(15),
         venue(15, {
+          id: 'v15-fitness',
+          positionConfidence: 'verified',
+          name: 'Fitness Center',
+          category: 'Spa & Wellness',
+          color: C.spa,
+          // deck-fifteen.svg puts THE FITNESS CENTER at the bow, Motion Studios A and B to starboard.
+          x: [42, 68],
+          description: 'Gym with cardio and weights plus Motion Studios A and B.',
+          tags: ['Gym', 'Classes'],
+          hours: ALL_DAY,
+        }),
+        venue(15, {
           id: 'v15-retreat-lounge',
+          positionConfidence: 'verified',
           name: 'The Retreat Lounge',
           category: 'Bars & Lounges',
           color: C.bar,
@@ -1093,18 +1196,6 @@ export function generateAllDecks() {
           description: 'Enlarged private lounge for suite guests with complimentary drinks and a dedicated concierge.',
           tags: ['The Retreat', 'Suite Guests Only'],
           access: 'suite',
-          hours: ALL_DAY,
-        }),
-        venue(15, {
-          id: 'v15-fitness',
-          positionConfidence: 'verified',
-          name: 'Fitness Center',
-          category: 'Spa & Wellness',
-          color: C.spa,
-          x: [136, 184],
-          y: PORT,
-          description: 'Gym with cardio and weights plus Motion Studios A and B.',
-          tags: ['Gym', 'Classes'],
           hours: ALL_DAY,
         }),
         venue(15, {
@@ -1121,11 +1212,12 @@ export function generateAllDecks() {
         }),
         venue(15, {
           id: 'v15-bora',
-          positionConfidence: 'estimated', // Celebrity's plan labels it aft of the Rooftop Garden
+          positionConfidence: 'verified',
           name: 'Bora',
           category: 'Fine Dining',
           color: C.dining,
-          x: [200, 224],
+          // deck-fifteen.svg labels BORA aft on the port side, forward of the Sunset Bar.
+          x: [276, 292],
           y: PORT,
           description: 'Open-air Mediterranean restaurant. New on Xcel.',
           tags: ['Mediterranean', 'Open Air', 'New on Xcel'],
@@ -1165,8 +1257,9 @@ export function generateAllDecks() {
           name: 'Sunset Bar',
           category: 'Bars & Lounges',
           color: C.bar,
-          x: [276, 318],
-          description: 'Open-air bar at the stern, twice the size of the Edge-class original, with wake views.',
+          x: [294, 318],
+          description:
+            'Open-air bar at the stern, twice the size of the Edge-class original, with wake views.',
           tags: ['Wake Views', 'Cocktails'],
           hours: [['10:00', '24:00']],
         }),
@@ -1184,13 +1277,47 @@ export function generateAllDecks() {
         'Edge Villa upper levels and plunge-pool terraces, the Retreat’s lower sundeck above the Solarium, Luminae at The Retreat, glass-walled hot tubs, the Magic Carpet’s “Dinner on the Edge” stop, and Mast Bar.',
       venues: [
         venue(16, {
+          id: 'v16-luminae',
+          positionConfidence: 'verified',
+          name: 'Luminae at The Retreat',
+          category: 'Fine Dining',
+          color: C.dining,
+          // deck-sixteen.svg wraps LUMINAE AT THE RETREAT around the bow on the port side.
+          x: [48, 80],
+          y: PORT,
+          description: 'Redesigned restaurant exclusively for suite guests.',
+          tags: ['The Retreat', 'Suite Guests Only'],
+          access: 'suite',
+          hours: [
+            ['07:30', '09:00'],
+            ['12:00', '13:30'],
+            ['17:30', '21:00'],
+          ], // lunch on sea days
+          hoursByDay: {
+            sea: [
+              ['07:30', '09:00'],
+              ['12:00', '13:30'],
+              ['17:30', '21:00'],
+            ],
+            port: [
+              ['07:30', '09:00'],
+              ['17:30', '21:00'],
+            ],
+          },
+          reservationRequired: false,
+          fee: 'included',
+          dressCode: 'smart casual',
+        }),
+        venue(16, {
           id: 'v16-villa-terraces-port',
           name: 'Edge Villa Terraces (Port)',
           category: 'Edge Villas',
           color: C.edgeVilla,
-          x: [48, 80],
-          y: PORT,
-          description: 'Upper levels and private plunge-pool terraces of the port-side Edge Villas.',
+          // deck-sixteen.svg draws the port villas' upper levels beside the forward elevators.
+          x: [84, 96],
+          y: [0, 8.5],
+          description:
+            'Upper levels and private plunge-pool terraces of the port-side Edge Villas.',
           tags: ['Edge Villas', 'Plunge Pool'],
         }),
         venue(16, {
@@ -1214,23 +1341,6 @@ export function generateAllDecks() {
           description: 'Suites-only sundeck above the Solarium.',
           tags: ['The Retreat', 'Suite Guests Only'],
           access: 'suite',
-        }),
-        venue(16, {
-          id: 'v16-luminae',
-          positionConfidence: 'verified',
-          name: 'Luminae at The Retreat',
-          category: 'Fine Dining',
-          color: C.dining,
-          x: [136, 184],
-          y: [0, 24],
-          description: 'Redesigned restaurant exclusively for suite guests.',
-          tags: ['The Retreat', 'Suite Guests Only'],
-          access: 'suite',
-          hours: [['07:30', '09:00'], ['12:00', '13:30'], ['17:30', '21:00']], // lunch on sea days
-          hoursByDay: { sea: [['07:30', '09:00'], ['12:00', '13:30'], ['17:30', '21:00']], port: [['07:30', '09:00'], ['17:30', '21:00']] },
-          reservationRequired: false,
-          fee: 'included',
-          dressCode: 'smart casual',
         }),
         venue(16, {
           id: 'v16-hot-tubs',
@@ -1264,7 +1374,7 @@ export function generateAllDecks() {
     })
   );
 
-  // Deck 17 — The Retreat Sundeck.
+  // Deck 17 — The Retreat Sundeck, over the forward elevators (deck-seventeen.svg).
   decks.push(
     deck(17, {
       title: 'The Retreat Sundeck',
@@ -1278,7 +1388,8 @@ export function generateAllDecks() {
           name: 'The Retreat Sundeck',
           category: 'Pool & Sun Deck',
           color: C.pool,
-          x: [96, 150],
+          // deck-seventeen.svg labels THE RETREAT SUNDECK and THE RETREAT POOL forward of the elevators.
+          x: [50, 72],
           description: 'Round pool, two cantilevered plunge pools, cabanas and premium loungers for suite guests.',
           tags: ['The Retreat', 'Suite Guests Only', 'Pool'],
           access: 'suite',
@@ -1286,11 +1397,13 @@ export function generateAllDecks() {
         }),
         venue(17, {
           id: 'v17-retreat-bar',
-          positionConfidence: 'estimated', // Celebrity's plan labels it forward of the elevators
+          positionConfidence: 'verified',
           name: 'The Retreat Bar',
           category: 'Bars & Lounges',
           color: C.bar,
-          x: [152, 176],
+          // deck-seventeen.svg labels THE RETREAT BAR on the port side, just forward of the elevators.
+          x: [74, 80],
+          y: [9, 19.3], // port side, between the sundeck and the lifts
           description: 'Poolside bar for Retreat guests.',
           tags: ['The Retreat', 'Suite Guests Only'],
           access: 'suite',

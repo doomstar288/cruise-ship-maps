@@ -308,7 +308,7 @@ const lobbies = (bank, decks) => decks.map((deck) => `elev-${bank}-${deck}`);
 const XCEL_LIFTS = [
   ...lobbies('fwd', [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17]),
   ...lobbies('mid', [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16]),
-  ...lobbies('aft', [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15]),
+  ...lobbies('aft', [2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15]),
 ];
 
 /**

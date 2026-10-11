@@ -32,8 +32,9 @@ describe('hullHalfWidth', () => {
   });
 
   it('is zero outside a stepped-back deck', () => {
-    expect(hullHalfWidth(17, 60)).toBe(0);
-    expect(hullHalfWidth(17, 120)).toBeGreaterThan(0);
+    expect(hullHalfWidth(17, 40)).toBe(0);
+    expect(hullHalfWidth(17, 120)).toBe(0);
+    expect(hullHalfWidth(17, 88)).toBeGreaterThan(0);
   });
 
   it('keeps the plan at the real length-to-beam proportion', () => {
@@ -151,5 +152,63 @@ describe('numberCabins and cabin parity', () => {
       expect(num % 2).toBe(c.side === 'Port' ? 1 : 0);
       expect(num).toBeGreaterThanOrEqual(9200);
     }
+  });
+});
+
+describe('generateStaterooms with placed cabins', () => {
+  const overlaps = (a, b) =>
+    a[0][0] < b[1][0] && b[0][0] < a[1][0] && a[0][1] < b[1][1] && b[0][1] < a[1][1];
+  const typeFor = ({ row }) => (row === 'inside' ? 'I2' : 'E1');
+
+  it('draws one cabin per given number, centred near its position', () => {
+    const placed = [
+      { number: 9201, side: 'Port', row: 'outside', x: 150 },
+      { number: 9203, side: 'Port', row: 'outside', x: 154 },
+      { number: 9200, side: 'Starboard', row: 'outside', x: 150 },
+      { number: 9202, side: 'Starboard', row: 'inside', x: 152 },
+    ];
+    const cabins = generateStaterooms(9, { typeFor, placed });
+    expect(cabins.map((c) => Number(c.label)).sort()).toEqual([9200, 9201, 9202, 9203]);
+    const at = (n) => cabins.find((c) => Number(c.label) === n);
+    expect(at(9201).center[0]).toBeCloseTo(150, 0);
+    expect(at(9203).center[1]).toBeLessThan(CENTERLINE_Y);
+    expect(at(9200).center[1]).toBeGreaterThan(CENTERLINE_Y);
+  });
+
+  it('spreads cabins labelled at one spot so none overlap', () => {
+    const placed = [9201, 9203, 9205, 9207].map((number) => ({
+      number,
+      side: 'Port',
+      row: 'outside',
+      x: 160,
+    }));
+    const cabins = generateStaterooms(9, { typeFor, placed });
+    expect(cabins).toHaveLength(4);
+    for (let i = 0; i < cabins.length; i += 1)
+      for (let j = i + 1; j < cabins.length; j += 1)
+        expect(overlaps(cabins[i].bounds, cabins[j].bounds)).toBe(false);
+  });
+
+  it('moves an inside cabin out of a lobby and keeps the hull row clear of it', () => {
+    const placed = [
+      { number: 9201, side: 'Port', row: 'inside', x: 186 },
+      { number: 9203, side: 'Port', row: 'outside', x: 182 },
+    ];
+    const cabins = generateStaterooms(9, { typeFor, placed, avoid: [[182, 194]] });
+    const inside = cabins.find((c) => Number(c.label) === 9201);
+    expect(inside.bounds[1][0]).toBeLessThanOrEqual(182);
+    expect(overlaps(inside.bounds, cabins.find((c) => Number(c.label) === 9203).bounds)).toBe(
+      false
+    );
+  });
+
+  it('puts an inside cabin on the hull row where the bow is too narrow for one', () => {
+    const cabins = generateStaterooms(9, {
+      typeFor,
+      placed: [{ number: 9101, side: 'Port', row: 'inside', x: 40 }],
+    });
+    expect(cabins).toHaveLength(1);
+    // Its outer wall is the hull itself.
+    expect(cabins[0].bounds[0][1]).toBeCloseTo(CENTERLINE_Y - hullHalfWidth(9, 38.2) + 0.4, 1);
   });
 });

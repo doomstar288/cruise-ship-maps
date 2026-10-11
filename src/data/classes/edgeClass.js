@@ -1408,7 +1408,8 @@ export function generateEdgeClassDecks(manifest) {
             name: 'The Retreat Sundeck',
             category: 'Pool & Sun Deck',
             color: C.pool,
-            x: [96, 150],
+            // Forward of the elevators, as on Celebrity's Xcel deck-seventeen.svg.
+            x: [50, 72],
             description: 'Round pool, plunge pools and cabanas for suite guests.',
             tags: ['The Retreat', 'Suite Guests Only', 'Pool'],
             access: 'suite',
@@ -1420,7 +1421,8 @@ export function generateEdgeClassDecks(manifest) {
             name: 'The Retreat Bar',
             category: 'Bars & Lounges',
             color: C.bar,
-            x: [152, 176],
+            x: [74, 80],
+            y: [9, 19.3], // port side, between the sundeck and the lifts
             description: 'Poolside bar for Retreat guests.',
             tags: ['The Retreat', 'Suite Guests Only'],
             access: 'suite',

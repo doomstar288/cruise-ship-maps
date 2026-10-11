@@ -322,9 +322,9 @@ describe('position confidence in the published Celebrity Xcel pack', () => {
   it('drops the conflict flag once the official plan resolves the deck', () => {
     // Mast Grill resolved to Deck 14 via official Celebrity Xcel deck-fourteen.svg, and the
     // Martini Bar to Deck 3 via deck-three.svg (no deck-two.svg labels it) (P1.1 / #18).
-    for (const name of ['Mast Grill & Bar', 'The Martini Bar']) {
-      expect(byName(name)?.positionConfidence, name).toBe('zone');
-    }
+    expect(byName('Mast Grill & Bar')?.positionConfidence).toBe('zone');
+    // deck-three.svg also places the Martini Bar's zone and side, so it is verified.
+    expect(byName('The Martini Bar')?.positionConfidence).toBe('verified');
   });
 
   it('marks verified specialty dining venues as verified', () => {
@@ -485,8 +485,8 @@ describe('venue access across the fleet', () => {
       ['v14-solarium', 'adults'],
       ['v14-cabanas', 'paid'],
       ['v15-retreat-lounge', 'suite'],
-      ['v16-retreat-lower-sundeck', 'suite'],
       ['v16-luminae', 'suite'],
+      ['v16-retreat-lower-sundeck', 'suite'],
       ['v17-retreat-sundeck', 'suite'],
       ['v17-retreat-bar', 'suite'],
     ]);
