@@ -118,15 +118,21 @@ const firstNumber = (value) => {
  *             labels: { text: string, x: number, y: number }[] }}
  */
 export function parseSvgLabels(svg) {
-  const body = svg.replace(/<!--[\s\S]*?-->/g, '').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1');
   const labels = [];
   const stack = [IDENTITY];
   let viewBox = null;
   let current = null; // the <text> being read: { matrix, x, y, parts }
-  const tagRe = /<(\/?)([\w:-]+)([^>]*?)(\/?)>|([^<]+)/g;
+  // Comments are skipped and CDATA read as text as the tokenizer meets them, rather than
+  // stripped beforehand, so no comment can survive a partial strip.
+  const tagRe =
+    /<!--[\s\S]*?(?:-->|$)|<!\[CDATA\[([\s\S]*?)(?:\]\]>|$)|<(\/?)([\w:-]+)([^>]*?)(\/?)>|([^<]+)/g;
   let skipDepth = 0; // inside <defs>, <style>, <title> etc. nothing is drawn as a label
 
-  for (const [, closing, rawName, rawAttrs, selfClosing, textNode] of body.matchAll(tagRe)) {
+  for (const [whole, cdata, closing, rawName, rawAttrs, selfClosing, plainText] of svg.matchAll(
+    tagRe
+  )) {
+    if (whole.startsWith('<!--')) continue;
+    const textNode = cdata ?? plainText;
     if (textNode !== undefined) {
       if (current && skipDepth === 0) current.parts.push(textNode);
       continue;

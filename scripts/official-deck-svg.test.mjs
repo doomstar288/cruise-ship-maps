@@ -76,6 +76,12 @@ describe('parseSvgLabels', () => {
     ]);
   });
 
+  it('reads CDATA as text and skips comments, even unclosed ones', () => {
+    const svg =
+      '<svg><text x="1" y="2"><![CDATA[Eden & Eden Bar]]></text><text x="3" y="4">Bora</text><!-- <text x="5" y="6">Gone</text>';
+    expect(parseSvgLabels(svg).labels.map((l) => l.text)).toEqual(['Eden & Eden Bar', 'Bora']);
+  });
+
   it('returns no labels when text is drawn as outlines', () => {
     expect(parseSvgLabels('<svg viewBox="0 0 10 10"><path d="M0 0L1 1"/></svg>').labels).toEqual(
       []
