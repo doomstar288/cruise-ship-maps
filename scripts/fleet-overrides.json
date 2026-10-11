@@ -46,6 +46,17 @@
       }
     },
     {
+      "imo": "5411254",
+      "reason": "Wikipedia: the ship (later Sun Vista) left Celebrity Cruises in 1997, sailed for Sun Cruises 1997–1999, and caught fire and sank in the Straits of Malacca on 21 May 1999, so it is not an in-service Celebrity ship.",
+      "source": "https://en.wikipedia.org/wiki/SS_Galileo_Galilei",
+      "set": {
+        "operator": "Sun Cruises",
+        "operatorId": null,
+        "status": "retired",
+        "retirementYear": 1999
+      }
+    },
+    {
       "imo": "5414971",
       "reason": "Wikipedia infobox for \"MS Siritara Ocean Queen\" gives the ship class; Wikidata has no vessel-class statement.",
       "source": "https://en.wikipedia.org/wiki/MS_Siritara_Ocean_Queen",
@@ -473,6 +484,16 @@
       }
     },
     {
+      "imo": "9072446",
+      "reason": "Wikipedia infobox: operated by Celebrity Cruises 1995–2015 and by Marella Cruises since 2019 (still in service); capacity 1,814 passengers.",
+      "source": "https://en.wikipedia.org/wiki/Marella_Explorer_2",
+      "set": {
+        "operator": "Marella Cruises",
+        "operatorId": "Q18636345",
+        "maxCapacity": 1814
+      }
+    },
+    {
       "imo": "9084542",
       "reason": "Wikipedia lists \"American Queen\" in Category:River cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. Wikipedia files this ship under Category:River cruise ships.",
       "source": "https://en.wikipedia.org/wiki/American_Queen",
@@ -573,6 +594,22 @@
       }
     },
     {
+      "imo": "9189419",
+      "reason": "Wikipedia infobox gives capacity 2,138 passengers; Wikidata has no capacity statement.",
+      "source": "https://en.wikipedia.org/wiki/Celebrity_Millennium",
+      "set": {
+        "maxCapacity": 2138
+      }
+    },
+    {
+      "imo": "9189421",
+      "reason": "Wikipedia infobox gives capacity 2,170 passengers; Wikidata has no capacity statement.",
+      "source": "https://en.wikipedia.org/wiki/Celebrity_Infinity",
+      "set": {
+        "maxCapacity": 2170
+      }
+    },
+    {
       "imo": "9192351",
       "reason": "Wikipedia infobox for \"Carnival Adventure\" gives the ship class; Wikidata has no vessel-class statement. Wikipedia infobox for \"Carnival Adventure\" gives the current name as Carnival Adventure. Wikipedia infobox for \"Carnival Adventure\" gives the current operator as Carnival Cruise Line.",
       "source": "https://en.wikipedia.org/wiki/Carnival_Adventure",
@@ -594,6 +631,14 @@
         "operator": "Carnival Cruise Line",
         "operatorId": "Q656554",
         "name": "Carnival Encounter"
+      }
+    },
+    {
+      "imo": "9192387",
+      "reason": "Wikipedia infobox gives capacity 2,158 passengers (lower berths) and 2,218 (all berths); maxCapacity uses all berths. Wikidata has no capacity statement.",
+      "source": "https://en.wikipedia.org/wiki/Celebrity_Summit",
+      "set": {
+        "maxCapacity": 2218
       }
     },
     {
@@ -872,9 +917,19 @@
     },
     {
       "imo": "9455882",
-      "reason": "Wikipedia lists \"National Geographic Delfina\" in Category:Ships of Lindblad Expeditions, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
+      "reason": "Wikipedia lists \"National Geographic Delfina\" in Category:Ships of Lindblad Expeditions, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. Wikipedia: the former Celebrity Xploration is now National Geographic Delfina, operated by Lindblad Expeditions and in service; MMSI 735057940, 16 passengers, built by Botto Astilleros y Marina, 242 GT per IMO GISIS (cited in the article).",
       "source": "https://en.wikipedia.org/wiki/National_Geographic_Delfina",
-      "include": "Q54933225"
+      "include": "Q54933225",
+      "set": {
+        "name": "National Geographic Delfina",
+        "operator": "Lindblad Expeditions",
+        "operatorId": null,
+        "mmsi": "735057940",
+        "status": "in_service",
+        "maxCapacity": 16,
+        "builder": "Botto Astilleros y Marina",
+        "grossTonnage": 242
+      }
     },
     {
       "imo": "9479852",
@@ -1289,10 +1344,12 @@
     },
     {
       "imo": "9837925",
-      "reason": "Wikipedia files this ship under Category:Expedition cruise ships.",
-      "source": "https://en.wikipedia.org/wiki/Category%3AExpedition_cruise_ships",
+      "reason": "Wikipedia files this ship under Category:Expedition cruise ships. Its Wikidata item has no English label, so the registry used the placeholder \"IMO 9837925\"; the Wikipedia article names it Celebrity Flora and gives a 17 m beam (from shipbuilder De Hoop).",
+      "source": "https://en.wikipedia.org/wiki/Celebrity_Flora",
       "set": {
-        "category": "expedition"
+        "category": "expedition",
+        "name": "Celebrity Flora",
+        "beamMeters": 17
       }
     },
     {
@@ -1304,12 +1361,22 @@
       }
     },
     {
+      "imo": "9838383",
+      "reason": "Wikipedia infobox (citing Chantiers de l'Atlantique) gives 130,818 GT, which Wikidata lacks, and a 39 m beam; Wikidata's 50 m beam is wrong.",
+      "source": "https://en.wikipedia.org/wiki/Celebrity_Apex",
+      "set": {
+        "grossTonnage": 130818,
+        "beamMeters": 39
+      }
+    },
+    {
       "imo": "9838400",
-      "reason": "Wikipedia infobox for \"Celebrity Ascent\" gives the ship class; Wikidata has no vessel-class statement.",
+      "reason": "Wikipedia infobox for \"Celebrity Ascent\" gives the ship class; Wikidata has no vessel-class statement. Wikipedia infobox gives MMSI 256191000; Wikidata has none.",
       "source": "https://en.wikipedia.org/wiki/Celebrity_Ascent",
       "set": {
         "shipClass": "Edge-class cruise ship",
-        "shipClassId": "Q36847697"
+        "shipClassId": "Q36847697",
+        "mmsi": "256191000"
       }
     },
     {
@@ -1400,6 +1467,22 @@
       }
     },
     {
+      "imo": "9852418",
+      "reason": "Fleet gap #49: Wikipedia infobox has IMO 9852418 but Wikidata item Q106590112 has no IMO, so the registry query cannot include it. Fields from the Wikipedia infobox (Ponant Explorers class, operator Ponant, VARD, MMSI 578001500, 184 passengers, in service). Delete once Wikidata has the IMO.",
+      "source": "https://en.wikipedia.org/wiki/Le_Bellot",
+      "add": {
+        "name": "Le Bellot",
+        "mmsi": "578001500",
+        "operator": "Ponant",
+        "operatorId": "Q2990078",
+        "shipClass": "Ponant explorer-class passenger ship",
+        "shipClassId": "Q54531132",
+        "builder": "VARD",
+        "maxCapacity": 184,
+        "status": "in_service"
+      }
+    },
+    {
       "imo": "9862023",
       "reason": "Wikipedia files this ship under Category:Expedition cruise ships. (source for the fields above: https://en.wikipedia.org/wiki/Category%3AExpedition_cruise_ships) Wikipedia infobox for \"Seabourn Venture\" gives MMSI 311000930.",
       "source": "https://en.wikipedia.org/wiki/Seabourn_Venture",
@@ -1477,6 +1560,24 @@
       "source": "https://en.wikipedia.org/wiki/Oceania_Cruises",
       "set": {
         "grossTonnage": 67817
+      }
+    },
+    {
+      "imo": "9870654",
+      "reason": "Fleet gap #49: Wikipedia infobox has IMO 9870654 but Wikidata item Q135706602 has no IMO, so the registry query cannot include it. Fields from the Wikipedia infobox and article (operator Virgin Voyages, Fincantieri, MMSI 311001167, 277 m x 38 m, 2,770 passengers, entered service 5 September 2025, Category:Cruise ships). Gross tonnage omitted: the infobox gives only a rounded, unreferenced 110,000. Delete once Wikidata has the IMO.",
+      "source": "https://en.wikipedia.org/wiki/Brilliant_Lady",
+      "add": {
+        "name": "Brilliant Lady",
+        "mmsi": "311001167",
+        "operator": "Virgin Voyages",
+        "operatorId": "Q20539284",
+        "builder": "Fincantieri",
+        "lengthMeters": 277,
+        "beamMeters": 38,
+        "inServiceYear": 2025,
+        "maxCapacity": 2770,
+        "status": "in_service",
+        "category": "ocean"
       }
     },
     {

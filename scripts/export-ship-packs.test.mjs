@@ -319,10 +319,11 @@ describe('position confidence in the published Celebrity Xcel pack', () => {
     expect(verified).toContain('v15-sunset-bar');
   });
 
-  it('marks the venues whose sources conflict as estimated', () => {
-    // Mast Grill resolved to Deck 14 via official Celebrity Xcel deck-fourteen.svg (P1.1 / #18).
-    for (const name of ['The Martini Bar']) {
-      expect(byName(name)?.positionConfidence, name).toBe('estimated');
+  it('drops the conflict flag once the official plan resolves the deck', () => {
+    // Mast Grill resolved to Deck 14 via official Celebrity Xcel deck-fourteen.svg, and the
+    // Martini Bar to Deck 3 via deck-three.svg (no deck-two.svg labels it) (P1.1 / #18).
+    for (const name of ['Mast Grill & Bar', 'The Martini Bar']) {
+      expect(byName(name)?.positionConfidence, name).toBe('zone');
     }
   });
 
@@ -1040,5 +1041,25 @@ describe('Multi-ship fleet publishing', () => {
       'celebrity-summit',
       'celebrity-constellation',
     ]);
+  });
+});
+
+describe('Shore Excursions deck in the published Edge-class packs', () => {
+  // Each ship's official deck plan SVG labels SHORE EXCURSIONS on deck-three.svg for
+  // Celebrity Edge (profile 2363) and on deck-four.svg for Apex (2366), Beyond (2364),
+  // Ascent (2362) and Xcel (2331).
+  const shoreDecks = (shipId) =>
+    JSON.parse(readFileSync(`public/v1/ships/${shipId}/plan.json`, 'utf8'))
+      .decks.filter((d) => d.features.some((f) => f.name === 'Shore Excursions'))
+      .map((d) => d.deckNumber);
+
+  it.each([
+    ['celebrity-edge', 3],
+    ['celebrity-apex', 4],
+    ['celebrity-beyond', 4],
+    ['celebrity-ascent', 4],
+    ['celebrity-xcel', 4],
+  ])('%s has Shore Excursions on Deck %i only', (shipId, deck) => {
+    expect(shoreDecks(shipId)).toEqual([deck]);
   });
 });

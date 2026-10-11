@@ -96,6 +96,8 @@ export function generateEdgeClassDecks(manifest) {
   const hasAnnex = hasVenue('The Annex');
   const hasCasinoBar = hasVenue('Casino Bar');
   const hasBora = hasVenue('Bora');
+  const shoreExcursionsDeck =
+    (manifest.venues || []).find((v) => v.name === 'Shore Excursions')?.deck ?? 3;
   const hasDeck12Luminae = (manifest.venues || []).some((v) => v.deck === 12 && v.name.includes('Luminae'));
   const isStretched = lengthMeters >= 320;
   const hasDeck17 = isStretched && (manifest.deckRange ? manifest.deckRange.max >= 17 : true);
@@ -286,7 +288,9 @@ export function generateEdgeClassDecks(manifest) {
         venue(3, {
           id: 'v3-martini-bar',
           aliases: ['Martini Bar'],
-          positionConfidence: 'estimated',
+          // Deck 3 midship on every Edge-class ship's official deck-three.svg (MARTINI BAR at the
+          // Grand Plaza); no deck-two.svg labels it. Resolves the Deck 2 vs 3 conflict (#18). e.g.
+          // https://www.celebritycruises.com/content/dam/rcg/cel/resources/deck-plans/ship/celebrity-edge/2363/decks/deck-three.svg
           name: 'The Martini Bar',
           category: 'Bars & Lounges',
           color: C.bar,
@@ -306,18 +310,23 @@ export function generateEdgeClassDecks(manifest) {
           description: 'Coffee, pastries and light bites on the Grand Plaza.',
           tags: ['Coffee', 'Snacks'],
         }),
-        venue(3, {
-          id: 'v3-shore-excursions',
-          positionConfidence: 'estimated',
-          name: 'Shore Excursions',
-          category: 'Guest Services',
-          color: C.service,
-          x: [200, 224],
-          y: [0, 17],
-          description: 'Book and manage shore excursions.',
-          tags: ['Excursions'],
-          aliases: ['Shore Ex'],
-        }),
+        // Shore Excursions follows the manifest's deck: Deck 3 on Celebrity Edge, Deck 4 on
+        // Apex, Beyond and Ascent, per each ship's official deck plan SVGs (see ingest-deck-facts).
+        ...(shoreExcursionsDeck === 3
+          ? [
+              venue(3, {
+                id: 'v3-shore-excursions',
+                name: 'Shore Excursions',
+                category: 'Guest Services',
+                color: C.service,
+                x: [200, 224],
+                y: [0, 17],
+                description: 'Book and manage shore excursions.',
+                tags: ['Excursions'],
+                aliases: ['Shore Ex'],
+              }),
+            ]
+          : []),
         venue(3, {
           id: 'v3-guest-relations',
           name: 'Guest Relations',
@@ -509,6 +518,24 @@ export function generateEdgeClassDecks(manifest) {
       aliases: ['The Casino', 'Celebrity Casino'],
     })
   );
+
+  if (shoreExcursionsDeck === 4) {
+    // Same footprint as Celebrity Xcel's v4-shore-excursions: midship, in the free band above
+    // the Casino.
+    deck4Venues.push(
+      venue(4, {
+        id: 'v4-shore-excursions',
+        name: 'Shore Excursions',
+        category: 'Guest Services',
+        color: C.service,
+        x: [200, 224],
+        y: [0, 11],
+        description: 'Book and manage shore excursions.',
+        tags: ['Excursions'],
+        aliases: ['Shore Ex'],
+      })
+    );
+  }
 
   if (hasCasinoBar) {
     deck4Venues.push(

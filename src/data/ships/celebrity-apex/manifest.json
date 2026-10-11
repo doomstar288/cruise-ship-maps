@@ -313,7 +313,7 @@
       "category": "Bars & Lounges",
       "side": "center",
       "zone": "mid",
-      "confidence": "estimated",
+      "confidence": "zone",
       "aliases": [
         "Martini Bar"
       ]
@@ -331,7 +331,7 @@
     },
     {
       "name": "Shore Excursions",
-      "deck": 3,
+      "deck": 4,
       "category": "Guest Services",
       "side": "starboard",
       "zone": "mid",
