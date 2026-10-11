@@ -357,6 +357,9 @@ export function sharesLineage(ship, members) {
 export function proposeCategories({ registry, categoryQids }) {
   const proposals = [];
   for (const ship of registry.ships) {
+    // Ships added by override have no Wikidata item; never match them against
+    // articles that have none either.
+    if (!ship.wikidataId) continue;
     const match = CATEGORY_TARGETS.find(([wpCategory]) =>
       categoryQids.get(wpCategory)?.has(ship.wikidataId)
     );

@@ -28,6 +28,15 @@
       }
     },
     {
+      "imo": "5302776",
+      "reason": "Wikipedia infobox for \"SS Ryndam (1950)\": out of service 2003, sank under tow to the breakers.",
+      "source": "https://en.wikipedia.org/wiki/SS_Ryndam_(1950)",
+      "set": {
+        "status": "retired",
+        "retirementYear": 2003
+      }
+    },
+    {
       "imo": "5404677",
       "reason": "Wikipedia infobox for \"MS Grigoriy Ordzhonikidze\" gives the ship class; Wikidata has no vessel-class statement.",
       "source": "https://en.wikipedia.org/wiki/MS_Grigoriy_Ordzhonikidze",
@@ -43,6 +52,15 @@
       "set": {
         "shipClass": "Mikhail Kalinin-class passenger ship",
         "shipClassId": "Q1933630"
+      }
+    },
+    {
+      "imo": "5522977",
+      "reason": "Wikipedia infobox for \"RMS Mauretania (1938)\": withdrawn and scrapped in 1965.",
+      "source": "https://en.wikipedia.org/wiki/RMS_Mauretania_(1938)",
+      "set": {
+        "status": "retired",
+        "retirementYear": 1965
       }
     },
     {
@@ -174,6 +192,14 @@
       }
     },
     {
+      "imo": "8314134",
+      "reason": "Wikipedia infobox for \"MS Celebration\" gives MMSI 255803270.",
+      "source": "https://en.wikipedia.org/wiki/MS_Celebration",
+      "set": {
+        "mmsi": "255803270"
+      }
+    },
+    {
       "imo": "8326008",
       "reason": "Wikipedia lists \"Volga Star\" in Category:River cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. Wikipedia infobox for \"Volga Star\" gives the ship class; Wikidata has no vessel-class statement. Wikipedia files this ship under Category:River cruise ships.",
       "source": "https://en.wikipedia.org/wiki/Volga_Star",
@@ -197,9 +223,14 @@
     },
     {
       "imo": "8420878",
-      "reason": "Wikipedia lists \"Wind Star (ship)\" in Category:Cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
-      "source": "https://en.wikipedia.org/wiki/Wind_Star_(ship)",
-      "include": "Q3569268"
+      "reason": "Wikipedia lists \"Wind Star (ship)\" in Category:Cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. (source for the fields above: https://en.wikipedia.org/wiki/Wind_Star_(ship)) The Windstar current-fleet table lists Wind Star (1986–present)",
+      "source": "https://en.wikipedia.org/wiki/Windstar_Cruises",
+      "include": "Q3569268",
+      "set": {
+        "operator": "Windstar Cruises",
+        "operatorId": "Q11045986",
+        "status": "in_service"
+      }
     },
     {
       "imo": "8422606",
@@ -230,12 +261,32 @@
       }
     },
     {
+      "imo": "8603509",
+      "reason": "The Windstar current-fleet table lists Wind Spirit (1988–present)",
+      "source": "https://en.wikipedia.org/wiki/Windstar_Cruises",
+      "set": {
+        "operator": "Windstar Cruises",
+        "operatorId": "Q11045986",
+        "status": "in_service"
+      }
+    },
+    {
       "imo": "8650813",
       "reason": "Wikipedia lists \"SV Noorderlicht\" in Category:Expedition cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. Wikipedia files this ship under Category:Expedition cruise ships.",
       "source": "https://en.wikipedia.org/wiki/SV_Noorderlicht",
       "include": "Q1855013",
       "set": {
         "category": "expedition"
+      }
+    },
+    {
+      "imo": "8700785",
+      "reason": "Wikipedia infobox for \"Wind Surf\" gives the current operator as Windstar Cruises. Wikipedia infobox for \"Wind Surf\" has the ship in service.",
+      "source": "https://en.wikipedia.org/wiki/Wind_Surf",
+      "set": {
+        "operator": "Windstar Cruises",
+        "operatorId": "Q11045986",
+        "status": "in_service"
       }
     },
     {
@@ -287,12 +338,22 @@
       }
     },
     {
+      "imo": "8807997",
+      "reason": "Wikipedia infobox for \"Star Breeze\" gives the current operator as Windstar Cruises.",
+      "source": "https://en.wikipedia.org/wiki/Star_Breeze",
+      "set": {
+        "operator": "Windstar Cruises",
+        "operatorId": "Q11045986"
+      }
+    },
+    {
       "imo": "8819512",
-      "reason": "Wikipedia infobox for \"Majesty of the Seas\" gives the ship class; Wikidata has no vessel-class statement.",
+      "reason": "Wikipedia infobox for \"Majesty of the Seas\" gives the ship class; Wikidata has no vessel-class statement. Wikipedia infobox for \"Majesty of the Seas\" gives capacity 2,767.",
       "source": "https://en.wikipedia.org/wiki/Majesty_of_the_Seas",
       "set": {
         "shipClass": "Sovereign-class cruise ship",
-        "shipClassId": "Q2975992"
+        "shipClassId": "Q2975992",
+        "maxCapacity": 2767
       }
     },
     {
@@ -376,6 +437,17 @@
       "include": "Q897158"
     },
     {
+      "imo": "9008598",
+      "reason": "Wikipedia infobox for \"Star Legend (ship)\" gives the current name as Star Legend. Wikipedia infobox for \"Star Legend (ship)\" gives the current operator as Windstar Cruises. Wikipedia infobox for \"Star Legend (ship)\" has the ship in service.",
+      "source": "https://en.wikipedia.org/wiki/Star_Legend_(ship)",
+      "set": {
+        "operator": "Windstar Cruises",
+        "operatorId": "Q11045986",
+        "status": "in_service",
+        "name": "Star Legend"
+      }
+    },
+    {
       "imo": "9048914",
       "reason": "Wikipedia lists \"MS Nordlys (1994)\" in List of cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
       "source": "https://en.wikipedia.org/wiki/MS_Nordlys_(1994)",
@@ -388,6 +460,16 @@
       "set": {
         "shipClass": "Vision-class cruise ship",
         "shipClassId": "Q2976021"
+      }
+    },
+    {
+      "imo": "9070632",
+      "reason": "Wikipedia infobox for \"Marella Discovery\" gives the current operator as Marella Cruises. Wikipedia infobox for \"Marella Discovery\" gives capacity 1,830.",
+      "source": "https://en.wikipedia.org/wiki/Marella_Discovery",
+      "set": {
+        "operator": "Marella Cruises",
+        "operatorId": "Q18636345",
+        "maxCapacity": 1830
       }
     },
     {
@@ -410,11 +492,12 @@
     },
     {
       "imo": "9111802",
-      "reason": "Wikipedia infobox for \"Enchantment of the Seas\" gives the ship class; Wikidata has no vessel-class statement.",
+      "reason": "Wikipedia infobox for \"Enchantment of the Seas\" gives the ship class; Wikidata has no vessel-class statement. Wikipedia infobox for \"Enchantment of the Seas\" gives capacity 2,446.",
       "source": "https://en.wikipedia.org/wiki/Enchantment_of_the_Seas",
       "set": {
         "shipClass": "Vision-class cruise ship",
-        "shipClassId": "Q2976021"
+        "shipClassId": "Q2976021",
+        "maxCapacity": 2446
       }
     },
     {
@@ -445,6 +528,14 @@
       }
     },
     {
+      "imo": "9156474",
+      "reason": "Wikipedia infobox for \"MS Regatta\" gives capacity 824.",
+      "source": "https://en.wikipedia.org/wiki/MS_Regatta",
+      "set": {
+        "maxCapacity": 824
+      }
+    },
+    {
       "imo": "9169550",
       "reason": "Wikipedia infobox for \"MV Queen of the Oceans\" gives the ship class; Wikidata has no vessel-class statement.",
       "source": "https://en.wikipedia.org/wiki/MV_Queen_of_the_Oceans",
@@ -463,30 +554,76 @@
       }
     },
     {
+      "imo": "9187899",
+      "reason": "Wikipedia infobox for \"MS Sirena\" gives capacity 826.",
+      "source": "https://en.wikipedia.org/wiki/MS_Sirena",
+      "set": {
+        "maxCapacity": 826
+      }
+    },
+    {
+      "imo": "9188647",
+      "reason": "Wikipedia infobox for \"Carnival Spirit\" gives the current operator as Carnival Cruise Line. Wikipedia infobox for \"Carnival Spirit\" has the ship in service. Wikipedia infobox for \"Carnival Spirit\" gives capacity 2,124.",
+      "source": "https://en.wikipedia.org/wiki/Carnival_Spirit",
+      "set": {
+        "operator": "Carnival Cruise Line",
+        "operatorId": "Q656554",
+        "status": "in_service",
+        "maxCapacity": 2124
+      }
+    },
+    {
       "imo": "9192351",
-      "reason": "Wikipedia infobox for \"Carnival Adventure\" gives the ship class; Wikidata has no vessel-class statement.",
+      "reason": "Wikipedia infobox for \"Carnival Adventure\" gives the ship class; Wikidata has no vessel-class statement. Wikipedia infobox for \"Carnival Adventure\" gives the current name as Carnival Adventure. Wikipedia infobox for \"Carnival Adventure\" gives the current operator as Carnival Cruise Line.",
       "source": "https://en.wikipedia.org/wiki/Carnival_Adventure",
       "set": {
         "shipClass": "Grand-class cruise ship",
-        "shipClassId": "Q3114654"
+        "shipClassId": "Q3114654",
+        "operator": "Carnival Cruise Line",
+        "operatorId": "Q656554",
+        "name": "Carnival Adventure"
       }
     },
     {
       "imo": "9192363",
-      "reason": "Wikipedia infobox for \"Carnival Encounter\" gives the ship class; Wikidata has no vessel-class statement.",
+      "reason": "Wikipedia infobox for \"Carnival Encounter\" gives the ship class; Wikidata has no vessel-class statement. Wikipedia infobox for \"Carnival Encounter\" gives the current name as Carnival Encounter. Wikipedia infobox for \"Carnival Encounter\" gives the current operator as Carnival Cruise Line.",
       "source": "https://en.wikipedia.org/wiki/Carnival_Encounter",
       "set": {
         "shipClass": "Grand-class cruise ship",
-        "shipClassId": "Q3114654"
+        "shipClassId": "Q3114654",
+        "operator": "Carnival Cruise Line",
+        "operatorId": "Q656554",
+        "name": "Carnival Encounter"
       }
     },
     {
       "imo": "9195195",
-      "reason": "Wikipedia infobox for \"Radiance of the Seas\" gives the ship class; Wikidata has no vessel-class statement.",
+      "reason": "Wikipedia infobox for \"Radiance of the Seas\" gives the ship class; Wikidata has no vessel-class statement. Wikipedia infobox for \"Radiance of the Seas\" gives capacity 2,501.",
       "source": "https://en.wikipedia.org/wiki/Radiance_of_the_Seas",
       "set": {
         "shipClass": "Radiance-class cruise ship",
-        "shipClassId": "Q2975978"
+        "shipClassId": "Q2975978",
+        "maxCapacity": 2501
+      }
+    },
+    {
+      "imo": "9195200",
+      "reason": "Wikipedia infobox for \"Brilliance of the Seas\" gives the current operator as Royal Caribbean International. Wikipedia infobox for \"Brilliance of the Seas\" gives capacity 2,543.",
+      "source": "https://en.wikipedia.org/wiki/Brilliance_of_the_Seas",
+      "set": {
+        "operator": "Royal Caribbean International",
+        "operatorId": "Q929872",
+        "maxCapacity": 2543
+      }
+    },
+    {
+      "imo": "9200938",
+      "reason": "Wikipedia infobox for \"MS Nautica\" gives the current operator as Oceania Cruises. Wikipedia infobox for \"MS Nautica\" has the ship in service.",
+      "source": "https://en.wikipedia.org/wiki/MS_Nautica",
+      "set": {
+        "operator": "Oceania Cruises",
+        "operatorId": "Q379437",
+        "status": "in_service"
       }
     },
     {
@@ -500,11 +637,13 @@
     },
     {
       "imo": "9215490",
-      "reason": "Wikipedia infobox for \"Caribbean Princess\" gives the ship class; Wikidata has no vessel-class statement.",
+      "reason": "Wikipedia infobox for \"Caribbean Princess\" gives the ship class; Wikidata has no vessel-class statement. Wikipedia infobox for \"Caribbean Princess\" gives the current operator as Princess Cruises.",
       "source": "https://en.wikipedia.org/wiki/Caribbean_Princess",
       "set": {
         "shipClass": "Grand-class cruise ship",
-        "shipClassId": "Q3114654"
+        "shipClassId": "Q3114654",
+        "operator": "Princess Cruises",
+        "operatorId": "Q745700"
       }
     },
     {
@@ -514,6 +653,25 @@
       "set": {
         "shipClass": "Sun-class cruise ship",
         "shipClassId": "Q2975998"
+      }
+    },
+    {
+      "imo": "9221281",
+      "reason": "Wikipedia infobox for \"MS Oosterdam\" gives the current operator as Holland America Line. Wikipedia infobox for \"MS Oosterdam\" has the ship in service.",
+      "source": "https://en.wikipedia.org/wiki/MS_Oosterdam",
+      "set": {
+        "operator": "Holland America Line",
+        "operatorId": "Q1624735",
+        "status": "in_service"
+      }
+    },
+    {
+      "imo": "9228186",
+      "reason": "Wikipedia infobox for \"Sapphire Princess\" gives the current operator as Princess Cruises.",
+      "source": "https://en.wikipedia.org/wiki/Sapphire_Princess",
+      "set": {
+        "operator": "Princess Cruises",
+        "operatorId": "Q745700"
       }
     },
     {
@@ -579,11 +737,21 @@
     },
     {
       "imo": "9293399",
-      "reason": "Wikipedia infobox for \"Crown Princess (2005)\" gives the ship class; Wikidata has no vessel-class statement.",
+      "reason": "Wikipedia infobox for \"Crown Princess (2005)\" gives the ship class; Wikidata has no vessel-class statement. Wikipedia infobox for \"Crown Princess (2005)\" gives the current operator as Princess Cruises.",
       "source": "https://en.wikipedia.org/wiki/Crown_Princess_(2005)",
       "set": {
         "shipClass": "Grand-class cruise ship",
-        "shipClassId": "Q3114654"
+        "shipClassId": "Q3114654",
+        "operator": "Princess Cruises",
+        "operatorId": "Q745700"
+      }
+    },
+    {
+      "imo": "9320087",
+      "reason": "Wikipedia infobox for \"MSC Musica\" gives capacity 2,550.",
+      "source": "https://en.wikipedia.org/wiki/MSC_Musica",
+      "set": {
+        "maxCapacity": 2550
       }
     },
     {
@@ -596,10 +764,36 @@
       }
     },
     {
+      "imo": "9333175",
+      "reason": "Wikipedia infobox for \"MV Ventura\" gives the current operator as P&O Cruises.",
+      "source": "https://en.wikipedia.org/wiki/MV_Ventura",
+      "set": {
+        "operator": "P&O Cruises",
+        "operatorId": "Q1759468"
+      }
+    },
+    {
       "imo": "9334088",
       "reason": "Wikipedia lists \"National Geographic Endeavour II\" in Category:Ships of Lindblad Expeditions, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
       "source": "https://en.wikipedia.org/wiki/National_Geographic_Endeavour_II",
       "include": "Q105764886"
+    },
+    {
+      "imo": "9334868",
+      "reason": "Wikipedia infobox for \"AIDAluna\" gives the current operator as AIDA Cruises.",
+      "source": "https://en.wikipedia.org/wiki/AIDAluna",
+      "set": {
+        "operator": "AIDA Cruises",
+        "operatorId": "Q293469"
+      }
+    },
+    {
+      "imo": "9342281",
+      "reason": "Wikipedia infobox for \"Norwegian Pearl\" gives capacity 2,394.",
+      "source": "https://en.wikipedia.org/wiki/Norwegian_Pearl",
+      "set": {
+        "maxCapacity": 2394
+      }
     },
     {
       "imo": "9370018",
@@ -629,24 +823,69 @@
     },
     {
       "imo": "9398917",
-      "reason": "Wikipedia infobox for \"Costa Deliziosa\" gives the ship class; Wikidata has no vessel-class statement.",
+      "reason": "Wikipedia infobox for \"Costa Deliziosa\" gives the ship class; Wikidata has no vessel-class statement. Wikipedia infobox for \"Costa Deliziosa\" gives capacity 2,828.",
       "source": "https://en.wikipedia.org/wiki/Costa_Deliziosa",
       "set": {
         "shipClass": "Vista (2002)-class cruise ship",
-        "shipClassId": "Q1346396"
+        "shipClassId": "Q1346396",
+        "maxCapacity": 2828
+      }
+    },
+    {
+      "imo": "9410569",
+      "reason": "Wikipedia infobox for \"Norwegian Epic\" gives the current operator as Norwegian Cruise Line. Wikipedia infobox for \"Norwegian Epic\" has the ship in service.",
+      "source": "https://en.wikipedia.org/wiki/Norwegian_Epic",
+      "set": {
+        "operator": "Norwegian Cruise Line",
+        "operatorId": "Q130309",
+        "status": "in_service"
       }
     },
     {
       "imo": "9437866",
-      "reason": "Wikipedia lists \"Silver Spirit (ship)\" in List of cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
+      "reason": "Wikipedia lists \"Silver Spirit (ship)\" in List of cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. Wikipedia infobox for \"Silver Spirit (ship)\" gives the current operator as Silversea Cruises. Wikipedia infobox for \"Silver Spirit (ship)\" has the ship in service.",
       "source": "https://en.wikipedia.org/wiki/Silver_Spirit_(ship)",
-      "include": "Q2286554"
+      "include": "Q2286554",
+      "set": {
+        "operator": "Silversea Cruises",
+        "operatorId": "Q2286599",
+        "status": "in_service"
+      }
+    },
+    {
+      "imo": "9438078",
+      "reason": "Wikipedia infobox for \"MS Riviera\" gives the current operator as Oceania Cruises. The Oceania Cruises fleet table lists Riviera in the current fleet (in service 2012) (source for status: https://en.wikipedia.org/wiki/Oceania_Cruises)",
+      "source": "https://en.wikipedia.org/wiki/MS_Riviera",
+      "set": {
+        "operator": "Oceania Cruises",
+        "operatorId": "Q379437",
+        "status": "in_service"
+      }
+    },
+    {
+      "imo": "9445590",
+      "reason": "Wikipedia infobox for \"Disney Fantasy\" gives capacity 4,000.",
+      "source": "https://en.wikipedia.org/wiki/Disney_Fantasy",
+      "set": {
+        "maxCapacity": 4000
+      }
     },
     {
       "imo": "9455882",
       "reason": "Wikipedia lists \"National Geographic Delfina\" in Category:Ships of Lindblad Expeditions, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
       "source": "https://en.wikipedia.org/wiki/National_Geographic_Delfina",
       "include": "Q54933225"
+    },
+    {
+      "imo": "9479852",
+      "reason": "Wikipedia infobox for \"Costa Favolosa\" gives the current operator as Costa Cruises. Wikipedia infobox for \"Costa Favolosa\" has the ship in service. Wikipedia infobox for \"Costa Favolosa\" gives capacity 3,780.",
+      "source": "https://en.wikipedia.org/wiki/Costa_Favolosa",
+      "set": {
+        "operator": "Costa Cruises",
+        "operatorId": "Q1136349",
+        "status": "in_service",
+        "maxCapacity": 3780
+      }
     },
     {
       "imo": "9502506",
@@ -718,6 +957,15 @@
       }
     },
     {
+      "imo": "9731171",
+      "reason": "Wikipedia infobox for \"MV Seabourn Encore\" gives the current operator as Seabourn Cruise Line.",
+      "source": "https://en.wikipedia.org/wiki/MV_Seabourn_Encore",
+      "set": {
+        "operator": "Seabourn Cruise Line",
+        "operatorId": "Q282903"
+      }
+    },
+    {
       "imo": "9733105",
       "reason": "Wikipedia infobox for \"Genting Dream\" gives the ship class; Wikidata has no vessel-class statement.",
       "source": "https://en.wikipedia.org/wiki/Genting_Dream",
@@ -737,11 +985,12 @@
     },
     {
       "imo": "9745378",
-      "reason": "Wikipedia infobox for \"MSC Seaview\" gives the ship class; Wikidata has no vessel-class statement.",
+      "reason": "Wikipedia infobox for \"MSC Seaview\" gives the ship class; Wikidata has no vessel-class statement. Wikipedia infobox for \"MSC Seaview\" gives capacity 5,119.",
       "source": "https://en.wikipedia.org/wiki/MSC_Seaview",
       "set": {
         "shipClass": "Seaside-class cruise ship",
-        "shipClassId": "Q25391838"
+        "shipClassId": "Q25391838",
+        "maxCapacity": 5119
       }
     },
     {
@@ -755,11 +1004,22 @@
     },
     {
       "imo": "9751511",
-      "reason": "Wikipedia infobox for \"Norwegian Encore\" gives the ship class; Wikidata has no vessel-class statement.",
+      "reason": "Wikipedia infobox for \"Norwegian Encore\" gives the ship class; Wikidata has no vessel-class statement. Wikipedia infobox for \"Norwegian Encore\" gives MMSI 311000879.",
       "source": "https://en.wikipedia.org/wiki/Norwegian_Encore",
       "set": {
         "shipClass": "Breakaway-class cruise ship",
-        "shipClassId": "Q15789743"
+        "shipClassId": "Q15789743",
+        "mmsi": "311000879"
+      }
+    },
+    {
+      "imo": "9764958",
+      "reason": "Wikipedia infobox for \"MV Seabourn Ovation\" gives the current operator as Seabourn Cruise Line. Wikipedia infobox for \"MV Seabourn Ovation\" gives MMSI 311000585.",
+      "source": "https://en.wikipedia.org/wiki/MV_Seabourn_Ovation",
+      "set": {
+        "operator": "Seabourn Cruise Line",
+        "operatorId": "Q282903",
+        "mmsi": "311000585"
       }
     },
     {
@@ -769,6 +1029,15 @@
       "set": {
         "shipClass": "Excellence-class cruise ship",
         "shipClassId": "Q28456719"
+      }
+    },
+    {
+      "imo": "9781889",
+      "reason": "Wikipedia infobox for \"Costa Smeralda (ship)\" gives the current operator as Costa Cruises.",
+      "source": "https://en.wikipedia.org/wiki/Costa_Smeralda_(ship)",
+      "set": {
+        "operator": "Costa Cruises",
+        "operatorId": "Q1136349"
       }
     },
     {
@@ -787,10 +1056,43 @@
       "include": "Q43022014"
     },
     {
+      "imo": "9795737",
+      "reason": "Wikipedia infobox for \"Odyssey of the Seas\" gives 169,379 GT.",
+      "source": "https://en.wikipedia.org/wiki/Odyssey_of_the_Seas",
+      "set": {
+        "grossTonnage": 169379
+      }
+    },
+    {
       "imo": "9796250",
-      "reason": "Wikipedia lists \"Viking Orion\" in List of cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
+      "reason": "Wikipedia lists \"Viking Orion\" in List of cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. Wikipedia infobox for \"Viking Orion\" gives the current operator as Viking Ocean Cruises. Wikipedia infobox for \"Viking Orion\" has the ship in service. Wikipedia infobox for \"Viking Orion\" gives capacity 930.",
       "source": "https://en.wikipedia.org/wiki/Viking_Orion",
-      "include": "Q83650670"
+      "include": "Q83650670",
+      "set": {
+        "operator": "Viking Ocean Cruises",
+        "operatorId": "Q17091043",
+        "status": "in_service",
+        "maxCapacity": 930
+      }
+    },
+    {
+      "imo": "9796262",
+      "reason": "The Viking fleet table lists Viking Jupiter (2019, 47,842 GT) in the current ocean fleet.",
+      "source": "https://en.wikipedia.org/wiki/Viking_(cruise_line)",
+      "set": {
+        "operator": "Viking Ocean Cruises",
+        "operatorId": "Q17091043",
+        "status": "in_service",
+        "grossTonnage": 47842
+      }
+    },
+    {
+      "imo": "9801689",
+      "reason": "Wikipedia infobox for \"Carnival Venezia\" gives MMSI 311001253.",
+      "source": "https://en.wikipedia.org/wiki/Carnival_Venezia",
+      "set": {
+        "mmsi": "311001253"
+      }
     },
     {
       "imo": "9802396",
@@ -802,10 +1104,37 @@
       }
     },
     {
+      "imo": "9803625",
+      "reason": "Wikipedia infobox for \"MSC Virtuosa\" gives MMSI 215610000. Wikipedia infobox for \"MSC Virtuosa\" gives 181,541 GT.",
+      "source": "https://en.wikipedia.org/wiki/MSC_Virtuosa",
+      "set": {
+        "mmsi": "215610000",
+        "grossTonnage": 181541
+      }
+    },
+    {
+      "imo": "9805336",
+      "reason": "Wikipedia infobox for \"Valiant Lady (ship)\" gives the current operator as Virgin Voyages. Wikipedia infobox for \"Valiant Lady (ship)\" has the ship in service. Wikipedia infobox for \"Valiant Lady (ship)\" gives capacity 2,770.",
+      "source": "https://en.wikipedia.org/wiki/Valiant_Lady_(ship)",
+      "set": {
+        "operator": "Virgin Voyages",
+        "operatorId": "Q20539284",
+        "status": "in_service",
+        "maxCapacity": 2770
+      }
+    },
+    {
       "imo": "9805348",
-      "reason": "Wikipedia lists \"Resilient Lady\" in Category:Cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
+      "reason": "Wikipedia lists \"Resilient Lady\" in Category:Cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it. Wikipedia infobox for \"Resilient Lady\" gives the current operator as Virgin Voyages. Wikipedia infobox for \"Resilient Lady\" has the ship in service. Wikipedia infobox for \"Resilient Lady\" gives MMSI 311001056. Wikipedia infobox for \"Resilient Lady\" gives capacity 2,770.",
       "source": "https://en.wikipedia.org/wiki/Resilient_Lady",
-      "include": "Q113679865"
+      "include": "Q113679865",
+      "set": {
+        "operator": "Virgin Voyages",
+        "operatorId": "Q20539284",
+        "status": "in_service",
+        "mmsi": "311001056",
+        "maxCapacity": 2770
+      }
     },
     {
       "imo": "9807126",
@@ -818,11 +1147,13 @@
     },
     {
       "imo": "9808986",
-      "reason": "Wikipedia infobox for \"Disney Adventure\" gives the ship class; Wikidata has no vessel-class statement.",
+      "reason": "Wikipedia infobox for \"Disney Adventure\" gives the ship class; Wikidata has no vessel-class statement. Wikipedia infobox for \"Disney Adventure\" has the ship in service. Wikipedia infobox for \"Disney Adventure\" gives capacity 6,700.",
       "source": "https://en.wikipedia.org/wiki/Disney_Adventure",
       "set": {
         "shipClass": "Global-class cruise ship",
-        "shipClassId": "Q55612706"
+        "shipClassId": "Q55612706",
+        "status": "in_service",
+        "maxCapacity": 6700
       }
     },
     {
@@ -852,12 +1183,71 @@
       }
     },
     {
+      "imo": "9821873",
+      "reason": "Wikipedia infobox for \"Silver Endeavour\" gives MMSI 311000932. Wikipedia infobox for \"Silver Endeavour\" gives 20,449 GT. Wikipedia infobox for \"Silver Endeavour\" gives capacity 200.",
+      "source": "https://en.wikipedia.org/wiki/Silver_Endeavour",
+      "set": {
+        "mmsi": "311000932",
+        "grossTonnage": 20449,
+        "maxCapacity": 200
+      }
+    },
+    {
+      "imo": "9823687",
+      "reason": "The Ritz-Carlton Yacht Collection current-fleet table lists Evrima (2022–present, 25,400 GT)",
+      "source": "https://en.wikipedia.org/wiki/The_Ritz-Carlton_Yacht_Collection",
+      "set": {
+        "operator": "The Ritz-Carlton Yacht Collection",
+        "operatorId": "Q125917043",
+        "status": "in_service",
+        "grossTonnage": 25400
+      }
+    },
+    {
+      "imo": "9823998",
+      "reason": "Wikipedia infobox for \"Norwegian Viva\" gives MMSI 311001127.",
+      "source": "https://en.wikipedia.org/wiki/Norwegian_Viva",
+      "set": {
+        "mmsi": "311001127"
+      }
+    },
+    {
       "imo": "9824007",
       "reason": "Wikipedia infobox for \"Norwegian Aqua\" gives the ship class; Wikidata has no vessel-class statement.",
       "source": "https://en.wikipedia.org/wiki/Norwegian_Aqua",
       "set": {
         "shipClass": "Prima-class cruise ship",
         "shipClassId": "Q42317734"
+      }
+    },
+    {
+      "imo": "9829942",
+      "reason": "Wikipedia infobox for \"Star of the Seas\" gives capacity 7,600.",
+      "source": "https://en.wikipedia.org/wiki/Star_of_the_Seas",
+      "set": {
+        "maxCapacity": 7600
+      }
+    },
+    {
+      "imo": "9833175",
+      "reason": "Wikidata item Q110929586 (Viking Venus, IMO 9833175) is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it; the Viking fleet table lists Viking Venus (2021) in the current ocean fleet.",
+      "source": "https://en.wikipedia.org/wiki/Viking_(cruise_line)",
+      "include": "Q110929586",
+      "set": {
+        "operator": "Viking Ocean Cruises",
+        "operatorId": "Q17091043",
+        "status": "in_service",
+        "category": "ocean"
+      }
+    },
+    {
+      "imo": "9833187",
+      "reason": "The Viking fleet table lists Viking Mars (2022) in the current ocean fleet.",
+      "source": "https://en.wikipedia.org/wiki/Viking_(cruise_line)",
+      "set": {
+        "operator": "Viking Ocean Cruises",
+        "operatorId": "Q17091043",
+        "status": "in_service"
       }
     },
     {
@@ -871,20 +1261,30 @@
     },
     {
       "imo": "9837444",
-      "reason": "Wikipedia infobox for \"Mardi Gras (2020 ship)\" gives the ship class; Wikidata has no vessel-class statement.",
+      "reason": "Wikipedia infobox for \"Mardi Gras (2020 ship)\" gives the ship class; Wikidata has no vessel-class statement. Wikipedia infobox for \"Mardi Gras (2020 ship)\" gives 181,808 GT.",
       "source": "https://en.wikipedia.org/wiki/Mardi_Gras_(2020_ship)",
       "set": {
         "shipClass": "Excellence-class cruise ship",
-        "shipClassId": "Q28456719"
+        "shipClassId": "Q28456719",
+        "grossTonnage": 181808
       }
     },
     {
       "imo": "9837456",
-      "reason": "Wikipedia infobox for \"Carnival Celebration\" gives the ship class; Wikidata has no vessel-class statement.",
+      "reason": "Wikipedia infobox for \"Carnival Celebration\" gives the ship class; Wikidata has no vessel-class statement. Wikipedia infobox for \"Carnival Celebration\" gives 183,521 GT.",
       "source": "https://en.wikipedia.org/wiki/Carnival_Celebration",
       "set": {
         "shipClass": "Excellence-class cruise ship",
-        "shipClassId": "Q28456719"
+        "shipClassId": "Q28456719",
+        "grossTonnage": 183521
+      }
+    },
+    {
+      "imo": "9837470",
+      "reason": "Wikipedia infobox for \"MS Rotterdam (2020)\" gives MMSI 245464000.",
+      "source": "https://en.wikipedia.org/wiki/MS_Rotterdam_(2020)",
+      "set": {
+        "mmsi": "245464000"
       }
     },
     {
@@ -913,18 +1313,40 @@
       }
     },
     {
+      "imo": "9838618",
+      "reason": "Wikidata item Q83651698 (Silver Moon, IMO 9838618) is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it; the Silversea current-fleet table lists Silver Moon (2020–present).",
+      "source": "https://en.wikipedia.org/wiki/Silversea_Cruises",
+      "include": "Q83651698",
+      "set": {
+        "operator": "Silversea Cruises",
+        "operatorId": "Q2286599",
+        "status": "in_service",
+        "category": "ocean"
+      }
+    },
+    {
       "imo": "9838644",
       "reason": "Wikipedia lists \"Coral Adventurer\" in Category:Cruise ships, but its Wikidata item is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it.",
       "source": "https://en.wikipedia.org/wiki/Coral_Adventurer",
       "include": "Q104382190"
     },
     {
+      "imo": "9839399",
+      "reason": "Wikipedia infobox for \"MS Queen Anne\" gives 114,188 GT.",
+      "source": "https://en.wikipedia.org/wiki/MS_Queen_Anne",
+      "set": {
+        "grossTonnage": 114188
+      }
+    },
+    {
       "imo": "9843792",
-      "reason": "Wikipedia infobox for \"MSC Seashore\" gives the ship class; Wikidata has no vessel-class statement.",
+      "reason": "Wikipedia infobox for \"MSC Seashore\" gives the ship class; Wikidata has no vessel-class statement. Wikipedia infobox for \"MSC Seashore\" gives MMSI 215920000. Wikipedia infobox for \"MSC Seashore\" gives 170,412 GT.",
       "source": "https://en.wikipedia.org/wiki/MSC_Seashore",
       "set": {
         "shipClass": "Seaside-class cruise ship",
-        "shipClassId": "Q25391838"
+        "shipClassId": "Q25391838",
+        "mmsi": "215920000",
+        "grossTonnage": 170412
       }
     },
     {
@@ -938,37 +1360,123 @@
     },
     {
       "imo": "9849693",
-      "reason": "Wikipedia infobox for \"MS Arvia\" gives the ship class; Wikidata has no vessel-class statement.",
+      "reason": "Wikipedia infobox for \"MS Arvia\" gives the ship class; Wikidata has no vessel-class statement. Wikipedia infobox for \"MS Arvia\" gives capacity 6,685.",
       "source": "https://en.wikipedia.org/wiki/MS_Arvia",
       "set": {
         "shipClass": "Excellence-class cruise ship",
-        "shipClassId": "Q28456719"
+        "shipClassId": "Q28456719",
+        "maxCapacity": 6685
       }
     },
     {
       "imo": "9851737",
-      "reason": "Wikipedia infobox for \"Carnival Jubilee\" gives the ship class; Wikidata has no vessel-class statement.",
+      "reason": "Wikipedia infobox for \"Carnival Jubilee\" gives the ship class; Wikidata has no vessel-class statement. Wikipedia infobox for \"Carnival Jubilee\" gives MMSI 311001390. Wikipedia infobox for \"Carnival Jubilee\" gives 183,521 GT.",
       "source": "https://en.wikipedia.org/wiki/Carnival_Jubilee",
       "set": {
         "shipClass": "Excellence-class cruise ship",
-        "shipClassId": "Q28456719"
+        "shipClassId": "Q28456719",
+        "mmsi": "311001390",
+        "grossTonnage": 183521
+      }
+    },
+    {
+      "imo": "9852444",
+      "reason": "Wikipedia infobox for \"Viking Vesta\" gives MMSI 257944000. Wikipedia infobox for \"Viking Vesta\" gives 53,769 GT.",
+      "source": "https://en.wikipedia.org/wiki/Viking_Vesta",
+      "set": {
+        "mmsi": "257944000",
+        "grossTonnage": 53769
+      }
+    },
+    {
+      "imo": "9857937",
+      "reason": "The Silversea current-fleet table lists Silver Dawn (2021–present, 596 passengers)",
+      "source": "https://en.wikipedia.org/wiki/Silversea_Cruises",
+      "set": {
+        "operator": "Silversea Cruises",
+        "operatorId": "Q2286599",
+        "status": "in_service",
+        "maxCapacity": 596
       }
     },
     {
       "imo": "9862023",
-      "reason": "Wikipedia files this ship under Category:Expedition cruise ships.",
-      "source": "https://en.wikipedia.org/wiki/Category%3AExpedition_cruise_ships",
+      "reason": "Wikipedia files this ship under Category:Expedition cruise ships. (source for the fields above: https://en.wikipedia.org/wiki/Category%3AExpedition_cruise_ships) Wikipedia infobox for \"Seabourn Venture\" gives MMSI 311000930.",
+      "source": "https://en.wikipedia.org/wiki/Seabourn_Venture",
       "set": {
-        "category": "expedition"
+        "category": "expedition",
+        "mmsi": "311000930"
+      }
+    },
+    {
+      "imo": "9862035",
+      "reason": "Wikidata item Q113679904 (Seabourn Pursuit, IMO 9862035) is not typed as a cruise ship and has no cruise-line operator, so the registry query misses it; the Seabourn fleet table lists Seabourn Pursuit (2023) in the current fleet.",
+      "source": "https://en.wikipedia.org/wiki/Seabourn_Cruise_Line",
+      "include": "Q113679904",
+      "set": {
+        "operator": "Seabourn Cruise Line",
+        "operatorId": "Q282903",
+        "status": "in_service",
+        "category": "ocean"
       }
     },
     {
       "imo": "9863118",
-      "reason": "Wikipedia infobox for \"Sun Princess (2024)\" gives the ship class; Wikidata has no vessel-class statement.",
+      "reason": "Wikipedia infobox for \"Sun Princess (2024)\" gives the ship class; Wikidata has no vessel-class statement. Wikipedia article \"Sun Princess (2024)\" names the ship Sun Princess (the Wikidata label carries a disambiguator) Wikipedia infobox for \"Sun Princess (2024)\" gives the current operator as Princess Cruises. Wikipedia infobox for \"Sun Princess (2024)\" gives 177,882 GT.",
       "source": "https://en.wikipedia.org/wiki/Sun_Princess_(2024)",
       "set": {
         "shipClass": "Sphere-class cruise ship",
-        "shipClassId": "Q108940077"
+        "shipClassId": "Q108940077",
+        "operator": "Princess Cruises",
+        "operatorId": "Q745700",
+        "grossTonnage": 177882,
+        "name": "Sun Princess"
+      }
+    },
+    {
+      "imo": "9863120",
+      "reason": "Star Princess (2024) has a Wikidata item (Q138330515) with no IMO statement, so the registry cannot match it. Wikipedia infobox for \"Star Princess (2024)\" gives IMO 9863120, MMSI 247502300, 177,882 GT, Sphere class, builder Fincantieri, operator Princess Cruises, capacity 4,300, maiden voyage 4 October 2025, in active service.",
+      "source": "https://en.wikipedia.org/wiki/Star_Princess_(2024)",
+      "add": {
+        "name": "Star Princess",
+        "mmsi": "247502300",
+        "operator": "Princess Cruises",
+        "operatorId": "Q745700",
+        "shipClass": "Sphere-class cruise ship",
+        "shipClassId": "Q108940077",
+        "builder": "Fincantieri",
+        "grossTonnage": 177882,
+        "inServiceYear": 2025,
+        "maxCapacity": 4300,
+        "status": "in_service",
+        "category": "ocean"
+      }
+    },
+    {
+      "imo": "9863194",
+      "reason": "Wikipedia infobox for \"Viking Octantis\" gives 30,150 GT.",
+      "source": "https://en.wikipedia.org/wiki/Viking_Octantis",
+      "set": {
+        "grossTonnage": 30150
+      }
+    },
+    {
+      "imo": "9876957",
+      "reason": "The Oceania Cruises fleet table lists Vista (Allura class, in service April 2023, 67,817 GT)",
+      "source": "https://en.wikipedia.org/wiki/Oceania_Cruises",
+      "set": {
+        "operator": "Oceania Cruises",
+        "operatorId": "Q379437",
+        "status": "in_service",
+        "grossTonnage": 67817
+      }
+    },
+    {
+      "imo": "9876969",
+      "reason": "The Oceania Cruises fleet table lists Allura at 67,817 GT.",
+      "source": "https://en.wikipedia.org/wiki/Oceania_Cruises",
+      "set": {
+        "grossTonnage": 67817
       }
     },
     {
@@ -978,6 +1486,49 @@
       "set": {
         "shipClass": "Edge-class cruise ship",
         "shipClassId": "Q36847697"
+      }
+    },
+    {
+      "imo": "9886213",
+      "reason": "Wikipedia infobox for \"Silver Nova\" gives the current operator as Silversea Cruises. Wikipedia infobox for \"Silver Nova\" has the ship in service. Wikipedia infobox for \"Silver Nova\" gives 54,700 GT. Wikipedia infobox for \"Silver Nova\" gives capacity 728.",
+      "source": "https://en.wikipedia.org/wiki/Silver_Nova",
+      "set": {
+        "operator": "Silversea Cruises",
+        "operatorId": "Q2286599",
+        "status": "in_service",
+        "grossTonnage": 54700,
+        "maxCapacity": 728
+      }
+    },
+    {
+      "imo": "9886225",
+      "reason": "The Silversea current-fleet table lists Silver Ray (2024–present, 728 passengers, 55,051 GT)",
+      "source": "https://en.wikipedia.org/wiki/Silversea_Cruises",
+      "set": {
+        "operator": "Silversea Cruises",
+        "operatorId": "Q2286599",
+        "status": "in_service",
+        "grossTonnage": 55051,
+        "maxCapacity": 728
+      }
+    },
+    {
+      "imo": "9901544",
+      "reason": "Wikipedia infobox for \"MSC Euribia\" gives MMSI 256281000.",
+      "source": "https://en.wikipedia.org/wiki/MSC_Euribia",
+      "set": {
+        "mmsi": "256281000"
+      }
+    },
+    {
+      "imo": "9967586",
+      "reason": "The Ritz-Carlton Yacht Collection current-fleet table lists Ilma (2024–present, 46,750 GT)",
+      "source": "https://en.wikipedia.org/wiki/The_Ritz-Carlton_Yacht_Collection",
+      "set": {
+        "operator": "The Ritz-Carlton Yacht Collection",
+        "operatorId": "Q125917043",
+        "status": "in_service",
+        "grossTonnage": 46750
       }
     }
   ]
