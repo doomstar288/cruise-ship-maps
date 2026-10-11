@@ -358,7 +358,7 @@ drawn). Not every bank serves every deck.
 | --- | --- |
 | `fwd` | 2–12, 14–17 |
 | `mid` | 2–12, 14–16 |
-| `aft` | 2–12, 14–15 |
+| `aft` | 2, 4–12, 14–15 (not 3: Celebrity's plan has the main restaurants across the ship there) |
 | Aft stairwell (`stairs-aft`, stairs only) | 7–12 |
 
 Every elevator core also has stairs between neighbouring served decks. Elevator and stairwell
@@ -408,14 +408,20 @@ the consumer prefers.
 ## Size
 
 The budget is **≤ 15 % gzipped growth** of `plan.json` over a recorded baseline,
-`scripts/pack-size-baseline.json`: `main` before routing, 59,100 bytes gzipped (Node `zlib`
-default level). The exporter's summary line prints raw and gzipped size before → after on every
+`scripts/pack-size-baseline.json`: `main` before Xcel's staterooms took Celebrity's real numbers
+and positions, 65,635 bytes gzipped (Node `zlib` default level; it was 59,100 B, `main` before
+routing, until then). The exporter's summary line prints raw and gzipped size before → after on every
 run.
 
 | `plan.json` | Raw | Gzipped |
 | --- | --- | --- |
 | Before routing | 619,443 B | 59,100 B |
 | With routing | 640,790 B (+3.4 %) | 63,547 B (+7.5 %) |
+| Before official stateroom positions (new baseline) | 650,883 B | 65,635 B |
+| With official stateroom positions | 699,812 B (+7.5 %) | 71,408 B (+8.8 %) |
+
+Celebrity's own numbering and spacing make the cabin rows irregular: their bounds compress less
+and the walk graph needs more corridor nodes beside them (routing 5.2 → 7.4 KB gzipped).
 
 The first draft used plain objects (`{ "id", "deck", "at", "kind" }` nodes and `{ "from", "to",
 "kind", "lengthM" }` edges, with pairwise elevator edges). It came to about 13 KB gzipped, +22 %.

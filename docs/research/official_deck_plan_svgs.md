@@ -44,11 +44,19 @@ The report lists:
 - per deck and side, stateroom numbers missing from the pack and pack numbers not on the plan.
 
 `--write` saves the facts to `src/data/ships/<shipId>/official-facts.json`. Commit that file:
-it holds no geometry, only names, decks, zones, sides, a 0–1 bow-to-stern position rounded to
-hundredths, and stateroom numbers.
+it holds no geometry, only names, decks, zones, sides, a 0–1 bow-to-stern position (hundredths
+for venues, thousandths for staterooms), and each stateroom's number, side and row (`outside` on
+the hull, `inside` one corridor in).
 
 Applying the findings is a normal code change: fix decks and zones, set `verified` in the generator,
-and correct `cabinRanges` in the ship's `manifest.json`. Then `npm run export:packs`.
+then `npm run export:packs` and `npm run record:route-fixtures`.
+
+Xcel's generator reads the stateroom facts directly: `officialCabins()` turns each one into a
+`placed` cabin for `generateStaterooms`, which draws one cabin of the generator's type at that
+spot (position × ship length). Cabins labelled at one spot are spread apart, inside cabins step
+out of lift lobbies, inside cabins where the bow is too narrow join the hull row, and a deep
+suite keeps to a standard depth beside a lobby or an inside cabin. So every number on Celebrity's
+plan is in the pack, on the right side and in order, while the shapes stay synthetic.
 
 ## How it reads a plan
 

@@ -397,6 +397,7 @@ export function zonesAgree(officialT, packZone) {
 }
 
 const round2 = (v) => Math.round(v * 100) / 100;
+const round3 = (v) => Math.round(v * 1000) / 1000;
 
 /**
  * Turns one deck's labels into facts. `t` runs bow (0) to stern (1) across the hull's
@@ -431,12 +432,14 @@ export function deckFacts({ deckNumber, labels }, { bow, port, hull }) {
     const kind = classifyLabel(label.text, deckNumber);
     if (kind === 'other' || kind === 'restroom') continue;
     if (kind === 'cabin') {
-      // Side comes from where it's drawn, since a few suites break odd-to-port; parity only
-      // settles the stern-facing staterooms drawn near the centreline.
+      // Odd numbers are to port and even to starboard, unless the plan clearly draws the
+      // cabin against the other rail; centreline blocks are split by number.
       const a = across(label);
       const odd = Number(label.text) % 2 === 1;
-      const side = a < 0.4 || (a <= 0.6 && odd) ? 'port' : 'starboard';
-      facts.cabins[side].push(Number(label.text));
+      const side = a < 0.25 ? 'port' : a > 0.75 ? 'starboard' : odd ? 'port' : 'starboard';
+      // Staterooms sit about a hundredth of the ship's length apart, so their positions keep
+      // a third decimal (about 0.3 m on Xcel).
+      facts.cabins[side].push({ number: Number(label.text), t: round3(along(label)), a });
       continue;
     }
     const t = round2(along(label));
@@ -444,11 +447,33 @@ export function deckFacts({ deckNumber, labels }, { bow, port, hull }) {
     if (kind === 'venue') facts.venues.push(fact);
     else facts[kind === 'elevator' ? 'elevators' : 'stairs'].push(fact);
   }
-  facts.cabins.port.sort((a, b) => a - b);
-  facts.cabins.starboard.sort((a, b) => a - b);
+  for (const side of ['port', 'starboard']) {
+    facts.cabins[side] = withRows(facts.cabins[side], side).sort((a, b) => a.number - b.number);
+  }
   facts.venues.sort((a, b) => a.t - b.t || a.name.localeCompare(b.name));
   return facts;
 }
+
+/** How far in from the hull row (as a fraction of the beam) a stateroom counts as inside. */
+export const INSIDE_ROW_OFFSET = 0.15;
+
+/**
+ * Splits one side's staterooms into the hull row and the inside row by how far across the
+ * ship each number sits. The hull row is the one nearest the rail among the numbers within
+ * `ROW_WINDOW` of it along the ship (the hull narrows toward the bow and stern, so the rail
+ * is local), and numbers well in from it are inside staterooms. Replaces each cabin's
+ * across-ship fraction `a` with its `row`.
+ */
+export function withRows(cabins, side) {
+  const fromRail = (c) => (side === 'port' ? c.a : 1 - c.a);
+  return cabins.map(({ a, ...c }) => {
+    const rail = Math.min(...cabins.filter((o) => Math.abs(o.t - c.t) <= ROW_WINDOW).map(fromRail));
+    return { ...c, row: fromRail({ a }) - rail > INSIDE_ROW_OFFSET ? 'inside' : 'outside' };
+  });
+}
+
+/** How far along the ship (fraction of length) neighbours set the local hull row. */
+const ROW_WINDOW = 0.03;
 
 const boxOf = (viewBox) => ({
   minX: viewBox.minX,
@@ -629,7 +654,7 @@ export function comparePack(facts, pack) {
       packCabins[f.cabin.side === 'port' ? 'port' : 'starboard'].add(Number(f.cabin.number));
     }
     for (const side of ['port', 'starboard']) {
-      const official = deck.cabins[side];
+      const official = deck.cabins[side].map((c) => c.number);
       if (!official.length && !packCabins[side].size) continue;
       const officialSet = new Set(official);
       cabins.push({

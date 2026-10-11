@@ -494,8 +494,102 @@ export function numberCabins(level, cabins, cabinRanges) {
   return built;
 }
 
+/** Closest two placed cabins in one row may sit (metres) before they're nudged apart. */
+const MIN_PLACED_GAP_M = 1.5;
+
 /**
- * Lays out stateroom rows between `range` stations.
+ * Nudges positions in one row apart to at least `MIN_PLACED_GAP_M`, keeping their order.
+ * A plan can label several cabins at one spot along the ship (cabins side by side across
+ * the stern, say); averaging a push-aft pass with a push-forward pass spreads such a
+ * cluster evenly about where it was.
+ */
+function spreadOut(list) {
+  const xs = list.map((p) => p.x);
+  const aft = [...xs];
+  for (let i = 1; i < aft.length; i++) aft[i] = Math.max(aft[i], aft[i - 1] + MIN_PLACED_GAP_M);
+  const fwd = [...xs];
+  for (let i = fwd.length - 2; i >= 0; i--)
+    fwd[i] = Math.min(fwd[i], fwd[i + 1] - MIN_PLACED_GAP_M);
+  return list.map((p, i) => ({ ...p, x: (aft[i] + fwd[i]) / 2 }));
+}
+
+/**
+ * Cabins at given positions, e.g. from an official deck plan's stateroom numbers. Each is
+ * its type's width, centred on its position, trimmed where it would meet its neighbours
+ * in the same side and row so the row never overlaps, and kept out of `avoid` spans.
+ */
+function placedCabins(level, placed, typeFor, avoid, lengthMeters, beamMeters) {
+  const cabins = [];
+  // Where the hull is too narrow for an inside row (toward the bow), an inside cabin joins
+  // the hull row instead, so no number is lost.
+  const half = STANDARD_CABIN_WIDTH_M / 2;
+  const fits = (p) =>
+    p.row !== 'inside' ||
+    cabinRect(
+      level,
+      p.side,
+      'inside',
+      p.x - half,
+      p.x + half,
+      INSIDE_DEPTH_M,
+      lengthMeters,
+      beamMeters
+    );
+  placed = placed.map((p) => (fits(p) ? p : { ...p, row: 'outside' }));
+  for (const side of ['Port', 'Starboard']) {
+    // Inside cabins go first so a deep suite on the hull row can stop short of them.
+    const insideSpans = [];
+    for (const row of ['inside', 'outside']) {
+      const width = (p) =>
+        CABIN_TYPES[typeFor({ x: p.x, side, row }) ?? '']?.width ?? STANDARD_CABIN_WIDTH_M;
+      // Inside cabins reach the centreline lobbies: one placed in a lobby moves to the
+      // lobby's nearer end.
+      const clear = (p) => {
+        if (row !== 'inside') return p;
+        const span = avoid.find(([a, b]) => p.x > a - width(p) / 2 && p.x < b + width(p) / 2);
+        if (!span) return p;
+        const [a, b] = span;
+        return { ...p, x: p.x < (a + b) / 2 ? a - width(p) / 2 : b + width(p) / 2 };
+      };
+      const list = spreadOut(
+        placed
+          .filter((p) => p.side === side && p.row === row)
+          .map(clear)
+          .sort((a, b) => a.x - b.x || a.number - b.number)
+      );
+      list.forEach((p, i) => {
+        const code = typeFor({ x: p.x, side, row }) ?? (row === 'inside' ? 'I2' : 'O2');
+        const type = CABIN_TYPES[code] ? code : row === 'inside' ? 'I2' : 'O2';
+        const width = CABIN_TYPES[type].width ?? STANDARD_CABIN_WIDTH_M;
+        const prev = list[i - 1];
+        const next = list[i + 1];
+        let x1 = Math.max(p.x - width / 2, prev ? (prev.x + p.x) / 2 : -Infinity, 0);
+        let x2 = Math.min(p.x + width / 2, next ? (next.x + p.x) / 2 : Infinity, lengthMeters);
+        // Spreading a cluster can push a cabin back toward a lobby; it stops at the edge.
+        if (row === 'inside') {
+          for (const [a, b] of avoid) {
+            if (x2 <= a || x1 >= b) continue;
+            if (p.x < (a + b) / 2) x2 = a;
+            else x1 = b;
+          }
+        }
+        if (x2 - x1 < 1) return;
+        // A deep suite beside a lobby or an inside cabin keeps to a standard depth so it
+        // stays clear of it.
+        const besideLobby = [...avoid, ...insideSpans].some(([a, b]) => x2 > a && x1 < b);
+        if (row === 'inside') insideSpans.push([x1, x2]);
+        const depth = besideLobby ? OUTSIDE_DEPTH_M : (CABIN_TYPES[type].depth ?? OUTSIDE_DEPTH_M);
+        const bounds = cabinRect(level, side, row, x1, x2, depth, lengthMeters, beamMeters);
+        if (bounds) cabins.push({ code: type, side, row, bounds, number: p.number, ada: false });
+      });
+    }
+  }
+  return cabins;
+}
+
+/**
+ * Lays out stateroom rows between `range` stations, or, with `placed`, puts one cabin at
+ * each given position instead (see `placedCabins`).
  * @param {number} level
  * @param {object} options
  * @param {[number, number]} options.range - fore/aft stations to fill
@@ -505,13 +599,30 @@ export function numberCabins(level, cabins, cabinRanges) {
  * @param {{corner: string, middle: string}} [options.transom] - stern-facing cabins across the transom
  * @param {Array<object>} [options.fixedCabins] - pre-placed cabins ({code, side, row, bounds, number?}) numbered with the rest
  * @param {{port?: Array<object>, starboard?: Array<object>}} [options.cabinRanges] - optional longitudinal cabin number ranges
+ * @param {Array<{number: number, side: string, row: string, x: number}>} [options.placed] - cabins at known positions; replaces `range` and `transom`, and `avoid` only trims inside cabins
  */
 export function generateStaterooms(
   level,
-  { range, avoid = [], starboardOutsideAvoid = [], typeFor, transom, fixedCabins = [], cabinRanges },
+  {
+    range,
+    avoid = [],
+    starboardOutsideAvoid = [],
+    typeFor,
+    transom,
+    fixedCabins = [],
+    cabinRanges,
+    placed,
+  },
   lengthMeters = SHIP_LENGTH_M,
   beamMeters = SHIP_BEAM_M
 ) {
+  if (placed) {
+    const cabins = [
+      ...placedCabins(level, placed, typeFor, avoid, lengthMeters, beamMeters),
+      ...fixedCabins,
+    ];
+    return numberCabins(level, cabins, cabinRanges);
+  }
   const cabins = [];
   for (const side of ['Port', 'Starboard']) {
     for (const row of ['outside', 'inside']) {
@@ -546,9 +657,17 @@ export function generateStaterooms(
   return numberCabins(level, cabins, cabinRanges);
 }
 
-/** Crew service strips down the centreline between stateroom rows (full-beam stations only). */
-export function generateServiceStrips(level, { range, avoid = [] }, lengthMeters = SHIP_LENGTH_M, beamMeters = SHIP_BEAM_M) {
-  const fullBeamThreshold = beamMeters < 35 ? round2(beamMeters / 2 - 1.0) : 19.2;
+/**
+ * Crew service strips down the centreline between stateroom rows: full-beam stations only,
+ * or wherever the hull's half-beam is at least `minHalfBeam`.
+ */
+export function generateServiceStrips(
+  level,
+  { range, avoid = [], minHalfBeam },
+  lengthMeters = SHIP_LENGTH_M,
+  beamMeters = SHIP_BEAM_M
+) {
+  const fullBeamThreshold = minHalfBeam ?? (beamMeters < 35 ? round2(beamMeters / 2 - 1.0) : 19.2);
   const fullBeam = (x) => hullHalfWidth(level, x, lengthMeters, beamMeters) >= fullBeamThreshold;
   const centerlineY = beamMeters / 2;
   const halfStrip = beamMeters < 35 ? 2.5 : 3.7;

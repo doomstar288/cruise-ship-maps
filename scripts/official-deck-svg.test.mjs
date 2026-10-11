@@ -297,7 +297,7 @@ describe('against the Xcel pack', () => {
     const svg3 = svgFromPackDeck(xcel, 3).replace(
       '</g>',
       // Mast Grill is on 14 in the pack; the Theatre is drawn forward in the pack.
-      '<text x="20" y="40">Mast Grill</text><text x="1200" y="80">The Theatre</text><text x="600" y="80">Nowhere Bar</text></g>'
+      '<text x="20" y="40">Mast Grill</text><text x="1200" y="80">The Theatre</text><text x="944" y="80">Nowhere Bar</text></g>'
     );
     const files = [3, 6].map((n) => ({
       name: `deck-${n}.svg`,

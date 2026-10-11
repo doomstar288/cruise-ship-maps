@@ -116,12 +116,13 @@ describe('routing in the published Celebrity Xcel pack', () => {
     // and port day (routing unchanged), and when P1.1 (#18) moved Shore Excursions to
     // Deck 4 and dropped the erroneous Deck 16 Mast Grill using official Celebrity
     // Xcel deck-plan SVGs, and when deck-three.svg resolved the Martini Bar's Deck 2 vs 3
-    // conflict (confidence only). Aliases, spans, confidence, entrances,
+    // conflict (confidence only), and when the official plans gave Xcel's staterooms
+    // their real numbers and positions and moved the venues they place elsewhere. Aliases, spans, confidence, entrances,
     // access, port exits, hours, hoursByDay, reservationRequired, fee, dressCode and restrooms
     // are all inside this hash. Update it only in a change that means to edit deck
     // data, never to make routing pass.
     expect(nonRoutingHash(pack)).toBe(
-      '093267ee6a784f851fad98d7b631e7697704f50f1b00c5d777d7ad4955cf9476'
+      'd6f6002c8a814143ff82603099d2b1028e63e6bea2defa8bab615d3ef3396b25'
     );
   });
 
@@ -291,7 +292,8 @@ describe('routing in the published Celebrity Xcel pack', () => {
     expect(banks).toEqual({
       fwd: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17],
       mid: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16],
-      aft: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15],
+      // Not Deck 3: the main restaurants run across the ship there (deck-three.svg).
+      aft: [2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15],
     });
     // And those are exactly the elevator features the pack draws.
     for (const [bank, decks] of Object.entries(banks)) {
@@ -302,7 +304,12 @@ describe('routing in the published Celebrity Xcel pack', () => {
     }
     expect(pack.routing.stairs.map(decksOf)).toContainEqual([7, 8, 9, 10, 11, 12]);
     const stairEdges = graph.edges.filter((e) => e.kind === 'stairs');
-    expect(stairEdges.every((e) => e.stepFree === false && e.decks === 1)).toBe(true);
+    expect(stairEdges.every((e) => e.stepFree === false)).toBe(true);
+    // Each flight climbs one level, except the aft core's from Deck 2 to 4.
+    const longFlights = stairEdges
+      .filter((e) => e.decks !== 1)
+      .map((e) => [byKey.get(e.from).featureId, byKey.get(e.to).featureId, e.decks]);
+    expect(longFlights).toEqual([['elev-aft-2', 'elev-aft-4', 2]]);
   });
 
   it('counts levels in pack order, so Deck 12 to 14 is one level', () => {

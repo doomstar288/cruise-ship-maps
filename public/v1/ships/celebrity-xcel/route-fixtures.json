@@ -1,7 +1,7 @@
 {
   "specVersion": 1,
   "shipId": "celebrity-xcel",
-  "recordedAgainstRevision": "235cdb6e442d",
+  "recordedAgainstRevision": "2dd7770478fa",
   "costModel": {
     "walkingSpeedMps": 1.1,
     "elevatorBoardS": 60,
@@ -30,8 +30,8 @@
       },
       "stepFree": false,
       "expected": {
-        "walkM": 145.34,
-        "timeS": 232.1,
+        "walkM": 98.85,
+        "timeS": 189.9,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -55,8 +55,8 @@
       },
       "stepFree": false,
       "expected": {
-        "walkM": 264.12,
-        "timeS": 300.1,
+        "walkM": 282.51,
+        "timeS": 316.8,
         "deckChanges": [
           {
             "mode": "stairs",
@@ -78,8 +78,8 @@
       },
       "stepFree": true,
       "expected": {
-        "walkM": 264.12,
-        "timeS": 316.1,
+        "walkM": 282.51,
+        "timeS": 332.8,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -101,8 +101,8 @@
       },
       "stepFree": false,
       "expected": {
-        "walkM": 42.52,
-        "timeS": 68.7,
+        "walkM": 31.73,
+        "timeS": 58.8,
         "deckChanges": [
           {
             "mode": "stairs",
@@ -124,17 +124,12 @@
       },
       "stepFree": false,
       "expected": {
-        "walkM": 146.83,
-        "timeS": 223.5,
+        "walkM": 104.6,
+        "timeS": 125.1,
         "deckChanges": [
           {
             "mode": "stairs",
             "fromDeck": 4,
-            "toDeck": 6
-          },
-          {
-            "mode": "stairs",
-            "fromDeck": 6,
             "toDeck": 5
           }
         ],
@@ -152,17 +147,12 @@
       },
       "stepFree": true,
       "expected": {
-        "walkM": 146.83,
-        "timeS": 277.5,
+        "walkM": 104.6,
+        "timeS": 163.1,
         "deckChanges": [
           {
             "mode": "elevator",
             "fromDeck": 4,
-            "toDeck": 6
-          },
-          {
-            "mode": "elevator",
-            "fromDeck": 6,
             "toDeck": 5
           }
         ],
@@ -180,8 +170,8 @@
       },
       "stepFree": false,
       "expected": {
-        "walkM": 91.22,
-        "timeS": 82.9,
+        "walkM": 112.67,
+        "timeS": 102.4,
         "deckChanges": [],
         "through": []
       }
@@ -197,8 +187,8 @@
       },
       "stepFree": true,
       "expected": {
-        "walkM": 222.55,
-        "timeS": 338.3,
+        "walkM": 215.33,
+        "timeS": 331.8,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -263,8 +253,8 @@
       },
       "stepFree": true,
       "expected": {
-        "walkM": 233.73,
-        "timeS": 364.5,
+        "walkM": 194.31,
+        "timeS": 328.6,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -291,8 +281,8 @@
       },
       "stepFree": true,
       "expected": {
-        "walkM": 109.68,
-        "timeS": 175.7,
+        "walkM": 90.6,
+        "timeS": 158.4,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -316,8 +306,8 @@
       },
       "stepFree": true,
       "expected": {
-        "walkM": 232.6,
-        "timeS": 327.5,
+        "walkM": 212.71,
+        "timeS": 309.4,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -341,8 +331,8 @@
       },
       "stepFree": false,
       "expected": {
-        "walkM": 300.15,
-        "timeS": 272.9,
+        "walkM": 299.71,
+        "timeS": 272.5,
         "deckChanges": [],
         "through": []
       }
@@ -358,8 +348,8 @@
       },
       "stepFree": false,
       "expected": {
-        "walkM": 123.38,
-        "timeS": 142.2,
+        "walkM": 141.76,
+        "timeS": 158.9,
         "deckChanges": [
           {
             "mode": "stairs",
@@ -381,8 +371,8 @@
       },
       "stepFree": true,
       "expected": {
-        "walkM": 123.38,
-        "timeS": 180.2,
+        "walkM": 141.76,
+        "timeS": 196.9,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -404,8 +394,8 @@
       },
       "stepFree": false,
       "expected": {
-        "walkM": 152.89,
-        "timeS": 169,
+        "walkM": 171.27,
+        "timeS": 185.7,
         "deckChanges": [
           {
             "mode": "stairs",
@@ -429,8 +419,8 @@
       },
       "stepFree": true,
       "expected": {
-        "walkM": 152.89,
-        "timeS": 207,
+        "walkM": 171.27,
+        "timeS": 223.7,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -454,8 +444,8 @@
       },
       "stepFree": false,
       "expected": {
-        "walkM": 142.51,
-        "timeS": 237.6,
+        "walkM": 143.38,
+        "timeS": 238.3,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -477,8 +467,8 @@
       },
       "stepFree": true,
       "expected": {
-        "walkM": 142.51,
-        "timeS": 237.6,
+        "walkM": 143.38,
+        "timeS": 238.3,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -500,8 +490,8 @@
       },
       "stepFree": false,
       "expected": {
-        "walkM": 172.02,
-        "timeS": 264.4,
+        "walkM": 172.89,
+        "timeS": 265.2,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -525,8 +515,8 @@
       },
       "stepFree": true,
       "expected": {
-        "walkM": 172.02,
-        "timeS": 264.4,
+        "walkM": 172.89,
+        "timeS": 265.2,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -550,8 +540,8 @@
       },
       "stepFree": false,
       "expected": {
-        "walkM": 185.03,
-        "timeS": 346.2,
+        "walkM": 158.96,
+        "timeS": 322.5,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -578,8 +568,8 @@
       },
       "stepFree": true,
       "expected": {
-        "walkM": 184.47,
-        "timeS": 383.7,
+        "walkM": 153.39,
+        "timeS": 355.4,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -606,8 +596,8 @@
       },
       "stepFree": false,
       "expected": {
-        "walkM": 214.54,
-        "timeS": 373,
+        "walkM": 188.47,
+        "timeS": 349.3,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -636,8 +626,8 @@
       },
       "stepFree": true,
       "expected": {
-        "walkM": 213.98,
-        "timeS": 410.5,
+        "walkM": 182.9,
+        "timeS": 382.3,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -669,8 +659,8 @@
       "stepFree": false,
       "avoidLifts": true,
       "expected": {
-        "walkM": 145.34,
-        "timeS": 282.1,
+        "walkM": 98.85,
+        "timeS": 239.9,
         "deckChanges": [
           {
             "mode": "stairs",
@@ -695,8 +685,8 @@
       "stepFree": false,
       "avoidLifts": true,
       "expected": {
-        "walkM": 232.6,
-        "timeS": 421.5,
+        "walkM": 212.71,
+        "timeS": 403.4,
         "deckChanges": [
           {
             "mode": "stairs",
@@ -721,8 +711,8 @@
       "stepFree": false,
       "avoidLifts": true,
       "expected": {
-        "walkM": 222.55,
-        "timeS": 262.3,
+        "walkM": 215.33,
+        "timeS": 255.8,
         "deckChanges": [
           {
             "mode": "stairs",
@@ -763,8 +753,8 @@
       "stepFree": true,
       "avoidLifts": true,
       "expected": {
-        "walkM": 91.22,
-        "timeS": 82.9,
+        "walkM": 112.67,
+        "timeS": 102.4,
         "deckChanges": [],
         "through": []
       }
@@ -788,8 +778,8 @@
       "stepFree": false,
       "expected": {
         "featureId": "v16-mast-bar",
-        "walkM": 105.41,
-        "timeS": 195.8,
+        "walkM": 60.99,
+        "timeS": 155.4,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -819,8 +809,8 @@
       "stepFree": false,
       "expected": {
         "featureId": "v15-retreat-lounge",
-        "walkM": 85.81,
-        "timeS": 138,
+        "walkM": 81.81,
+        "timeS": 134.4,
         "deckChanges": [
           {
             "mode": "stairs",
@@ -847,9 +837,9 @@
       ],
       "stepFree": false,
       "expected": {
-        "featureId": "v5-world-class-bar",
-        "walkM": 215.45,
-        "timeS": 225.9,
+        "featureId": "v5-annex",
+        "walkM": 168.69,
+        "timeS": 183.4,
         "deckChanges": [
           {
             "mode": "stairs",
@@ -877,8 +867,8 @@
       "stepFree": true,
       "expected": {
         "featureId": "v3-martini-bar",
-        "walkM": 182.47,
-        "timeS": 249.9,
+        "walkM": 145.12,
+        "timeS": 215.9,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -905,16 +895,10 @@
       ],
       "stepFree": false,
       "expected": {
-        "featureId": "v5-world-class-bar",
-        "walkM": 106.18,
-        "timeS": 126.5,
-        "deckChanges": [
-          {
-            "mode": "stairs",
-            "fromDeck": 4,
-            "toDeck": 5
-          }
-        ],
+        "featureId": "v4-craft-social",
+        "walkM": 78.23,
+        "timeS": 71.1,
+        "deckChanges": [],
         "through": []
       }
     },
@@ -934,16 +918,10 @@
       ],
       "stepFree": true,
       "expected": {
-        "featureId": "v5-world-class-bar",
-        "walkM": 106.18,
-        "timeS": 164.5,
-        "deckChanges": [
-          {
-            "mode": "elevator",
-            "fromDeck": 4,
-            "toDeck": 5
-          }
-        ],
+        "featureId": "v4-craft-social",
+        "walkM": 78.23,
+        "timeS": 71.1,
+        "deckChanges": [],
         "through": []
       }
     },
@@ -970,9 +948,9 @@
       ],
       "stepFree": false,
       "expected": {
-        "featureId": "restrooms-fwd-port-14",
-        "walkM": 61.77,
-        "timeS": 140.2,
+        "featureId": "restrooms-mid-port-14",
+        "walkM": 67.2,
+        "timeS": 145.1,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -1020,7 +998,6 @@
         "elev-mid-15",
         "elev-mid-16",
         "elev-aft-2",
-        "elev-aft-3",
         "elev-aft-4",
         "elev-aft-5",
         "elev-aft-6",
@@ -1035,9 +1012,9 @@
       ],
       "stepFree": false,
       "expected": {
-        "featureId": "elev-fwd-10",
-        "walkM": 48.37,
-        "timeS": 44,
+        "featureId": "elev-mid-10",
+        "walkM": 46.3,
+        "timeS": 42.1,
         "deckChanges": [],
         "through": []
       }
@@ -1064,10 +1041,16 @@
       ],
       "stepFree": false,
       "expected": {
-        "featureId": "v5-raw-on-5",
-        "walkM": 38.52,
-        "timeS": 35,
-        "deckChanges": [],
+        "featureId": "v4-cosmopolitan",
+        "walkM": 9.32,
+        "timeS": 38.5,
+        "deckChanges": [
+          {
+            "mode": "stairs",
+            "fromDeck": 5,
+            "toDeck": 4
+          }
+        ],
         "through": []
       }
     },
@@ -1139,8 +1122,8 @@
       "stepFree": false,
       "expected": {
         "featureId": "v16-mast-bar",
-        "walkM": 105.41,
-        "timeS": 245.8,
+        "walkM": 60.99,
+        "timeS": 205.4,
         "deckChanges": [
           {
             "mode": "stairs",
