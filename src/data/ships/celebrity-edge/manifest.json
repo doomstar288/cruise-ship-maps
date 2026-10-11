@@ -313,7 +313,7 @@
       "category": "Bars & Lounges",
       "side": "center",
       "zone": "mid",
-      "confidence": "estimated",
+      "confidence": "zone",
       "aliases": [
         "Martini Bar"
       ]

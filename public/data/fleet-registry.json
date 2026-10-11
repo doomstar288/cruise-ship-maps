@@ -5,33 +5,33 @@
     "sourceUrl": "https://query.wikidata.org/sparql",
     "license": "CC0-1.0",
     "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
-    "retrievedAt": "2026-10-01T22:48:47.298Z",
+    "retrievedAt": "2026-10-11T15:00:05.232Z",
     "queryHash": "a2e9ea79fb678c71",
     "generator": "scripts/seed-fleet.mjs",
     "overrides": "scripts/fleet-overrides.json",
     "note": "Vessel identity and specifications only. Contains no deck-plan geometry. Fields listed in a ship's \"overriddenFields\" were corrected by hand, not sourced."
   },
   "stats": {
-    "ships": 728,
+    "ships": 730,
     "classes": 64,
     "byStatus": {
-      "in_service": 345,
+      "in_service": 347,
       "on_order": 2,
-      "retired": 157,
-      "unknown": 224
+      "retired": 158,
+      "unknown": 223
     },
     "byCategory": {
-      "ocean": 577,
+      "ocean": 578,
       "expedition": 32,
       "river": 55,
       "ferry": 48,
-      "other": 16
+      "other": 17
     },
-    "withOperator": 381,
-    "withMmsi": 485,
-    "withClass": 252,
-    "withTonnage": 589,
-    "overridden": 96,
+    "withOperator": 384,
+    "withMmsi": 489,
+    "withClass": 253,
+    "withTonnage": 590,
+    "overridden": 105,
     "operatorAmbiguous": 13,
     "missingFromSource": 0,
     "invalidImoChecksums": 3,
@@ -637,6 +637,16 @@
       "shipCount": 2
     },
     {
+      "id": "Q54531132",
+      "name": "Ponant explorer-class passenger ship",
+      "operator": "Ponant",
+      "imos": [
+        "9852418",
+        "9852420"
+      ],
+      "shipCount": 2
+    },
+    {
       "id": "Q2975974",
       "name": "R-class cruise ship",
       "operator": "Azamara",
@@ -754,15 +764,6 @@
       "operator": null,
       "imos": [
         "1050193"
-      ],
-      "shipCount": 1
-    },
-    {
-      "id": "Q54531132",
-      "name": "Ponant explorer-class passenger ship",
-      "operator": null,
-      "imos": [
-        "9852420"
       ],
       "shipCount": 1
     },
@@ -2075,7 +2076,7 @@
       "wikidataId": "Q133837129",
       "imo": "9838400",
       "imoValid": true,
-      "mmsi": null,
+      "mmsi": "256191000",
       "name": "Celebrity Ascent",
       "operator": "Celebrity Cruises",
       "operatorId": "Q1052823",
@@ -2093,6 +2094,7 @@
       "formerNames": [],
       "formerOperators": [],
       "overriddenFields": [
+        "mmsi",
         "shipClass",
         "shipClassId"
       ]
@@ -2496,6 +2498,32 @@
       "retirementYear": null,
       "formerNames": [],
       "formerOperators": []
+    },
+    {
+      "wikidataId": "Q28494959",
+      "imo": "9838383",
+      "imoValid": true,
+      "mmsi": "215105000",
+      "name": "Celebrity Apex",
+      "operator": "Celebrity Cruises",
+      "operatorId": "Q1052823",
+      "shipClass": "Edge-class cruise ship",
+      "shipClassId": "Q36847697",
+      "builder": "Chantiers de l'Atlantique",
+      "grossTonnage": 130818,
+      "lengthMeters": 306,
+      "beamMeters": 39,
+      "inServiceYear": 2020,
+      "maxCapacity": 2910,
+      "status": "in_service",
+      "category": "ocean",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "overriddenFields": [
+        "beamMeters",
+        "grossTonnage"
+      ]
     },
     {
       "wikidataId": "Q1044042",
@@ -4007,12 +4035,15 @@
       "lengthMeters": 294,
       "beamMeters": 32.2,
       "inServiceYear": 2000,
-      "maxCapacity": null,
+      "maxCapacity": 2138,
       "status": "in_service",
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "maxCapacity"
+      ]
     },
     {
       "wikidataId": "Q1052834",
@@ -4029,12 +4060,15 @@
       "lengthMeters": 294,
       "beamMeters": 32,
       "inServiceYear": 2001,
-      "maxCapacity": null,
+      "maxCapacity": 2170,
       "status": "in_service",
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "maxCapacity"
+      ]
     },
     {
       "wikidataId": "Q1052838",
@@ -4051,12 +4085,15 @@
       "lengthMeters": 294,
       "beamMeters": 32.2,
       "inServiceYear": 2001,
-      "maxCapacity": null,
+      "maxCapacity": 2218,
       "status": "in_service",
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "maxCapacity"
+      ]
     },
     {
       "wikidataId": "Q606002",
@@ -5069,8 +5106,8 @@
       "imoValid": true,
       "mmsi": "249054000",
       "name": "Marella Explorer 2",
-      "operator": "Celebrity Cruises",
-      "operatorId": "Q1052823",
+      "operator": "Marella Cruises",
+      "operatorId": "Q18636345",
       "shipClass": "Century-class cruise ship",
       "shipClassId": "Q15622073",
       "builder": "Meyer Werft",
@@ -5078,12 +5115,17 @@
       "lengthMeters": 246.5,
       "beamMeters": 32,
       "inServiceYear": 1995,
-      "maxCapacity": null,
+      "maxCapacity": 1814,
       "status": "in_service",
       "category": "ocean",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "maxCapacity",
+        "operator",
+        "operatorId"
+      ]
     },
     {
       "wikidataId": "Q1044050",
@@ -9336,7 +9378,7 @@
       "operatorId": null,
       "shipClass": null,
       "shipClassId": null,
-      "builder": "Cantiere navale di Riva Trigoso",
+      "builder": "Riva Trigoso shipyard",
       "grossTonnage": 17042,
       "lengthMeters": 163.3,
       "beamMeters": 22.8,
@@ -9426,7 +9468,7 @@
       "operatorId": null,
       "shipClass": null,
       "shipClassId": null,
-      "builder": "Cantiere navale di Riva Trigoso",
+      "builder": "Riva Trigoso shipyard",
       "grossTonnage": 16710,
       "lengthMeters": 168.38,
       "beamMeters": 22.76,
@@ -11360,7 +11402,7 @@
       "imo": "9837925",
       "imoValid": true,
       "mmsi": null,
-      "name": "IMO 9837925",
+      "name": "Celebrity Flora",
       "operator": "Celebrity Cruises",
       "operatorId": "Q1052823",
       "shipClass": null,
@@ -11368,7 +11410,7 @@
       "builder": "Shipyard De Hoop",
       "grossTonnage": 5922,
       "lengthMeters": 101.5,
-      "beamMeters": null,
+      "beamMeters": 17,
       "inServiceYear": 2019,
       "maxCapacity": 100,
       "status": "in_service",
@@ -11377,7 +11419,9 @@
       "formerNames": [],
       "formerOperators": [],
       "overriddenFields": [
-        "category"
+        "beamMeters",
+        "category",
+        "name"
       ]
     },
     {
@@ -13983,29 +14027,6 @@
       "formerOperators": []
     },
     {
-      "wikidataId": "Q54933225",
-      "imo": "9455882",
-      "imoValid": true,
-      "mmsi": null,
-      "name": "Celebrity Xploration",
-      "operator": null,
-      "operatorId": null,
-      "shipClass": null,
-      "shipClassId": null,
-      "builder": null,
-      "grossTonnage": 319,
-      "lengthMeters": 29.97,
-      "beamMeters": null,
-      "inServiceYear": 2007,
-      "maxCapacity": null,
-      "status": "unknown",
-      "category": "other",
-      "retirementYear": null,
-      "formerNames": [],
-      "formerOperators": [],
-      "includedByOverride": true
-    },
-    {
       "wikidataId": "Q138642768",
       "imo": "9093074",
       "imoValid": true,
@@ -14070,6 +14091,39 @@
       "retirementYear": null,
       "formerNames": [],
       "formerOperators": []
+    },
+    {
+      "wikidataId": "Q54933225",
+      "imo": "9455882",
+      "imoValid": true,
+      "mmsi": "735057940",
+      "name": "National Geographic Delfina",
+      "operator": "Lindblad Expeditions",
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": "Botto Astilleros y Marina",
+      "grossTonnage": 242,
+      "lengthMeters": 29.97,
+      "beamMeters": null,
+      "inServiceYear": 2007,
+      "maxCapacity": 16,
+      "status": "in_service",
+      "category": "other",
+      "retirementYear": null,
+      "formerNames": [],
+      "formerOperators": [],
+      "includedByOverride": true,
+      "overriddenFields": [
+        "builder",
+        "grossTonnage",
+        "maxCapacity",
+        "mmsi",
+        "name",
+        "operator",
+        "operatorId",
+        "status"
+      ]
     },
     {
       "wikidataId": "Q125206102",
@@ -15665,8 +15719,8 @@
       "imoValid": true,
       "mmsi": null,
       "name": "SS Galileo Galilei",
-      "operator": "Celebrity Cruises",
-      "operatorId": "Q1052823",
+      "operator": "Sun Cruises",
+      "operatorId": null,
       "shipClass": null,
       "shipClassId": null,
       "builder": "Cantieri Riuniti dell'Adriatico",
@@ -15675,11 +15729,17 @@
       "beamMeters": 28.71,
       "inServiceYear": 1963,
       "maxCapacity": null,
-      "status": "in_service",
+      "status": "retired",
       "category": "ocean",
-      "retirementYear": null,
+      "retirementYear": 1999,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [],
+      "overriddenFields": [
+        "operator",
+        "operatorId",
+        "retirementYear",
+        "status"
+      ]
     },
     {
       "wikidataId": "Q11712962",
@@ -16712,28 +16772,6 @@
       ]
     },
     {
-      "wikidataId": "Q28494959",
-      "imo": "9838383",
-      "imoValid": true,
-      "mmsi": "215105000",
-      "name": "Celebrity Apex",
-      "operator": "Celebrity Cruises",
-      "operatorId": "Q1052823",
-      "shipClass": "Edge-class cruise ship",
-      "shipClassId": "Q36847697",
-      "builder": "Chantiers de l'Atlantique",
-      "grossTonnage": null,
-      "lengthMeters": 306,
-      "beamMeters": 50,
-      "inServiceYear": 2020,
-      "maxCapacity": 2910,
-      "status": "in_service",
-      "category": "ocean",
-      "retirementYear": null,
-      "formerNames": [],
-      "formerOperators": []
-    },
-    {
       "wikidataId": "Q85760924",
       "imo": "9839399",
       "imoValid": true,
@@ -16876,6 +16914,40 @@
       "retirementYear": null,
       "formerNames": [],
       "formerOperators": []
+    },
+    {
+      "wikidataId": null,
+      "imo": "9852418",
+      "imoValid": true,
+      "mmsi": "578001500",
+      "name": "Le Bellot",
+      "operator": "Ponant",
+      "operatorId": "Q2990078",
+      "shipClass": "Ponant explorer-class passenger ship",
+      "shipClassId": "Q54531132",
+      "builder": "VARD",
+      "grossTonnage": null,
+      "lengthMeters": null,
+      "beamMeters": null,
+      "inServiceYear": null,
+      "retirementYear": null,
+      "maxCapacity": 184,
+      "status": "in_service",
+      "category": "other",
+      "formerNames": [],
+      "formerOperators": [],
+      "source": "override",
+      "overriddenFields": [
+        "builder",
+        "maxCapacity",
+        "mmsi",
+        "name",
+        "operator",
+        "operatorId",
+        "shipClass",
+        "shipClassId",
+        "status"
+      ]
     },
     {
       "wikidataId": "Q101004204",
@@ -17081,6 +17153,42 @@
       "retirementYear": null,
       "formerNames": [],
       "formerOperators": []
+    },
+    {
+      "wikidataId": null,
+      "imo": "9870654",
+      "imoValid": true,
+      "mmsi": "311001167",
+      "name": "Brilliant Lady",
+      "operator": "Virgin Voyages",
+      "operatorId": "Q20539284",
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": "Fincantieri",
+      "grossTonnage": null,
+      "lengthMeters": 277,
+      "beamMeters": 38,
+      "inServiceYear": 2025,
+      "retirementYear": null,
+      "maxCapacity": 2770,
+      "status": "in_service",
+      "category": "ocean",
+      "formerNames": [],
+      "formerOperators": [],
+      "source": "override",
+      "overriddenFields": [
+        "beamMeters",
+        "builder",
+        "category",
+        "inServiceYear",
+        "lengthMeters",
+        "maxCapacity",
+        "mmsi",
+        "name",
+        "operator",
+        "operatorId",
+        "status"
+      ]
     },
     {
       "wikidataId": "Q138748177",

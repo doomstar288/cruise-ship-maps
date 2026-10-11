@@ -367,12 +367,13 @@ const COMMON_EDGE_VENUES = [
     aliases: ['Grand Plaza', 'Grand Plaza Bar'],
   },
   {
+    // Deck 3 midship on every Edge-class ship's official deck-three.svg; no deck-two.svg has it.
     name: 'The Martini Bar',
     deck: 3,
     category: 'Bars & Lounges',
     side: 'center',
     zone: 'mid',
-    confidence: 'estimated',
+    confidence: 'zone',
     aliases: ['Martini Bar'],
   },
   {
@@ -385,6 +386,8 @@ const COMMON_EDGE_VENUES = [
     aliases: ['Grand Plaza Cafe'],
   },
   {
+    // Deck 4 on Apex, Beyond, Ascent and Xcel (official deck-four.svg); Celebrity Edge
+    // overrides it to Deck 3 below (its deck-three.svg labels SHORE EXCURSIONS).
     name: 'Shore Excursions',
     deck: 4,
     category: 'Guest Services',
@@ -1277,7 +1280,8 @@ export const EDGE_CLASS_FACTS = {
     deckNames: ORIGINAL_DECK_NAMES,
     cabinRanges: ORIGINAL_CABIN_RANGES,
     venues: [
-      ...COMMON_EDGE_VENUES,
+      // Official plan: https://www.celebritycruises.com/content/dam/rcg/cel/resources/deck-plans/ship/celebrity-edge/2363/decks/deck-three.svg
+      ...COMMON_EDGE_VENUES.map((v) => (v.name === 'Shore Excursions' ? { ...v, deck: 3 } : v)),
       {
         name: 'Casino Bar',
         deck: 4,

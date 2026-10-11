@@ -115,12 +115,13 @@ describe('routing in the published Celebrity Xcel pack', () => {
     // features on Decks 2–5, 14 and 15, and when hoursByDay split four venues' hours by sea
     // and port day (routing unchanged), and when P1.1 (#18) moved Shore Excursions to
     // Deck 4 and dropped the erroneous Deck 16 Mast Grill using official Celebrity
-    // Xcel deck-plan SVGs. Aliases, spans, confidence, entrances,
+    // Xcel deck-plan SVGs, and when deck-three.svg resolved the Martini Bar's Deck 2 vs 3
+    // conflict (confidence only). Aliases, spans, confidence, entrances,
     // access, port exits, hours, hoursByDay, reservationRequired, fee, dressCode and restrooms
     // are all inside this hash. Update it only in a change that means to edit deck
     // data, never to make routing pass.
     expect(nonRoutingHash(pack)).toBe(
-      'ca755c727ebb6ac0a9b85d8459bcbaa49840e3831799884d6591e4b223f6f486'
+      '093267ee6a784f851fad98d7b631e7697704f50f1b00c5d777d7ad4955cf9476'
     );
   });
 
