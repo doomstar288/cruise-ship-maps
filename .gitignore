@@ -33,3 +33,7 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Official deck plan SVGs saved by hand for scripts/official-deck-svg.mjs. They stay local:
+# only the facts read from them are committed (docs/research/official_deck_plan_svgs.md).
+.official-deck-plans/
