@@ -14,7 +14,7 @@
  * Usage:
  *   node scripts/official-deck-svg.mjs --ship-id celebrity-xcel
  *   node scripts/official-deck-svg.mjs --ship-id celebrity-xcel --dir path/to/svgs --json
- *   node scripts/official-deck-svg.mjs --ship-id celebrity-xcel --bow right --port bottom
+ *   node scripts/official-deck-svg.mjs --ship-id celebrity-xcel --bow top --port right
  *   node scripts/official-deck-svg.mjs --ship-id celebrity-xcel --write
  */
 
@@ -113,13 +113,21 @@ const firstNumber = (value) => {
  * ancestor transforms) out of an SVG document. A label split over several `<tspan>`s
  * ("MAST" / "GRILL") comes back as one label at the first line's position.
  *
+ * Each label also carries `u`, the unit vector its text reads along, `v`, the unit vector
+ * from one line of text to the next, and `size`, its font size in viewBox units, so that
+ * names Celebrity sets as separate `<text>` lines can be stitched back together.
+ *
  * @param {string} svg
  * @returns {{ viewBox: { minX: number, minY: number, width: number, height: number } | null,
- *             labels: { text: string, x: number, y: number }[] }}
+ *             labels: Label[] }}
+ *
+ * @typedef {{ text: string, x: number, y: number, u: [number, number], v: [number, number],
+ *             size: number }} Label
  */
 export function parseSvgLabels(svg) {
   const labels = [];
   const stack = [IDENTITY];
+  const sizes = [undefined]; // inherited font-size attribute, parallel to `stack`
   let viewBox = null;
   let current = null; // the <text> being read: { matrix, x, y, parts }
   // Comments are skipped and CDATA read as text as the tokenizer meets them, rather than
@@ -157,12 +165,25 @@ export function parseSvgLabels(svg) {
       if (name === 'text' && current) {
         const text = decodeEntities(current.parts.join('')).replace(/\s+/g, ' ').trim();
         if (text) {
+          const [a, b, c, d] = current.matrix;
           const [x, y] = apply(current.matrix, current.x ?? 0, current.y ?? 0);
-          labels.push({ text, x, y });
+          const ul = Math.hypot(a, b) || 1;
+          const vl = Math.hypot(c, d) || 1;
+          labels.push({
+            text,
+            x,
+            y,
+            u: [a / ul, b / ul],
+            v: [c / vl, d / vl],
+            size: current.size === undefined ? undefined : current.size * vl,
+          });
         }
         current = null;
       }
-      if (stack.length > 1) stack.pop();
+      if (stack.length > 1) {
+        stack.pop();
+        sizes.pop();
+      }
       continue;
     }
 
@@ -176,9 +197,10 @@ export function parseSvgLabels(svg) {
         viewBox = { minX, minY, width, height };
     }
     const matrix = multiply(stack[stack.length - 1], parseTransform(attrs.transform));
+    const size = firstNumber(attrs['font-size']) ?? sizes[sizes.length - 1];
 
     if (name === 'text') {
-      current = { matrix, x: firstNumber(attrs.x), y: firstNumber(attrs.y), parts: [] };
+      current = { matrix, size, x: firstNumber(attrs.x), y: firstNumber(attrs.y), parts: [] };
     } else if (name === 'tspan' && current) {
       // A tspan only supplies the label's position when the <text> itself has none.
       if (current.x === undefined && current.parts.join('').trim() === '') {
@@ -194,7 +216,16 @@ export function parseSvgLabels(svg) {
     if (selfClosing) continue;
     if (skipped) skipDepth += 1;
     stack.push(matrix);
+    sizes.push(size);
   }
+  // Text sized only by a stylesheet gets the document's typical label size: Celebrity sets
+  // most labels' size inline and the stylesheet-sized ones match it.
+  const known = labels
+    .map((l) => l.size)
+    .filter((n) => n !== undefined)
+    .sort((a, b) => a - b);
+  const typical = known.length ? known[Math.floor(known.length / 2)] : 16;
+  for (const l of labels) l.size ??= typical;
   return { viewBox, labels };
 }
 
@@ -234,47 +265,120 @@ export function deckNumberFromFilename(filename) {
 // ------------------------------------------------------------------ labels → facts
 
 /**
- * What a label is. Stateroom numbers carry their deck as a prefix (6101, 10122); anything
- * else naming stairs or lifts is circulation; text with letters is a venue or area name.
+ * What a label is. Stateroom numbers carry their deck as a prefix (6101, 10122). Labels
+ * naming lifts or stairs are circulation, and restroom signs are their own kind (the pack
+ * names restrooms generically). Other text with a word in it is a venue or area name.
  */
 export function classifyLabel(text, deckNumber) {
   const t = text.trim();
   if (/^\d{4,5}$/.test(t)) return t.startsWith(String(deckNumber)) ? 'cabin' : 'other';
   if (/\b(elevators?|lifts?)\b/i.test(t)) return 'elevator';
   if (/\b(stairs?|stairwell|staircase)\b/i.test(t)) return 'stairs';
-  if (!/[a-z]{3,}/i.test(t)) return 'other'; // legend letters, icons, stray digits
+  if (/^(gents|ladies|wc|men|women|restrooms?)$/i.test(t)) return 'restroom';
+  if (!/[a-z]{2,}/i.test(t)) return 'other'; // legend letters, icons, stray digits
   return 'venue';
+}
+
+const dot = (a, b) => a[0] * b[0] + a[1] * b[1];
+
+/**
+ * Stitches names set as separate `<text>` lines back together: "IL SECONDO" over "BACIO",
+ * "THE" / "POOL" / "CLUB". Two venue labels join when they read the same way, sit one line
+ * apart (0.6–1.3 font sizes along the line-to-line direction) and overlap along the reading
+ * direction by at least a quarter of the shorter line. Lines join top line first.
+ */
+export function mergeLines(labels, deckNumber) {
+  const words = labels.filter((l) => classifyLabel(l.text, deckNumber) === 'venue');
+  const rest = labels.filter((l) => classifyLabel(l.text, deckNumber) !== 'venue');
+  const parent = words.map((_, i) => i);
+  const find = (i) => (parent[i] === i ? i : (parent[i] = find(parent[i])));
+  for (let i = 0; i < words.length; i++) {
+    for (let j = i + 1; j < words.length; j++) {
+      const [a, b] = [words[i], words[j]];
+      if (dot(a.u, b.u) < 0.99) continue;
+      const delta = [b.x - a.x, b.y - a.y];
+      const size = Math.max(a.size, b.size);
+      const lineGap = Math.abs(dot(delta, a.v));
+      if (lineGap < 0.6 * size || lineGap > 1.3 * size) continue;
+      // The lines must overlap along the reading direction (text starts at x, y and runs
+      // roughly 0.6 font sizes per character), as a stacked name's lines do; neighbours
+      // that merely touch end to end don't.
+      const [aStart, bStart] = [dot([a.x, a.y], a.u), dot([b.x, b.y], a.u)];
+      const [aEnd, bEnd] = [
+        aStart + 0.6 * a.size * a.text.length,
+        bStart + 0.6 * b.size * b.text.length,
+      ];
+      const overlap = Math.min(aEnd, bEnd) - Math.max(aStart, bStart);
+      if (overlap < 0.25 * Math.min(aEnd - aStart, bEnd - bStart)) continue;
+      parent[find(j)] = find(i);
+    }
+  }
+  const groups = new Map();
+  words.forEach((w, i) => {
+    const root = find(i);
+    if (!groups.has(root)) groups.set(root, []);
+    groups.get(root).push(w);
+  });
+  const merged = [...groups.values()].map((lines) => {
+    const ordered = [...lines].sort((p, q) => dot([p.x, p.y], p.v) - dot([q.x, q.y], q.v));
+    const xs = ordered.map((l) => l.x);
+    const ys = ordered.map((l) => l.y);
+    return {
+      ...ordered[0],
+      text: ordered.map((l) => l.text).join(' '),
+      x: (Math.min(...xs) + Math.max(...xs)) / 2,
+      y: (Math.min(...ys) + Math.max(...ys)) / 2,
+    };
+  });
+  return [...merged, ...rest];
 }
 
 /** Mean of the values, or NaN when there are none. */
 const mean = (xs) => xs.reduce((s, v) => s + v, 0) / xs.length;
 
+const SIDES = { left: ['x', -1], right: ['x', 1], top: ['y', -1], bottom: ['y', 1] };
+
 /**
- * Works out which way the drawing faces from the stateroom numbers: Celebrity numbers
- * staterooms upward from bow to stern, odd to port and even to starboard. Needs cabins on
- * at least one deck; returns null for a direction it can't tell.
+ * Works out which way the drawings face from the stateroom numbers: Celebrity numbers
+ * staterooms upward from bow to stern, odd to port and even to starboard. The ship's long
+ * axis is the one its staterooms spread along. Returns null for a direction it can't tell.
  *
- * @param {{ deckNumber: number, labels: { text: string, x: number, y: number }[] }[]} decks
- * @returns {{ bow: 'left' | 'right' | null, port: 'top' | 'bottom' | null }}
+ * @param {{ deckNumber: number, labels: Label[] }[]} decks
+ * @returns {{ bow: 'left' | 'right' | 'top' | 'bottom' | null,
+ *             port: 'left' | 'right' | 'top' | 'bottom' | null }}
  */
 export function calibrateOrientation(decks) {
+  const cabinDecks = decks
+    .map(({ deckNumber, labels }) =>
+      labels.filter((l) => classifyLabel(l.text, deckNumber) === 'cabin')
+    )
+    .filter((cabins) => cabins.length >= 4);
+  if (!cabinDecks.length) return { bow: null, port: null };
+
+  const spread = (axis) =>
+    mean(
+      cabinDecks.map((c) => Math.max(...c.map((l) => l[axis])) - Math.min(...c.map((l) => l[axis])))
+    );
+  const along = spread('x') >= spread('y') ? 'x' : 'y';
+  const across = along === 'x' ? 'y' : 'x';
+
   let slopeVotes = 0;
   const odd = [];
   const even = [];
-  for (const { deckNumber, labels } of decks) {
-    const cabins = labels.filter((l) => classifyLabel(l.text, deckNumber) === 'cabin');
-    if (cabins.length < 4) continue;
-    const xs = cabins.map((c) => c.x);
+  for (const cabins of cabinDecks) {
+    const ps = cabins.map((c) => c[along]);
     const seqs = cabins.map((c) => Number(c.text) % 1000);
-    const mx = mean(xs);
+    const mp = mean(ps);
     const ms = mean(seqs);
-    const cov = xs.reduce((s, x, i) => s + (x - mx) * (seqs[i] - ms), 0);
-    slopeVotes += Math.sign(cov);
-    for (const c of cabins) (Number(c.text) % 2 ? odd : even).push(c.y);
+    slopeVotes += Math.sign(ps.reduce((s, p, i) => s + (p - mp) * (seqs[i] - ms), 0));
+    for (const c of cabins) (Number(c.text) % 2 ? odd : even).push(c[across]);
   }
+  const low = { x: 'left', y: 'top' };
+  const high = { x: 'right', y: 'bottom' };
   return {
-    bow: slopeVotes > 0 ? 'left' : slopeVotes < 0 ? 'right' : null,
-    port: odd.length && even.length ? (mean(odd) < mean(even) ? 'top' : 'bottom') : null,
+    // Numbers rise toward the stern, so the bow is at the low end when the slope is positive.
+    bow: slopeVotes > 0 ? low[along] : slopeVotes < 0 ? high[along] : null,
+    port: odd.length && even.length ? (mean(odd) < mean(even) ? low[across] : high[across]) : null,
   };
 }
 
@@ -296,23 +400,23 @@ const round2 = (v) => Math.round(v * 100) / 100;
 
 /**
  * Turns one deck's labels into facts. `t` runs bow (0) to stern (1) across the hull's
- * extent; `side` is port / starboard / center by which third of the beam the label sits in.
+ * length; `side` is port / starboard / center by which third of the beam the label sits in.
  *
- * @param {{ deckNumber: number, labels: { text: string, x: number, y: number }[] }} deck
- * @param {{ bow: 'left' | 'right', port: 'top' | 'bottom',
+ * @param {{ deckNumber: number, labels: Label[] }} deck
+ * @param {{ bow: string, port: string,
  *           hull: { minX: number, maxX: number, minY: number, maxY: number } }} frame
  */
 export function deckFacts({ deckNumber, labels }, { bow, port, hull }) {
-  const along = (x) => {
-    const f = (x - hull.minX) / (hull.maxX - hull.minX);
-    return Math.min(1, Math.max(0, bow === 'left' ? f : 1 - f));
+  const fraction = (side, p) => {
+    const [axis, sign] = SIDES[side];
+    const [min, max] = axis === 'x' ? [hull.minX, hull.maxX] : [hull.minY, hull.maxY];
+    const f = (p[axis] - min) / (max - min);
+    return Math.min(1, Math.max(0, sign < 0 ? f : 1 - f));
   };
-  const across = (y) => {
-    const f = (y - hull.minY) / (hull.maxY - hull.minY);
-    return port === 'top' ? f : 1 - f; // 0 = port rail, 1 = starboard rail
-  };
-  const sideOf = (y) => {
-    const a = across(y);
+  const along = (p) => fraction(bow, p); // 0 = bow, 1 = stern
+  const across = (p) => fraction(port, p); // 0 = port rail, 1 = starboard rail
+  const sideOf = (p) => {
+    const a = across(p);
     return a < 1 / 3 ? 'port' : a > 2 / 3 ? 'starboard' : 'center';
   };
 
@@ -323,20 +427,20 @@ export function deckFacts({ deckNumber, labels }, { bow, port, hull }) {
     stairs: [],
     cabins: { port: [], starboard: [] },
   };
-  for (const label of labels) {
+  for (const label of mergeLines(labels, deckNumber)) {
     const kind = classifyLabel(label.text, deckNumber);
-    if (kind === 'other') continue;
+    if (kind === 'other' || kind === 'restroom') continue;
     if (kind === 'cabin') {
       // Side comes from where it's drawn, since a few suites break odd-to-port; parity only
       // settles the stern-facing staterooms drawn near the centreline.
-      const a = across(label.y);
+      const a = across(label);
       const odd = Number(label.text) % 2 === 1;
       const side = a < 0.4 || (a <= 0.6 && odd) ? 'port' : 'starboard';
       facts.cabins[side].push(Number(label.text));
       continue;
     }
-    const t = round2(along(label.x));
-    const fact = { name: label.text, t, zone: zoneOf(t), side: sideOf(label.y) };
+    const t = round2(along(label));
+    const fact = { name: label.text, t, zone: zoneOf(t), side: sideOf(label) };
     if (kind === 'venue') facts.venues.push(fact);
     else facts[kind === 'elevator' ? 'elevators' : 'stairs'].push(fact);
   }
@@ -346,37 +450,55 @@ export function deckFacts({ deckNumber, labels }, { bow, port, hull }) {
   return facts;
 }
 
+const boxOf = (viewBox) => ({
+  minX: viewBox.minX,
+  maxX: viewBox.minX + viewBox.width,
+  minY: viewBox.minY,
+  maxY: viewBox.minY + viewBox.height,
+});
+
 /**
- * The hull's extent in drawing units. Without an explicit one, the spread of the
- * stateroom and venue labels across all decks stands in for it (padded slightly, since
- * no label sits on the bow tip); the viewBox is the last resort.
+ * Each deck's hull frame in drawing units. Celebrity crops every deck from one shared
+ * drawing, so the decks line up along the ship (the lift banks sit at the same place on
+ * every deck) while each sits in its own column across it. The ship's length is therefore
+ * the union of all the decks' viewBoxes along the long axis (the longest deck spans it),
+ * and each deck's beam is its own viewBox across the short axis.
+ *
+ * Without viewBoxes, the spread of all labels, padded slightly, stands in for both.
+ *
+ * @param {{ deckNumber: number, labels: Label[], viewBox: object | null }[]} decks
+ * @param {'x' | 'y'} alongAxis
+ * @returns {Map<number, { minX: number, maxX: number, minY: number, maxY: number }>}
  */
-export function hullExtent(decks, viewBox) {
+export function hullFrames(decks, alongAxis) {
+  const frames = new Map();
+  const boxes = decks.filter((d) => d.viewBox).map((d) => boxOf(d.viewBox));
+  const [lo, hi] = alongAxis === 'x' ? ['minX', 'maxX'] : ['minY', 'maxY'];
+  if (boxes.length === decks.length) {
+    const length = {
+      [lo]: Math.min(...boxes.map((b) => b[lo])),
+      [hi]: Math.max(...boxes.map((b) => b[hi])),
+    };
+    for (const d of decks) frames.set(d.deckNumber, { ...boxOf(d.viewBox), ...length });
+    return frames;
+  }
   const pts = decks.flatMap(({ deckNumber, labels }) =>
     labels.filter((l) => classifyLabel(l.text, deckNumber) !== 'other')
   );
-  if (pts.length >= 8) {
-    const xs = pts.map((p) => p.x);
-    const ys = pts.map((p) => p.y);
-    const [minX, maxX, minY, maxY] = [
-      Math.min(...xs),
-      Math.max(...xs),
-      Math.min(...ys),
-      Math.max(...ys),
-    ];
-    const padX = (maxX - minX) * 0.03;
-    const padY = (maxY - minY) * 0.08;
-    return { minX: minX - padX, maxX: maxX + padX, minY: minY - padY, maxY: maxY + padY };
-  }
-  if (viewBox) {
-    return {
-      minX: viewBox.minX,
-      maxX: viewBox.minX + viewBox.width,
-      minY: viewBox.minY,
-      maxY: viewBox.minY + viewBox.height,
-    };
-  }
-  throw new Error('Cannot tell the hull extent: no labels and no viewBox');
+  if (pts.length < 8) throw new Error('Cannot tell the hull extent: too few labels and no viewBox');
+  const xs = pts.map((p) => p.x);
+  const ys = pts.map((p) => p.y);
+  const [minX, maxX, minY, maxY] = [
+    Math.min(...xs),
+    Math.max(...xs),
+    Math.min(...ys),
+    Math.max(...ys),
+  ];
+  const padX = (maxX - minX) * (alongAxis === 'x' ? 0.03 : 0.08);
+  const padY = (maxY - minY) * (alongAxis === 'y' ? 0.03 : 0.08);
+  const frame = { minX: minX - padX, maxX: maxX + padX, minY: minY - padY, maxY: maxY + padY };
+  for (const d of decks) frames.set(d.deckNumber, frame);
+  return frames;
 }
 
 // ------------------------------------------------------------------ pack comparison
@@ -415,14 +537,19 @@ function packNameIndex(pack) {
 }
 
 /**
- * Pack venues for an official name: an exact name or alias first, else ones whose name
- * extends it or that it extends word by word ("Mast Grill" ↔ "Mast Grill & Bar"). A
- * one-word name only matches exactly, so "Mast" never pulls in "Mast Bar".
+ * Pack venues for an official name: an exact name or alias first, then the same words in
+ * another order, else ones whose name extends it or that it extends word by word
+ * ("Mast Grill" ↔ "Mast Grill & Bar"). A one-word name only matches exactly, so "Mast"
+ * never pulls in "Mast Bar".
  */
 export function lookup(index, key) {
   const exact = index.get(key);
   if (exact) return exact;
   if (!key.includes(' ')) return [];
+  // Stacked lines can join in another order than the name reads ("BACIO IL SECONDO").
+  const sortedWords = (k) => k.split(' ').sort().join(' ');
+  const reordered = [...index].filter(([name]) => sortedWords(name) === sortedWords(key));
+  if (reordered.length) return reordered.flatMap(([, entries]) => entries);
   const found = [];
   for (const [name, entries] of index) {
     if (name.includes(' ') && (name.startsWith(`${key} `) || key.startsWith(`${name} `)))
@@ -589,18 +716,16 @@ export function formatReport(shipId, facts, comparison) {
 // ------------------------------------------------------------------ CLI
 
 /**
- * Reads every deck SVG in `dir` and turns them into facts for one ship.
- * @param {{ files: { name: string, svg: string }[], bow?: 'left' | 'right', port?: 'top' | 'bottom' }} input
+ * Reads every deck SVG and turns them into facts for one ship.
+ * @param {{ files: { name: string, svg: string }[], bow?: string, port?: string }} input
  */
 export function buildFacts({ files, bow, port }) {
   const decks = [];
-  let viewBox = null;
   for (const { name, svg } of files) {
     const deckNumber = deckNumberFromFilename(name);
     if (deckNumber === null) continue;
     const parsed = parseSvgLabels(svg);
-    viewBox ??= parsed.viewBox;
-    decks.push({ deckNumber, labels: parsed.labels });
+    decks.push({ deckNumber, labels: parsed.labels, viewBox: parsed.viewBox });
   }
   decks.sort((a, b) => a.deckNumber - b.deckNumber);
   if (!decks.length) throw new Error('No deck-<n>.svg files found');
@@ -613,13 +738,16 @@ export function buildFacts({ files, bow, port }) {
   const orientation = { bow: bow ?? calibrated.bow, port: port ?? calibrated.port };
   if (!orientation.bow || !orientation.port) {
     throw new Error(
-      'Cannot tell which way the drawings face (too few stateroom numbers). Pass --bow left|right and --port top|bottom.'
+      'Cannot tell which way the drawings face (too few stateroom numbers). Pass --bow and --port (left, right, top or bottom).'
     );
   }
-  const hull = hullExtent(decks, viewBox);
+  if (SIDES[orientation.bow][0] === SIDES[orientation.port][0]) {
+    throw new Error('--bow and --port must be on different axes (e.g. --bow top --port right)');
+  }
+  const frames = hullFrames(decks, SIDES[orientation.bow][0]);
   return {
     orientation,
-    decks: decks.map((d) => deckFacts(d, { ...orientation, hull })),
+    decks: decks.map((d) => deckFacts(d, { ...orientation, hull: frames.get(d.deckNumber) })),
   };
 }
 
@@ -635,10 +763,10 @@ export function parseArgs(argv) {
     else if (arg === '--json') args.json = true;
     else throw new Error(`Unknown argument: ${arg}`);
   }
-  if (args.bow && !['left', 'right'].includes(args.bow))
-    throw new Error('--bow must be left or right');
-  if (args.port && !['top', 'bottom'].includes(args.port))
-    throw new Error('--port must be top or bottom');
+  for (const flag of ['bow', 'port']) {
+    if (args[flag] && !(args[flag] in SIDES))
+      throw new Error(`--${flag} must be left, right, top or bottom`);
+  }
   return args;
 }
 

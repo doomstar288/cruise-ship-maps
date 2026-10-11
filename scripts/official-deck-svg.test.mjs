@@ -10,6 +10,7 @@ import {
   formatReport,
   formatRuns,
   lookup,
+  mergeLines,
   normalizeName,
   packPath,
   parseArgs,
@@ -21,23 +22,38 @@ import {
 
 const xcel = JSON.parse(readFileSync(packPath('celebrity-xcel'), 'utf8'));
 
-/** Draws a pack deck back out as an SVG of labels only, the way an official plan would label it. */
-function svgFromPackDeck(pack, deckNumber, { bow = 'left', port = 'top', scale = 4 } = {}) {
+/**
+ * Draws a pack deck back out as an SVG of labels only, the way an official plan would label
+ * it. `column` shifts the deck sideways across the ship and crops the viewBox to it, as
+ * Celebrity's plans do: every deck is cut from one drawing with the decks side by side.
+ */
+function svgFromPackDeck(
+  pack,
+  deckNumber,
+  { bow = 'left', port = 'top', scale = 4, column = 0 } = {}
+) {
   const { minX, maxX } = pack.geometry.extent;
-  const beam = pack.geometry.beamMeters;
+  const length = (maxX - minX) * scale;
+  const beam = pack.geometry.beamMeters * scale;
+  const offset = column * beam * 1.5;
+  const place = (along, across) => {
+    const a = ['left', 'top'].includes(bow) ? along : length - along;
+    const c = offset + (['left', 'top'].includes(port) ? across : beam - across);
+    return ['left', 'right'].includes(bow) ? [a, c] : [c, a];
+  };
   const deck = pack.decks.find((d) => d.deckNumber === deckNumber);
   const texts = deck.features
     .filter(
       (f) => f.featureType === 'venue' || f.featureType === 'poi' || f.featureType === 'cabin'
     )
     .map((f) => {
-      const [cx, cy] = f.center;
-      const x = (bow === 'left' ? cx - minX : maxX - cx) * scale;
-      const y = (port === 'top' ? cy : beam - cy) * scale;
+      const [x, y] = place((f.center[0] - minX) * scale, f.center[1] * scale);
       const label = f.featureType === 'cabin' ? f.cabin.number : f.name.replace(/&/g, '&amp;');
       return `<text transform="matrix(1 0 0 1 ${x.toFixed(2)} ${y.toFixed(2)})">${label}</text>`;
     });
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${(maxX - minX) * scale} ${beam * scale}"><g>${texts.join('')}</g></svg>`;
+  const [vx, vy] = place(0, 0).map((n, i) => Math.min(n, place(length, beam)[i]));
+  const [vw, vh] = ['left', 'right'].includes(bow) ? [length, beam] : [beam, length];
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vx} ${vy} ${vw} ${vh}"><g>${texts.join('')}</g></svg>`;
 }
 
 describe('parseTransform', () => {
@@ -69,11 +85,27 @@ describe('parseSvgLabels', () => {
       </svg>`;
     const { viewBox, labels } = parseSvgLabels(svg);
     expect(viewBox).toEqual({ minX: 0, minY: 0, width: 1000, height: 120 });
-    expect(labels).toEqual([
+    expect(labels.map(({ text, x, y }) => ({ text, x, y }))).toEqual([
       { text: 'Café al Bacio & Gelateria', x: 105, y: 17 },
       { text: 'MAST GRILL', x: 300, y: 40 },
       { text: 'Rooftop Garden', x: 900, y: 60 },
     ]);
+  });
+
+  it('records reading direction and font size, defaulting to the typical size', () => {
+    const svg = `<svg>
+      <text font-size="4" transform="matrix(0 -1 1 0 10 50)">THE CLUB</text>
+      <text font-size="4" x="0" y="0">A</text>
+      <g transform="scale(2)"><text x="1" y="1">POOL</text></g>
+    </svg>`;
+    const [club, , pool] = parseSvgLabels(svg).labels;
+    expect(club.u[0]).toBeCloseTo(0);
+    expect(club.u[1]).toBeCloseTo(-1);
+    expect(club.v).toEqual([1, 0]);
+    expect(club.size).toBe(4);
+    // No font-size anywhere: the document's typical size, scaled by its transform.
+    expect(pool.size).toBe(4);
+    expect([pool.x, pool.y]).toEqual([2, 2]);
   });
 
   it('reads CDATA as text and skips comments, even unclosed ones', () => {
@@ -104,6 +136,8 @@ describe('deck files and labels', () => {
     expect(classifyLabel('Forward Elevators', 6)).toBe('elevator');
     expect(classifyLabel('STAIRS', 6)).toBe('stairs');
     expect(classifyLabel('A', 6)).toBe('other');
+    expect(classifyLabel('GENTS', 6)).toBe('restroom');
+    expect(classifyLabel('WC', 6)).toBe('restroom');
     expect(classifyLabel('Mast Grill', 14)).toBe('venue');
   });
 
@@ -115,6 +149,7 @@ describe('deck files and labels', () => {
     ]);
     expect(lookup(index, 'mast grill')).toEqual([entry]);
     expect(lookup(index, 'mast')).toEqual([]);
+    expect(lookup(index, 'grill mast and bar')).toEqual([entry]);
   });
 
   it('folds names for matching', () => {
@@ -131,6 +166,65 @@ describe('deck files and labels', () => {
 
   it('collapses cabin numbers into runs', () => {
     expect(formatRuns([6101, 6103, 6105, 6109])).toBe('6101–6105, 6109');
+  });
+});
+
+describe('mergeLines', () => {
+  const at = (text, x, y, vertical = false) => ({
+    text,
+    x,
+    y,
+    u: vertical ? [0, -1] : [1, 0],
+    v: vertical ? [1, 0] : [0, 1],
+    size: 4,
+  });
+  const merged = (labels) =>
+    mergeLines(labels, 14)
+      .map((l) => l.text)
+      .sort();
+
+  // Positions below are Celebrity Xcel's own, from its deck 3 and deck 14 plans.
+  it('joins a name set over several lines, top line first', () => {
+    expect(
+      merged([at('POOL', 437.5, 430.4), at('CLUB', 437.5, 434.4), at('THE', 438.7, 426.4)])
+    ).toEqual(['THE POOL CLUB']);
+    expect(merged([at('BACIO', 423.6, 565.5, true), at('IL SECONDO', 419.6, 570, true)])).toEqual([
+      'IL SECONDO BACIO',
+    ]);
+  });
+
+  it('keeps neighbouring names apart', () => {
+    // Side by side, a line apart, but only touching end to end.
+    expect(
+      merged([
+        at('GUEST', 1600, 471.1),
+        at('RELATIONS', 1600, 475.1),
+        at('CONCIERGE', 1620.6, 475.3),
+        at('LOUNGE', 1620.6, 479.3),
+      ])
+    ).toEqual(['CONCIERGE LOUNGE', 'GUEST RELATIONS']);
+    // Two lines down is another label, and a hot tub beside the pool isn't part of it.
+    expect(
+      merged([
+        at('SUNDECK', 69, 196),
+        at('THE', 74, 202),
+        at('POOL', 437.9, 324.2),
+        at('HOT', 453.6, 326.8),
+      ])
+    ).toEqual(['HOT', 'POOL', 'SUNDECK', 'THE']);
+    // Text reading another way never joins.
+    expect(merged([at('RELAXATION', 407.6, 239.5, true), at('BARBER', 418, 239.2)])).toEqual([
+      'BARBER',
+      'RELAXATION',
+    ]);
+  });
+
+  it('leaves staterooms, lifts and restrooms alone', () => {
+    expect(
+      mergeLines([at('GENTS', 0, 0), at('LADIES', 0, 4), at('ELEVATORS', 0, 8)], 14).map(
+        (l) => l.text
+      )
+    ).toEqual(['GENTS', 'LADIES', 'ELEVATORS']);
   });
 });
 
@@ -152,6 +246,18 @@ describe('calibrateOrientation', () => {
     });
   });
 
+  it('finds the long axis when the ship is drawn upright, as Celebrity draws it', () => {
+    const labels = cabinsAt([
+      ['6101', 10, 100],
+      ['6103', 10, 200],
+      ['6105', 10, 300],
+      ['6100', 60, 100],
+      ['6102', 60, 200],
+      ['6104', 60, 300],
+    ]);
+    expect(calibrateOrientation([{ deckNumber: 6, labels }])).toEqual({ bow: 'top', port: 'left' });
+  });
+
   it('gives up without enough staterooms', () => {
     expect(calibrateOrientation([{ deckNumber: 14, labels: cabinsAt([['Pool', 1, 1]]) }])).toEqual({
       bow: null,
@@ -166,11 +272,12 @@ describe('against the Xcel pack', () => {
   for (const [bow, port] of [
     ['left', 'top'],
     ['right', 'bottom'],
+    ['top', 'left'], // how Celebrity draws its plans
   ]) {
     it(`agrees with itself when drawn bow-${bow}, port-${port}`, () => {
-      const files = decks.map((n) => ({
+      const files = decks.map((n, column) => ({
         name: `deck-${n}.svg`,
-        svg: svgFromPackDeck(xcel, n, { bow, port }),
+        svg: svgFromPackDeck(xcel, n, { bow, port, column }),
       }));
       const facts = buildFacts({ files });
       expect(facts.orientation).toEqual({ bow, port });

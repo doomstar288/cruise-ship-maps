@@ -55,14 +55,25 @@ and correct `cabinRanges` in the ship's `manifest.json`. Then `npm run export:pa
 - **Labels**: every `<text>` element, with ancestor `transform`s applied. Lines split over
   `<tspan>`s become one label. If the labels are drawn as outlines (no `<text>`), the script
   stops and says so. Those plans would need OCR, which this doesn't do.
+- **Stacked names**: Celebrity sets many names as separate `<text>` lines ("THE" / "POOL" /
+  "CLUB", "IL SECONDO" / "BACIO"). Venue labels that read the same way, sit one line apart
+  (0.6–1.3 font sizes) and overlap along the line by at least a quarter of the shorter one
+  are joined, top line first. Text sized only by a stylesheet takes the plan's typical
+  label size. Dense spots can still join two neighbouring names, so read the "not in the
+  pack" list with the plan open.
 - **Kinds**: 4–5 digit numbers starting with the deck number are staterooms. Labels naming
-  elevators, lifts or stairs are circulation. Other text with a word in it is a venue.
+  elevators, lifts or stairs are circulation, and GENTS / LADIES / WC are restrooms, which
+  are skipped because the pack names them generically. Other text with a word in it is a venue.
 - **Orientation**: Celebrity numbers staterooms upward from bow to stern, odd to port. The
-  script reads which way the drawing faces from that, across all decks. `--bow left|right`
-  and `--port top|bottom` override it.
-- **Extent**: the spread of all labels across all decks, padded slightly, stands in for the
-  hull. That assumes every deck SVG shares one frame. If upper decks come out skewed, that
-  assumption is wrong for that ship.
+  script reads which way the drawings face from that, across all decks, including which
+  axis the ship runs along. Celebrity draws the ship upright, bow at the top and port on
+  the left. `--bow` and `--port` (each `left`, `right`, `top` or `bottom`) override it.
+- **Extent**: Celebrity cuts every deck from one drawing with the decks side by side, so
+  the decks line up along the ship (the lift banks sit at the same place on every deck).
+  The ship's length is the union of all the decks' viewBoxes along the ship, and each
+  deck's beam is its own viewBox across it. Without viewBoxes, the spread of all labels
+  stands in. On Xcel the two official lift banks land at 0.29 and 0.62 of the length,
+  against 0.27 and 0.59 for the pack's forward and midship banks.
 - **Zones**: fore/aft thirds of the hull, with a 4% slack at each boundary. Side is by
   thirds of the beam. Side is reported but doesn't decide a match, because pack sides are
   often synthetic.
