@@ -318,6 +318,14 @@ describe('proposeCategories', () => {
     // River wins: it is the more specific of the two categories.
     expect(proposals).toMatchObject([{ imo: '9524176', from: 'other', to: 'river' }]);
   });
+
+  it('ignores ships without a Wikidata item (added by override)', () => {
+    const registry = registryOf([ship('9863120', { wikidataId: null })]);
+    const categoryQids = new Map([
+      ['Category:Expedition cruise ships', new Set([undefined, null])],
+    ]);
+    expect(proposeCategories({ registry, categoryQids })).toEqual([]);
+  });
 });
 
 describe('merging proposals into overrides', () => {
