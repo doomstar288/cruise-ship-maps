@@ -1,7 +1,7 @@
 {
   "specVersion": 1,
   "shipId": "celebrity-xcel",
-  "recordedAgainstRevision": "2dd7770478fa",
+  "recordedAgainstRevision": "60e8acb42688",
   "costModel": {
     "walkingSpeedMps": 1.1,
     "elevatorBoardS": 60,
@@ -281,8 +281,8 @@
       },
       "stepFree": true,
       "expected": {
-        "walkM": 90.6,
-        "timeS": 158.4,
+        "walkM": 52.47,
+        "timeS": 123.7,
         "deckChanges": [
           {
             "mode": "elevator",
@@ -290,9 +290,7 @@
             "toDeck": 17
           }
         ],
-        "through": [
-          "v17-retreat-sundeck"
-        ]
+        "through": []
       }
     },
     {

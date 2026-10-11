@@ -117,12 +117,13 @@ describe('routing in the published Celebrity Xcel pack', () => {
     // Deck 4 and dropped the erroneous Deck 16 Mast Grill using official Celebrity
     // Xcel deck-plan SVGs, and when deck-three.svg resolved the Martini Bar's Deck 2 vs 3
     // conflict (confidence only), and when the official plans gave Xcel's staterooms
-    // their real numbers and positions and moved the venues they place elsewhere. Aliases, spans, confidence, entrances,
+    // their real numbers and positions and moved the venues they place elsewhere,
+    // Deck 17 included. Aliases, spans, confidence, entrances,
     // access, port exits, hours, hoursByDay, reservationRequired, fee, dressCode and restrooms
     // are all inside this hash. Update it only in a change that means to edit deck
     // data, never to make routing pass.
     expect(nonRoutingHash(pack)).toBe(
-      'd6f6002c8a814143ff82603099d2b1028e63e6bea2defa8bab615d3ef3396b25'
+      'b724bcad9bb54bab407305e500538ef96524308fd26e0c3b501ba987432cfe00'
     );
   });
 
@@ -469,9 +470,9 @@ describe('access restrictions on routes, across the published fleet', () => {
       }
     }
     expect(failures).toEqual([]);
-    // The Retreat Bar, reached across the Retreat Sundeck, on the three ships
-    // that draw it; proves the check sees crossings at all.
-    expect(restrictedCrossings).toBeGreaterThan(0);
+    // No route crosses a restricted area at all since the Retreat Bar moved out of the
+    // Retreat Sundeck (Deck 17, from Celebrity's deck-seventeen.svg).
+    expect(restrictedCrossings).toBe(0);
   });
 });
 

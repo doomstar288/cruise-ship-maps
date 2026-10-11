@@ -330,15 +330,14 @@ with its reason. Each is a documented modelling decision, not geometry:
 | 4 | Mosaic at The Bazaar | Along the 0.4 m seam between Cosmopolitan and Cyprus, standing in for the walkway between two dining rooms. Crosses nothing. |
 | 5 | Spice Café | `through` Market at The Bazaar: both are in the same open Bazaar hall. |
 | 14 | Aft Sun Deck | Along the 0.4 m seam at the edge of the Oceanview Café Terrace. Crosses nothing. |
-| 17 | The Retreat Bar | `through` the Retreat Sundeck it serves. |
 | 2, 5, 14, 16 | Magic Carpet stops | `through` the venue each stop extends (Destination Gateway, World Class Bar, Pool Club Cabanas, Glass-Walled Hot Tubs), ending at a projected door on the hull edge. |
 
 The tests hold this list to exactly what's needed. Removing any one connector must leave a venue
 unreachable, and `through` is only allowed on connector edges.
 
 **Restricted areas.** A route never crosses a feature whose `access` is `suite`, `adults` or `kids`
-unless its destination has the same `access`. Today that crossing is only the Retreat Bar, reached
-across the Retreat Sundeck, and both are suite-only. `paid` doesn't keep anyone out, so a route may
+unless its destination has the same `access`. Today no route crosses one: the Retreat Bar used to
+be reached across the Retreat Sundeck, until Celebrity's plan moved it beside the lifts. `paid` doesn't keep anyone out, so a route may
 pass one: the Deck 14 Magic Carpet stop is reached along the cabana row. The fleet-wide test in
 `scripts/routing-graph.test.mjs` checks every venue on every published ship.
 

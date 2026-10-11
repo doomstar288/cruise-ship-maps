@@ -32,8 +32,9 @@ describe('hullHalfWidth', () => {
   });
 
   it('is zero outside a stepped-back deck', () => {
-    expect(hullHalfWidth(17, 60)).toBe(0);
-    expect(hullHalfWidth(17, 120)).toBeGreaterThan(0);
+    expect(hullHalfWidth(17, 40)).toBe(0);
+    expect(hullHalfWidth(17, 120)).toBe(0);
+    expect(hullHalfWidth(17, 88)).toBeGreaterThan(0);
   });
 
   it('keeps the plan at the real length-to-beam proportion', () => {

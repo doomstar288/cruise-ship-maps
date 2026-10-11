@@ -105,16 +105,7 @@ export const ROUTING_CONNECTORS = [
     through: 'v5-bazaar-market',
     reason: 'Spice Café: through the Market, the same open Bazaar hall',
   },
-  {
-    deck: 17,
-    // The Retreat Bar is the sundeck's poolside bar; the sundeck is full-beam.
-    path: [
-      [88, 19.5],
-      [151, 19.5],
-    ],
-    through: 'v17-retreat-sundeck',
-    reason: 'The Retreat Bar: across the Retreat Sundeck it serves',
-  },
+
   {
     deck: 14,
     // The Aft Sun Deck's only walkway is the passage behind Il Secondo Bacio,

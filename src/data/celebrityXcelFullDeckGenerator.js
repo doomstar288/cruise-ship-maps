@@ -1374,7 +1374,7 @@ export function generateAllDecks() {
     })
   );
 
-  // Deck 17 — The Retreat Sundeck.
+  // Deck 17 — The Retreat Sundeck, over the forward elevators (deck-seventeen.svg).
   decks.push(
     deck(17, {
       title: 'The Retreat Sundeck',
@@ -1388,7 +1388,8 @@ export function generateAllDecks() {
           name: 'The Retreat Sundeck',
           category: 'Pool & Sun Deck',
           color: C.pool,
-          x: [96, 150],
+          // deck-seventeen.svg labels THE RETREAT SUNDECK and THE RETREAT POOL forward of the elevators.
+          x: [50, 72],
           description: 'Round pool, two cantilevered plunge pools, cabanas and premium loungers for suite guests.',
           tags: ['The Retreat', 'Suite Guests Only', 'Pool'],
           access: 'suite',
@@ -1396,11 +1397,13 @@ export function generateAllDecks() {
         }),
         venue(17, {
           id: 'v17-retreat-bar',
-          positionConfidence: 'estimated', // Celebrity's plan labels it forward of the elevators
+          positionConfidence: 'verified',
           name: 'The Retreat Bar',
           category: 'Bars & Lounges',
           color: C.bar,
-          x: [152, 176],
+          // deck-seventeen.svg labels THE RETREAT BAR on the port side, just forward of the elevators.
+          x: [74, 80],
+          y: [9, 19.3], // port side, between the sundeck and the lifts
           description: 'Poolside bar for Retreat guests.',
           tags: ['The Retreat', 'Suite Guests Only'],
           access: 'suite',

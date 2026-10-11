@@ -65,7 +65,9 @@ export const DECK_ENVELOPES = {
   14: { xStart: 34, xEnd: 312, cornerRadius: 6 },
   15: { xStart: 40, xEnd: 318, cornerRadius: 6 },
   16: { xStart: 46, xEnd: 252, beamScale: 0.94, cornerRadius: 6 },
-  17: { xStart: 76, xEnd: 176, beamScale: 0.7, cornerRadius: 9 },
+  // Celebrity's deck-seventeen.svg (Xcel, profile 2331) puts the Retreat Sundeck over the
+  // forward elevators, from about 48 m to 108 m aft of the bow.
+  17: { xStart: 48, xEnd: 108, beamScale: 0.76, cornerRadius: 9 },
 };
 
 /** The Magic Carpet rides a fixed starboard station; only its deck changes. */
@@ -100,7 +102,7 @@ export function computeDeckEnvelopes(lengthMeters = SHIP_LENGTH_M) {
     14: { xStart: 34, xEnd: 312 + delta, cornerRadius: 6 },
     15: { xStart: 40, xEnd: 318 + delta, cornerRadius: 6 },
     16: { xStart: 46, xEnd: lengthMeters < 320 ? 235 : 252, beamScale: 0.94, cornerRadius: 6 },
-    ...(lengthMeters >= 320 ? { 17: { xStart: 76, xEnd: 176, beamScale: 0.7, cornerRadius: 9 } } : {}),
+    ...(lengthMeters >= 320 ? { 17: { xStart: 48, xEnd: 108, beamScale: 0.76, cornerRadius: 9 } } : {}),
   };
 }
 
