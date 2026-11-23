@@ -5,23 +5,23 @@
     "sourceUrl": "https://query.wikidata.org/sparql",
     "license": "CC0-1.0",
     "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
-    "retrievedAt": "2026-11-02T13:02:33.652Z",
+    "retrievedAt": "2026-11-23T15:38:39.461Z",
     "queryHash": "93888cfbaac16dc6",
     "generator": "scripts/seed-fleet.mjs",
     "overrides": "scripts/fleet-overrides.json",
     "note": "Vessel identity and specifications only. Contains no deck-plan geometry. Fields listed in a ship's \"overriddenFields\" were corrected by hand, not sourced."
   },
   "stats": {
-    "ships": 734,
+    "ships": 735,
     "classes": 64,
     "byStatus": {
       "in_service": 372,
       "on_order": 2,
       "retired": 160,
-      "unknown": 200
+      "unknown": 201
     },
     "byCategory": {
-      "ocean": 582,
+      "ocean": 583,
       "expedition": 32,
       "river": 55,
       "ferry": 48,
@@ -35,7 +35,7 @@
     "operatorAmbiguous": 13,
     "missingFromSource": 0,
     "invalidImoChecksums": 3,
-    "unnamed": 1
+    "unnamed": 2
   },
   "classes": [
     {
@@ -1244,8 +1244,8 @@
       "shipClassId": "Q28456719",
       "builder": "Meyer Werft",
       "grossTonnage": 183521,
-      "lengthMeters": 345320.1,
-      "beamMeters": null,
+      "lengthMeters": 345.39,
+      "beamMeters": 42,
       "inServiceYear": 2023,
       "maxCapacity": 5228,
       "status": "in_service",
@@ -10330,7 +10330,9 @@
       "category": "ferry",
       "retirementYear": null,
       "formerNames": [],
-      "formerOperators": []
+      "formerOperators": [
+        "Ofotens og Vesteraalens Dampskibsselskab"
+      ]
     },
     {
       "wikidataId": "Q6719731",
@@ -13256,7 +13258,7 @@
       "wikidataId": "Q277910",
       "imo": "8979295",
       "imoValid": true,
-      "mmsi": "211160710",
+      "mmsi": "269057664",
       "name": "A-Rosa Riva",
       "operator": null,
       "operatorId": null,
@@ -14971,6 +14973,28 @@
       "status": "retired",
       "category": "ocean",
       "retirementYear": 2022,
+      "formerNames": [],
+      "formerOperators": []
+    },
+    {
+      "wikidataId": "Q142143211",
+      "imo": "1037488",
+      "imoValid": true,
+      "mmsi": null,
+      "name": null,
+      "operator": null,
+      "operatorId": null,
+      "shipClass": null,
+      "shipClassId": null,
+      "builder": "Asenav",
+      "grossTonnage": null,
+      "lengthMeters": null,
+      "beamMeters": null,
+      "inServiceYear": null,
+      "maxCapacity": null,
+      "status": "unknown",
+      "category": "ocean",
+      "retirementYear": null,
       "formerNames": [],
       "formerOperators": []
     },
