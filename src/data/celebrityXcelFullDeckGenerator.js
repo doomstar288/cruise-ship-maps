@@ -117,16 +117,31 @@ const partOf = (venueGroup, { aliases = [] } = {}) => ({
 const ALL_DAY = [['00:00', '24:00']];
 
 /** Select Dining Anytime dinner in all four main restaurants. */
-const MAIN_RESTAURANT = { hours: [['17:30', '21:00']], reservationRequired: false, fee: 'included', dressCode: 'smart casual' };
+const MAIN_RESTAURANT = {
+  hours: [['17:30', '21:00']],
+  reservationRequired: false,
+  fee: 'included',
+  dressCode: 'smart casual',
+};
 
 /** Oceanview Café and its seating areas: coffee, tea and juices around the clock. */
-const OCEANVIEW_CAFE = { hours: ALL_DAY, reservationRequired: false, fee: 'included', dressCode: 'casual' };
+const OCEANVIEW_CAFE = {
+  hours: ALL_DAY,
+  reservationRequired: false,
+  fee: 'included',
+  dressCode: 'casual',
+};
 
 /** Pool-deck grill on Deck 14. Official Celebrity Xcel deck-fourteen.svg (profile 2331)
  *  labels MAST GRILL there; deck-sixteen.svg labels MAST BAR, not Mast Grill:
  *  https://www.celebritycruises.com/content/dam/rcg/cel/resources/deck-plans/ship/celebrity-xcel/2331/decks/deck-fourteen.svg
  */
-const MAST_GRILL = { hours: [['11:30', '18:00']], reservationRequired: false, fee: 'included', dressCode: 'casual' };
+const MAST_GRILL = {
+  hours: [['11:30', '18:00']],
+  reservationRequired: false,
+  fee: 'included',
+  dressCode: 'casual',
+};
 
 /** The Spa, salon and SEA Thermal Suite, on both of The Spa's levels. */
 const THE_SPA = { hours: [['08:00', '22:00']] };
@@ -169,22 +184,83 @@ const RESTROOMS = {
     },
   ],
   4: [
-    { id: 'restrooms-fwd-4', x: [79, 87], y: [30, 34], where: 'forward on the starboard side, between The Theatre and the forward elevators' },
-    { id: 'restrooms-mid-4', x: [135, 143], y: [34.6, 39], where: 'midship on the starboard side, across from Le Voyage' },
-    { id: 'restrooms-aft-4', x: [264, 272], y: [34.6, 39], where: 'aft on the starboard side, forward of Cyprus' },
+    {
+      id: 'restrooms-fwd-4',
+      x: [79, 87],
+      y: [30, 34],
+      where: 'forward on the starboard side, between The Theatre and the forward elevators',
+    },
+    {
+      id: 'restrooms-mid-4',
+      x: [135, 143],
+      y: [34.6, 39],
+      where: 'midship on the starboard side, across from Le Voyage',
+    },
+    {
+      id: 'restrooms-aft-4',
+      x: [264, 272],
+      y: [34.6, 39],
+      where: 'aft on the starboard side, forward of Cyprus',
+    },
   ],
   5: [
-    { id: 'restrooms-fwd-5', x: [70, 78], y: [0, 4.4], where: 'forward on the port side, between The Theatre and the forward elevators' },
-    { id: 'restrooms-mid-5', x: [134, 142], y: [30, 33], where: 'midship on the starboard side, forward of the midship elevators' },
-    { id: 'restrooms-aft-5', x: [264, 272], y: [0, 4.4], where: 'aft on the port side, by the entrance to The Bazaar' },
+    {
+      id: 'restrooms-fwd-5',
+      x: [70, 78],
+      y: [0, 4.4],
+      where: 'forward on the port side, between The Theatre and the forward elevators',
+    },
+    {
+      id: 'restrooms-mid-5',
+      x: [134, 142],
+      y: [30, 33],
+      where: 'midship on the starboard side, forward of the midship elevators',
+    },
+    {
+      id: 'restrooms-aft-5',
+      x: [264, 272],
+      y: [0, 4.4],
+      where: 'aft on the port side, by the entrance to The Bazaar',
+    },
   ],
   14: [
-    { id: 'restrooms-fwd-port-14', rooms: 'Gents', x: [86, 90], y: [6, 9], where: 'on the port side of the forward elevators' },
-    { id: 'restrooms-fwd-stbd-14', rooms: 'Ladies', x: [86, 90], y: [35.6, 39], where: 'on the starboard side of the forward elevators' },
-    { id: 'restrooms-mid-port-14', rooms: 'Gents', x: [196, 200], y: [0, 4.4], where: 'on the port side of the midship elevators' },
-    { id: 'restrooms-mid-stbd-14', rooms: 'Ladies', x: [196, 200], y: [34.6, 39], where: 'on the starboard side of the midship elevators' },
+    {
+      id: 'restrooms-fwd-port-14',
+      rooms: 'Gents',
+      x: [86, 90],
+      y: [6, 9],
+      where: 'on the port side of the forward elevators',
+    },
+    {
+      id: 'restrooms-fwd-stbd-14',
+      rooms: 'Ladies',
+      x: [86, 90],
+      y: [35.6, 39],
+      where: 'on the starboard side of the forward elevators',
+    },
+    {
+      id: 'restrooms-mid-port-14',
+      rooms: 'Gents',
+      x: [196, 200],
+      y: [0, 4.4],
+      where: 'on the port side of the midship elevators',
+    },
+    {
+      id: 'restrooms-mid-stbd-14',
+      rooms: 'Ladies',
+      x: [196, 200],
+      y: [34.6, 39],
+      where: 'on the starboard side of the midship elevators',
+    },
   ],
-  15: [{ id: 'restrooms-aft-15', x: [264, 272], y: [34.6, 39], where: 'aft on the starboard side, across from Bora' }],
+  15: [
+    {
+      id: 'restrooms-aft-15',
+      x: [264, 272],
+      y: [34.6, 39],
+      where: 'aft on the starboard side, across from Bora',
+    },
+  ],
 };
 
 /** Deck `level`'s restrooms, as `poi` records (the exporter keys on the category). */
@@ -211,7 +287,8 @@ function restroomsOn(level) {
 const edgeVeranda = (x) => (x >= 95 && x < 186 ? 'E1' : 'E3');
 
 /** Magic Carpet Sky Suite directly forward of the platform's starboard track. */
-const nextToMagicCarpet = ({ x, side, row }) => side === 'Starboard' && row === 'outside' && x >= 144 && x < 154;
+const nextToMagicCarpet = ({ x, side, row }) =>
+  side === 'Starboard' && row === 'outside' && x >= 144 && x < 154;
 
 /** Half-beam that still fits a hull cabin, a corridor and half a service strip. */
 const NARROW_STRIP_HALF_BEAM = 15;
@@ -279,9 +356,13 @@ export function generateAllDecks() {
           category: 'Guest Services',
           color: C.service,
           x: [58, 80],
-          description: 'Shipboard medical center staffed by physicians and nurses, near the forward elevators.',
+          description:
+            'Shipboard medical center staffed by physicians and nurses, near the forward elevators.',
           tags: ['Medical', 'First Aid'],
-          hours: [['08:00', '11:00'], ['16:00', '19:00']],
+          hours: [
+            ['08:00', '11:00'],
+            ['16:00', '19:00'],
+          ],
         }),
         ...generateCenterlineCore(2),
         venue(2, {
@@ -294,7 +375,11 @@ export function generateAllDecks() {
           description: 'Teen hangout with games, music and activities for guests aged 13–17.',
           tags: ['Teens', 'Games'],
           access: 'kids',
-          hours: [['10:00', '12:00'], ['14:00', '17:00'], ['20:00', '23:00']],
+          hours: [
+            ['10:00', '12:00'],
+            ['14:00', '17:00'],
+            ['20:00', '23:00'],
+          ],
         }),
         venue(2, {
           id: 'v2-crew-fwd',
@@ -333,7 +418,8 @@ export function generateAllDecks() {
         magicCarpetStop(2, {
           name: 'Magic Carpet (Tender Platform)',
           ...partOf('magic-carpet', { aliases: ['Tender Platform'] }),
-          description: 'At Deck 2 the Magic Carpet becomes a tender embarkation platform for Destination Gateway.',
+          description:
+            'At Deck 2 the Magic Carpet becomes a tender embarkation platform for Destination Gateway.',
           tags: ['Tender Platform', 'Starboard'],
           // Guests wait in Destination Gateway and board the tenders from here.
           portExit: 'tender',
@@ -420,7 +506,8 @@ export function generateAllDecks() {
           color: C.bar,
           x: [157, 169],
           y: [14, 25],
-          description: 'Full-circle bar at the center of the Grand Plaza, known for its flair bartenders.',
+          description:
+            'Full-circle bar at the center of the Grand Plaza, known for its flair bartenders.',
           tags: ['Cocktails', 'Grand Plaza'],
         }),
         venue(3, {
@@ -470,7 +557,11 @@ export function generateAllDecks() {
           description: 'Kids club with age-grouped activities, just aft of the forward elevators.',
           tags: ['Kids'],
           access: 'kids',
-          hours: [['09:00', '12:00'], ['14:00', '17:00'], ['19:00', '22:00']],
+          hours: [
+            ['09:00', '12:00'],
+            ['14:00', '17:00'],
+            ['19:00', '22:00'],
+          ],
         }),
         venue(3, {
           id: 'v3-concierge-lounge',
@@ -577,7 +668,8 @@ export function generateAllDecks() {
           color: C.dining,
           x: [126, 150],
           y: PORT,
-          description: 'Specialty restaurant with a globe-trotting menu by Chef Daniel Boulud. New on Xcel.',
+          description:
+            'Specialty restaurant with a globe-trotting menu by Chef Daniel Boulud. New on Xcel.',
           tags: ['Specialty Dining', 'Daniel Boulud'],
           hours: [['17:30', '21:00']],
           reservationRequired: true,
@@ -593,10 +685,14 @@ export function generateAllDecks() {
           color: C.dining,
           x: [152, 172],
           y: PORT_EDGE,
-          description: 'French bistro on the Grand Plaza; hosts Le Petit Chef animated dining at night.',
+          description:
+            'French bistro on the Grand Plaza; hosts Le Petit Chef animated dining at night.',
           tags: ['French', 'Le Petit Chef'],
           // Lunch, then Le Petit Chef's two dinner seatings at 5:30 and 7:30 PM.
-          hours: [['12:00', '13:30'], ['17:30', '19:30']],
+          hours: [
+            ['12:00', '13:30'],
+            ['17:30', '19:30'],
+          ],
           reservationRequired: true,
           fee: 'surcharge',
           dressCode: 'smart casual',
@@ -680,8 +776,22 @@ export function generateAllDecks() {
           tags: ['Main Dining'],
           ...MAIN_RESTAURANT,
           // The one main restaurant that also serves breakfast, and lunch on sea days.
-          hours: [['07:30', '09:00'], ['12:00', '13:30'], ['17:30', '21:00']],
-          hoursByDay: { sea: [['07:30', '09:00'], ['12:00', '13:30'], ['17:30', '21:00']], port: [['07:30', '09:00'], ['17:30', '21:00']] },
+          hours: [
+            ['07:30', '09:00'],
+            ['12:00', '13:30'],
+            ['17:30', '21:00'],
+          ],
+          hoursByDay: {
+            sea: [
+              ['07:30', '09:00'],
+              ['12:00', '13:30'],
+              ['17:30', '21:00'],
+            ],
+            port: [
+              ['07:30', '09:00'],
+              ['17:30', '21:00'],
+            ],
+          },
         }),
         venue(4, {
           id: 'v4-cyprus',
@@ -702,7 +812,8 @@ export function generateAllDecks() {
           category: 'Fine Dining',
           color: C.dining,
           x: [298, 327],
-          description: 'Restaurant on the lower level of The Bazaar, the triple-height aft space that replaced Eden on Xcel.',
+          description:
+            'Restaurant on the lower level of The Bazaar, the triple-height aft space that replaced Eden on Xcel.',
           tags: ['The Bazaar', 'New on Xcel'],
           hours: [['17:30', '20:30']],
           reservationRequired: true,
@@ -827,7 +938,10 @@ export function generateAllDecks() {
           y: STBD_EDGE,
           description: 'Raw bar with oysters, crudo and sushi, beside the Magic Carpet.',
           tags: ['Seafood', 'Sushi'],
-          hours: [['12:00', '14:00'], ['17:30', '21:00']],
+          hours: [
+            ['12:00', '14:00'],
+            ['17:30', '21:00'],
+          ],
           reservationRequired: false,
           fee: 'a la carte',
           dressCode: 'smart casual',
@@ -848,7 +962,8 @@ export function generateAllDecks() {
           positionConfidence: 'verified',
           name: 'Magic Carpet (Deck 5 Dining)',
           ...partOf('magic-carpet'),
-          description: 'The cantilevered Magic Carpet docks on Deck 5 as an open-air extension of the dining venues.',
+          description:
+            'The cantilevered Magic Carpet docks on Deck 5 as an open-air extension of the dining venues.',
           tags: ['Cantilevered', 'Ocean Views', 'Starboard'],
           // Evenings only. By day it moves to Deck 14 or 16, which varies too much to record.
           hours: [['18:00', '21:30']],
@@ -878,7 +993,10 @@ export function generateAllDecks() {
           y: PORT,
           description: 'Restaurant reserved for AquaClass guests, with a clean-eating menu.',
           tags: ['AquaClass', 'Healthy'],
-          hours: [['07:30', '09:00'], ['17:30', '21:00']],
+          hours: [
+            ['07:30', '09:00'],
+            ['17:30', '21:00'],
+          ],
           reservationRequired: false,
           fee: 'included',
           dressCode: 'smart casual',
@@ -900,7 +1018,8 @@ export function generateAllDecks() {
           category: 'Casual Dining',
           color: C.dining,
           x: [276, 304],
-          description: 'Market-style dining, crafts and festival entertainment on The Bazaar’s middle level.',
+          description:
+            'Market-style dining, crafts and festival entertainment on The Bazaar’s middle level.',
           tags: ['The Bazaar', 'New on Xcel'],
           hours: [['10:00', '23:00']],
           reservationRequired: false,
@@ -914,7 +1033,10 @@ export function generateAllDecks() {
           x: [306, 327],
           description: 'Casual café in The Bazaar with two outdoor seating areas.',
           tags: ['The Bazaar', 'New on Xcel'],
-          hours: [['07:30', '10:30'], ['11:30', '16:00']], // lunch runs into afternoon snacks on sea days
+          hours: [
+            ['07:30', '10:30'],
+            ['11:30', '16:00'],
+          ], // lunch runs into afternoon snacks on sea days
           reservationRequired: false,
           fee: 'included',
         }),
@@ -961,9 +1083,28 @@ export function generateAllDecks() {
   const midDeckTypes = {
     7: ({ x }) => (x < 50 ? 'DO' : edgeVeranda(x)),
     8: ({ x }) => (x < 45 ? 'DO' : x < 81 ? 'A1' : edgeVeranda(x)),
-    9: ({ x }) => (x < 45 ? 'DO' : x < 81 ? 'A1' : x < 120 && x >= 95 ? 'S1' : x < 186 && x >= 95 ? 'C2' : edgeVeranda(x)),
+    9: ({ x }) =>
+      x < 45
+        ? 'DO'
+        : x < 81
+          ? 'A1'
+          : x < 120 && x >= 95
+            ? 'S1'
+            : x < 186 && x >= 95
+              ? 'C2'
+              : edgeVeranda(x),
     10: ({ x }) =>
-      x < 45 ? 'E3' : x < 70 ? 'A1' : x < 81 ? 'AS' : x < 120 && x >= 95 ? 'S1' : x < 186 && x >= 95 ? 'C2' : edgeVeranda(x),
+      x < 45
+        ? 'E3'
+        : x < 70
+          ? 'A1'
+          : x < 81
+            ? 'AS'
+            : x < 120 && x >= 95
+              ? 'S1'
+              : x < 186 && x >= 95
+                ? 'C2'
+                : edgeVeranda(x),
   };
   const midDeckInfo = {
     7: 'Deluxe Oceanview staterooms forward, Prime Edge and Edge Infinite Veranda staterooms, and Sunset Verandas facing the wake.',
@@ -999,7 +1140,8 @@ export function generateAllDecks() {
           category: 'Navigation & Bridge',
           color: C.service,
           x: [18, 42],
-          description: 'The ship’s navigation bridge, with wings overhanging both sides. Crew only.',
+          description:
+            'The ship’s navigation bridge, with wings overhanging both sides. Crew only.',
           tags: ['Bridge', 'Crew Only'],
         }),
         ...stateroomDeck(11, {
@@ -1052,7 +1194,8 @@ export function generateAllDecks() {
           category: 'Spa & Wellness',
           color: C.spa,
           x: [36, 80],
-          description: 'Full-service spa with the SEA Thermal Suite, including the new Hydra Room, salon and Spa Café.',
+          description:
+            'Full-service spa with the SEA Thermal Suite, including the new Hydra Room, salon and Spa Café.',
           tags: ['Spa', 'Thermal Suite', 'Hydra Room'],
           ...THE_SPA,
         }),
@@ -1078,7 +1221,8 @@ export function generateAllDecks() {
           color: C.pool,
           x: [136, 184],
           y: [0, 28],
-          description: 'Main resort deck with a 23 m lap pool, a giant LED screen and two-deck-high martini-glass hot tubs.',
+          description:
+            'Main resort deck with a 23 m lap pool, a giant LED screen and two-deck-high martini-glass hot tubs.',
           tags: ['Main Pool', 'Martini Glass Hot Tubs'],
           hours: [['07:00', '23:00']],
         }),
@@ -1096,7 +1240,8 @@ export function generateAllDecks() {
         magicCarpetStop(14, {
           name: 'Magic Carpet (Pool Deck)',
           ...partOf('magic-carpet'),
-          description: 'On Deck 14 the Magic Carpet extends the pool deck out over the sea, in front of the cabanas.',
+          description:
+            'On Deck 14 the Magic Carpet extends the pool deck out over the sea, in front of the cabanas.',
           tags: ['Pool Deck', 'Starboard'],
         }),
         venue(14, {
@@ -1193,7 +1338,8 @@ export function generateAllDecks() {
           category: 'Bars & Lounges',
           color: C.bar,
           x: [96, 134],
-          description: 'Enlarged private lounge for suite guests with complimentary drinks and a dedicated concierge.',
+          description:
+            'Enlarged private lounge for suite guests with complimentary drinks and a dedicated concierge.',
           tags: ['The Retreat', 'Suite Guests Only'],
           access: 'suite',
           hours: ALL_DAY,
@@ -1221,9 +1367,21 @@ export function generateAllDecks() {
           y: PORT,
           description: 'Open-air Mediterranean restaurant. New on Xcel.',
           tags: ['Mediterranean', 'Open Air', 'New on Xcel'],
-          hours: [['10:30', '13:00'], ['18:00', '20:30']], // brunch and dinner
+          hours: [
+            ['10:30', '13:00'],
+            ['18:00', '20:30'],
+          ], // brunch and dinner
           // Brunch 10:30–1:00 on sea days, 11:00–12:00 on port days.
-          hoursByDay: { sea: [['10:30', '13:00'], ['18:00', '20:30']], port: [['11:00', '12:00'], ['18:00', '20:30']] },
+          hoursByDay: {
+            sea: [
+              ['10:30', '13:00'],
+              ['18:00', '20:30'],
+            ],
+            port: [
+              ['11:00', '12:00'],
+              ['18:00', '20:30'],
+            ],
+          },
           reservationRequired: true,
           fee: 'surcharge',
           dressCode: 'smart casual',
@@ -1237,7 +1395,8 @@ export function generateAllDecks() {
           color: C.dining,
           x: [200, 224],
           y: STBD,
-          description: 'Upper level seating and outdoor terrace for Oceanview Café overlooking the stern.',
+          description:
+            'Upper level seating and outdoor terrace for Oceanview Café overlooking the stern.',
           tags: ['Buffet', 'Outdoor Seating'],
           ...OCEANVIEW_CAFE,
         }),
@@ -1248,7 +1407,8 @@ export function generateAllDecks() {
           category: 'Outdoor & Recreation',
           color: C.pool,
           x: [226, 260],
-          description: 'Expanded garden lounge with the Rooftop Garden Grill, pickleball and evening movies.',
+          description:
+            'Expanded garden lounge with the Rooftop Garden Grill, pickleball and evening movies.',
           tags: ['Garden', 'Grill', 'Movies'],
         }),
         venue(15, {
@@ -1327,7 +1487,8 @@ export function generateAllDecks() {
           color: C.edgeVilla,
           x: [48, 80],
           y: STBD,
-          description: 'Upper levels and private plunge-pool terraces of the starboard Edge Villas.',
+          description:
+            'Upper levels and private plunge-pool terraces of the starboard Edge Villas.',
           tags: ['Edge Villas', 'Plunge Pool'],
         }),
         ...generateCenterlineCore(16),
@@ -1355,7 +1516,8 @@ export function generateAllDecks() {
         magicCarpetStop(16, {
           name: 'Magic Carpet (Dinner on the Edge)',
           ...partOf('magic-carpet'),
-          description: 'The Magic Carpet’s highest stop, used for “Dinner on the Edge” and sail-away events.',
+          description:
+            'The Magic Carpet’s highest stop, used for “Dinner on the Edge” and sail-away events.',
           tags: ['Dinner on the Edge', 'Starboard'],
         }),
         venue(16, {
@@ -1379,7 +1541,8 @@ export function generateAllDecks() {
     deck(17, {
       title: 'The Retreat Sundeck',
       category: 'The Retreat',
-      description: 'The suites-only Retreat Sundeck with a round pool, two cantilevered plunge pools, cabanas and The Retreat Bar.',
+      description:
+        'The suites-only Retreat Sundeck with a round pool, two cantilevered plunge pools, cabanas and The Retreat Bar.',
       venues: [
         ...generateCenterlineCore(17, ['fwd']),
         venue(17, {
@@ -1390,7 +1553,8 @@ export function generateAllDecks() {
           color: C.pool,
           // deck-seventeen.svg labels THE RETREAT SUNDECK and THE RETREAT POOL forward of the elevators.
           x: [50, 72],
-          description: 'Round pool, two cantilevered plunge pools, cabanas and premium loungers for suite guests.',
+          description:
+            'Round pool, two cantilevered plunge pools, cabanas and premium loungers for suite guests.',
           tags: ['The Retreat', 'Suite Guests Only', 'Pool'],
           access: 'suite',
           hours: ALL_DAY,

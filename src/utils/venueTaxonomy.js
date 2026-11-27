@@ -28,11 +28,23 @@ export const FILTER_KEYS = {
 const KEYWORD_RULES = [
   { key: FILTER_KEYS.MAGIC_CARPET, keywords: ['magic carpet'] },
   { key: FILTER_KEYS.SUITES, keywords: ['suite', 'villa', 'vip', 'retreat', 'penthouse'] },
-  { key: FILTER_KEYS.STATEROOMS, keywords: ['stateroom', 'cabin', 'accommodation', 'oceanview', 'veranda'] },
-  { key: FILTER_KEYS.DINING, keywords: ['dining', 'culinary', 'restaurant', 'cafe', 'grill', 'eatery', 'food'] },
+  {
+    key: FILTER_KEYS.STATEROOMS,
+    keywords: ['stateroom', 'cabin', 'accommodation', 'oceanview', 'veranda'],
+  },
+  {
+    key: FILTER_KEYS.DINING,
+    keywords: ['dining', 'culinary', 'restaurant', 'cafe', 'grill', 'eatery', 'food'],
+  },
   { key: FILTER_KEYS.BARS, keywords: ['bar', 'lounge', 'nightlife', 'club', 'pub', 'cocktail'] },
-  { key: FILTER_KEYS.ENTERTAINMENT, keywords: ['entertainment', 'theater', 'theatre', 'plaza', 'show', 'casino', 'cinema'] },
-  { key: FILTER_KEYS.POOL, keywords: ['pool', 'sun', 'outdoor', 'recreation', 'sport', 'deck party', 'lido'] },
+  {
+    key: FILTER_KEYS.ENTERTAINMENT,
+    keywords: ['entertainment', 'theater', 'theatre', 'plaza', 'show', 'casino', 'cinema'],
+  },
+  {
+    key: FILTER_KEYS.POOL,
+    keywords: ['pool', 'sun', 'outdoor', 'recreation', 'sport', 'deck party', 'lido'],
+  },
 ];
 
 /**

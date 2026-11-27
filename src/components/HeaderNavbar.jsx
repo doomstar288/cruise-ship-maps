@@ -11,7 +11,12 @@ export default function HeaderNavbar({
   onToggleUpscale,
   onOpenSearch,
 }) {
-  const ship = currentShip ?? { name: 'Celebrity Xcel', shipClass: 'Edge Series', lengthMeters: 327, guestDecks: 15 };
+  const ship = currentShip ?? {
+    name: 'Celebrity Xcel',
+    shipClass: 'Edge Series',
+    lengthMeters: 327,
+    guestDecks: 15,
+  };
 
   const edgeShips = availableShips.filter((s) => (s.shipClass || '').includes('Edge'));
   const solsticeShips = availableShips.filter((s) => (s.shipClass || '').includes('Solstice'));
@@ -52,9 +57,7 @@ export default function HeaderNavbar({
               }}
             >
               {edgeShips.length > 0 && (
-                <optgroup label="Edge Series (5 Ships)">
-                  {edgeShips.map(renderOption)}
-                </optgroup>
+                <optgroup label="Edge Series (5 Ships)">{edgeShips.map(renderOption)}</optgroup>
               )}
               {solsticeShips.length > 0 && (
                 <optgroup label="Solstice Class (5 Ships)">
@@ -66,7 +69,9 @@ export default function HeaderNavbar({
                   {millenniumShips.map(renderOption)}
                 </optgroup>
               )}
-              {edgeShips.length === 0 && solsticeShips.length === 0 && millenniumShips.length === 0 &&
+              {edgeShips.length === 0 &&
+                solsticeShips.length === 0 &&
+                millenniumShips.length === 0 &&
                 availableShips.map(renderOption)}
             </select>
             <span className="ship-badge" style={{ fontSize: '0.68rem', padding: '1px 6px' }}>
@@ -98,9 +103,15 @@ export default function HeaderNavbar({
           </kbd>
         </button>
 
-        <button className="btn-glass" onClick={onOpenAccuracyInspector} title="View Multi-Source Accuracy Verification & Sources">
+        <button
+          className="btn-glass"
+          onClick={onOpenAccuracyInspector}
+          title="View Multi-Source Accuracy Verification & Sources"
+        >
           <ShieldCheck size={16} color="var(--accent-emerald)" />
-          <span style={{ color: 'var(--accent-emerald)', fontWeight: 700 }}>98.4% Verified Accuracy</span>
+          <span style={{ color: 'var(--accent-emerald)', fontWeight: 700 }}>
+            98.4% Verified Accuracy
+          </span>
         </button>
 
         <button className={`btn-glass ${isUpscaledMode ? 'active' : ''}`} onClick={onToggleUpscale}>

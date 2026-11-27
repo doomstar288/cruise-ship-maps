@@ -31,10 +31,7 @@ import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import { gzipSync } from 'node:zlib';
 
-import {
-  CELEBRITY_XCEL_METADATA,
-  CELEBRITY_XCEL_DECKS,
-} from '../src/data/celebrityXcelData.js';
+import { CELEBRITY_XCEL_METADATA, CELEBRITY_XCEL_DECKS } from '../src/data/celebrityXcelData.js';
 import { generateShip } from '../src/utils/shipGenerator.js';
 import { withEntrances } from './venue-entrances.mjs';
 import { buildRouting, getShipRoutingConnectors } from './routing-graph.mjs';
@@ -145,7 +142,11 @@ export function featureAliasesFor(venue, featureType) {
     // Loud, not silent: an alias on crew space or a cabin is a data mistake.
     throw new Error(`${venue.id} is a ${featureType}; only venue and poi features take aliases`);
   }
-  const exactKey = (text) => String(text ?? '').toLowerCase().replace(/\s+/g, ' ').trim();
+  const exactKey = (text) =>
+    String(text ?? '')
+      .toLowerCase()
+      .replace(/\s+/g, ' ')
+      .trim();
   const seen = new Set([exactKey(venue.name)]);
   const aliases = authored.filter((alias) => {
     const key = exactKey(alias);
@@ -158,7 +159,9 @@ export function featureAliasesFor(venue, featureType) {
 
 /** Every deck a multi-deck venue occupies, ascending and deduplicated; undefined if none. */
 export function spansDecksFor(venue) {
-  const decks = [...new Set((venue.spansDecks ?? []).filter(Number.isInteger))].sort((a, b) => a - b);
+  const decks = [...new Set((venue.spansDecks ?? []).filter(Number.isInteger))].sort(
+    (a, b) => a - b
+  );
   return decks.length ? decks : undefined;
 }
 
@@ -250,16 +253,19 @@ export function hoursFor(venue, featureType) {
   const reject = (why) => {
     throw new Error(`Venue ${venue.id} has malformed hours: ${why}`);
   };
-  if (!Array.isArray(authored) || authored.length === 0) reject('expected a list of [open, close] windows');
+  if (!Array.isArray(authored) || authored.length === 0)
+    reject('expected a list of [open, close] windows');
   if (authored.length === 1 && authored[0]?.[0] === '00:00' && authored[0]?.[1] === '24:00') {
     return [['00:00', '24:00']];
   }
 
   let previousClose = -1;
   authored.forEach((window, i) => {
-    if (!Array.isArray(window) || window.length !== 2) reject(`window ${i + 1} is not an [open, close] pair`);
+    if (!Array.isArray(window) || window.length !== 2)
+      reject(`window ${i + 1} is not an [open, close] pair`);
     const [open, close] = window;
-    if (typeof open !== 'string' || !CLOCK.test(open)) reject(`"${open}" is not an HH:MM opening time`);
+    if (typeof open !== 'string' || !CLOCK.test(open))
+      reject(`"${open}" is not an HH:MM opening time`);
     if (typeof close !== 'string' || !(CLOCK.test(close) || close === '24:00')) {
       reject(`"${close}" is not an HH:MM closing time`);
     }
@@ -271,7 +277,8 @@ export function hoursFor(venue, featureType) {
       if (i !== authored.length - 1) reject('only the last window may run past midnight');
       end += DAY_MINUTES;
     }
-    if (start <= previousClose) reject('windows must be in opening order and must not overlap or touch');
+    if (start <= previousClose)
+      reject('windows must be in opening order and must not overlap or touch');
     previousClose = end;
   });
   if (previousClose >= minutesOf(authored[0][0]) + DAY_MINUTES) {
@@ -319,10 +326,15 @@ export function hoursByDayFor(venue, featureType) {
   const out = {};
   for (const type of HOURS_DAY_TYPES) {
     if (authored[type] === undefined) continue;
-    const windows = hoursFor({ id: `${venue.id} hoursByDay.${type}`, hours: authored[type] }, featureType);
+    const windows = hoursFor(
+      { id: `${venue.id} hoursByDay.${type}`, hours: authored[type] },
+      featureType
+    );
     for (const window of windows) {
       const [start, end] = span(window);
-      const inside = spans.some(([from, to]) => [0, DAY_MINUTES].some((shift) => start + shift >= from && end + shift <= to));
+      const inside = spans.some(([from, to]) =>
+        [0, DAY_MINUTES].some((shift) => start + shift >= from && end + shift <= to)
+      );
       if (!inside) reject(`${type} window ${window[0]}–${window[1]} is outside hours`);
     }
     out[type] = windows;
@@ -337,7 +349,9 @@ export function bookingFactsFor(venue, featureType) {
   const { reservationRequired, fee, dressCode } = venue;
   if (reservationRequired !== undefined) {
     if (typeof reservationRequired !== 'boolean') {
-      throw new Error(`Venue ${venue.id} has reservationRequired "${reservationRequired}"; expected true or false`);
+      throw new Error(
+        `Venue ${venue.id} has reservationRequired "${reservationRequired}"; expected true or false`
+      );
     }
     facts.reservationRequired = reservationRequired;
   }
@@ -346,11 +360,14 @@ export function bookingFactsFor(venue, featureType) {
     facts.fee = fee;
   }
   if (dressCode !== undefined) {
-    if (!DRESS_CODES.includes(dressCode)) throw new Error(`Venue ${venue.id} has unknown dressCode "${dressCode}"`);
+    if (!DRESS_CODES.includes(dressCode))
+      throw new Error(`Venue ${venue.id} has unknown dressCode "${dressCode}"`);
     facts.dressCode = dressCode;
   }
   if (Object.keys(facts).length && !ALIASABLE_TYPES.has(featureType)) {
-    throw new Error(`${venue.id} is a ${featureType}; only venue and poi features take booking facts`);
+    throw new Error(
+      `${venue.id} is a ${featureType}; only venue and poi features take booking facts`
+    );
   }
   return facts;
 }
@@ -514,7 +531,14 @@ export function aliasesFor(shipName, cruiseLine) {
  */
 export function revisionOf(pack) {
   const { specVersion, shipId, geometry, positionConfidenceDefaults, decks, routing } = pack;
-  const canonical = JSON.stringify({ specVersion, shipId, geometry, positionConfidenceDefaults, decks, routing });
+  const canonical = JSON.stringify({
+    specVersion,
+    shipId,
+    geometry,
+    positionConfidenceDefaults,
+    decks,
+    routing,
+  });
   return createHash('sha256').update(canonical).digest('hex').slice(0, 12);
 }
 
@@ -574,9 +598,7 @@ export function reconcilePackTimestamp(pack, previous) {
 export function reconcileIndexTimestamp(index, previous) {
   if (!previous?.generatedAt) return index;
   const strip = ({ generatedAt: _ignored, ...rest }) => JSON.stringify(rest);
-  return strip(index) === strip(previous)
-    ? { ...index, generatedAt: previous.generatedAt }
-    : index;
+  return strip(index) === strip(previous) ? { ...index, generatedAt: previous.generatedAt } : index;
 }
 
 /** The catalog row for a built pack. Small by design — it is fetched eagerly. */

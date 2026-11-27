@@ -4,7 +4,9 @@ import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 
 export default [
-  { ignores: ['dist/**', 'node_modules/**', 'coverage/**'] },
+  // .claude/worktrees/ holds full nested checkouts (plus their dist/ and coverage/
+  // output) created by agent sessions; linting them reports thousands of bogus errors.
+  { ignores: ['dist/**', 'node_modules/**', 'coverage/**', '.claude/worktrees/**'] },
   js.configs.recommended,
   {
     files: ['**/*.{js,jsx,mjs}'],

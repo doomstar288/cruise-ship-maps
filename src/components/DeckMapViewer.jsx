@@ -28,7 +28,10 @@ const LEGEND = [
 ];
 
 const escapeHtml = (text) =>
-  String(text).replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
+  String(text).replace(
+    /[&<>"']/g,
+    (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]
+  );
 
 const isCabin = (venue) => Boolean(venue.cabinClass);
 const toLatLng = ([x, y]) => [y, x];
@@ -134,23 +137,35 @@ export default function DeckMapViewer({
 
       // Centreline and frame stations every 10 m, clipped to the deck.
       geometryLayer.addLayer(
-        L.polyline([[CENTERLINE_Y, xStart], [CENTERLINE_Y, xEnd]], {
-          color: isUpscaledMode ? 'rgba(34, 211, 238, 0.22)' : 'rgba(148, 163, 184, 0.14)',
-          weight: 1,
-          dashArray: '3 6',
-          interactive: false,
-        })
+        L.polyline(
+          [
+            [CENTERLINE_Y, xStart],
+            [CENTERLINE_Y, xEnd],
+          ],
+          {
+            color: isUpscaledMode ? 'rgba(34, 211, 238, 0.22)' : 'rgba(148, 163, 184, 0.14)',
+            weight: 1,
+            dashArray: '3 6',
+            interactive: false,
+          }
+        )
       );
       if (isUpscaledMode) {
         for (let x = Math.ceil(xStart / 10) * 10; x <= xEnd; x += 10) {
           const hw = hullHalfWidth(level, x);
           if (hw < 1) continue;
           geometryLayer.addLayer(
-            L.polyline([[CENTERLINE_Y - hw, x], [CENTERLINE_Y + hw, x]], {
-              color: 'rgba(34, 211, 238, 0.07)',
-              weight: 1,
-              interactive: false,
-            })
+            L.polyline(
+              [
+                [CENTERLINE_Y - hw, x],
+                [CENTERLINE_Y + hw, x],
+              ],
+              {
+                color: 'rgba(34, 211, 238, 0.07)',
+                weight: 1,
+                interactive: false,
+              }
+            )
           );
         }
       }
@@ -189,15 +204,21 @@ export default function DeckMapViewer({
       const isSelected = selectedVenue?.id === venue.id;
       const cabin = isCabin(venue);
 
-      const rect = L.rectangle([[y1, x1], [y2, x2]], {
-        color: isSelected ? '#22d3ee' : venue.color,
-        weight: isSelected ? 3 : cabin ? 0.6 : 1.4,
-        opacity: cabin ? 0.75 : 0.95,
-        fillColor: venue.color,
-        fillOpacity: isSelected ? 0.75 : venue.hideLabel ? 0.22 : cabin ? 0.45 : 0.32,
-        className: isUpscaledMode && !cabin ? 'upscaled-vector-polygon' : '',
-        interactive: !venue.hideLabel,
-      });
+      const rect = L.rectangle(
+        [
+          [y1, x1],
+          [y2, x2],
+        ],
+        {
+          color: isSelected ? '#22d3ee' : venue.color,
+          weight: isSelected ? 3 : cabin ? 0.6 : 1.4,
+          opacity: cabin ? 0.75 : 0.95,
+          fillColor: venue.color,
+          fillOpacity: isSelected ? 0.75 : venue.hideLabel ? 0.22 : cabin ? 0.45 : 0.32,
+          className: isUpscaledMode && !cabin ? 'upscaled-vector-polygon' : '',
+          interactive: !venue.hideLabel,
+        }
+      );
 
       if (!venue.hideLabel) {
         rect.on('click', () => onSelectVenue(venue));
@@ -267,7 +288,12 @@ export default function DeckMapViewer({
       .sort((a, b) => {
         const selA = selectedVenue?.id === a.id ? 1000 : 0;
         const selB = selectedVenue?.id === b.id ? 1000 : 0;
-        return getLabelPriority(b) + selB + area(b.bounds) / 1000 - (getLabelPriority(a) + selA + area(a.bounds) / 1000);
+        return (
+          getLabelPriority(b) +
+          selB +
+          area(b.bounds) / 1000 -
+          (getLabelPriority(a) + selA + area(a.bounds) / 1000)
+        );
       });
 
     const placed = [];
@@ -304,9 +330,10 @@ export default function DeckMapViewer({
       if (collides && !isSelected) continue;
       placed.push(box);
 
-      const html = cabin && !isSelected
-        ? `<div class="cabin-label">${escapeHtml(text)}</div>`
-        : `<div class="custom-venue-label-pill${isSelected ? ' selected' : ''}">
+      const html =
+        cabin && !isSelected
+          ? `<div class="cabin-label">${escapeHtml(text)}</div>`
+          : `<div class="custom-venue-label-pill${isSelected ? ' selected' : ''}">
              <span class="label-dot" style="background:${venue.color}"></span>
              <span class="label-text">${escapeHtml(text)}</span>
            </div>`;
@@ -358,10 +385,14 @@ export default function DeckMapViewer({
 
     for (const landing of path.landings) {
       const isLift = landing.kind === 'elevator';
-      routeGroup.addLayer(pin(landing.coords, 'elevator', isLift ? '⇅' : '⇞', isLift ? 'Elevators' : 'Stairs'));
+      routeGroup.addLayer(
+        pin(landing.coords, 'elevator', isLift ? '⇅' : '⇞', isLift ? 'Elevators' : 'Stairs')
+      );
     }
-    if (path.start) routeGroup.addLayer(pin(path.start.coords, 'origin', 'A', activeRoute.origin.name));
-    if (path.end) routeGroup.addLayer(pin(path.end.coords, 'destination', 'B', activeRoute.destination.name));
+    if (path.start)
+      routeGroup.addLayer(pin(path.start.coords, 'origin', 'A', activeRoute.origin.name));
+    if (path.end)
+      routeGroup.addLayer(pin(path.end.coords, 'destination', 'B', activeRoute.destination.name));
   }, [activeRoute, currentDeck]);
 
   const handleZoomIn = () => leafletInstance.current?.zoomIn();
@@ -370,17 +401,32 @@ export default function DeckMapViewer({
 
   return (
     <div className="map-container">
-      <div id="deck-map" ref={mapRef} role="application" aria-label={`Deck plan for ${currentDeck?.name ?? 'deck'}`} />
+      <div
+        id="deck-map"
+        ref={mapRef}
+        role="application"
+        aria-label={`Deck plan for ${currentDeck?.name ?? 'deck'}`}
+      />
 
       <div className="map-toolbar">
         <div className="toolbar-group">
           <button className="tool-btn" onClick={handleZoomIn} title="Zoom in" aria-label="Zoom in">
             <ZoomIn size={18} />
           </button>
-          <button className="tool-btn" onClick={handleZoomOut} title="Zoom out" aria-label="Zoom out">
+          <button
+            className="tool-btn"
+            onClick={handleZoomOut}
+            title="Zoom out"
+            aria-label="Zoom out"
+          >
             <ZoomOut size={18} />
           </button>
-          <button className="tool-btn" onClick={handleFit} title="Fit whole deck" aria-label="Fit whole deck">
+          <button
+            className="tool-btn"
+            onClick={handleFit}
+            title="Fit whole deck"
+            aria-label="Fit whole deck"
+          >
             <Maximize2 size={18} />
           </button>
         </div>

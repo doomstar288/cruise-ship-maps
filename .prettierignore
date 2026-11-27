@@ -2,3 +2,13 @@ dist
 coverage
 node_modules
 package-lock.json
+.claude/worktrees
+
+# Generated JSON: written by scripts with JSON.stringify(x, null, 2), which is not
+# Prettier's style, so formatting it would be undone on the next regeneration.
+# export:packs -> public/v1 (packs, index, route fixtures)
+public/v1
+# seed:fleet -> fleet registry
+public/data/fleet-registry.json
+# ingest:facts -> per-ship manifests
+src/data/ships/*/manifest.json
