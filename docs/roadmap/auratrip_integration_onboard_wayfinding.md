@@ -1,8 +1,12 @@
 # Roadmap — AuraTrip Integration & Onboard Event Wayfinding
 
-_Written 2026-09-15. Status: **Phases 0, 2, 3, 4 and 5 shipped** (2026-09-16 to 2026-09-17).
-Phase 1 is half done: P1.3 and P1.4 shipped; P1.1 and P1.2 wait on an official Celebrity plan.
-Live tracking: [#24](https://github.com/doomstar288/cruise-ship-maps/issues/24).
+_Written 2026-09-15; status line refreshed 2026-11-27. Status: **Phases 0, 2, 3, 4 and 5 shipped**
+(2026-09-16 to 2026-09-17). Phase 1 is half done: P1.3 and P1.4 shipped; P1.1 and P1.2 wait on an
+official Celebrity plan. **Phase 7** (planner enhancements) has shipped on the maps side except muster
+stations, and AuraTrip's P7.1, P7.7 and P7.8 have shipped. The one open roadmap item is P7.4, tracked in
+[#55](https://github.com/doomstar288/cruise-ship-maps/issues/55). The original tracking issue
+[#24](https://github.com/doomstar288/cruise-ship-maps/issues/24) is closed.
+**AuraTrip has since been renamed Gangway** (repo `big-trip-planner`); the "AuraTrip …" paths below are in that repo.
 Spans two repos:_
 
 - **Producer** — `cruise-ship-maps` (this repo): deck data, Ship Map Pack exports.

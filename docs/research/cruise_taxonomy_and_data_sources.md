@@ -4,6 +4,11 @@
 > **Status:** Data Model Architecture & Taxonomy Specification  
 > **Target System:** Open-Source Cruise Ship Maps API & Public Dataset Repository
 
+> **Reality check (2026-11-27): partly implemented.** The vessel and class model is realized by the
+> Wikidata-seeded fleet registry (`public/data/fleet-registry.json`: `wikidataId`, `imo`, `shipClass`,
+> `category`, `operator`, …; see [fleet_registry_seeding.md](fleet_registry_seeding.md)). The scraping,
+> AIS-telemetry and crowdsourcing strategies below are **not implemented**.
+
 ---
 
 ## Executive Summary

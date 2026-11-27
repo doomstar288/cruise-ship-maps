@@ -4,6 +4,11 @@
 > **Status:** Architecture & Research Specification  
 > **Target System:** Open-Source Cruise Ship Maps Engine & Open API
 
+> **Reality check (2026-11-27): research only.** The AI super-resolution and vectorization pipeline
+> described here is **not implemented**: no upscaling model or script exists in this repo (the viewer's
+> "AI Upscale" button is only a display toggle). The packs come from a programmatic, synthetic grid
+> generator (`src/data/`, `src/utils/shipGenerator.js`), not from traced or upscaled official plans.
+
 ---
 
 ## Executive Summary & Spatial Domain Challenges
