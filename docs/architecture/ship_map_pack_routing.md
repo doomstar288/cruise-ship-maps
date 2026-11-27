@@ -47,24 +47,24 @@ Excerpt of Deck 4 (indices as published):
 }
 ```
 
-| Field | Notes |
-| --- | --- |
-| `walkingSpeedMps` | Default pace for turning `lengthM` into time. A consumer may use its own. |
-| `decks[]` | One entry per pack deck, same order, matched by `deckNumber`. |
-| `decks[].nodes[]` | Node tuples, below. Coordinates are metres in pack coordinates, 2 dp. |
-| `decks[].walk[]` | `[i, j, lengthM]` or `[i, j, lengthM, through]`. `i < j` index this deck's `nodes`. `lengthM` is the straight-line distance, 2 dp. |
-| `elevators[]` | `{ bank, stops }`. `stops` are elevator feature ids, ascending by deck; each names the one `elevator_lobby` node for that feature. A bank joins **every pair** of its stops. |
-| `stairs[]` | Feature-id lists, ascending by deck. Stairs join **neighbouring** stops only (one flight). |
+| Field             | Notes                                                                                                                                                                        |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `walkingSpeedMps` | Default pace for turning `lengthM` into time. A consumer may use its own.                                                                                                    |
+| `decks[]`         | One entry per pack deck, same order, matched by `deckNumber`.                                                                                                                |
+| `decks[].nodes[]` | Node tuples, below. Coordinates are metres in pack coordinates, 2 dp.                                                                                                        |
+| `decks[].walk[]`  | `[i, j, lengthM]` or `[i, j, lengthM, through]`. `i < j` index this deck's `nodes`. `lengthM` is the straight-line distance, 2 dp.                                           |
+| `elevators[]`     | `{ bank, stops }`. `stops` are elevator feature ids, ascending by deck; each names the one `elevator_lobby` node for that feature. A bank joins **every pair** of its stops. |
+| `stairs[]`        | Feature-id lists, ascending by deck. Stairs join **neighbouring** stops only (one flight).                                                                                   |
 
 ### Node kinds
 
-| Tuple | Kind | Meaning |
-| --- | --- | --- |
-| `[x, y]` | `corridor` | A point on a walkway centreline: a junction, bend, or spacing point. |
-| `[x, y, "elevator_lobby", featureId]` | lobby | The landing of an elevator core. `featureId` is the `elevator` feature. The core's stairs land here too. |
-| `[x, y, "stair", featureId]` | stair | The landing of a stairwell with no lifts (the aft stairwell on Decks 7–12). |
-| `[x, y, "entrance", featureId, n]` | door | `feature.entrances[n]`, exactly. |
-| `[x, y, "entrance", featureId, "projected"]` | projected door | A door the pack doesn't author, for a venue with no `entrances` (or none on the graph). See below. |
+| Tuple                                        | Kind           | Meaning                                                                                                  |
+| -------------------------------------------- | -------------- | -------------------------------------------------------------------------------------------------------- |
+| `[x, y]`                                     | `corridor`     | A point on a walkway centreline: a junction, bend, or spacing point.                                     |
+| `[x, y, "elevator_lobby", featureId]`        | lobby          | The landing of an elevator core. `featureId` is the `elevator` feature. The core's stairs land here too. |
+| `[x, y, "stair", featureId]`                 | stair          | The landing of a stairwell with no lifts (the aft stairwell on Decks 7–12).                              |
+| `[x, y, "entrance", featureId, n]`           | door           | `feature.entrances[n]`, exactly.                                                                         |
+| `[x, y, "entrance", featureId, "projected"]` | projected door | A door the pack doesn't author, for a venue with no `entrances` (or none on the graph). See below.       |
 
 Nodes are ordered lobbies, stairs, doors, corridor, and by position within each group, so the
 order is deterministic.
@@ -74,11 +74,11 @@ order is deterministic.
 A consumer expands the block into three edge kinds. `expandRouting(pack)` in the generator does
 exactly this; a port should match it.
 
-| Kind | From | Cost inputs |
-| --- | --- | --- |
-| `walk` | `decks[].walk` | `lengthM`. Walk edges never change deck and are step-free. |
-| `elevator` | every pair of stops in `elevators[].stops` | `decks`: levels between the two stops. Step-free. |
-| `stairs` | neighbouring stops in `stairs[]` | `decks` (always 1 today). **Not** step-free. |
+| Kind       | From                                       | Cost inputs                                                |
+| ---------- | ------------------------------------------ | ---------------------------------------------------------- |
+| `walk`     | `decks[].walk`                             | `lengthM`. Walk edges never change deck and are step-free. |
+| `elevator` | every pair of stops in `elevators[].stops` | `decks`: levels between the two stops. Step-free.          |
+| `stairs`   | neighbouring stops in `stairs[]`           | `decks` (always 1 today). **Not** step-free.               |
 
 **All edges are undirected.** Nothing in v1 is one-way.
 
@@ -100,28 +100,28 @@ recorded with it, and AuraTrip's TypeScript port must match it.
 
 **Endpoints.**
 
-| Endpoint | Resolves to |
-| --- | --- |
-| `{ featureId }` | Every door of that venue on the graph (the cheapest wins), or an elevator or stairwell's landing. |
-| `{ deck, at: [x, y] }` | The nearest `corridor` node on that deck (the cabin snap rule). The snap distance **is** added to the walk, at both ends. |
-| `{ deck, elevators: true }` | Every connected elevator lobby on that deck (the cheapest wins). |
+| Endpoint                    | Resolves to                                                                                                               |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `{ featureId }`             | Every door of that venue on the graph (the cheapest wins), or an elevator or stairwell's landing.                         |
+| `{ deck, at: [x, y] }`      | The nearest `corridor` node on that deck (the cabin snap rule). The snap distance **is** added to the walk, at both ends. |
+| `{ deck, elevators: true }` | Every connected elevator lobby on that deck (the cheapest wins).                                                          |
 
 **Cost is time, in seconds.**
 
-| Edge | Cost |
-| --- | --- |
-| `walk` | `lengthM / walkingSpeedMps` |
+| Edge       | Cost                                                      |
+| ---------- | --------------------------------------------------------- |
+| `walk`     | `lengthM / walkingSpeedMps`                               |
 | `elevator` | `elevatorBoardS` (60) + `elevatorPerLevelS` (8) × `decks` |
-| `stairs` | `stairsPerLevelS` (30) × `decks` |
+| `stairs`   | `stairsPerLevelS` (30) × `decks`                          |
 
 The lift numbers are guesses (see the roadmap's risks). They make stairs win for one or two decks
 and lifts win from three. Ties go to the lower node index, so a route is deterministic.
 
 **Options.**
 
-| Option | Leaves out | For |
-| --- | --- | --- |
-| `stepFree: true` | `stairs` edges | Step-free directions. |
+| Option             | Leaves out       | For                                        |
+| ------------------ | ---------------- | ------------------------------------------ |
+| `stepFree: true`   | `stairs` edges   | Step-free directions.                      |
 | `avoidLifts: true` | `elevator` edges | A muster route: stairs only, never a lift. |
 
 With both, only `walk` edges are left, so a trip to another deck or another walk section has no
@@ -148,7 +148,9 @@ candidate. `routeToNearest` does it in one.
 
 ```js
 // Stateroom 6100's centre, the public bars, step-free:
-const nearest = router.routeToNearest({ deck: 6, at: [21.8, 25.99] }, publicBars, { stepFree: true });
+const nearest = router.routeToNearest({ deck: 6, at: [21.8, 25.99] }, publicBars, {
+  stepFree: true,
+});
 // → { featureId: 'v3-martini-bar', route: { walkM: 182.47, timeS: 249.9, legs, … } }
 ```
 
@@ -184,18 +186,28 @@ between this repo and ports.
 {
   "specVersion": 1,
   "shipId": "celebrity-xcel",
-  "recordedAgainstRevision": "c2b64fbc5010",   // informational
-  "costModel": { "walkingSpeedMps": 1.1, "elevatorBoardS": 60, "elevatorPerLevelS": 8, "stairsPerLevelS": 30 },
+  "recordedAgainstRevision": "c2b64fbc5010", // informational
+  "costModel": {
+    "walkingSpeedMps": 1.1,
+    "elevatorBoardS": 60,
+    "elevatorPerLevelS": 8,
+    "stairsPerLevelS": 30,
+  },
   "tolerance": { "walkM": { "abs": 2, "rel": 0.03 }, "timeS": { "abs": 5, "rel": 0.05 } },
   "routes": [
     {
       "id": "lifts-5-to-spice-cafe",
       "description": "…",
-      "from": { "deck": 5, "elevators": true },   // or { "featureId" } or { "cabinId" }
+      "from": { "deck": 5, "elevators": true }, // or { "featureId" } or { "cabinId" }
       "to": { "featureId": "v5-spice-cafe" },
       "stepFree": false,
-      "expected": { "walkM": 46.44, "timeS": 42.2, "deckChanges": [], "through": ["v5-bazaar-market"] }
-    }
+      "expected": {
+        "walkM": 46.44,
+        "timeS": 42.2,
+        "deckChanges": [],
+        "through": ["v5-bazaar-market"],
+      },
+    },
   ],
   "avoidLiftsRoutes": [
     {
@@ -205,8 +217,8 @@ between this repo and ports.
       "to": { "featureId": "v4-theatre" },
       "stepFree": true,
       "avoidLifts": true,
-      "expected": null                              // no route, and no fallback
-    }
+      "expected": null, // no route, and no fallback
+    },
   ],
   "nearest": [
     {
@@ -214,15 +226,16 @@ between this repo and ports.
       "description": "…",
       "from": { "cabinId": "c6-6100" },
       "candidates": ["v3-martini-bar", "v4-craft-social", "…"],
-      "stepFree": true,                       // and "avoidLifts": true on a no-lifts case
+      "stepFree": true, // and "avoidLifts": true on a no-lifts case
       "expected": {
         "featureId": "v3-martini-bar",
-        "walkM": 182.47, "timeS": 249.9,
+        "walkM": 182.47,
+        "timeS": 249.9,
         "deckChanges": [{ "mode": "elevator", "fromDeck": 6, "toDeck": 3 }],
-        "through": []
-      }
-    }
-  ]
+        "through": [],
+      },
+    },
+  ],
 }
 ```
 
@@ -325,13 +338,13 @@ route reaches every section, on every published ship.
 A few doors open onto sections that have no lobby at all. `ROUTING_CONNECTORS` links each one,
 with its reason. Each is a documented modelling decision, not geometry:
 
-| Deck | Links | How |
-| --- | --- | --- |
-| 4 | Mosaic at The Bazaar | Along the 0.4 m seam between Cosmopolitan and Cyprus, standing in for the walkway between two dining rooms. Crosses nothing. |
-| 5 | Spice Café | `through` Market at The Bazaar: both are in the same open Bazaar hall. |
-| 14 | Aft Sun Deck | Along the 0.4 m seam at the edge of the Oceanview Café Terrace. Crosses nothing. |
-| 17 | The Retreat Bar | `through` the Retreat Sundeck it serves. |
-| 2, 5, 14, 16 | Magic Carpet stops | `through` the venue each stop extends (Destination Gateway, World Class Bar, Pool Club Cabanas, Glass-Walled Hot Tubs), ending at a projected door on the hull edge. |
+| Deck         | Links                | How                                                                                                                                                                  |
+| ------------ | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 4            | Mosaic at The Bazaar | Along the 0.4 m seam between Cosmopolitan and Cyprus, standing in for the walkway between two dining rooms. Crosses nothing.                                         |
+| 5            | Spice Café           | `through` Market at The Bazaar: both are in the same open Bazaar hall.                                                                                               |
+| 14           | Aft Sun Deck         | Along the 0.4 m seam at the edge of the Oceanview Café Terrace. Crosses nothing.                                                                                     |
+| 17           | The Retreat Bar      | `through` the Retreat Sundeck it serves.                                                                                                                             |
+| 2, 5, 14, 16 | Magic Carpet stops   | `through` the venue each stop extends (Destination Gateway, World Class Bar, Pool Club Cabanas, Glass-Walled Hot Tubs), ending at a projected door on the hull edge. |
 
 The tests hold this list to exactly what's needed. Removing any one connector must leave a venue
 unreachable, and `through` is only allowed on connector edges.
@@ -354,12 +367,12 @@ Edge describes a short stairway there with a stairlift, so a wheelchair route de
 Derived from which elevator features each deck draws (a core the deck's hull can't hold isn't
 drawn). Not every bank serves every deck.
 
-| Bank | Decks |
-| --- | --- |
-| `fwd` | 2–12, 14–17 |
-| `mid` | 2–12, 14–16 |
-| `aft` | 2–12, 14–15 |
-| Aft stairwell (`stairs-aft`, stairs only) | 7–12 |
+| Bank                                      | Decks       |
+| ----------------------------------------- | ----------- |
+| `fwd`                                     | 2–12, 14–17 |
+| `mid`                                     | 2–12, 14–16 |
+| `aft`                                     | 2–12, 14–15 |
+| Aft stairwell (`stairs-aft`, stairs only) | 7–12        |
 
 Every elevator core also has stairs between neighbouring served decks. Elevator and stairwell
 positions are `positionConfidence: "estimated"`.
@@ -412,10 +425,10 @@ The budget is **≤ 15 % gzipped growth** of `plan.json` over a recorded baselin
 default level). The exporter's summary line prints raw and gzipped size before → after on every
 run.
 
-| `plan.json` | Raw | Gzipped |
-| --- | --- | --- |
-| Before routing | 619,443 B | 59,100 B |
-| With routing | 640,790 B (+3.4 %) | 63,547 B (+7.5 %) |
+| `plan.json`    | Raw                | Gzipped           |
+| -------------- | ------------------ | ----------------- |
+| Before routing | 619,443 B          | 59,100 B          |
+| With routing   | 640,790 B (+3.4 %) | 63,547 B (+7.5 %) |
 
 The first draft used plain objects (`{ "id", "deck", "at", "kind" }` nodes and `{ "from", "to",
 "kind", "lengthM" }` edges, with pairwise elevator edges). It came to about 13 KB gzipped, +22 %.
@@ -424,5 +437,5 @@ stairs are stop lists.
 
 **Updating the baseline.** Only do it deliberately, in a change that justifies the growth (e.g. a
 new feature field the budget should absorb). Re-record `gzipBytes` and `rawBytes` from `main`
-*before* your change, run `npm test`, and say why in the PR. Never raise it just to make routing
+_before_ your change, run `npm test`, and say why in the PR. Never raise it just to make routing
 fit.

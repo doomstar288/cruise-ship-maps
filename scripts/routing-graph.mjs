@@ -181,7 +181,10 @@ export const ROUTING_CONNECTORS = [
  * self-connected via natural corridors and circulation and do not use Edge connectors.
  */
 export function getShipRoutingConnectors(optionsOrShipId, maybeDeckRange) {
-  let shipId, lengthMeters = 327, decks = [], deckRange;
+  let shipId,
+    lengthMeters = 327,
+    decks = [],
+    deckRange;
   if (typeof optionsOrShipId === 'object' && optionsOrShipId !== null) {
     ({ shipId, lengthMeters = 327, decks = [], deckRange } = optionsOrShipId);
   } else {
@@ -212,8 +215,7 @@ export function getShipRoutingConnectors(optionsOrShipId, maybeDeckRange) {
     SOLSTICE_SHIPS.has(shipId) ||
     (deckRange && deckRange.max === 16 && deckRange.min === 2 && decks.length === 14);
   const isMillennium =
-    MILLENNIUM_SHIPS.has(shipId) ||
-    (deckRange && deckRange.max === 12 && deckRange.min === 2);
+    MILLENNIUM_SHIPS.has(shipId) || (deckRange && deckRange.max === 12 && deckRange.min === 2);
 
   if (isSolstice || isMillennium) {
     return [];
@@ -236,10 +238,22 @@ export function getShipRoutingConnectors(optionsOrShipId, maybeDeckRange) {
   }).map((c) => {
     if (lengthMeters < 320) {
       if (c.deck === 4 && c.path[1][0] === 297) {
-        return { ...c, path: [[268, 19.5], [289, 19.5]] };
+        return {
+          ...c,
+          path: [
+            [268, 19.5],
+            [289, 19.5],
+          ],
+        };
       }
       if (c.deck === 14 && c.path[1][0] === 293) {
-        return { ...c, path: [[268, 19.5], [285, 19.5]] };
+        return {
+          ...c,
+          path: [
+            [268, 19.5],
+            [285, 19.5],
+          ],
+        };
       }
       if (c.deck === 16 && c.featureId === 'v16-magic-carpet') {
         const { through: _through, ...rest } = c;

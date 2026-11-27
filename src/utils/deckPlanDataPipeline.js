@@ -95,12 +95,19 @@ export function computeDeckEnvelopes(lengthMeters = SHIP_LENGTH_M) {
     8: { xStart: 0, xEnd: 327 + delta },
     9: { xStart: 0, xEnd: 327 + delta },
     10: { xStart: 0, xEnd: 327 + delta },
-    11: { xStart: 16, xEnd: 327 + delta, cornerRadius: 4, bridgeWings: { x: [22, 32], overhang: 3 } },
+    11: {
+      xStart: 16,
+      xEnd: 327 + delta,
+      cornerRadius: 4,
+      bridgeWings: { x: [22, 32], overhang: 3 },
+    },
     12: { xStart: 24, xEnd: 327 + delta, cornerRadius: 4 },
     14: { xStart: 34, xEnd: 312 + delta, cornerRadius: 6 },
     15: { xStart: 40, xEnd: 318 + delta, cornerRadius: 6 },
     16: { xStart: 46, xEnd: lengthMeters < 320 ? 235 : 252, beamScale: 0.94, cornerRadius: 6 },
-    ...(lengthMeters >= 320 ? { 17: { xStart: 76, xEnd: 176, beamScale: 0.7, cornerRadius: 9 } } : {}),
+    ...(lengthMeters >= 320
+      ? { 17: { xStart: 76, xEnd: 176, beamScale: 0.7, cornerRadius: 9 } }
+      : {}),
   };
 }
 
@@ -142,7 +149,10 @@ export function hullHalfWidth(level, x, lengthMeters = SHIP_LENGTH_M, beamMeters
   if (cornerRadius > 0) {
     const d = Math.min(x - xStart, xEnd - x);
     if (d < cornerRadius) {
-      hw = Math.min(hw, half - cornerRadius + Math.sqrt(cornerRadius ** 2 - (cornerRadius - d) ** 2));
+      hw = Math.min(
+        hw,
+        half - cornerRadius + Math.sqrt(cornerRadius ** 2 - (cornerRadius - d) ** 2)
+      );
     }
   }
 
@@ -150,7 +160,13 @@ export function hullHalfWidth(level, x, lengthMeters = SHIP_LENGTH_M, beamMeters
 }
 
 /** Whether a plan point lies on the deck (within `tolerance` metres). */
-export function isInsideHull(level, [x, y], tolerance = 0.01, lengthMeters = SHIP_LENGTH_M, beamMeters = SHIP_BEAM_M) {
+export function isInsideHull(
+  level,
+  [x, y],
+  tolerance = 0.01,
+  lengthMeters = SHIP_LENGTH_M,
+  beamMeters = SHIP_BEAM_M
+) {
   const hw = hullHalfWidth(level, x, lengthMeters, beamMeters);
   return hw > 0 && Math.abs(y - beamMeters / 2) <= hw + tolerance;
 }
@@ -187,7 +203,8 @@ export function generateHullOutline(level, lengthMeters = SHIP_LENGTH_M, beamMet
   if (bridgeWings) {
     const [w1, w2] = bridgeWings.x;
     const addWing = (points, sign) => {
-      const edge = (x) => round2(centerlineY + sign * hullHalfWidth(level, x, lengthMeters, beamMeters));
+      const edge = (x) =>
+        round2(centerlineY + sign * hullHalfWidth(level, x, lengthMeters, beamMeters));
       const tip = round2(centerlineY + sign * (beamMeters / 2 + bridgeWings.overhang));
       const kept = points.filter(([x]) => x < w1 || x > w2);
       kept.push([w1, edge(w1)], [w1, tip], [w2, tip], [w2, edge(w2)]);
@@ -207,7 +224,13 @@ export function generateHullOutline(level, lengthMeters = SHIP_LENGTH_M, beamMet
 }
 
 /** Clip a requested rectangle to the deck, or null if too little of it survives. */
-export function clampToHull(level, [x1, x2], [y1, y2], lengthMeters = SHIP_LENGTH_M, beamMeters = SHIP_BEAM_M) {
+export function clampToHull(
+  level,
+  [x1, x2],
+  [y1, y2],
+  lengthMeters = SHIP_LENGTH_M,
+  beamMeters = SHIP_BEAM_M
+) {
   const { xStart, xEnd } = deckEnvelope(level, lengthMeters);
   const cx1 = Math.max(x1, xStart + HULL_MARGIN_M);
   const cx2 = Math.min(x2, xEnd - HULL_MARGIN_M);
@@ -216,7 +239,11 @@ export function clampToHull(level, [x1, x2], [y1, y2], lengthMeters = SHIP_LENGT
   const centerlineY = beamMeters / 2;
   // Half-width rises through the bow, holds, then falls at the stern, so its
   // minimum over a span is always at one of the span's ends.
-  const inner = Math.min(hullHalfWidth(level, cx1, lengthMeters, beamMeters), hullHalfWidth(level, cx2, lengthMeters, beamMeters)) - HULL_MARGIN_M;
+  const inner =
+    Math.min(
+      hullHalfWidth(level, cx1, lengthMeters, beamMeters),
+      hullHalfWidth(level, cx2, lengthMeters, beamMeters)
+    ) - HULL_MARGIN_M;
   const cy1 = Math.max(y1, centerlineY - inner);
   const cy2 = Math.min(y2, centerlineY + inner);
   if (cy2 - cy1 < 1) return null;
@@ -230,7 +257,12 @@ export function clampToHull(level, [x1, x2], [y1, y2], lengthMeters = SHIP_LENGT
 const centerOf = ([[x1, y1], [x2, y2]]) => [round2((x1 + x2) / 2), round2((y1 + y2) / 2)];
 
 /** A named venue rectangle clipped to the deck. Throws if it cannot fit. */
-export function placeVenue(level, { id, name, category, color, x, y, ...rest }, lengthMeters = SHIP_LENGTH_M, beamMeters = SHIP_BEAM_M) {
+export function placeVenue(
+  level,
+  { id, name, category, color, x, y, ...rest },
+  lengthMeters = SHIP_LENGTH_M,
+  beamMeters = SHIP_BEAM_M
+) {
   const effectiveY = y ?? [0, beamMeters];
   const bounds = clampToHull(level, x, effectiveY, lengthMeters, beamMeters);
   if (!bounds) throw new Error(`Venue ${id} does not fit inside the Deck ${level} hull`);
@@ -238,10 +270,20 @@ export function placeVenue(level, { id, name, category, color, x, y, ...rest }, 
 }
 
 /** The Magic Carpet platform, cantilevered off the starboard side at this deck. */
-export function magicCarpetStop(level, fields, lengthMeters = SHIP_LENGTH_M, beamMeters = SHIP_BEAM_M) {
+export function magicCarpetStop(
+  level,
+  fields,
+  lengthMeters = SHIP_LENGTH_M,
+  beamMeters = SHIP_BEAM_M
+) {
   const [x1, x2] = MAGIC_CARPET_X;
   const centerlineY = beamMeters / 2;
-  const edge = centerlineY + Math.max(hullHalfWidth(level, x1, lengthMeters, beamMeters), hullHalfWidth(level, x2, lengthMeters, beamMeters));
+  const edge =
+    centerlineY +
+    Math.max(
+      hullHalfWidth(level, x1, lengthMeters, beamMeters),
+      hullHalfWidth(level, x2, lengthMeters, beamMeters)
+    );
   const bounds = [
     [x1, round2(edge + 0.3)],
     [x2, round2(edge + 0.3 + MAGIC_CARPET_DEPTH_M)],
@@ -260,13 +302,29 @@ export function magicCarpetStop(level, fields, lengthMeters = SHIP_LENGTH_M, bea
 }
 
 /** Elevator lobbies (and the stern stairwell on stateroom decks) down the centreline. */
-export function generateCenterlineCore(level, banks = ['fwd', 'mid', 'aft'], lengthMeters = SHIP_LENGTH_M, beamMeters = SHIP_BEAM_M, customSternStairX = null, stations = CORE_STATIONS) {
+export function generateCenterlineCore(
+  level,
+  banks = ['fwd', 'mid', 'aft'],
+  lengthMeters = SHIP_LENGTH_M,
+  beamMeters = SHIP_BEAM_M,
+  customSternStairX = null,
+  stations = CORE_STATIONS
+) {
   const cores = [];
-  const stairX = customSternStairX || (lengthMeters < 300 ? [264, 270] : lengthMeters < 320 ? [282, 288] : STERN_STAIR_X);
-  const coreY = beamMeters < 35 ? [round2(beamMeters / 2 - 8.5), round2(beamMeters / 2 + 8.5)] : CORE_Y;
+  const stairX =
+    customSternStairX ||
+    (lengthMeters < 300 ? [264, 270] : lengthMeters < 320 ? [282, 288] : STERN_STAIR_X);
+  const coreY =
+    beamMeters < 35 ? [round2(beamMeters / 2 - 8.5), round2(beamMeters / 2 + 8.5)] : CORE_Y;
   for (const bank of banks) {
     if (bank === 'stern') {
-      const bounds = clampToHull(level, stairX, beamMeters < 35 ? [round2(beamMeters / 2 - 6), round2(beamMeters / 2 + 6)] : [12, 27], lengthMeters, beamMeters);
+      const bounds = clampToHull(
+        level,
+        stairX,
+        beamMeters < 35 ? [round2(beamMeters / 2 - 6), round2(beamMeters / 2 + 6)] : [12, 27],
+        lengthMeters,
+        beamMeters
+      );
       if (!bounds) continue;
       cores.push({
         id: `stairs-aft-${level}`,
@@ -307,8 +365,18 @@ export const CABIN_TYPES = {
   PO: { label: 'Panoramic Oceanview', color: VENUE_COLORS.oceanview },
   DO: { label: 'Deluxe Oceanview', color: VENUE_COLORS.oceanview },
   ES: { label: 'Edge Single', color: VENUE_COLORS.veranda, width: 2.8 },
-  E3: { label: 'Edge Stateroom with Infinite Veranda', color: VENUE_COLORS.veranda, sqft: 243, verandaSqft: 42 },
-  E1: { label: 'Prime Edge Stateroom with Infinite Veranda', color: VENUE_COLORS.veranda, sqft: 243, verandaSqft: 42 },
+  E3: {
+    label: 'Edge Stateroom with Infinite Veranda',
+    color: VENUE_COLORS.veranda,
+    sqft: 243,
+    verandaSqft: 42,
+  },
+  E1: {
+    label: 'Prime Edge Stateroom with Infinite Veranda',
+    color: VENUE_COLORS.veranda,
+    sqft: 243,
+    verandaSqft: 42,
+  },
   SV: { label: 'Sunset Veranda', color: VENUE_COLORS.veranda },
   C2: { label: 'Concierge Class', color: VENUE_COLORS.concierge, sqft: 243, verandaSqft: 42 },
   A1: { label: 'AquaClass', color: VENUE_COLORS.aquaClass, sqft: 243, verandaSqft: 42 },
@@ -325,7 +393,8 @@ export const CABIN_TYPES = {
     color: VENUE_COLORS.iconicSuite,
     sqft: 2530,
     verandaSqft: 745,
-    description: 'Two-bedroom Iconic Suite perched above the navigation bridge, with a wraparound veranda and private whirlpool.',
+    description:
+      'Two-bedroom Iconic Suite perched above the navigation bridge, with a wraparound veranda and private whirlpool.',
   },
   EV: {
     label: 'Edge Villa',
@@ -333,7 +402,8 @@ export const CABIN_TYPES = {
     color: VENUE_COLORS.edgeVilla,
     sqft: 950,
     verandaSqft: 210,
-    description: 'Two-story Edge Villa with a private terrace and plunge pool, part of The Retreat.',
+    description:
+      'Two-story Edge Villa with a private terrace and plunge pool, part of The Retreat.',
   },
 };
 
@@ -352,8 +422,21 @@ function subtractRanges([from, to], avoid) {
   return segments;
 }
 
-function cabinRect(level, side, row, x1, x2, depth, lengthMeters = SHIP_LENGTH_M, beamMeters = SHIP_BEAM_M) {
-  const hw = Math.min(hullHalfWidth(level, x1, lengthMeters, beamMeters), hullHalfWidth(level, x2, lengthMeters, beamMeters)) - HULL_MARGIN_M;
+function cabinRect(
+  level,
+  side,
+  row,
+  x1,
+  x2,
+  depth,
+  lengthMeters = SHIP_LENGTH_M,
+  beamMeters = SHIP_BEAM_M
+) {
+  const hw =
+    Math.min(
+      hullHalfWidth(level, x1, lengthMeters, beamMeters),
+      hullHalfWidth(level, x2, lengthMeters, beamMeters)
+    ) - HULL_MARGIN_M;
   if (hw < MIN_CABIN_HALF_BEAM_M) return null;
   const centerlineY = beamMeters / 2;
   const inward = side === 'Port' ? 1 : -1;
@@ -377,11 +460,20 @@ function cabinRect(level, side, row, x1, x2, depth, lengthMeters = SHIP_LENGTH_M
   ];
 }
 
-function transomCabins(level, { corner, middle }, lengthMeters = SHIP_LENGTH_M, beamMeters = SHIP_BEAM_M) {
+function transomCabins(
+  level,
+  { corner, middle },
+  lengthMeters = SHIP_LENGTH_M,
+  beamMeters = SHIP_BEAM_M
+) {
   const centerlineY = beamMeters / 2;
   const x2 = lengthMeters - HULL_MARGIN_M;
   const x1 = x2 - OUTSIDE_DEPTH_M;
-  const hw = Math.min(hullHalfWidth(level, x1, lengthMeters, beamMeters), hullHalfWidth(level, x2, lengthMeters, beamMeters)) - HULL_MARGIN_M;
+  const hw =
+    Math.min(
+      hullHalfWidth(level, x1, lengthMeters, beamMeters),
+      hullHalfWidth(level, x2, lengthMeters, beamMeters)
+    ) - HULL_MARGIN_M;
   const yA = centerlineY - hw;
   const yB = centerlineY + hw;
   const cornerWidth = CABIN_TYPES[corner].width ?? STANDARD_CABIN_WIDTH_M;
@@ -469,7 +561,8 @@ export function numberCabins(level, cabins, cabinRanges) {
       color: type.color,
       bounds: cabin.bounds,
       center: centerOf(cabin.bounds),
-      description: type.description ?? `${type.label} on Deck ${level}, ${side.toLowerCase()} side.`,
+      description:
+        type.description ?? `${type.label} on Deck ${level}, ${side.toLowerCase()} side.`,
       cabinClass: cabin.code,
       sqft: type.sqft,
       verandaSqft: type.verandaSqft,
@@ -508,7 +601,15 @@ export function numberCabins(level, cabins, cabinRanges) {
  */
 export function generateStaterooms(
   level,
-  { range, avoid = [], starboardOutsideAvoid = [], typeFor, transom, fixedCabins = [], cabinRanges },
+  {
+    range,
+    avoid = [],
+    starboardOutsideAvoid = [],
+    typeFor,
+    transom,
+    fixedCabins = [],
+    cabinRanges,
+  },
   lengthMeters = SHIP_LENGTH_M,
   beamMeters = SHIP_BEAM_M
 ) {
@@ -529,7 +630,16 @@ export function generateStaterooms(
           }
           const width = type.width ?? STANDARD_CABIN_WIDTH_M;
           if (x + width > b) break;
-          const bounds = cabinRect(level, side, row, x, x + width, type.depth ?? OUTSIDE_DEPTH_M, lengthMeters, beamMeters);
+          const bounds = cabinRect(
+            level,
+            side,
+            row,
+            x,
+            x + width,
+            type.depth ?? OUTSIDE_DEPTH_M,
+            lengthMeters,
+            beamMeters
+          );
           if (!bounds) {
             x += 1;
             continue;
@@ -547,7 +657,12 @@ export function generateStaterooms(
 }
 
 /** Crew service strips down the centreline between stateroom rows (full-beam stations only). */
-export function generateServiceStrips(level, { range, avoid = [] }, lengthMeters = SHIP_LENGTH_M, beamMeters = SHIP_BEAM_M) {
+export function generateServiceStrips(
+  level,
+  { range, avoid = [] },
+  lengthMeters = SHIP_LENGTH_M,
+  beamMeters = SHIP_BEAM_M
+) {
   const fullBeamThreshold = beamMeters < 35 ? round2(beamMeters / 2 - 1.0) : 19.2;
   const fullBeam = (x) => hullHalfWidth(level, x, lengthMeters, beamMeters) >= fullBeamThreshold;
   const centerlineY = beamMeters / 2;
@@ -598,10 +713,15 @@ export function describeLocation([x, y], lengthMeters = SHIP_LENGTH_M, beamMeter
  * Supports both stretched (327m) and original (306m) Edge-class hulls,
  * as well as Solstice (317m) and Millennium (294m) hulls.
  */
-export function createHullPipeline({ lengthMeters = SHIP_LENGTH_M, beamMeters = SHIP_BEAM_M, coreStations = null } = {}) {
+export function createHullPipeline({
+  lengthMeters = SHIP_LENGTH_M,
+  beamMeters = SHIP_BEAM_M,
+  coreStations = null,
+} = {}) {
   const delta = lengthMeters - SHIP_LENGTH_M;
   const centerlineY = beamMeters / 2;
-  const sternStairX = lengthMeters < 300 ? [264, 270] : lengthMeters < 320 ? [282, 288] : STERN_STAIR_X;
+  const sternStairX =
+    lengthMeters < 300 ? [264, 270] : lengthMeters < 320 ? [282, 288] : STERN_STAIR_X;
 
   return {
     lengthMeters,
@@ -617,9 +737,17 @@ export function createHullPipeline({ lengthMeters = SHIP_LENGTH_M, beamMeters = 
     placeVenue: (level, fields) => placeVenue(level, fields, lengthMeters, beamMeters),
     magicCarpetStop: (level, fields) => magicCarpetStop(level, fields, lengthMeters, beamMeters),
     generateCenterlineCore: (level, banks, customStair) =>
-      generateCenterlineCore(level, banks, lengthMeters, beamMeters, customStair ?? sternStairX, coreStations ?? CORE_STATIONS),
+      generateCenterlineCore(
+        level,
+        banks,
+        lengthMeters,
+        beamMeters,
+        customStair ?? sternStairX,
+        coreStations ?? CORE_STATIONS
+      ),
     generateStaterooms: (level, opts) => generateStaterooms(level, opts, lengthMeters, beamMeters),
-    generateServiceStrips: (level, opts) => generateServiceStrips(level, opts, lengthMeters, beamMeters),
+    generateServiceStrips: (level, opts) =>
+      generateServiceStrips(level, opts, lengthMeters, beamMeters),
     describeLocation: (pt) => describeLocation(pt, lengthMeters, beamMeters),
   };
 }

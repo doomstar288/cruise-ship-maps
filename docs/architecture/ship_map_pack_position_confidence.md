@@ -9,25 +9,26 @@ This is the detail doc for the field. The pack format as a whole is in
 
 ## Values
 
-| Value | Meaning |
-| --- | --- |
-| `verified` | Deck, fore/aft zone **and side** checked against an authoritative plan. Nothing is `verified` yet (P1.1). |
-| `zone` | Deck and fore/aft zone are reliable. The exact spot and side are not. |
-| `estimated` | Deck or zone is uncertain or conflicting, or the geometry is synthetic. |
+| Value       | Meaning                                                                                                   |
+| ----------- | --------------------------------------------------------------------------------------------------------- |
+| `verified`  | Deck, fore/aft zone **and side** checked against an authoritative plan. Nothing is `verified` yet (P1.1). |
+| `zone`      | Deck and fore/aft zone are reliable. The exact spot and side are not.                                     |
+| `estimated` | Deck or zone is uncertain or conflicting, or the geometry is synthetic.                                   |
 
 A consumer must treat an unknown value as `estimated`.
 
 ## Where it appears
 
-| Location | Field | Notes |
-| --- | --- | --- |
-| Pack | `positionConfidenceDefaults` | Object keyed by `featureType`. Today `{ "cabin": "estimated" }`. |
-| Feature | `positionConfidence` | Omitted when it equals the pack default for the feature's type. |
+| Location | Field                        | Notes                                                            |
+| -------- | ---------------------------- | ---------------------------------------------------------------- |
+| Pack     | `positionConfidenceDefaults` | Object keyed by `featureType`. Today `{ "cabin": "estimated" }`. |
+| Feature  | `positionConfidence`         | Omitted when it equals the pack default for the feature's type.  |
 
 Resolve a feature's confidence like this:
 
 ```js
-const confidence = feature.positionConfidence ?? pack.positionConfidenceDefaults?.[feature.featureType];
+const confidence =
+  feature.positionConfidence ?? pack.positionConfidenceDefaults?.[feature.featureType];
 ```
 
 If `confidence` is still undefined, the pack makes no claim. Only `corridor` features have no
@@ -35,12 +36,12 @@ claim today, because they're circulation and never a destination.
 
 ## What gets which value
 
-| `featureType` | Value | Why |
-| --- | --- | --- |
-| `venue`, `poi`, `muster_station` | `zone`, or `estimated` where authored | Always on the feature. |
-| `elevator`, `stairwell` | `estimated` | Routing targets on a synthetic grid. Always on the feature. |
-| `cabin` | `estimated`, via the pack default | Cabin numbering is synthetic (P1.2). |
-| `corridor` | none | Not a destination. |
+| `featureType`                    | Value                                 | Why                                                         |
+| -------------------------------- | ------------------------------------- | ----------------------------------------------------------- |
+| `venue`, `poi`, `muster_station` | `zone`, or `estimated` where authored | Always on the feature.                                      |
+| `elevator`, `stairwell`          | `estimated`                           | Routing targets on a synthetic grid. Always on the feature. |
+| `cabin`                          | `estimated`, via the pack default     | Cabin numbering is synthetic (P1.2).                        |
+| `corridor`                       | none                                  | Not a destination.                                          |
 
 In the producer, confidence is a fact on the source venue record in
 `src/data/celebrityXcelFullDeckGenerator.js`. A venue is `estimated` when sources conflict on its

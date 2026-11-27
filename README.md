@@ -6,7 +6,7 @@ An open-source, high-accuracy cruise ship deck map viewer, spatial database sche
 
 ## 🌟 Key Features
 
-- **All 15 Guest Decks**: Interactive vector maps of *Celebrity Xcel*'s guest decks (2–12 and 14–17), drawn to the real 327 m × 39 m proportions with venues on their published decks and fore/aft zones.
+- **All 15 Guest Decks**: Interactive vector maps of _Celebrity Xcel_'s guest decks (2–12 and 14–17), drawn to the real 327 m × 39 m proportions with venues on their published decks and fore/aft zones.
 - **Programmatic Deck Grid Engine**: Metre-scale hull envelopes per deck, non-overlapping stateroom rows and corridors, hull boundary clamping, and bow-to-stern cabin numbering. Layouts are synthetic approximations, not traced official plans.
 - **Multi-Source Accuracy Consensus Engine**: Cross-references official floorplan vectors, satellite AIS telemetry (IMO 9938430), AI super-resolution (Real-ESRGAN), and crowdsourced logs to guarantee 98.4%+ spatial accuracy.
 - **OpenAPI 3.1 & GeoJSON Download**: Export full deck vector geometries and venue metadata directly as standardized `.geojson` files for external trip planning applications.

@@ -71,10 +71,7 @@ function matchesCategory(venueCategory, filterTab) {
   switch (filterTab) {
     case 'Dining':
       return (
-        c.includes('dining') ||
-        c.includes('restaurant') ||
-        c.includes('cafe') ||
-        c.includes('food')
+        c.includes('dining') || c.includes('restaurant') || c.includes('cafe') || c.includes('food')
       );
     case 'Bars':
       return c.includes('bar') || c.includes('lounge');
@@ -197,9 +194,7 @@ export default function SearchCommandPalette({
   // Flattened venues across all decks of current ship
   const allVenues = useMemo(() => {
     return shipDecks.flatMap((deck) =>
-      (deck.venues || [])
-        .filter((v) => !v.hideLabel)
-        .map((v) => ({ ...v, deck }))
+      (deck.venues || []).filter((v) => !v.hideLabel).map((v) => ({ ...v, deck }))
     );
   }, [shipDecks]);
 
@@ -370,7 +365,11 @@ export default function SearchCommandPalette({
           </div>
 
           {/* Category Filter Tabs */}
-          <div className="command-palette-tabs" role="tablist" aria-label="Filter venues by category">
+          <div
+            className="command-palette-tabs"
+            role="tablist"
+            aria-label="Filter venues by category"
+          >
             {CATEGORY_TABS.map((tab) => (
               <button
                 key={tab}
@@ -416,9 +415,7 @@ export default function SearchCommandPalette({
                   {cabinTelemetry.side === 'Port' ? '🔵 Port Side' : '🟢 Starboard Side'}
                 </span>
 
-                <span className="telemetry-badge zone">
-                  🧭 {cabinTelemetry.zone}
-                </span>
+                <span className="telemetry-badge zone">🧭 {cabinTelemetry.zone}</span>
 
                 <span className="telemetry-badge category">
                   🏷️ {cabinTelemetry.suggestedCategory || CABIN_CATEGORIES.VERANDA}
@@ -451,12 +448,15 @@ export default function SearchCommandPalette({
               <div className="cross-ship-header">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <Ship size={16} color="var(--accent-gold)" />
-                  <span style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.88rem' }}>
+                  <span
+                    style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.88rem' }}
+                  >
                     {fleetAmenity.name}
                   </span>
                 </div>
                 <span className="cross-ship-badge">
-                  {fleetAmenity.shipClass} ({fleetAmenity.shipCount} {fleetAmenity.shipCount === 1 ? 'ship' : 'ships'})
+                  {fleetAmenity.shipClass} ({fleetAmenity.shipCount}{' '}
+                  {fleetAmenity.shipCount === 1 ? 'ship' : 'ships'})
                 </span>
               </div>
 
@@ -526,7 +526,9 @@ export default function SearchCommandPalette({
                   Matches for &ldquo;{query}&rdquo; ({filteredVenues.length})
                 </span>
               ) : (
-                <span>Suggested Venues ({filteredVenues.slice(0, MAX_DISPLAY_RESULTS).length})</span>
+                <span>
+                  Suggested Venues ({filteredVenues.slice(0, MAX_DISPLAY_RESULTS).length})
+                </span>
               )}
             </div>
 
@@ -535,7 +537,8 @@ export default function SearchCommandPalette({
                 <div className="palette-empty-state">
                   <p>No matching venues or staterooms found for &ldquo;{query}&rdquo;.</p>
                   <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                    Try searching for a cabin number (e.g. 8124, 7206) or signature venue like Sunset Bar or Solarium.
+                    Try searching for a cabin number (e.g. 8124, 7206) or signature venue like
+                    Sunset Bar or Solarium.
                   </span>
                 </div>
               ) : (
@@ -559,8 +562,8 @@ export default function SearchCommandPalette({
                         )}
                       </div>
                       <div className="venue-deck-meta">
-                        <MapPin size={11} /> {venue.deck?.shortName || `Deck ${venue.deck?.level}`} •{' '}
-                        {venue.deck?.title || venue.category}
+                        <MapPin size={11} /> {venue.deck?.shortName || `Deck ${venue.deck?.level}`}{' '}
+                        • {venue.deck?.title || venue.category}
                       </div>
                     </div>
 
@@ -598,7 +601,10 @@ export default function SearchCommandPalette({
             <kbd className="footer-kbd">↑</kbd> <kbd className="footer-kbd">↓</kbd> Navigate
           </span>
           <span className="footer-hint">
-            <kbd className="footer-kbd"><CornerDownLeft size={10} /></kbd> Select
+            <kbd className="footer-kbd">
+              <CornerDownLeft size={10} />
+            </kbd>{' '}
+            Select
           </span>
           <span className="footer-hint">
             <kbd className="footer-kbd">ESC</kbd> Close

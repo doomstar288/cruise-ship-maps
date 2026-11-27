@@ -2,7 +2,7 @@
 
 > **Document Version:** 1.0.0  
 > **Status:** Data Model Architecture & Taxonomy Specification  
-> **Target System:** Open-Source Cruise Ship Maps API & Public Dataset Repository  
+> **Target System:** Open-Source Cruise Ship Maps API & Public Dataset Repository
 
 ---
 
@@ -11,6 +11,7 @@
 To model, store, and query cruise ship spatial data at scale, an open-source mapping system requires a standardized taxonomy and data model. Unlike static buildings on land, cruise ships represent complex hierarchical entities: a single vessel belongs to a ship class, operates under a brand owned by a parent corporation, features 10 to 22 deck levels, and contains thousands of spatial units ranging from staterooms to engine control rooms.
 
 This document defines:
+
 1. The global cruise industry **Corporate & Vessel Fleet Hierarchy** across all major cruise conglomerates.
 2. Standardized **Deck Naming, Numbering, and Level Normalization Algorithms**.
 3. A taxonomy and schema for **Spatial Units and Venues** (staterooms, dining, lounges, entertainment, outdoor recreation, technical/crew spaces).
@@ -158,16 +159,16 @@ Different cruise lines use disparate naming schemes for deck levels. The API nor
 
 ### Deck Naming Conversion Matrix Table
 
-| Physical Stack Level | Royal Caribbean | Carnival | NCL | Celebrity | Disney | Normalization Standard |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Deck 21–22** | Icon / Suite Sun Deck | - | Horizon / Haven | - | - | `Deck 21` / `Deck 22` |
-| **Deck 18–20** | Suite Deck / Solarium | Sky Deck | The Haven Complex | The Retreat | Sun Deck | `Deck 18` / `Deck 19` |
-| **Deck 15–17** | Windjammer / Pool | Sports Deck | Garden Cafe / Spa | Oceanview Cafe | Sports Deck | `Deck 15` / `Deck 16` |
-| **Deck 14** | Lido / Adventure Ocean | Lido Deck | Pool Deck / Buffet | Resort Deck | Pool Deck | `Deck 14 (Lido)` |
-| **Deck 5–8** | Royal Promenade | Promenade Deck | Waterfront / Galaxy | Plaza / Main | Atrium / Shops | `Deck 5` to `Deck 8` |
-| **Deck 3–4** | Main Dining / Theater | Lobby / Main Deck | Stardust / Casino | Entertainment Deck | Walt Disney Theatre | `Deck 3` / `Deck 4` |
-| **Deck 1–2** | Gangway / Medical | Riviera Deck | Medical Center | Medical / Tender | Gangway | `Deck 1` / `Deck 2` |
-| **Deck 0 / Below** | Crew Mess / Engine | Crew Deck | Engine Control | Crew Deck | Engine Room | `Deck 0 (Crew/Engine)` |
+| Physical Stack Level | Royal Caribbean        | Carnival          | NCL                 | Celebrity          | Disney              | Normalization Standard |
+| :------------------- | :--------------------- | :---------------- | :------------------ | :----------------- | :------------------ | :--------------------- |
+| **Deck 21–22**       | Icon / Suite Sun Deck  | -                 | Horizon / Haven     | -                  | -                   | `Deck 21` / `Deck 22`  |
+| **Deck 18–20**       | Suite Deck / Solarium  | Sky Deck          | The Haven Complex   | The Retreat        | Sun Deck            | `Deck 18` / `Deck 19`  |
+| **Deck 15–17**       | Windjammer / Pool      | Sports Deck       | Garden Cafe / Spa   | Oceanview Cafe     | Sports Deck         | `Deck 15` / `Deck 16`  |
+| **Deck 14**          | Lido / Adventure Ocean | Lido Deck         | Pool Deck / Buffet  | Resort Deck        | Pool Deck           | `Deck 14 (Lido)`       |
+| **Deck 5–8**         | Royal Promenade        | Promenade Deck    | Waterfront / Galaxy | Plaza / Main       | Atrium / Shops      | `Deck 5` to `Deck 8`   |
+| **Deck 3–4**         | Main Dining / Theater  | Lobby / Main Deck | Stardust / Casino   | Entertainment Deck | Walt Disney Theatre | `Deck 3` / `Deck 4`    |
+| **Deck 1–2**         | Gangway / Medical      | Riviera Deck      | Medical Center      | Medical / Tender   | Gangway             | `Deck 1` / `Deck 2`    |
+| **Deck 0 / Below**   | Crew Mess / Engine     | Crew Deck         | Engine Control      | Crew Deck          | Engine Room         | `Deck 0 (Crew/Engine)` |
 
 ---
 
@@ -191,6 +192,7 @@ graph LR
 ### 3.1 Detailed Subcategory Definitions & Attributes
 
 #### 1. Staterooms & Suites (`stateroom`)
+
 - **Subcategories**: `inside`, `oceanview`, `balcony`, `virtual_balcony`, `cove_balcony`, `infinite_veranda`, `suite_junior`, `suite_grand`, `suite_owners`, `suite_loft`, `suite_royal`, `ship_within_a_ship` (e.g. RCI Star Class, NCL Haven, MSC Yacht Club, Celebrity Retreat).
 - **Core Attributes**:
   - `stateroom_number` (string): e.g. `"14204"`.
@@ -203,6 +205,7 @@ graph LR
   - `bed_configuration` (string): `king`, `twin_convertible`, `pullman`, `sofa_bed`.
 
 #### 2. Dining & Culinary (`dining`)
+
 - **Subcategories**: `main_dining_room`, `specialty_restaurant`, `buffet`, `casual_grab_go`, `room_service_galley`, `specialty_cafe`, `chef_table`.
 - **Attributes**:
   - `cost_model`: `included`, `specialty_cover_charge`, `a_la_carte`.
@@ -212,27 +215,34 @@ graph LR
   - `requires_reservation`: Boolean flag.
 
 #### 3. Bars, Lounges & Nightlife (`bar_lounge`)
+
 - **Subcategories**: `pool_bar`, `pub`, `atrium_bar`, `speakeasy`, `piano_bar`, `cigar_lounge`, `nightclub`, `observation_lounge`, `wine_bar`, `bionic_robotic_bar`.
 - **Attributes**: `has_live_music`, `outdoor_seating`, `age_restriction` (e.g., `21+`).
 
 #### 4. Entertainment & Theater (`entertainment`)
+
 - **Subcategories**: `main_theater`, `ice_rink`, `aquatheater`, `comedy_club`, `casino`, `cinema_4d`, `arcade`, `vr_lounge`.
 - **Attributes**: `stage_type`, `seat_capacity`, `has_3d_projector`.
 
 #### 5. Outdoor, Sports & Recreation (`recreation`)
+
 - **Subcategories**: `pool_main`, `pool_adults_solarium`, `waterpark_kids`, `waterslide`, `zipline`, `flowrider_surf`, `ropes_course`, `sports_court`, `jogging_track`, `promenade_deck`, `helipad`.
 - **Attributes**: `track_length_meters`, `laps_per_mile`, `pool_depth_meters`.
 
 #### 6. Guest Services & Medical (`guest_services`)
+
 - **Subcategories**: `guest_services_desk`, `shore_excursions`, `future_cruise_desk`, `medical_center`, `photo_gallery`, `conference_room`, `atm`, `wifi_helpdesk`.
 
 #### 7. Wellness & Fitness (`wellness`)
+
 - **Subcategories**: `thermal_suite`, `spa_treatment_room`, `salon`, `gymnasium`, `spin_studio`, `sauna_steamroom`.
 
 #### 8. Youth & Family (`youth`)
+
 - **Subcategories**: `nursery_infant`, `kids_club_3_5`, `kids_club_6_11`, `teen_club_12_17`, `game_arcade`.
 
 #### 9. Navigation, Technical & Crew (`technical_crew`)
+
 - **Subcategories**: `bridge`, `engine_control_room`, `galley_main`, `crew_mess`, `crew_bar`, `laundry_industrial`, `tender_embarkation`, `muster_station`.
 - **Attributes**: `muster_zone_letter` (e.g., `"Muster Zone A"`).
 
@@ -262,6 +272,7 @@ sequenceDiagram
 ### 4.1 Automated Web Scraping & Public API Integration
 
 #### Scraper Targets & Technical Approaches
+
 1. **Cruise Line Interactive Deck Plan APIs**:
    - Modern cruise sites utilize GraphQL or REST microservices to power web deck plan widgets.
    - Example endpoints:
@@ -273,6 +284,7 @@ sequenceDiagram
    - Vessel specifications (IMO number, MMSI, Length Overall [LOA], Beam, Gross Tonnage [GT], Draft, Passenger Capacity, Crew Capacity) are scraped or queried via open AIS sources (MarineTraffic, VesselFinder, IMO Global Integrated Shipping Information System - GISIS).
 
 #### Ethical & Legal Scraping Safeguards
+
 - **Rate Limiting**: Worker threads execute with exponential backoff and a minimum delay of 1.5 seconds per request.
 - **Robots.txt & Terms Compliance**: Respect `Robots.txt` crawl delays and store only public non-PII spatial geometry data.
 - **Decoupled Architecture**: All scrapers reside in `scrapers/` micro-services, generating immutable JSON snapshot files (`data/snapshots/{ship_imo}_{timestamp}.json`) before database insertion.
@@ -351,15 +363,15 @@ export interface DeckLevel {
   bounding_box_hull_meters: [number, number, number, number]; // [xmin, ymin, xmax, ymax]
 }
 
-export type VenueCategory = 
-  | 'stateroom' 
-  | 'dining' 
-  | 'bar_lounge' 
-  | 'entertainment' 
-  | 'recreation' 
-  | 'guest_services' 
-  | 'wellness' 
-  | 'youth' 
+export type VenueCategory =
+  | 'stateroom'
+  | 'dining'
+  | 'bar_lounge'
+  | 'entertainment'
+  | 'recreation'
+  | 'guest_services'
+  | 'wellness'
+  | 'youth'
   | 'technical_crew';
 
 export interface SpatialUnit {
@@ -382,7 +394,7 @@ export interface SpatialUnit {
     seating_capacity?: number;
   };
   geometry: {
-    type: "Polygon" | "MultiPolygon";
+    type: 'Polygon' | 'MultiPolygon';
     coordinates: number[][][]; // Local hull meters or GeoJSON coordinates
   };
 }
@@ -390,11 +402,18 @@ export interface SpatialUnit {
 export interface AmenityPOI {
   id: string; // e.g. "poi_sym_d14_aed_1"
   deck_id: string;
-  type: 'aed' | 'elevator_bank' | 'stairwell' | 'restroom_unisex' | 'restroom_accessible' | 'towel_station' | 'atm';
+  type:
+    | 'aed'
+    | 'elevator_bank'
+    | 'stairwell'
+    | 'restroom_unisex'
+    | 'restroom_accessible'
+    | 'towel_station'
+    | 'atm';
   name: string;
   icon_symbol: string;
   geometry: {
-    type: "Point";
+    type: 'Point';
     coordinates: [number, number]; // [x, y]
   };
 }

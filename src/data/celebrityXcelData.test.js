@@ -1,10 +1,16 @@
 import { describe, it, expect } from 'vitest';
 import { CELEBRITY_XCEL_DECKS, CELEBRITY_XCEL_METADATA } from './celebrityXcelData';
 import { isValidImo } from '../utils/imo';
-import { CENTERLINE_Y, SHIP_LENGTH_M, hullHalfWidth, isInsideHull } from '../utils/deckPlanDataPipeline';
+import {
+  CENTERLINE_Y,
+  SHIP_LENGTH_M,
+  hullHalfWidth,
+  isInsideHull,
+} from '../utils/deckPlanDataPipeline';
 
 const deckAt = (level) => CELEBRITY_XCEL_DECKS.find((d) => d.level === level);
-const allVenues = () => CELEBRITY_XCEL_DECKS.flatMap((d) => d.venues.map((v) => ({ ...v, level: d.level })));
+const allVenues = () =>
+  CELEBRITY_XCEL_DECKS.flatMap((d) => d.venues.map((v) => ({ ...v, level: d.level })));
 
 describe('Celebrity Xcel vessel metadata', () => {
   it('carries a checksum-valid IMO number', () => {
@@ -59,7 +65,12 @@ describe('Celebrity Xcel deck dataset', () => {
     for (const { level, bounds, id, outboard } of allVenues()) {
       if (outboard) continue;
       const [[x1, y1], [x2, y2]] = bounds;
-      for (const corner of [[x1, y1], [x1, y2], [x2, y1], [x2, y2]]) {
+      for (const corner of [
+        [x1, y1],
+        [x1, y2],
+        [x2, y1],
+        [x2, y2],
+      ]) {
         expect(isInsideHull(level, corner), `${id} corner ${corner} on Deck ${level}`).toBe(true);
       }
     }
@@ -103,14 +114,18 @@ describe('real-ship layout', () => {
       expect(theatre.center[0]).toBeLessThan(SHIP_LENGTH_M / 3);
     }
     for (const level of [4, 5, 6]) {
-      const bazaar = deckAt(level).venues.filter((v) => /Bazaar/.test(`${v.name} ${v.tags?.join(' ')}`));
+      const bazaar = deckAt(level).venues.filter((v) =>
+        /Bazaar/.test(`${v.name} ${v.tags?.join(' ')}`)
+      );
       expect(bazaar.length).toBeGreaterThan(0);
       for (const v of bazaar) expect(v.center[0]).toBeGreaterThan((2 * SHIP_LENGTH_M) / 3);
     }
   });
 
   it('does not carry venues that Xcel does not have', () => {
-    const names = allVenues().map((v) => v.name).join('\n');
+    const names = allVenues()
+      .map((v) => v.name)
+      .join('\n');
     expect(names).not.toMatch(/\bEden\b/);
     expect(names).not.toMatch(/Solstice/);
   });
@@ -128,7 +143,9 @@ describe('real-ship layout', () => {
     for (const deck of CELEBRITY_XCEL_DECKS) {
       const cabins = deck.venues.filter((v) => v.cabinClass);
       const numbers = cabins.map((c) => Number(c.label));
-      expect(new Set(numbers).size, `Deck ${deck.level} duplicate cabin numbers`).toBe(numbers.length);
+      expect(new Set(numbers).size, `Deck ${deck.level} duplicate cabin numbers`).toBe(
+        numbers.length
+      );
       for (const cabin of cabins) {
         expect(cabin.label.startsWith(String(deck.level))).toBe(true);
         if (cabin.cabinClass === 'EV') continue; // Edge Villas keep their published numbers.

@@ -57,7 +57,12 @@ describe('generateHullOutline', () => {
 describe('clampToHull', () => {
   it('pulls a rectangle inside a tapering bow', () => {
     const [[x1, y1], [x2, y2]] = clampToHull(8, [20, 40], [0, SHIP_BEAM_M]);
-    for (const corner of [[x1, y1], [x2, y2], [x1, y2], [x2, y1]]) {
+    for (const corner of [
+      [x1, y1],
+      [x2, y2],
+      [x1, y2],
+      [x2, y1],
+    ]) {
       expect(isInsideHull(8, corner)).toBe(true);
     }
   });
@@ -77,12 +82,60 @@ describe('describeLocation', () => {
 
 describe('numberCabins and cabin parity', () => {
   const sampleCabins = [
-    { code: 'E1', side: 'Port', row: 'outside', bounds: [[50, 0], [53, 5]] },
-    { code: 'E1', side: 'Port', row: 'outside', bounds: [[54, 0], [57, 5]] },
-    { code: 'E1', side: 'Port', row: 'outside', bounds: [[58, 0], [61, 5]] },
-    { code: 'E1', side: 'Starboard', row: 'outside', bounds: [[50, 34], [53, 39]] },
-    { code: 'E1', side: 'Starboard', row: 'outside', bounds: [[54, 34], [57, 39]] },
-    { code: 'E1', side: 'Starboard', row: 'outside', bounds: [[58, 34], [61, 39]] },
+    {
+      code: 'E1',
+      side: 'Port',
+      row: 'outside',
+      bounds: [
+        [50, 0],
+        [53, 5],
+      ],
+    },
+    {
+      code: 'E1',
+      side: 'Port',
+      row: 'outside',
+      bounds: [
+        [54, 0],
+        [57, 5],
+      ],
+    },
+    {
+      code: 'E1',
+      side: 'Port',
+      row: 'outside',
+      bounds: [
+        [58, 0],
+        [61, 5],
+      ],
+    },
+    {
+      code: 'E1',
+      side: 'Starboard',
+      row: 'outside',
+      bounds: [
+        [50, 34],
+        [53, 39],
+      ],
+    },
+    {
+      code: 'E1',
+      side: 'Starboard',
+      row: 'outside',
+      bounds: [
+        [54, 34],
+        [57, 39],
+      ],
+    },
+    {
+      code: 'E1',
+      side: 'Starboard',
+      row: 'outside',
+      bounds: [
+        [58, 34],
+        [61, 39],
+      ],
+    },
   ];
 
   it('assigns odd numbers to port and even numbers to starboard by default', () => {
@@ -122,12 +175,24 @@ describe('numberCabins and cabin parity', () => {
 
   it('preserves ada accessible and connecting stateroom properties', () => {
     const withFlags = [
-      { code: 'E1', side: 'Port', row: 'outside', bounds: [[50, 0], [53, 5]], ada: true },
       {
         code: 'E1',
         side: 'Port',
         row: 'outside',
-        bounds: [[54, 0], [57, 5]],
+        bounds: [
+          [50, 0],
+          [53, 5],
+        ],
+        ada: true,
+      },
+      {
+        code: 'E1',
+        side: 'Port',
+        row: 'outside',
+        bounds: [
+          [54, 0],
+          [57, 5],
+        ],
         connecting: 'c8-8105',
       },
     ];

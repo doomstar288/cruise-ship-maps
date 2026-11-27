@@ -62,7 +62,8 @@ function exactTimes({ nodes, edges }, speed, from, stepFree, avoidLifts = false)
     if (u === -1) return time;
     done[u] = true;
     for (const { to, s, stairs, lift } of links[u]) {
-      if (!(stepFree && stairs) && !(avoidLifts && lift)) time[to] = Math.min(time[to], time[u] + s);
+      if (!(stepFree && stairs) && !(avoidLifts && lift))
+        time[to] = Math.min(time[to], time[u] + s);
     }
   }
 }
@@ -308,8 +309,13 @@ describe.each(Object.keys(ROUTE_FIXTURE_CASES))('route fixtures for %s', (shipId
     const exits = pack.decks.flatMap((d) => d.features.filter((f) => f.portExit).map((f) => f.id));
     expect(exits.length).toBeGreaterThan(0);
     for (const exit of exits) {
-      const plain = fixtures.routes.filter((r) => r.to.featureId === exit && r.from.cabinId && !r.stepFree);
-      expect(new Set(plain.map((r) => routerEndpoint(pack, r.from).deck)).size, exit).toBeGreaterThanOrEqual(3);
+      const plain = fixtures.routes.filter(
+        (r) => r.to.featureId === exit && r.from.cabinId && !r.stepFree
+      );
+      expect(
+        new Set(plain.map((r) => routerEndpoint(pack, r.from).deck)).size,
+        exit
+      ).toBeGreaterThanOrEqual(3);
       for (const r of plain) {
         const twin = fixtures.routes.find((t) => t.id === `${r.id}-step-free`);
         expect(twin, r.id).toMatchObject({ from: r.from, to: r.to, stepFree: true });

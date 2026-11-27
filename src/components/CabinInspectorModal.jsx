@@ -3,7 +3,13 @@ import { X, Navigation, Sparkles, CheckCircle2, MapPin } from 'lucide-react';
 import { calculateSourceConsensus, ACCURACY_SOURCES } from '../utils/multiSourceDataConsensus';
 import { describeLocation } from '../utils/deckPlanDataPipeline';
 
-export default function CabinInspectorModal({ venue, deck, onClose, onStartWayfinding, onRouteFromHere }) {
+export default function CabinInspectorModal({
+  venue,
+  deck,
+  onClose,
+  onStartWayfinding,
+  onRouteFromHere,
+}) {
   // Escape closes the drawer; the map behind it stays usable.
   useEffect(() => {
     const onKeyDown = (event) => {
@@ -21,21 +27,42 @@ export default function CabinInspectorModal({ venue, deck, onClose, onStartWayfi
 
   return (
     <div className="modal-overlay drawer">
-      <div className="modal-card" role="dialog" aria-modal="false" aria-labelledby="venue-inspector-title">
+      <div
+        className="modal-card"
+        role="dialog"
+        aria-modal="false"
+        aria-labelledby="venue-inspector-title"
+      >
         {/* Header */}
         <div className="modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span style={{
-              width: '14px',
-              height: '14px',
-              borderRadius: '50%',
-              background: venue.color,
-              boxShadow: `0 0 12px ${venue.color}`,
-              flexShrink: 0
-            }}></span>
+            <span
+              style={{
+                width: '14px',
+                height: '14px',
+                borderRadius: '50%',
+                background: venue.color,
+                boxShadow: `0 0 12px ${venue.color}`,
+                flexShrink: 0,
+              }}
+            ></span>
             <div>
-              <h3 id="venue-inspector-title" style={{ fontSize: '1.15rem', color: 'var(--text-primary)' }}>{venue.name}</h3>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <h3
+                id="venue-inspector-title"
+                style={{ fontSize: '1.15rem', color: 'var(--text-primary)' }}
+              >
+                {venue.name}
+              </h3>
+              <div
+                style={{
+                  fontSize: '0.8rem',
+                  color: 'var(--text-secondary)',
+                  marginTop: '2px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                }}
+              >
                 <MapPin size={12} /> Deck {deck.level} · {describeLocation(venue.center)}
               </div>
             </div>
@@ -48,20 +75,33 @@ export default function CabinInspectorModal({ venue, deck, onClose, onStartWayfi
         {/* Body */}
         <div className="modal-body">
           {/* Multi-source accuracy verification pill */}
-          <div style={{
-            background: 'hsla(160, 84%, 39%, 0.12)',
-            border: '1px solid var(--accent-emerald)',
-            padding: '10px 14px',
-            borderRadius: 'var(--radius-md)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', fontWeight: 700, color: 'var(--accent-emerald)' }}>
+          <div
+            style={{
+              background: 'hsla(160, 84%, 39%, 0.12)',
+              border: '1px solid var(--accent-emerald)',
+              padding: '10px 14px',
+              borderRadius: 'var(--radius-md)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '0.82rem',
+                fontWeight: 700,
+                color: 'var(--accent-emerald)',
+              }}
+            >
               <CheckCircle2 size={16} />
               <span>Multi-Source Verified: {(consensus.confidenceScore * 100).toFixed(0)}%</span>
             </div>
-            <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>{consensus.sourcesCount}/{ACCURACY_SOURCES.length} sources</span>
+            <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+              {consensus.sourcesCount}/{ACCURACY_SOURCES.length} sources
+            </span>
           </div>
 
           {/* Subheader Badges */}
@@ -72,7 +112,8 @@ export default function CabinInspectorModal({ venue, deck, onClose, onStartWayfi
 
             {isStateroom && venue.sqft && (
               <span className="ship-badge" style={{ background: 'rgba(255,255,255,0.06)' }}>
-                📐 {venue.sqft} sq ft {venue.verandaSqft ? `(+${venue.verandaSqft} sq ft veranda)` : ''}
+                📐 {venue.sqft} sq ft{' '}
+                {venue.verandaSqft ? `(+${venue.verandaSqft} sq ft veranda)` : ''}
               </span>
             )}
 
@@ -83,21 +124,49 @@ export default function CabinInspectorModal({ venue, deck, onClose, onStartWayfi
             )}
 
             {isStateroom && venue.ada && (
-              <span className="ship-badge" style={{ background: 'rgba(20,184,166,0.15)', borderColor: '#14b8a6', color: '#14b8a6' }}>
+              <span
+                className="ship-badge"
+                style={{
+                  background: 'rgba(20,184,166,0.15)',
+                  borderColor: '#14b8a6',
+                  color: '#14b8a6',
+                }}
+              >
                 ♿ Accessible
               </span>
             )}
 
             {isMagicCarpet && (
-              <span className="ship-badge" style={{ background: 'rgba(234,179,8,0.2)', borderColor: '#eab308', color: '#eab308' }}>
+              <span
+                className="ship-badge"
+                style={{
+                  background: 'rgba(234,179,8,0.2)',
+                  borderColor: '#eab308',
+                  color: '#eab308',
+                }}
+              >
                 ✨ Cantilevered Floating Platform
               </span>
             )}
           </div>
 
           {/* Description */}
-          <div style={{ background: 'rgba(255,255,255,0.03)', padding: '16px', borderRadius: 'var(--radius-md)', border: '1px solid var(--glass-border)' }}>
-            <h4 style={{ fontSize: '0.85rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '8px' }}>
+          <div
+            style={{
+              background: 'rgba(255,255,255,0.03)',
+              padding: '16px',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--glass-border)',
+            }}
+          >
+            <h4
+              style={{
+                fontSize: '0.85rem',
+                color: 'var(--text-muted)',
+                textTransform: 'uppercase',
+                marginBottom: '8px',
+              }}
+            >
               About
             </h4>
             <p style={{ fontSize: '0.92rem', color: 'var(--text-primary)', lineHeight: 1.6 }}>
@@ -108,7 +177,14 @@ export default function CabinInspectorModal({ venue, deck, onClose, onStartWayfi
           {/* Tags */}
           {venue.tags && venue.tags.length > 0 && (
             <div>
-              <h4 style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '8px' }}>
+              <h4
+                style={{
+                  fontSize: '0.78rem',
+                  color: 'var(--text-muted)',
+                  textTransform: 'uppercase',
+                  marginBottom: '8px',
+                }}
+              >
                 Features & Amenities
               </h4>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
