@@ -6,6 +6,12 @@
 > **Status:** Approved Architecture Baseline  
 > **Maintainer:** System Architecture & Scrum Core Team
 
+> **Reality check (2026-11-27): a planning blueprint, not the live process.** The governance model,
+> sprint cadence and backlog below were written at the start of the project and are not what is
+> tracked today. Current work lives in GitHub issues and in the
+> [two-repo roadmap](../roadmap/auratrip_integration_onboard_wayfinding.md). Some files it mentions
+> (`docs/rfcs/`, `docs/schemas/`, `docs/architecture/openapi_v3.1.json`) do not exist.
+
 ---
 
 ## 1. Open-Source Agile Framework & Governance

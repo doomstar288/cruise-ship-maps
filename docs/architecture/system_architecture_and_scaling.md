@@ -6,6 +6,12 @@
 > **Status:** Approved Architecture Baseline  
 > **Maintainer:** Core Infrastructure & Spatial Systems Architecture Team
 
+> **Reality check (2026-11-27): this blueprint was never built.** This repo is a single Vite app.
+> There is no Turborepo, PostGIS database, server or REST API here. What exists is the static
+> [Ship Map Pack v1](ship_map_pack.md) under `public/v1/`, whose paths mirror the routes below so a client
+> could later swap a static base URL for a live API. For what is actually implemented, read
+> [`../../CLAUDE.md`](../../CLAUDE.md).
+
 ---
 
 ## 1. System Architecture & Component Overview

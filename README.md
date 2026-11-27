@@ -1,6 +1,6 @@
 # 🚢 Cruise Ship Maps & Open Deck Plan API Platform
 
-An open-source, high-accuracy cruise ship deck map viewer, spatial database schema, and REST API platform for travel applications and trip planners. Prototype vessel: **Celebrity Xcel** (Edge-Class flagship).
+An open-source cruise ship deck map viewer, and the producer of static, versioned **Ship Map Pack** JSON for travel applications and trip planners. Prototype vessel: **Celebrity Xcel** (Edge-Class flagship); packs are published for 14 Celebrity ships. There is no backend: the "API" is static files under `public/v1/`.
 
 ---
 
@@ -8,8 +8,8 @@ An open-source, high-accuracy cruise ship deck map viewer, spatial database sche
 
 - **All 15 Guest Decks**: Interactive vector maps of _Celebrity Xcel_'s guest decks (2–12 and 14–17), drawn to the real 327 m × 39 m proportions with venues on their published decks and fore/aft zones.
 - **Programmatic Deck Grid Engine**: Metre-scale hull envelopes per deck, non-overlapping stateroom rows and corridors, hull boundary clamping, and bow-to-stern cabin numbering. Layouts are synthetic approximations, not traced official plans.
-- **Multi-Source Accuracy Consensus Engine**: Cross-references official floorplan vectors, satellite AIS telemetry (IMO 9938430), AI super-resolution (Real-ESRGAN), and crowdsourced logs to guarantee 98.4%+ spatial accuracy.
-- **OpenAPI 3.1 & GeoJSON Download**: Export full deck vector geometries and venue metadata directly as standardized `.geojson` files for external trip planning applications.
+- **Multi-Source Consensus panel (illustrative)**: a UI mock-up of how floorplan, AIS and crowdsourced sources could be cross-referenced. Its sources and scores are hardcoded; no AIS, satellite or AI-upscaling ingestion exists in this repo.
+- **Static Ship Map Packs & GeoJSON download**: versioned JSON (`public/v1/ships/index.json` and per-ship `plan.json`, see [Ship Map Pack v1](./docs/architecture/ship_map_pack.md)) published on GitHub Pages, plus a per-deck `.geojson` download in the viewer. The OpenAPI/REST design in `docs/architecture/system_architecture_and_scaling.md` is a blueprint, not a running service.
 - **Turn-by-Turn Wayfinding & Routing**: Multi-deck routes over the published pack's routing graph (walks, lifts and stairs, with a step-free option), drawn as animated paths with turn-by-turn guidance.
 - **Accessible UI & Design System**: Custom HSL dark mode theme, 44px minimum touch targets, desktop right slide-over inspector drawers, and WAI-ARIA accessibility.
 
@@ -22,14 +22,14 @@ An open-source, high-accuracy cruise ship deck map viewer, spatial database sche
 git clone https://github.com/doomstar288/cruise-ship-maps.git
 cd cruise-ship-maps
 
-# Install dependencies
+# Install dependencies (Node 24, see .nvmrc)
 npm install
 
 # Start local development server
 npm run dev
 ```
 
-Open [http://localhost:8765](http://localhost:8765) in your browser.
+Open [http://localhost:8766](http://localhost:8766) in your browser. Run `npm test`, `npm run lint` and `npm run format:check` before opening a PR. Contributors and AI agents: start with [CLAUDE.md](./CLAUDE.md).
 
 ---
 
