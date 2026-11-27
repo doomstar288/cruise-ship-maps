@@ -68,11 +68,17 @@ export function generateSolsticeClassDecks(manifest) {
   const hasCraftSocial = hasVenue('Craft Social');
   const hasLawnClubGrill = hasVenue('Lawn Club Grill');
   const hasSilkHarvest = hasVenue('Silk Harvest');
-  const hasDeck3Luminae = (manifest.venues || []).some((v) => v.deck === 3 && v.name.includes('Luminae'));
+  const hasDeck3Luminae = (manifest.venues || []).some(
+    (v) => v.deck === 3 && v.name.includes('Luminae')
+  );
 
   // Main dining room name from manifest
-  const mainDiningVenue = (manifest.venues || []).find((v) => v.deck === 3 && v.category === 'Fine Dining' && v.name.includes('Restaurant'));
-  const mainDiningName = mainDiningVenue ? mainDiningVenue.name.replace(/\s*\(Lower Level\)$/, '') : 'Grand Epernay Restaurant';
+  const mainDiningVenue = (manifest.venues || []).find(
+    (v) => v.deck === 3 && v.category === 'Fine Dining' && v.name.includes('Restaurant')
+  );
+  const mainDiningName = mainDiningVenue
+    ? mainDiningVenue.name.replace(/\s*\(Lower Level\)$/, '')
+    : 'Grand Epernay Restaurant';
 
   const venueGroups = getVenueGroups();
   const partOf = (groupName, { aliases = [] } = {}) => {
@@ -100,7 +106,10 @@ export function generateSolsticeClassDecks(manifest) {
 
   const venue = (level, fields) => placeVenue(level, fields);
 
-  function stateroomDeck(level, { range, typeFor, transom = true, extraBanks = [], fixedCabins = [], cabinRanges }) {
+  function stateroomDeck(
+    level,
+    { range, typeFor, transom = true, extraBanks = [], fixedCabins = [], cabinRanges }
+  ) {
     const avoid = [...CORES, ...(transom ? [STERN_STAIR_X] : [])];
     const cabins = generateStaterooms(level, {
       range,
@@ -111,7 +120,13 @@ export function generateSolsticeClassDecks(manifest) {
       cabinRanges: cabinRanges ?? manifest.cabinRanges?.[String(level)],
     });
     return [
-      ...generateCenterlineCore(level, ['fwd', 'mid', 'aft', ...(transom ? ['stern'] : []), ...extraBanks]),
+      ...generateCenterlineCore(level, [
+        'fwd',
+        'mid',
+        'aft',
+        ...(transom ? ['stern'] : []),
+        ...extraBanks,
+      ]),
       ...generateServiceStrips(level, { range, avoid }),
       ...cabins,
     ];
@@ -124,7 +139,8 @@ export function generateSolsticeClassDecks(manifest) {
     deck(2, {
       title: 'Medical Center & Technical',
       category: 'Tenders & Guest Services',
-      description: 'Shipboard Medical Center forward, security screening and tender gangway midship, crew and technical facilities.',
+      description:
+        'Shipboard Medical Center forward, security screening and tender gangway midship, crew and technical facilities.',
       venues: [
         venue(2, {
           id: 'v2-medical',
@@ -192,7 +208,8 @@ export function generateSolsticeClassDecks(manifest) {
     deck(3, {
       title: 'Grand Foyer & Passport Bar',
       category: 'Public Venues & Staterooms',
-      description: 'Solstice Theatre lower level forward, Grand Foyer with Passport Bar (or Luminae on Reflection), Guest Relations desk, oceanview staterooms, and the lower level of the Main Restaurant.',
+      description:
+        'Solstice Theatre lower level forward, Grand Foyer with Passport Bar (or Luminae on Reflection), Guest Relations desk, oceanview staterooms, and the lower level of the Main Restaurant.',
       venues: [
         venue(3, {
           id: 'v3-theatre',
@@ -202,7 +219,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.entertainment,
           x: [24, 78],
           y: FULL_BEAM_INNER,
-          description: 'Three-deck main show lounge hosting Broadway-style productions and guest artists. Lower level entrance.',
+          description:
+            'Three-deck main show lounge hosting Broadway-style productions and guest artists. Lower level entrance.',
           tags: ['Shows', 'Lower Level'],
           aliases: ['Solstice Theatre', 'The Theatre'],
         }),
@@ -215,7 +233,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.entertainment,
           x: [146, 176],
           y: [10, 27],
-          description: 'The soaring multi-deck central atrium featuring live classical music and sweeping staircases.',
+          description:
+            'The soaring multi-deck central atrium featuring live classical music and sweeping staircases.',
           tags: ['Atrium', 'Live Music'],
           aliases: ['Grand Foyer', 'Atrium'],
         }),
@@ -240,7 +259,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.service,
           x: [136, 146],
           y: PORT_OUTER,
-          description: '24-hour reception desk for guest inquiries, currency exchange, and assistance.',
+          description:
+            '24-hour reception desk for guest inquiries, currency exchange, and assistance.',
           tags: ['Reception', 'Customer Service'],
           aliases: ['Guest Relations', 'Guest Services', 'Reception'],
         }),
@@ -262,7 +282,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.entertainment,
           x: [150, 172],
           y: STBD_OUTER,
-          description: 'Youth activity club with age-tailored entertainment, science, technology, and arts.',
+          description:
+            'Youth activity club with age-tailored entertainment, science, technology, and arts.',
           tags: ['Kids', 'Activities'],
           access: 'kids',
           aliases: ['Kids Club'],
@@ -294,7 +315,8 @@ export function generateSolsticeClassDecks(manifest) {
     deck(4, {
       title: 'Entertainment, Casino & Shops',
       category: 'Entertainment & Shopping',
-      description: 'Solstice Theatre middle level, Boulevard Shops, Fortunes Casino, Martini Bar & Crush, Quasar nightclub, Cellar Masters / Craft Social, and upper level of the Main Restaurant.',
+      description:
+        'Solstice Theatre middle level, Boulevard Shops, Fortunes Casino, Martini Bar & Crush, Quasar nightclub, Cellar Masters / Craft Social, and upper level of the Main Restaurant.',
       venues: [
         venue(4, {
           id: 'v4-theatre',
@@ -316,7 +338,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.entertainment,
           x: [96, 110],
           y: CENTER_PASSAGE,
-          description: 'Central hub hosting live band performances, game shows, and interactive events.',
+          description:
+            'Central hub hosting live band performances, game shows, and interactive events.',
           tags: ['Music', 'Live Music'],
           aliases: ['Entertainment Plaza'],
         }),
@@ -327,7 +350,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.shopping,
           x: [112, 144],
           y: PORT_OUTER,
-          description: 'Designer fashion, fine watches, jewelry, and luxury tax-free retail boutiques.',
+          description:
+            'Designer fashion, fine watches, jewelry, and luxury tax-free retail boutiques.',
           tags: ['Shopping', 'Boutiques'],
           aliases: ['Boulevard Shops', 'The Shops'],
         }),
@@ -361,7 +385,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.bar,
           x: [150, 174],
           y: PORT_OUTER,
-          description: 'Signature ice-topped bar known for classic and creative martinis with high-energy flair bartenders.',
+          description:
+            'Signature ice-topped bar known for classic and creative martinis with high-energy flair bartenders.',
           tags: ['Cocktails', 'Martinis'],
           aliases: ['Martini Bar', 'Crush'],
         }),
@@ -372,7 +397,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.entertainment,
           x: [150, 174],
           y: STBD_OUTER,
-          description: 'Retro-futuristic nightclub with pulsing DJ sets, light shows, and dance floor.',
+          description:
+            'Retro-futuristic nightclub with pulsing DJ sets, light shows, and dance floor.',
           tags: ['Nightclub', 'Dancing'],
           aliases: ['Quasar'],
         }),
@@ -383,7 +409,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.entertainment,
           x: [200, 238],
           y: FULL_BEAM_INNER,
-          description: 'Full-service gaming casino with blackjack, roulette, poker tables, and slot machines.',
+          description:
+            'Full-service gaming casino with blackjack, roulette, poker tables, and slot machines.',
           tags: ['Casino', 'Gaming'],
           aliases: ['Fortunes Casino', 'The Casino', 'Casino'],
         }),
@@ -408,7 +435,9 @@ export function generateSolsticeClassDecks(manifest) {
             ? 'Gastropub featuring dozens of craft beers on tap and by the bottle, paired with gourmet comfort food.'
             : 'Enomatic state-of-the-art wine dispenser bar offering fine vintages by the glass from around the world.',
           tags: ['Beer', 'Wine', 'Lounge'],
-          aliases: hasCraftSocial ? ['Craft Social Bar', 'Craft Social'] : ['Cellar Masters Wine Bar', 'Cellar Masters'],
+          aliases: hasCraftSocial
+            ? ['Craft Social Bar', 'Craft Social']
+            : ['Cellar Masters Wine Bar', 'Cellar Masters'],
         }),
         venue(4, {
           id: 'v4-main-restaurant',
@@ -431,7 +460,8 @@ export function generateSolsticeClassDecks(manifest) {
     deck(5, {
       title: 'Specialty Dining & Galleria',
       category: 'Fine Dining & Lounges',
-      description: 'Solstice Theatre balcony, Galleria Boutiques, Art Gallery, Café al Bacio, Ensemble Lounge, and specialty restaurants (Murano, Blu, Silk Harvest/Qsine, Tuscan Grille).',
+      description:
+        'Solstice Theatre balcony, Galleria Boutiques, Art Gallery, Café al Bacio, Ensemble Lounge, and specialty restaurants (Murano, Blu, Silk Harvest/Qsine, Tuscan Grille).',
       venues: [
         venue(5, {
           id: 'v5-theatre',
@@ -464,7 +494,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.entertainment,
           x: [98, 144],
           y: STBD_OUTER,
-          description: 'Exhibition gallery exhibiting works by renowned modern artists and hosting art auctions.',
+          description:
+            'Exhibition gallery exhibiting works by renowned modern artists and hosting art auctions.',
           tags: ['Art', 'Auctions'],
           aliases: ['Art Gallery', 'Park West Gallery'],
         }),
@@ -487,7 +518,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.dining,
           x: [148, 174],
           y: PORT_OUTER,
-          description: 'European-style patisserie serving specialty espresso, Lavazza coffee, herbal teas, pastries, and authentic Italian gelato.',
+          description:
+            'European-style patisserie serving specialty espresso, Lavazza coffee, herbal teas, pastries, and authentic Italian gelato.',
           tags: ['Coffee', 'Pastries', 'Gelato'],
           aliases: ['Cafe al Bacio', 'Café al Bacio', 'Gelateria'],
         }),
@@ -498,7 +530,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.bar,
           x: [148, 174],
           y: STBD_OUTER,
-          description: 'Expert mixologists crafting bespoke cocktails with premium spirits and fresh botanicals.',
+          description:
+            'Expert mixologists crafting bespoke cocktails with premium spirits and fresh botanicals.',
           tags: ['Cocktails', 'Mixology'],
         }),
         venue(5, {
@@ -508,7 +541,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.bar,
           x: [200, 218],
           y: CENTER_PASSAGE,
-          description: 'Sophisticated gateway lounge to the specialty dining district, featuring live jazz and acoustic sets.',
+          description:
+            'Sophisticated gateway lounge to the specialty dining district, featuring live jazz and acoustic sets.',
           tags: ['Cocktails', 'Live Music', 'Jazz'],
           aliases: ['Ensemble Lounge', 'Ensemble'],
         }),
@@ -519,7 +553,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.dining,
           x: [220, 244],
           y: PORT_OUTER,
-          description: 'Contemporary French fine dining featuring table-side preparation, artisanal cheese cart, and extensive vintage wine list.',
+          description:
+            'Contemporary French fine dining featuring table-side preparation, artisanal cheese cart, and extensive vintage wine list.',
           tags: ['French', 'Specialty Dining'],
           aliases: ['Murano Restaurant', 'Murano'],
         }),
@@ -530,7 +565,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.dining,
           x: [220, 244],
           y: STBD_OUTER,
-          description: 'Clean-cuisine specialty restaurant exclusively dedicated to AquaClass guests, highlighting fresh farm-to-table flavors.',
+          description:
+            'Clean-cuisine specialty restaurant exclusively dedicated to AquaClass guests, highlighting fresh farm-to-table flavors.',
           tags: ['AquaClass', 'Healthy Dining'],
           aliases: ['Blu Restaurant', 'Blu'],
         }),
@@ -554,7 +590,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.dining,
           x: [276, 314],
           y: FULL_BEAM_INNER,
-          description: 'Italian steakhouse serving dry-aged USDA Prime steaks, handmade pasta, and regional Italian specialties overlooking the ship wake.',
+          description:
+            'Italian steakhouse serving dry-aged USDA Prime steaks, handmade pasta, and regional Italian specialties overlooking the ship wake.',
           tags: ['Steakhouse', 'Italian'],
           aliases: ['Tuscan Grille', 'Tuscan Grill'],
         }),
@@ -566,7 +603,11 @@ export function generateSolsticeClassDecks(manifest) {
   for (let lvl = 6; lvl <= 11; lvl += 1) {
     const isBridgeDeck = lvl === 11;
     const xStart = isBridgeDeck ? 36 : 20;
-    const title = isBridgeDeck ? 'Bridge & Staterooms' : lvl === 10 ? 'Staterooms, Suites & Library' : 'Staterooms & Suites';
+    const title = isBridgeDeck
+      ? 'Bridge & Staterooms'
+      : lvl === 10
+        ? 'Staterooms, Suites & Library'
+        : 'Staterooms & Suites';
     const category = 'Staterooms';
 
     const extraVenues = [];
@@ -626,7 +667,8 @@ export function generateSolsticeClassDecks(manifest) {
     deck(12, {
       title: 'Resort Deck, Solarium & Pools',
       category: 'Pools & Sun Deck',
-      description: 'Adults-only glass-canopied Solarium, AquaSpa Café, Main Outdoor Pools, Pool Bar, Mast Bar, and Mast Grill.',
+      description:
+        'Adults-only glass-canopied Solarium, AquaSpa Café, Main Outdoor Pools, Pool Bar, Mast Bar, and Mast Grill.',
       venues: [
         venue(12, {
           id: 'v12-solarium',
@@ -635,7 +677,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.pool,
           x: [36, 80],
           y: FULL_BEAM_INNER,
-          description: 'Tranquil glass-domed sanctuary for adults with a heated lap pool, whirlpool spas, and cushioned daybeds.',
+          description:
+            'Tranquil glass-domed sanctuary for adults with a heated lap pool, whirlpool spas, and cushioned daybeds.',
           tags: ['Solarium', 'Pool', 'Adults Only'],
           access: 'adults',
           aliases: ['Solarium', 'Solarium Pool', 'Adults Pool'],
@@ -647,7 +690,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.dining,
           x: [62, 78],
           y: PORT_OUTER,
-          description: 'Nourishing light spa cuisine, organic smoothies, and fresh salads inside the Solarium.',
+          description:
+            'Nourishing light spa cuisine, organic smoothies, and fresh salads inside the Solarium.',
           tags: ['Spa Food', 'Healthy'],
           aliases: ['AquaSpa Cafe', 'Spa Cafe'],
         }),
@@ -659,7 +703,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.pool,
           x: [98, 184],
           y: [6, 31],
-          description: 'Two outdoor freshwater swimming pools surrounded by four whirlpools and teak sun deck loungers.',
+          description:
+            'Two outdoor freshwater swimming pools surrounded by four whirlpools and teak sun deck loungers.',
           tags: ['Pool', 'Sun Deck'],
           aliases: ['Resort Deck Pools', 'Main Pool', 'Outdoor Pools'],
         }),
@@ -670,7 +715,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.bar,
           x: [136, 154],
           y: PORT_OUTER,
-          description: 'Poolside beverage station serving frozen daiquiris, craft beers, and chilled tropical cocktails.',
+          description:
+            'Poolside beverage station serving frozen daiquiris, craft beers, and chilled tropical cocktails.',
           tags: ['Poolside', 'Cocktails'],
           aliases: ['Pool Bar'],
         }),
@@ -692,7 +738,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.dining,
           x: [136, 154],
           y: STBD_OUTER,
-          description: 'Open-air grill serving freshly cooked burgers, hot dogs, fries, and tacos by the pool.',
+          description:
+            'Open-air grill serving freshly cooked burgers, hot dogs, fries, and tacos by the pool.',
           tags: ['Burgers', 'Grill'],
           aliases: ['Mast Grill', 'Mast Grill & Bar'],
         }),
@@ -710,7 +757,8 @@ export function generateSolsticeClassDecks(manifest) {
     deck(14, {
       title: 'Oceanview Café, Spa & Sky Lounge',
       category: 'Dining & Spa',
-      description: 'Sky Observation Lounge and Canyon Ranch Spa forward, Oceanview Café buffet mid-aft, and Oceanview Bar with wake terrace aft.',
+      description:
+        'Sky Observation Lounge and Canyon Ranch Spa forward, Oceanview Café buffet mid-aft, and Oceanview Bar with wake terrace aft.',
       venues: [
         venue(14, {
           id: 'v14-sky-lounge',
@@ -719,7 +767,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.bar,
           x: [38, 80],
           y: FULL_BEAM_INNER,
-          description: 'Forward panoramic observation lounge offering floor-to-ceiling vistas, sunset cocktails, and nighttime dancing.',
+          description:
+            'Forward panoramic observation lounge offering floor-to-ceiling vistas, sunset cocktails, and nighttime dancing.',
           tags: ['Observation', 'Cocktails', 'Panoramic'],
           aliases: ['Sky Observation Lounge', 'Sky Lounge'],
         }),
@@ -731,7 +780,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.spa,
           x: [96, 144],
           y: FULL_BEAM_INNER,
-          description: 'Full-service Canyon Ranch wellness sanctuary featuring the Persian Garden thermal suite, acupuncture, massage, and ocean-view fitness center.',
+          description:
+            'Full-service Canyon Ranch wellness sanctuary featuring the Persian Garden thermal suite, acupuncture, massage, and ocean-view fitness center.',
           tags: ['Spa', 'Wellness', 'Fitness'],
           aliases: ['The Spa', 'Canyon Ranch', 'Fitness Center', 'Gym'],
         }),
@@ -753,7 +803,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.spa,
           x: [146, 176],
           y: STBD_OUTER,
-          description: 'State-of-the-art gym equipped with Technogym cardio machines, free weights, and fitness studio.',
+          description:
+            'State-of-the-art gym equipped with Technogym cardio machines, free weights, and fitness studio.',
           tags: ['Gym', 'Fitness'],
         }),
         venue(14, {
@@ -763,7 +814,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.dining,
           x: [200, 258],
           y: FULL_BEAM_INNER,
-          description: 'Expansive buffet marketplace with live-cooking stations featuring international cuisines, stir-fry, pasta, carvings, pizza, and desserts.',
+          description:
+            'Expansive buffet marketplace with live-cooking stations featuring international cuisines, stir-fry, pasta, carvings, pizza, and desserts.',
           tags: ['Buffet', 'Casual Dining'],
           aliases: ['Oceanview Café', 'Oceanview Cafe', 'Buffet', 'OVC'],
         }),
@@ -774,7 +826,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.bar,
           x: [276, 298],
           y: [8, 29],
-          description: 'Alfresco aft bar and shaded outdoor dining terrace overlooking the ship wake.',
+          description:
+            'Alfresco aft bar and shaded outdoor dining terrace overlooking the ship wake.',
           tags: ['Bar', 'Outdoor Dining'],
           aliases: ['Oceanview Bar', 'Aft Terrace'],
         }),
@@ -791,7 +844,8 @@ export function generateSolsticeClassDecks(manifest) {
       color: C.entertainment,
       x: [44, 80],
       y: [8, 29],
-      description: 'Outdoor open-air sports court for basketball, pickleball, and volleyball tournaments.',
+      description:
+        'Outdoor open-air sports court for basketball, pickleball, and volleyball tournaments.',
       tags: ['Basketball', 'Sports'],
       aliases: ['Sports Court', 'Sport Court'],
     }),
@@ -803,7 +857,8 @@ export function generateSolsticeClassDecks(manifest) {
       color: C.pool,
       x: [198, 258],
       y: [6, 31],
-      description: 'Celebrity Cruises signature half-acre of real manicured green grass lawn on the top deck for picnics, lawn bowling, and barefoot relaxation.',
+      description:
+        'Celebrity Cruises signature half-acre of real manicured green grass lawn on the top deck for picnics, lawn bowling, and barefoot relaxation.',
       tags: ['Lawn Club', 'Real Grass', 'Outdoor'],
       aliases: ['The Lawn Club', 'The Lawn', 'Lawn Club'],
     }),
@@ -825,7 +880,8 @@ export function generateSolsticeClassDecks(manifest) {
       color: C.bar,
       x: [276, 304],
       y: [7, 30],
-      description: 'Casual open-air aft bar located at the very stern tip of the Lawn Club, offering unimpeded 180-degree sunset ocean views.',
+      description:
+        'Casual open-air aft bar located at the very stern tip of the Lawn Club, offering unimpeded 180-degree sunset ocean views.',
       tags: ['Sunset Bar', 'Aft View', 'Cocktails'],
       aliases: ['Sunset Bar', 'Aft Sunset Bar'],
     }),
@@ -840,7 +896,8 @@ export function generateSolsticeClassDecks(manifest) {
         color: C.dining,
         x: [226, 258],
         y: STBD_OUTER,
-        description: 'Interactive open-air gourmet grill where guests cook gourmet burgers, steaks, and flatbreads alongside Celebrity chefs.',
+        description:
+          'Interactive open-air gourmet grill where guests cook gourmet burgers, steaks, and flatbreads alongside Celebrity chefs.',
         tags: ['Grill', 'Outdoor Dining'],
         aliases: ['Lawn Club Grill', 'The Grill'],
       }),
@@ -862,7 +919,8 @@ export function generateSolsticeClassDecks(manifest) {
         color: C.pool,
         x: [156, 184],
         y: PORT_OUTER,
-        description: 'Private cabanas set along the edge of The Lawn Club available for full-day rental.',
+        description:
+          'Private cabanas set along the edge of The Lawn Club available for full-day rental.',
         tags: ['Cabanas'],
         access: 'paid',
         aliases: ['The Alcoves'],
@@ -877,7 +935,8 @@ export function generateSolsticeClassDecks(manifest) {
         color: C.entertainment,
         x: [226, 258],
         y: STBD_OUTER,
-        description: 'Live glassblowing demonstrations presented in partnership with the Corning Museum of Glass.',
+        description:
+          'Live glassblowing demonstrations presented in partnership with the Corning Museum of Glass.',
         tags: ['Glassblowing', 'Live Show'],
         aliases: ['Hot Glass Show', 'Corning Glass'],
       }),
@@ -888,7 +947,8 @@ export function generateSolsticeClassDecks(manifest) {
         color: C.bar,
         x: [226, 258],
         y: PORT_OUTER,
-        description: 'Shaded lounge seating area next to the lawn for afternoon cocktails and board games.',
+        description:
+          'Shaded lounge seating area next to the lawn for afternoon cocktails and board games.',
         tags: ['Lounge', 'Patio'],
         aliases: ['Patio on the Lawn'],
       })
@@ -899,7 +959,8 @@ export function generateSolsticeClassDecks(manifest) {
     deck(15, {
       title: 'The Lawn Club & Sunset Bar',
       category: 'Pools & Sun Deck',
-      description: 'The Lawn Club real manicured grass lawn, Sunset Bar at the stern, sports court forward, and specialty lawn venues.',
+      description:
+        'The Lawn Club real manicured grass lawn, Sunset Bar at the stern, sports court forward, and specialty lawn venues.',
       venues: deck15Venues,
     })
   );
@@ -909,7 +970,8 @@ export function generateSolsticeClassDecks(manifest) {
     deck(16, {
       title: 'Solstice Deck',
       category: 'Pools & Sun Deck',
-      description: 'Forward-facing open observation sun deck with plush loungers overlooking the bow.',
+      description:
+        'Forward-facing open observation sun deck with plush loungers overlooking the bow.',
       venues: [
         venue(16, {
           id: 'v16-forward-lookout',
@@ -918,7 +980,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.pool,
           x: [50, 78],
           y: [8, 29],
-          description: 'Scenic top-deck forward lookout platform overlooking the ship bow and open ocean.',
+          description:
+            'Scenic top-deck forward lookout platform overlooking the ship bow and open ocean.',
           tags: ['Observation', 'Lookout', 'Bow View'],
           aliases: ['Observation Deck', 'Bow Lookout'],
         }),
@@ -930,7 +993,8 @@ export function generateSolsticeClassDecks(manifest) {
           color: C.pool,
           x: [98, 136],
           y: FULL_BEAM_INNER,
-          description: 'Tranquil top-deck sunbathing oasis with padded loungers, daybeds, and panoramic sea views.',
+          description:
+            'Tranquil top-deck sunbathing oasis with padded loungers, daybeds, and panoramic sea views.',
           tags: ['Sun Deck', 'Loungers'],
           aliases: ['Solstice Deck', 'Sky Deck', 'Forward Sun Deck'],
         }),

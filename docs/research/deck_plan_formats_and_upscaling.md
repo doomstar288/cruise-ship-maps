@@ -2,7 +2,12 @@
 
 > **Document Version:** 1.0.0  
 > **Status:** Architecture & Research Specification  
-> **Target System:** Open-Source Cruise Ship Maps Engine & Open API  
+> **Target System:** Open-Source Cruise Ship Maps Engine & Open API
+
+> **Reality check (2026-11-27): research only.** The AI super-resolution and vectorization pipeline
+> described here is **not implemented**: no upscaling model or script exists in this repo (the viewer's
+> "AI Upscale" button is only a display toggle). The packs come from a programmatic, synthetic grid
+> generator (`src/data/`, `src/utils/shipGenerator.js`), not from traced or upscaled official plans.
 
 ---
 
@@ -34,14 +39,14 @@ Vessel Footprint (Anchor) ──► Level (Deck) ──► Units (Staterooms/Ven
 
 #### Key GeoJSON / IMDF Feature Schema for Deck Plans
 
-| Feature Type | IMDF Equivalent | Geometry Type | Description & Ship Context |
-| :--- | :--- | :--- | :--- |
-| `vessel_footprint` | `footprint` | `Polygon` / `MultiPolygon` | Overall outer hull footprint of the ship at sea level or maximum beam projection. |
-| `deck_level` | `level` | `Polygon` | Boundary polygon of a specific physical deck (e.g., Deck 14 Lido). Contains `ordinal` (e.g., `14`). |
-| `unit` | `unit` | `Polygon` | Enclosed functional space: staterooms, dining rooms, bars, shops, stage areas, control rooms. |
-| `opening` | `opening` | `LineString` / `Polygon` | Doors, stateroom entries, balcony sliders, gangways, emergency exits. |
-| `amenity` | `amenity` | `Point` | Micro-POIs: Lifejacket stations, AEDs, soda dispensers, elevators, stairwells, ATMs. |
-| `section` | `section` | `Polygon` | Logical groupings: "The Haven", "Boardwalk", "Central Park", "Royal Promenade", "Muster Zone B". |
+| Feature Type       | IMDF Equivalent | Geometry Type              | Description & Ship Context                                                                          |
+| :----------------- | :-------------- | :------------------------- | :-------------------------------------------------------------------------------------------------- |
+| `vessel_footprint` | `footprint`     | `Polygon` / `MultiPolygon` | Overall outer hull footprint of the ship at sea level or maximum beam projection.                   |
+| `deck_level`       | `level`         | `Polygon`                  | Boundary polygon of a specific physical deck (e.g., Deck 14 Lido). Contains `ordinal` (e.g., `14`). |
+| `unit`             | `unit`          | `Polygon`                  | Enclosed functional space: staterooms, dining rooms, bars, shops, stage areas, control rooms.       |
+| `opening`          | `opening`       | `LineString` / `Polygon`   | Doors, stateroom entries, balcony sliders, gangways, emergency exits.                               |
+| `amenity`          | `amenity`       | `Point`                    | Micro-POIs: Lifejacket stations, AEDs, soda dispensers, elevators, stairwells, ATMs.                |
+| `section`          | `section`       | `Polygon`                  | Logical groupings: "The Haven", "Boardwalk", "Central Park", "Royal Promenade", "Muster Zone B".    |
 
 #### Spatial Coordinate Reference Systems (CRS)
 
@@ -51,7 +56,7 @@ Traditional GeoJSON relies strictly on WGS84 (`EPSG:4326` - longitude, latitude 
    - **X-axis**: Starboard (+X) / Port (-X), measured in meters from centerline.
    - **Y-axis**: Bow (+Y) / Stern (-Y), measured in meters from midship or aft perpendicular.
    - **Z-axis**: Deck vertical elevation in meters above baseline (keel).
-   - *Advantage*: Spatial queries (e.g., distance between cabin 10124 and elevator bank A) remain invariant regardless of ship location.
+   - _Advantage_: Spatial queries (e.g., distance between cabin 10124 and elevator bank A) remain invariant regardless of ship location.
 
 2. **Projected Web Mercator Overlay (`EPSG:3857`)**:
    - For GIS map engines (MapLibre, Leaflet), the vessel hull is mapped into a synthetic bounding box centered near the equator $(0^\circ N, 0^\circ E)$ or dynamically transformed via an affine transformation matrix to align with live AIS telemetry coordinates.
@@ -72,13 +77,15 @@ Traditional GeoJSON relies strictly on WGS84 (`EPSG:4326` - longitude, latitude 
       "id": "unit_12154",
       "geometry": {
         "type": "Polygon",
-        "coordinates": [[
-          [-12.4, 45.2],
-          [-9.8, 45.2],
-          [-9.8, 51.0],
-          [-12.4, 51.0],
-          [-12.4, 45.2]
-        ]]
+        "coordinates": [
+          [
+            [-12.4, 45.2],
+            [-9.8, 45.2],
+            [-9.8, 51.0],
+            [-12.4, 51.0],
+            [-12.4, 45.2]
+          ]
+        ]
       },
       "properties": {
         "category": "stateroom",
@@ -103,17 +110,20 @@ Traditional GeoJSON relies strictly on WGS84 (`EPSG:4326` - longitude, latitude 
 Scalable Vector Graphics (SVG) are heavily utilized by commercial cruise line websites (e.g., Royal Caribbean, Celebrity, NCL) for interactive deck plan widgets.
 
 #### Architectural Characteristics
+
 - **DOM Structure**: SVG nodes are XML-based (`<path>`, `<g>`, `<rect>`, `<polygon>`). Nodes map directly to browser DOM elements.
 - **Styling**: Native CSS styling (`fill`, `stroke`, hover states, CSS animations).
 - **Coordinate System**: Screen Cartesian space $(x, y)$ with $(0,0)$ at the top-left corner.
 - **Interactivity**: Direct event listeners (`onclick`, `onmouseover`) attached to paths or groups.
 
 #### Limitations of Pure SVG for Large-Scale Mapping Systems
+
 - **DOM Node Overhead**: A 20-deck ship with 3,000 cabins yields >50,000 SVG elements. Rendering all decks simultaneously degrades DOM performance and causes high memory consumption.
-- **Lack of Spatial Indexing**: SVG does not support spatial indexing (R-trees, Quadtrees). Queries like *"Find all venues within 20 meters of cabin 8102"* require manual bounding-box recalculation in JavaScript.
+- **Lack of Spatial Indexing**: SVG does not support spatial indexing (R-trees, Quadtrees). Queries like _"Find all venues within 20 meters of cabin 8102"_ require manual bounding-box recalculation in JavaScript.
 - **Zoom/Pan Constraints**: Standard browser SVG pan/zoom requires heavy CSS matrix transforms or library wrappers (e.g., `svg-pan-zoom`), lacking tile-level viewport frustum culling.
 
 #### SVG to GeoJSON Conversion Strategy
+
 SVG path data string `d="M 10 80 L 100 80 L 100 200 Z"` can be parsed using affine matrices to convert screen pixel coordinates into meters or projected degrees:
 $$\begin{bmatrix} X_{geo} \\ Y_{geo} \end{bmatrix} = \begin{bmatrix} a & b \\ c & d \end{bmatrix} \begin{bmatrix} x_{svg} \\ y_{svg} \end{bmatrix} + \begin{bmatrix} e \\ f \end{bmatrix}$$
 
@@ -132,18 +142,24 @@ Level N: 32768 x 32768 (16,384 tiles)
 ```
 
 #### International Image Interoperability Framework (IIIF 3.0)
+
 IIIF provides a standardized REST API for requesting sub-regions of multi-resolution images:
 `GET /image/{identifier}/{region}/{size}/{rotation}/{quality}.{format}`
+
 - Example: `GET /api/iiif/v1/oasis_of_the_seas_deck14/0,0,1024,1024/max/0/default.webp`
 
 #### DeepZoom Image (DZI) Format
+
 Microsoft DeepZoom generates an XML manifest (`deck14.dzi`) and a folder structure of tiles:
+
 ```xml
 <Image TileSize="256" Overlap="1" Format="png" xmlns="http://schemas.microsoft.com/deepzoom/2008">
     <Size Width="16384" Height="8192"/>
 </Image>
 ```
+
 Directory structure:
+
 ```
 deck14_files/
 ├── 0/
@@ -157,6 +173,7 @@ deck14_files/
 ```
 
 #### Suitability Analysis
+
 - **Pros**: Zero initial loading overhead for massive image files; smooth client-side pan/zoom; native integration with OpenSeadragon or Leaflet.
 - **Cons**: Pure raster format—no dynamic styling, color customization, text selection, or spatial querying without an overlaid vector layer.
 
@@ -179,11 +196,13 @@ graph TD
 ```
 
 ##### 1. `deck_outlines`
+
 - `deck_id` (string): Unique identifier (e.g., `rccl_oasis_d15`).
 - `deck_number` (int): Numerical index.
 - `hull_section` (string): `bow`, `midship`, `aft`.
 
 ##### 2. `venues_and_cabins`
+
 - `unit_id` (string): Unique cabin/venue identifier.
 - `name` (string): Display name ("Windjammer Cafe", "Stateroom 9204").
 - `category` (string): `stateroom`, `dining`, `bar`, `entertainment`, `service`, `pool`.
@@ -191,15 +210,19 @@ graph TD
 - `min_zoom` (int): Zoom level visibility control (e.g., venue names at zoom 15, cabin numbers at zoom 18).
 
 ##### 3. `corridors_and_stairs`
+
 - `type` (string): `corridor`, `elevator_bank`, `stairwell`, `escalator`, `crew_passageway`.
 - `accessible` (bool): Wheelchair accessibility flag.
 
 ##### 4. `pois_and_amenities`
+
 - `type` (string): `aed`, `restroom_unisex`, `restroom_accessible`, `towel_station`, `guest_services`, `bar_counter`.
 - `icon_symbol` (string): Icon identifier for sprite maps.
 
 #### Tile Generation Pipeline
+
 Tiles are generated from PostGIS or GeoJSON sources using **Tippecanoe**:
+
 ```bash
 tippecanoe \
   -o cruise_deck_plans.mvt \
@@ -209,6 +232,7 @@ tippecanoe \
   --layer=corridors_and_stairs:data/geojson/deck14_corridors.geojson \
   --layer=pois_and_amenities:data/geojson/deck14_pois.geojson
 ```
+
 Alternatively, **Martin** or **pg_tileserv** serves MVT tiles on the fly directly from PostGIS spatial indexes (`ST_AsMVT`).
 
 ---
@@ -231,8 +255,8 @@ const map = new maplibregl.Map({
       'deck-tiles': {
         type: 'vector',
         tiles: ['https://tiles.cruisemaps.org/v1/{z}/{x}/{y}.pbf'],
-        maxzoom: 22
-      }
+        maxzoom: 22,
+      },
     },
     layers: [
       {
@@ -243,15 +267,20 @@ const map = new maplibregl.Map({
         filter: ['==', 'category', 'stateroom'],
         paint: {
           'fill-color': [
-            'match', ['get', 'subcategory'],
-            'suite', '#8a2be2',
-            'balcony', '#1e90ff',
-            'oceanview', '#20b2aa',
-            'inside', '#a9a9a9',
-            '#ffffff'
+            'match',
+            ['get', 'subcategory'],
+            'suite',
+            '#8a2be2',
+            'balcony',
+            '#1e90ff',
+            'oceanview',
+            '#20b2aa',
+            'inside',
+            '#a9a9a9',
+            '#ffffff',
           ],
-          'fill-opacity': 0.85
-        }
+          'fill-opacity': 0.85,
+        },
       },
       {
         id: 'stateroom-borders',
@@ -260,22 +289,24 @@ const map = new maplibregl.Map({
         'source-layer': 'venues_and_cabins',
         paint: {
           'line-color': '#333333',
-          'line-width': 1
-        }
-      }
-    ]
+          'line-width': 1,
+        },
+      },
+    ],
   },
   center: [0, 0],
-  zoom: 18
+  zoom: 18,
 });
 ```
 
 #### Strengths
+
 - **GPU Hardware Acceleration**: Smooth 60 FPS pan/zoom for tens of thousands of features.
 - **3D Feature Extrusion**: Capability to render 3D deck boundaries and cabin walls using `fill-extrusion` layers based on `deck_ordinal` height offsets ($Z = \text{deck\_ordinal} \times 3.5\text{m}$).
 - **Data-Driven Styling**: High-performance client-side filtering by deck level, venue type, or accessibility features without dynamic tile fetching.
 
 #### Weaknesses
+
 - EPSG:3857 (Web Mercator) bias requires reprojecting non-geographic ship coordinates onto dummy bounding boxes near coordinates $(0, 0)$ to prevent polar distortion.
 
 ---
@@ -289,34 +320,41 @@ Leaflet is an established lightweight (42KB) 2D JavaScript mapping library.
 const map = L.map('map-container', {
   crs: L.CRS.Simple,
   minZoom: -2,
-  maxZoom: 4
+  maxZoom: 4,
 });
 
 // Defining vessel bounds in image pixels (e.g. 4000x2000 px)
-const bounds = [[0, 0], [2000, 4000]];
+const bounds = [
+  [0, 0],
+  [2000, 4000],
+];
 const image = L.imageOverlay('/assets/decks/oasis_deck14.png', bounds).addTo(map);
 
 map.fitBounds(bounds);
 
 // Loading GeoJSON overlay on simple CRS
 fetch('/api/v1/decks/14/geojson')
-  .then(res => res.json())
-  .then(geojsonData => {
+  .then((res) => res.json())
+  .then((geojsonData) => {
     L.geoJSON(geojsonData, {
       style: (feature) => ({ color: '#ff7800', weight: 2 }),
       onEachFeature: (feature, layer) => {
-        layer.bindPopup(`<b>${feature.properties.name}</b><br>Cabin ${feature.properties.stateroom_number}`);
-      }
+        layer.bindPopup(
+          `<b>${feature.properties.name}</b><br>Cabin ${feature.properties.stateroom_number}`
+        );
+      },
     }).addTo(map);
   });
 ```
 
 #### Strengths
+
 - **Native `L.CRS.Simple`**: Ideal for plain pixel-based $(x,y)$ spatial coordinates without geographic spherical distortions.
 - **Extensive Plugin Ecosystem**: `Leaflet-Indoor` (layer control for multi-level deck switching), `Leaflet.DeepZoom` (DZI tile pyramid support).
 - **Extremely Lightweight**: Low CPU/RAM footprint on older mobile web viewports.
 
 #### Weaknesses
+
 - **Canvas/DOM Performance Threshold**: Struggles when rendering >2,000 complex vector polygons on canvas/SVG layers simultaneously.
 - **No Native 3D**: Lacks pitch, bearing, or 3D multi-deck stack perspective capabilities.
 
@@ -332,24 +370,36 @@ import { Deck, OrthographicView, GeoJsonLayer } from '@deck.gl/core';
 // Multi-deck vertical stacking rendering in Deck.gl
 const deckDecksStack = [12, 13, 14, 15];
 
-const layers = deckDecksStack.map(deckOrdinal => {
+const layers = deckDecksStack.map((deckOrdinal) => {
   return new GeoJsonLayer({
     id: `deck-layer-${deckOrdinal}`,
     data: `/api/v1/decks/${deckOrdinal}/geojson`,
     filled: true,
     extruded: true,
     getElevation: 5.0, // 5 meters height per venue
-    getPosition: f => f.geometry.coordinates,
-    getFillColor: f => [30, 144, 255, 200],
+    getPosition: (f) => f.geometry.coordinates,
+    getFillColor: (f) => [30, 144, 255, 200],
     getLineColor: [50, 50, 50, 255],
     lineWidthMinPixels: 1,
     // Elevation translation along Z-axis for vertical stack effect
     modelMatrix: [
-      1, 0, 0, 0,
-      0, 1, 0, 0,
-      0, 0, 1, 0,
-      0, 0, deckOrdinal * 8.0, 1 // 8m spacing between decks in 3D perspective view
-    ]
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      deckOrdinal * 8.0,
+      1, // 8m spacing between decks in 3D perspective view
+    ],
   });
 });
 
@@ -360,18 +410,20 @@ new Deck({
     target: [2000, 1000, 0],
     zoom: 0,
     rotationX: 45,
-    rotationOrbit: 30
+    rotationOrbit: 30,
   },
-  layers: layers
+  layers: layers,
 });
 ```
 
 #### Strengths
+
 - **Multi-Deck 3D Perspective View**: Seamlessly displays all 18 decks floating in a 3D isometric stack with configurable vertical inter-deck spacing.
 - **Gigapixel GPU Performance**: Renders 100,000+ vector elements at 60 FPS using GPU instancing.
 - **Orthographic & Perspective Hybrid**: Switching between 2D flat floorplan views (`OrthographicView`) and 3D architectural hull views (`MapView` / `OrbitView`).
 
 #### Weaknesses
+
 - Larger JS bundle footprint (~300KB+ gzipped).
 - Higher development complexity compared to basic 2D Leaflet setups.
 
@@ -379,19 +431,20 @@ new Deck({
 
 ### 2.4 Engine Comparative Analysis Matrix
 
-| Feature / Criteria | MapLibre GL JS | Leaflet.js | Deck.gl |
-| :--- | :--- | :--- | :--- |
-| **Rendering Engine** | WebGL / WebGL2 | DOM / Canvas / SVG | WebGL2 / WebGPU |
-| **Coordinate Reference Systems** | EPSG:3857 (Web Mercator) | `L.CRS.Simple` (Flat $(x,y)$), EPSG:4326 | `OrthographicView`, `Cartesian`, `Globe` |
-| **Performance (10,000 Features)** | High (60 FPS) | Low (15–25 FPS) | Ultra-High (60 FPS) |
-| **Multi-Deck 3D Stacking** | Moderate (Extrusion only) | Unsupported | Excellent (Native 3D matrices) |
-| **Vector Tile Support (MVT)** | Native | Requires plugin | Requires plugin |
-| **Raster Pyramid Support (DZI)** | Requires custom protocol | Native via plugin | Native via TileLayer |
-| **Bundle Size (gzipped)** | ~210 KB | ~42 KB | ~340 KB |
-| **Mobile Responsiveness** | Excellent | Excellent | Good (Requires GPU cap) |
-| **Pathfinding Animation** | Good (Line-dash animation) | Moderate | Excellent (TripsLayer / Particle system) |
+| Feature / Criteria                | MapLibre GL JS             | Leaflet.js                               | Deck.gl                                  |
+| :-------------------------------- | :------------------------- | :--------------------------------------- | :--------------------------------------- |
+| **Rendering Engine**              | WebGL / WebGL2             | DOM / Canvas / SVG                       | WebGL2 / WebGPU                          |
+| **Coordinate Reference Systems**  | EPSG:3857 (Web Mercator)   | `L.CRS.Simple` (Flat $(x,y)$), EPSG:4326 | `OrthographicView`, `Cartesian`, `Globe` |
+| **Performance (10,000 Features)** | High (60 FPS)              | Low (15–25 FPS)                          | Ultra-High (60 FPS)                      |
+| **Multi-Deck 3D Stacking**        | Moderate (Extrusion only)  | Unsupported                              | Excellent (Native 3D matrices)           |
+| **Vector Tile Support (MVT)**     | Native                     | Requires plugin                          | Requires plugin                          |
+| **Raster Pyramid Support (DZI)**  | Requires custom protocol   | Native via plugin                        | Native via TileLayer                     |
+| **Bundle Size (gzipped)**         | ~210 KB                    | ~42 KB                                   | ~340 KB                                  |
+| **Mobile Responsiveness**         | Excellent                  | Excellent                                | Good (Requires GPU cap)                  |
+| **Pathfinding Animation**         | Good (Line-dash animation) | Moderate                                 | Excellent (TripsLayer / Particle system) |
 
 #### Architecture Recommendation
+
 - **Primary Web Deck Viewer**: **MapLibre GL JS** combined with **MVT Vector Tiles** for fast 2D dynamic vector deck plan exploration.
 - **3D Interactive Vessel Explorer**: **Deck.gl** for full-vessel multi-deck isometric overview and cross-deck elevator routing visualization.
 - **Legacy Scanned Blueprint View**: **Leaflet.js** + `L.CRS.Simple` + **DeepZoom (DZI)** for historical or non-vectorized high-resolution scanned raster plans.
@@ -425,10 +478,12 @@ flowchart TD
 Low-resolution deck plans downloaded from web sources often exhibit JPEG compression artifacts, fuzzy text, and broken line boundaries. We utilize **Real-ESRGAN** (Real-Enhanced Super-Resolution Generative Adversarial Networks) for deep-learning-based upscaling.
 
 #### Model Selection Criteria
+
 - **`RealESRGAN_x4plus`**: Recommended for general architectural deck plans containing rich texture details.
 - **`RealESRNet_x4plus_anime_6B` / `RealESRGAN_x4plus_anime_6B`**: Highly optimized for clean line-art, mechanical diagrams, and sharp boundary extraction. Ideal for monochrome vector deck plan tracing.
 
 #### Pre-Processing Pipeline
+
 1. **Color Normalization & Denoising**: Apply non-local means denoising (`cv2.fastNlMeansDenoisingColored`) to remove JPEG ringing artifacts.
 2. **Contrast Enhancement**: Adaptive Histogram Equalization (CLAHE) to sharpen light corridor boundary lines.
 3. **Background Isolation**: Thresholding to segregate the vessel deck silhouette from water/white web page backgrounds.
@@ -439,14 +494,14 @@ Low-resolution deck plans downloaded from web sources often exhibit JPEG compres
 
 Once an image is upscaled by $4\times$ or $8\times$, raster line geometries must be vectorized into spatial polygon shapes.
 
-| Vectorization Feature | Potrace | VTracer (Visioncortex) | OpenCV Contour Extraction |
-| :--- | :--- | :--- | :--- |
-| **Input Format Requirement** | Monochromatic Bitmap (1-bit) | Multi-color RGBA Raster | Binary/Gray Image |
-| **Output Format** | SVG (Single layer) | SVG (Layered Color Paths) | NumPy Contours / GeoJSON |
-| **Speed & Throughput** | Extremely fast (C-native) | Fast (Rust-native) | Ultra-fast (In-memory) |
-| **Line Regularization** | Corner threshold optimization | Clustering-based polygon curves | ApproxPolyDP (Ramer-Douglas-Peucker) |
-| **Color Segmentation** | None (Binary threshold required) | Native k-Means color quantization | Requires manual color mask |
-| **Cabin Polygon Integrity** | High for black/white outlines | High for color-coded category maps | Requires heavy topological filtering |
+| Vectorization Feature        | Potrace                          | VTracer (Visioncortex)             | OpenCV Contour Extraction            |
+| :--------------------------- | :------------------------------- | :--------------------------------- | :----------------------------------- |
+| **Input Format Requirement** | Monochromatic Bitmap (1-bit)     | Multi-color RGBA Raster            | Binary/Gray Image                    |
+| **Output Format**            | SVG (Single layer)               | SVG (Layered Color Paths)          | NumPy Contours / GeoJSON             |
+| **Speed & Throughput**       | Extremely fast (C-native)        | Fast (Rust-native)                 | Ultra-fast (In-memory)               |
+| **Line Regularization**      | Corner threshold optimization    | Clustering-based polygon curves    | ApproxPolyDP (Ramer-Douglas-Peucker) |
+| **Color Segmentation**       | None (Binary threshold required) | Native k-Means color quantization  | Requires manual color mask           |
+| **Cabin Polygon Integrity**  | High for black/white outlines    | High for color-coded category maps | Requires heavy topological filtering |
 
 ---
 
@@ -506,12 +561,12 @@ class DeckPlanProcessor:
         self.input_path = input_image_path
         self.output_dir = output_dir
         os.makedirs(output_dir, exist_ok=True)
-        
+
     def upscale_image(self, scale_factor: int = 4) -> str:
         """Upscales input raster image using Real-ESRGAN CLI or Python API."""
         print(f"[+] Upscaling image {self.input_path} by {scale_factor}x with Real-ESRGAN...")
         upscaled_path = os.path.join(self.output_dir, "upscaled_deck.png")
-        
+
         # Real-ESRGAN execution command string
         cmd = (
             f"realesrgan-ncnn-vulkan -i {self.input_path} -o {upscaled_path} "
@@ -525,14 +580,14 @@ class DeckPlanProcessor:
             h, w = img.shape[:2]
             upscaled = cv2.resize(img, (w * scale_factor, h * scale_factor), interpolation=cv2.INTER_LANCZOS4)
             cv2.imwrite(upscaled_path, upscaled)
-            
+
         return upscaled_path
 
     def vectorize_image(self, upscaled_png_path: str) -> str:
         """Vectorizes upscaled raster image using Rust VTracer (Visioncortex)."""
         print("[+] Vectorizing image to SVG using VTracer...")
         svg_output_path = os.path.join(self.output_dir, "vectorized_deck.svg")
-        
+
         vtracer.convert_image_to_svg_py(
             upscaled_png_path,
             svg_output_path,
@@ -565,11 +620,11 @@ class DeckPlanProcessor:
         """Parses SVG vector paths, regularizes geometries, and generates GeoJSON."""
         print("[+] Building structured GeoJSON from vector paths...")
         geojson_path = os.path.join(self.output_dir, f"deck_{deck_ordinal}_units.geojson")
-        
+
         # Prototype polygon extraction & regularization logic
         sample_polygon = Polygon([[100, 100], [400, 100], [400, 250], [100, 250]])
         regularized = self.regularize_geometry(sample_polygon)
-        
+
         feature = {
             "type": "Feature",
             "id": f"unit_deck{deck_ordinal}_001",
@@ -581,16 +636,16 @@ class DeckPlanProcessor:
                 "is_regularized": True
             }
         }
-        
+
         feature_collection = {
             "type": "FeatureCollection",
             "name": f"Deck {deck_ordinal} Spatial Units",
             "features": [feature]
         }
-        
+
         with open(geojson_path, "w", encoding="utf-8") as f:
             json.dump(feature_collection, f, indent=2)
-            
+
         print(f"[✓] GeoJSON successfully written to {geojson_path}")
         return geojson_path
 

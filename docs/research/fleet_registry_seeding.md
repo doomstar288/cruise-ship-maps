@@ -47,11 +47,11 @@ Each ship gets `status` (`in_service`, `on_order`, `retired`, `unknown`),
 `category` (`ocean`, `expedition`, `river`, `ferry`, `other`), `formerNames`,
 `formerOperators` and `retirementYear`.
 
-- **Operator is the *current* one.** Operator statements are read with their
+- **Operator is the _current_ one.** Operator statements are read with their
   start/end qualifiers. Previously any operator a ship ever had could be picked,
   which counted sold ships in their former line's fleet.
 - **Ambiguous operators are flagged, not guessed.** Wikidata often lists several
-  undated operators at once (Mein Schiff 3: TUI Cruises *and* Celebrity
+  undated operators at once (Mein Schiff 3: TUI Cruises _and_ Celebrity
   Cruises). Resolution: preferred rank → latest start date → last run's value
   (so it can't flip weekly). Ships decided by the fallback carry
   `operatorAmbiguous: true` and are listed in the refresh PR.
@@ -107,7 +107,7 @@ reasoning about it:
 
 1. **Ship typing is inconsistent.** Matching only `instance of → cruise ship`
    (`P31/P279* wd:Q39804`) misses vessels typed as generic "ship". Celebrity
-   Xcel is typed `Q11446` (ship) and is reachable *only* via its operator. The
+   Xcel is typed `Q11446` (ship) and is reachable _only_ via its operator. The
    query therefore unions three routes: instance-of cruise ship, vessel class is
    a cruise-ship class, or **operator is a cruise line** (`Q946499`).
 
@@ -177,20 +177,20 @@ which is what filters out the operators, ports and people those pages link to.
 
 ### What it reports
 
-| Finding | Fix |
-| --- | --- |
-| **Ships to include** — cruise ship on Wikipedia, valid IMO on Wikidata, but typed only as "ship" there | `include` override, or `P31 cruise ship` on Wikidata |
-| **Missing IMO on Wikidata** — the infobox has a checksum-valid IMO Wikidata lacks | Wikidata edit; the registry is keyed by IMO |
-| **Class proposals** — infobox names a class Wikidata does not record | `set` override and/or `P289` on Wikidata |
-| **Class proposals to review** — the class exists but this ship shares no operator or shipbuilder with its members | By hand: usually a same-named class of another line |
-| **Category fixes** — Wikipedia's expedition/river categories | `set` override |
-| **Duplicate Wikidata items** — two items for one IMO | Merge on Wikidata |
-| **Unresolved classes** — grouped by class, so one fix classifies every ship listed | Create or merge the class item on Wikidata |
-| **Historic ships** — IMO below 7000000 (built before ~1970) | Never proposed automatically; `include` by hand if wanted |
+| Finding                                                                                                           | Fix                                                       |
+| ----------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| **Ships to include** — cruise ship on Wikipedia, valid IMO on Wikidata, but typed only as "ship" there            | `include` override, or `P31 cruise ship` on Wikidata      |
+| **Missing IMO on Wikidata** — the infobox has a checksum-valid IMO Wikidata lacks                                 | Wikidata edit; the registry is keyed by IMO               |
+| **Class proposals** — infobox names a class Wikidata does not record                                              | `set` override and/or `P289` on Wikidata                  |
+| **Class proposals to review** — the class exists but this ship shares no operator or shipbuilder with its members | By hand: usually a same-named class of another line       |
+| **Category fixes** — Wikipedia's expedition/river categories                                                      | `set` override                                            |
+| **Duplicate Wikidata items** — two items for one IMO                                                              | Merge on Wikidata                                         |
+| **Unresolved classes** — grouped by class, so one fix classifies every ship listed                                | Create or merge the class item on Wikidata                |
+| **Historic ships** — IMO below 7000000 (built before ~1970)                                                       | Never proposed automatically; `include` by hand if wanted |
 
 `scripts/fleet-gap-ignore.json` silences findings that are not wanted (by
-article title or QID, with a reason) — the nuclear icebreakers *Yamal* and
-*50 Let Pobedy*, for instance, carry tourists to the North Pole but are not
+article title or QID, with a reason) — the nuclear icebreakers _Yamal_ and
+_50 Let Pobedy_, for instance, carry tourists to the North Pole but are not
 cruise ships. Ignoring a ship only stops it being proposed: if it is already in
 the registry through an `include` override, remove that override too, which the
 check warns about.
@@ -203,7 +203,7 @@ check warns about.
   already in it; otherwise it is held for manual review.
 - **Ambiguity is never guessed.** A class link to a disambiguation page, a
   redirect into an article section (`R-class cruise ship` → `Renaissance
-  Cruises#R class`), or two Wikidata items sharing a class label all resolve to
+Cruises#R class`), or two Wikidata items sharing a class label all resolve to
   nothing rather than to a wrong answer.
 - **Only structured IMO numbers**, validated by check digit.
 - **Nothing is written without review**: `--write-overrides` never overwrites a
@@ -227,7 +227,7 @@ as a build artifact.
 Two settings the refresh workflow depends on, both one-time:
 
 1. **Allow Actions to open PRs** — Settings → Actions → General → Workflow
-   permissions → *Allow GitHub Actions to create and approve pull requests*.
+   permissions → _Allow GitHub Actions to create and approve pull requests_.
    Without it the run fails at the last step having already pushed its branch.
 2. **A GitHub App token.** GitHub never triggers workflows for a PR created
    with the built-in `GITHUB_TOKEN`, to stop workflows triggering themselves.
@@ -238,10 +238,10 @@ Two settings the refresh workflow depends on, both one-time:
    Install a GitHub App on the repository with **contents: write** and
    **pull-requests: write**, then set:
 
-   | Where | Name | Value |
-   | --- | --- | --- |
-   | Settings → Secrets and variables → Actions → Variables | `FLEET_BOT_APP_ID` | the app's ID |
-   | Settings → Secrets and variables → Actions → Secrets | `FLEET_BOT_PRIVATE_KEY` | the app's private key (full PEM) |
+   | Where                                                  | Name                    | Value                            |
+   | ------------------------------------------------------ | ----------------------- | -------------------------------- |
+   | Settings → Secrets and variables → Actions → Variables | `FLEET_BOT_APP_ID`      | the app's ID                     |
+   | Settings → Secrets and variables → Actions → Secrets   | `FLEET_BOT_PRIVATE_KEY` | the app's private key (full PEM) |
 
    The workflow falls back to `GITHUB_TOKEN` when the variable is unset, so it
    keeps running before the app exists — the PR opens, but its checks stay

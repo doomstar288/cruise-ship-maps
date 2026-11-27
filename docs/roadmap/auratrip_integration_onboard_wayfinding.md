@@ -1,8 +1,12 @@
 # Roadmap — AuraTrip Integration & Onboard Event Wayfinding
 
-_Written 2026-09-15. Status: **Phases 0, 2, 3, 4 and 5 shipped** (2026-09-16 to 2026-09-17).
-Phase 1 is half done: P1.3 and P1.4 shipped; P1.1 and P1.2 wait on an official Celebrity plan.
-Live tracking: [#24](https://github.com/doomstar288/cruise-ship-maps/issues/24).
+_Written 2026-09-15; status line refreshed 2026-11-27. Status: **Phases 0, 2, 3, 4 and 5 shipped**
+(2026-09-16 to 2026-09-17). Phase 1 is half done: P1.3 and P1.4 shipped; P1.1 and P1.2 wait on an
+official Celebrity plan. **Phase 7** (planner enhancements) has shipped on the maps side except muster
+stations, and AuraTrip's P7.1, P7.7 and P7.8 have shipped. The one open roadmap item is P7.4, tracked in
+[#55](https://github.com/doomstar288/cruise-ship-maps/issues/55). The original tracking issue
+[#24](https://github.com/doomstar288/cruise-ship-maps/issues/24) is closed.
+**AuraTrip has since been renamed Gangway** (repo `big-trip-planner`); the "AuraTrip …" paths below are in that repo.
 Spans two repos:_
 
 - **Producer** — `cruise-ship-maps` (this repo): deck data, Ship Map Pack exports.
@@ -36,18 +40,18 @@ deck. It must work **offline at sea**, because that is the only time anyone need
 
 As written before the work started. For where it ended up, see the status tables in §4.
 
-| Capability | Cruise Ship Maps | AuraTrip |
-|---|---|---|
-| Vector deck geometry | ✅ 15 real guest decks at 327 m × 39 m (PR #14) | ✅ Tier 0 `DeckVectorMap` renders packs |
-| Pack transport + offline cache | ✅ static `/v1/ships/**.json` on `prebuild` | ✅ IDB + SW `CacheFirst`, inert unless `VITE_SHIP_MAPS_URL` set (on in production since Phase 0) |
-| Onboard events | — | ✅ `OnboardReservation[]` (Epic A), daily-program parser, agenda, reminders |
-| Venue on an event | — | ⚠️ free text only (`reservation.venue`, `ParsedActivity.notes`) |
-| Traveler's cabin | — | ✅ `TripMetadata.cabinNumber`, `ShipCard.cabin` |
-| Wayfinding | ⚠️ web-app only (`src/utils/wayfinding.js`: corridor → elevator → corridor) | ❌ elevators are pins only; no routes |
-| Walking time | ⚠️ flat 70 m/min estimate in the web app | ❌ |
-| Walking pace personalization | — | 📝 Epic F pedometer proposed |
+| Capability                     | Cruise Ship Maps                                                            | AuraTrip                                                                                         |
+| ------------------------------ | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Vector deck geometry           | ✅ 15 real guest decks at 327 m × 39 m (PR #14)                             | ✅ Tier 0 `DeckVectorMap` renders packs                                                          |
+| Pack transport + offline cache | ✅ static `/v1/ships/**.json` on `prebuild`                                 | ✅ IDB + SW `CacheFirst`, inert unless `VITE_SHIP_MAPS_URL` set (on in production since Phase 0) |
+| Onboard events                 | —                                                                           | ✅ `OnboardReservation[]` (Epic A), daily-program parser, agenda, reminders                      |
+| Venue on an event              | —                                                                           | ⚠️ free text only (`reservation.venue`, `ParsedActivity.notes`)                                  |
+| Traveler's cabin               | —                                                                           | ✅ `TripMetadata.cabinNumber`, `ShipCard.cabin`                                                  |
+| Wayfinding                     | ⚠️ web-app only (`src/utils/wayfinding.js`: corridor → elevator → corridor) | ❌ elevators are pins only; no routes                                                            |
+| Walking time                   | ⚠️ flat 70 m/min estimate in the web app                                    | ❌                                                                                               |
+| Walking pace personalization   | —                                                                           | 📝 Epic F pedometer proposed                                                                     |
 
-**The gap is three missing links:** (1) routing data that travels *inside* the pack so
+**The gap is three missing links:** (1) routing data that travels _inside_ the pack so
 AuraTrip can route offline, (2) a resolver from an event's free-text venue to a pack
 feature, and (3) a walking-time model plus the UI that puts it on the agenda.
 
@@ -67,7 +71,7 @@ Found while researching the real ship and reading both codebases. Each maps to a
    the Sunset Bar is at the stern of Deck 15. → P0.4, P0.5
 3. **Synthetic cabin numbers ≠ real cabin numbers.** The generator numbers cabins
    bow→stern and assumes even numbers are port. A guest's real cabin 10175 will resolve to
-   *a* synthetic 10175, which may be tens of metres from the real one. Until this is fixed,
+   _a_ synthetic 10175, which may be tens of metres from the real one. Until this is fixed,
    any route "from your cabin" is only approximate. → P1.2
 4. **Venue positions have mixed confidence.** Deck and fore/aft zone come from published
    descriptions and are reliable. Side of ship is unverified for the main dining rooms,
@@ -90,42 +94,42 @@ Found while researching the real ship and reading both codebases. Each maps to a
 Sizes: **S** ≤ 1 day, **M** 2–4 days, **L** 1–2 weeks. Each phase ends in something
 shippable; later phases never block earlier value.
 
-### Phase 0 — Land it and turn it on  `S–M` · both repos · ✅ shipped 2026-09-16
+### Phase 0 — Land it and turn it on `S–M` · both repos · ✅ shipped 2026-09-16
 
-| # | Status |
-|---|---|
-| P0.1 | ✅ [#14](https://github.com/doomstar288/cruise-ship-maps/pull/14) |
-| P0.2, P0.3 | ✅ [#26](https://github.com/doomstar288/cruise-ship-maps/pull/26). All 38 crew/back-of-house features (not only the `hideLabel` strips) now export as `corridor`. |
-| P0.4, P0.7 | ✅ [AuraTrip #166](https://github.com/doomstar288/big-trip-planner/pull/166). Docker `build.args` default to the Pages URL. It also fixed the SW pack rule, which never matched cross-origin, and made pack URLs revision-addressed (`plan.json?rev=`) with a `NetworkFirst` catalog, so updates aren't pinned for 180 days. |
-| P0.5 | ✅ [AuraTrip #165](https://github.com/doomstar288/big-trip-planner/pull/165) |
-| P0.6 | ✅ [#17](https://github.com/doomstar288/cruise-ship-maps/issues/17). The repo was private with Pages disabled; it was made public and the self-hosted runner retired first. Base URL `https://doomstar288.github.io/cruise-ship-maps`, `access-control-allow-origin: *`. Fork-PR deploy guard [#25](https://github.com/doomstar288/cruise-ship-maps/pull/25). |
+| #          | Status                                                                                                                                                                                                                                                                                                                                                        |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| P0.1       | ✅ [#14](https://github.com/doomstar288/cruise-ship-maps/pull/14)                                                                                                                                                                                                                                                                                             |
+| P0.2, P0.3 | ✅ [#26](https://github.com/doomstar288/cruise-ship-maps/pull/26). All 38 crew/back-of-house features (not only the `hideLabel` strips) now export as `corridor`.                                                                                                                                                                                             |
+| P0.4, P0.7 | ✅ [AuraTrip #166](https://github.com/doomstar288/big-trip-planner/pull/166). Docker `build.args` default to the Pages URL. It also fixed the SW pack rule, which never matched cross-origin, and made pack URLs revision-addressed (`plan.json?rev=`) with a `NetworkFirst` catalog, so updates aren't pinned for 180 days.                                  |
+| P0.5       | ✅ [AuraTrip #165](https://github.com/doomstar288/big-trip-planner/pull/165)                                                                                                                                                                                                                                                                                  |
+| P0.6       | ✅ [#17](https://github.com/doomstar288/cruise-ship-maps/issues/17). The repo was private with Pages disabled; it was made public and the self-hosted runner retired first. Base URL `https://doomstar288.github.io/cruise-ship-maps`, `access-control-allow-origin: *`. Fork-PR deploy guard [#25](https://github.com/doomstar288/cruise-ship-maps/pull/25). |
 
 Original task list:
 
 Goal: AuraTrip users see the corrected Xcel map from the published service.
 
-| # | Repo | Task |
-|---|---|---|
-| P0.1 | maps | Merge PR #14. |
-| P0.2 | maps | Exporter: skip `hideLabel` decorative features, or emit them as `corridor` so the adapter treats them as circulation. Add an exporter test that no `Crew & Service` feature is a `venue`. |
-| P0.3 | maps | Set `geometry.units` to `"meters"`. Additive, so no `specVersion` bump. Keep `extent` as the only normalizer. |
-| P0.4 | AuraTrip | Update `SHIP_MAP_SERVICE_INTERFACE.md`: metres, 15 decks, extent now includes the outboard Magic Carpet and the bridge wings. |
-| P0.5 | AuraTrip | Re-author `shipPresets/celebrityXcel.json` from the pack's venue facts: The Bazaar replaces Eden, Sunset Bar on 15, Magic Carpet stops 2/5/14/16. Tier 1 and Tier 0 must agree. |
-| P0.6 | maps | Confirm GitHub Pages deploys `/v1/ships/index.json` and that the response allows cross-origin fetch from AuraTrip's origin. |
-| P0.7 | AuraTrip | Set `VITE_SHIP_MAPS_URL` (the Pages base URL) in the production build/deploy config. Smoke-test online, then offline after first load. |
+| #    | Repo     | Task                                                                                                                                                                                      |
+| ---- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| P0.1 | maps     | Merge PR #14.                                                                                                                                                                             |
+| P0.2 | maps     | Exporter: skip `hideLabel` decorative features, or emit them as `corridor` so the adapter treats them as circulation. Add an exporter test that no `Crew & Service` feature is a `venue`. |
+| P0.3 | maps     | Set `geometry.units` to `"meters"`. Additive, so no `specVersion` bump. Keep `extent` as the only normalizer.                                                                             |
+| P0.4 | AuraTrip | Update `SHIP_MAP_SERVICE_INTERFACE.md`: metres, 15 decks, extent now includes the outboard Magic Carpet and the bridge wings.                                                             |
+| P0.5 | AuraTrip | Re-author `shipPresets/celebrityXcel.json` from the pack's venue facts: The Bazaar replaces Eden, Sunset Bar on 15, Magic Carpet stops 2/5/14/16. Tier 1 and Tier 0 must agree.           |
+| P0.6 | maps     | Confirm GitHub Pages deploys `/v1/ships/index.json` and that the response allows cross-origin fetch from AuraTrip's origin.                                                               |
+| P0.7 | AuraTrip | Set `VITE_SHIP_MAPS_URL` (the Pages base URL) in the production build/deploy config. Smoke-test online, then offline after first load.                                                    |
 
 **Accept when:** a trip with a "Celebrity Xcel" cruise event shows the 15-deck vector map
 in Travel Tools → Ship & Deck Plan. Search finds "Sunset Bar" on Deck 15 and no "Crew
 Service Area". The map loads in airplane mode after one online visit.
 
-### Phase 1 — Data you can route on  `M` · maps · ◐ half shipped
+### Phase 1 — Data you can route on `M` · maps · ◐ half shipped
 
-| # | Status |
-|---|---|
+| #    | Status                                                                                                                                                  |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | P1.1 | ⏳ [#18](https://github.com/doomstar288/cruise-ship-maps/issues/18). Needs an official Celebrity plan (facts only). Zone leads are posted on the issue. |
-| P1.2 | ⏳ [#19](https://github.com/doomstar288/cruise-ship-maps/issues/19). Needs the real ship's published cabin ranges. |
-| P1.3 | ✅ [#29](https://github.com/doomstar288/cruise-ship-maps/pull/29). 46 venues `zone`, 22 `estimated`, 0 `verified`. |
-| P1.4 | ✅ [#30](https://github.com/doomstar288/cruise-ship-maps/pull/30). 85 entrances on 27 venues, all derived on corridor-facing edges. |
+| P1.2 | ⏳ [#19](https://github.com/doomstar288/cruise-ship-maps/issues/19). Needs the real ship's published cabin ranges.                                      |
+| P1.3 | ✅ [#29](https://github.com/doomstar288/cruise-ship-maps/pull/29). 46 venues `zone`, 22 `estimated`, 0 `verified`.                                      |
+| P1.4 | ✅ [#30](https://github.com/doomstar288/cruise-ship-maps/pull/30). 85 entrances on 27 venues, all derived on corridor-facing edges.                     |
 
 When P1.1 moves venues, regenerate the pack (routing included) and re-record the route
 fixtures (`npm run record:route-fixtures`), then refresh AuraTrip's fixture copies.
@@ -144,7 +148,7 @@ Goal: positions trustworthy enough that walking times are not misleading.
   Confirm the actual odd/even side convention. Until done, AuraTrip labels
   cabin-origin routes "approximate".
 - **P1.3 Confidence per feature.** Add an additive `positionConfidence:
-  "verified" | "zone" | "estimated"` so the consumer can soften the UI, e.g. "near
+"verified" | "zone" | "estimated"` so the consumer can soften the UI, e.g. "near
   midship, starboard side" instead of a precise pin.
 - **P1.4 Venue entrances.** Big rooms have doors, not centres. Add an additive
   `entrances: [[x, y], …]` on large venues (Theatre, main dining rooms, Bazaar, Pool Club).
@@ -154,15 +158,15 @@ Goal: positions trustworthy enough that walking times are not misleading.
 the real ship's published ranges resolve to the correct deck section. Producer tests
 assert each entrance sits on a corridor edge of its venue.
 
-### Phase 2 — Routing graph in the pack  `L` · maps · ✅ shipped 2026-09-16
+### Phase 2 — Routing graph in the pack `L` · maps · ✅ shipped 2026-09-16
 
-| # | Status |
-|---|---|
-| P2.1–P2.3 | ✅ [#36](https://github.com/doomstar288/cruise-ship-maps/pull/36). 576 nodes, 587 walk edges, compact tuples; +7.5 % gzipped (budget 15 %). Decks 2, 4, 5, 14, 15 and 16 are split by full-beam venues, so the P2.2 rule was relaxed to "every walk section has an elevator lobby" with documented connectors ([routing doc](../architecture/ship_map_pack_routing.md)). |
-| P2.4, P2.5 | ✅ [#37](https://github.com/doomstar288/cruise-ship-maps/pull/37). One dependency-free router (`src/utils/shipRouter.js`) draws the site's routes; 14 route fixtures are published at `v1/ships/celebrity-xcel/route-fixtures.json`. |
+| #          | Status                                                                                                                                                                                                                                                                                                                                                                   |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| P2.1–P2.3  | ✅ [#36](https://github.com/doomstar288/cruise-ship-maps/pull/36). 576 nodes, 587 walk edges, compact tuples; +7.5 % gzipped (budget 15 %). Decks 2, 4, 5, 14, 15 and 16 are split by full-beam venues, so the P2.2 rule was relaxed to "every walk section has an elevator lobby" with documented connectors ([routing doc](../architecture/ship_map_pack_routing.md)). |
+| P2.4, P2.5 | ✅ [#37](https://github.com/doomstar288/cruise-ship-maps/pull/37). One dependency-free router (`src/utils/shipRouter.js`) draws the site's routes; 14 route fixtures are published at `v1/ships/celebrity-xcel/route-fixtures.json`.                                                                                                                                     |
 
 **Cost model (decided 2026-09-17, [AuraTrip #161](https://github.com/doomstar288/big-trip-planner/issues/161)):**
-routes are *chosen* with lift 60 s + 8 s per level and stairs 30 s per level (the fixtures'
+routes are _chosen_ with lift 60 s + 8 s per level and stairs 30 s per level (the fixtures'
 `costModel`). Phase 3's table below only sets the displayed time range.
 
 Original task list:
@@ -209,13 +213,13 @@ the interface spec.
 **Accept when:** the maps site draws multi-deck routes from the graph. The fixtures pass
 in both repos. The pack stays within budget.
 
-### Phase 3 — On-device routing & walking-time model  `M–L` · AuraTrip · ✅ shipped 2026-09-17
+### Phase 3 — On-device routing & walking-time model `M–L` · AuraTrip · ✅ shipped 2026-09-17
 
-| # | Status |
-|---|---|
+| #          | Status                                                                                                                                                                      |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | P3.1, P3.3 | ✅ [AuraTrip #177](https://github.com/doomstar288/big-trip-planner/pull/177). `PackRouting` sanitizer and a TypeScript port of the maps router; all 14 route fixtures pass. |
-| P3.2 | ✅ [AuraTrip #178](https://github.com/doomstar288/big-trip-planner/pull/178). Stateroom 10175 → Le Voyage shows "3–6 min", or "3–8 min" to a reservation. |
-| P3.4 | ✅ [AuraTrip #179](https://github.com/doomstar288/big-trip-planner/pull/179). "Directions from cabin" in the deck viewer, drawn per deck, with "Next: Deck N". |
+| P3.2       | ✅ [AuraTrip #178](https://github.com/doomstar288/big-trip-planner/pull/178). Stateroom 10175 → Le Voyage shows "3–6 min", or "3–8 min" to a reservation.                   |
+| P3.4       | ✅ [AuraTrip #179](https://github.com/doomstar288/big-trip-planner/pull/179). "Directions from cabin" in the deck viewer, drawn per deck, with "Next: Deck N".              |
 
 Original task list:
 
@@ -226,18 +230,19 @@ Pure logic in `src/utils/*` with sibling tests, per AuraTrip conventions.
   must never reject the whole pack, because the map still works without routes.
 - **P3.2 `utils/walkingTime.ts`.** Returns a **range**, never false precision:
 
-  | Component | Default (tunable) | Notes |
-  |---|---|---|
-  | Walk | distance ÷ 1.1 m/s | Crowded public decks ×1.25 |
-  | Stairs | 15 s per deck | Excluded when `stepFree` |
+  | Component     | Default (tunable)         | Notes                                                         |
+  | ------------- | ------------------------- | ------------------------------------------------------------- |
+  | Walk          | distance ÷ 1.1 m/s        | Crowded public decks ×1.25                                    |
+  | Stairs        | 15 s per deck             | Excluded when `stepFree`                                      |
   | Elevator wait | 45 s off-peak, 150 s peak | Peak = ±20 min around show starts, dinner seatings, disembark |
-  | Elevator ride | 10 s + 4 s per deck | |
-  | Buffer | +2 min for reservations | Configurable |
+  | Elevator ride | 10 s + 4 s per deck       |                                                               |
+  | Buffer        | +2 min for reservations   | Configurable                                                  |
 
   Output example: `{ minMinutes: 6, maxMinutes: 8, mode: "elevator", steps: [...] }`.
   Prefer stairs for a change of 1–2 decks unless step-free.
+
 - **P3.3 `utils/shipRouting.ts`.** Snap origin and destination to graph nodes, run
-  Dijkstra with a cost of *time*, not metres, then split the route into per-deck
+  Dijkstra with a cost of _time_, not metres, then split the route into per-deck
   polylines plus deck-change steps. Coordinates go through the same `extent` projection as
   `shipMapAdapter.ts`.
 - **P3.4 Render routes in `DeckVectorMap`.** Add a polyline layer per deck, start/end
@@ -248,14 +253,14 @@ Pure logic in `src/utils/*` with sibling tests, per AuraTrip conventions.
 elevators, and step-free mode never uses stairs. The viewer shows the route across both
 decks with the network disabled.
 
-### Phase 4 — Event → venue linking (the core of the request)  `M` · both repos · ✅ shipped 2026-09-17
+### Phase 4 — Event → venue linking (the core of the request) `M` · both repos · ✅ shipped 2026-09-17
 
-| # | Status |
-|---|---|
-| P4.1 | ✅ [#27](https://github.com/doomstar288/cruise-ship-maps/pull/27). `aliases` and `spansDecks` in the pack. |
+| #    | Status                                                                                                                                                              |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| P4.1 | ✅ [#27](https://github.com/doomstar288/cruise-ship-maps/pull/27). `aliases` and `spansDecks` in the pack.                                                          |
 | P4.2 | ✅ [AuraTrip #170](https://github.com/doomstar288/big-trip-planner/pull/170). 45/45 located rows of a synthetic 60-row Xcel program resolve, none to a wrong venue. |
-| P4.3 | ✅ [AuraTrip #171](https://github.com/doomstar288/big-trip-planner/pull/171). `venueRef`, set only by a manual pick. |
-| P4.4 | ✅ [AuraTrip #172](https://github.com/doomstar288/big-trip-planner/pull/172). Per-ship venue keywords. |
+| P4.3 | ✅ [AuraTrip #171](https://github.com/doomstar288/big-trip-planner/pull/171). `venueRef`, set only by a manual pick.                                                |
+| P4.4 | ✅ [AuraTrip #172](https://github.com/doomstar288/big-trip-planner/pull/172). Per-ship venue keywords.                                                              |
 
 Original task list:
 
@@ -284,16 +289,16 @@ Original task list:
 the rest prompt, and no activity resolves to the wrong venue. Measure against a
 checked-in, anonymized text fixture.
 
-### Phase 5 — Agenda UX: directions, times, leave-by  `M` · AuraTrip · ✅ shipped 2026-09-17
+### Phase 5 — Agenda UX: directions, times, leave-by `M` · AuraTrip · ✅ shipped 2026-09-17
 
-| # | Status |
-|---|---|
-| P5.0 | ✅ [AuraTrip #187](https://github.com/doomstar288/big-trip-planner/pull/187). `venueRef` on activities too (decided 2026-09-17); port plans now ride in backup, merge and sync. |
-| P5.1 | ✅ [AuraTrip #189](https://github.com/doomstar288/big-trip-planner/pull/189). "📍 venue · Deck N" and "🚶 3–8 min · leave by 7:20 PM (approx.)" chips. |
-| P5.2 | ✅ [AuraTrip #188](https://github.com/doomstar288/big-trip-planner/pull/188). Default start is the previous agenda item, falling back to the cabin (decided 2026-09-17); remembered per day. |
-| P5.3 | ✅ [AuraTrip #191](https://github.com/doomstar288/big-trip-planner/pull/191). Directions sheet and Pick on map / Change venue, for bookings and activities. |
-| P5.4 | ✅ [AuraTrip #192](https://github.com/doomstar288/big-trip-planner/pull/192). Reminders at leave-by. |
-| P5.5 | ✅ [AuraTrip #193](https://github.com/doomstar288/big-trip-planner/pull/193). "Trivia ends 7:28 PM, but the walk takes 2–6 min — not enough time". |
+| #    | Status                                                                                                                                                                                                                                                    |
+| ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| P5.0 | ✅ [AuraTrip #187](https://github.com/doomstar288/big-trip-planner/pull/187). `venueRef` on activities too (decided 2026-09-17); port plans now ride in backup, merge and sync.                                                                           |
+| P5.1 | ✅ [AuraTrip #189](https://github.com/doomstar288/big-trip-planner/pull/189). "📍 venue · Deck N" and "🚶 3–8 min · leave by 7:20 PM (approx.)" chips.                                                                                                    |
+| P5.2 | ✅ [AuraTrip #188](https://github.com/doomstar288/big-trip-planner/pull/188). Default start is the previous agenda item, falling back to the cabin (decided 2026-09-17); remembered per day.                                                              |
+| P5.3 | ✅ [AuraTrip #191](https://github.com/doomstar288/big-trip-planner/pull/191). Directions sheet and Pick on map / Change venue, for bookings and activities.                                                                                               |
+| P5.4 | ✅ [AuraTrip #192](https://github.com/doomstar288/big-trip-planner/pull/192). Reminders at leave-by.                                                                                                                                                      |
+| P5.5 | ✅ [AuraTrip #193](https://github.com/doomstar288/big-trip-planner/pull/193). "Trivia ends 7:28 PM, but the walk takes 2–6 min — not enough time".                                                                                                        |
 | P5.6 | ✅ [AuraTrip #194](https://github.com/doomstar288/big-trip-planner/pull/194). Found that timed reminders never fired at their time (all-day .ics alarms, manual-only in-app) and fixed it; "approx." everywhere; verified at 1280 and 375 px and offline. |
 
 Original task list:
@@ -333,35 +338,35 @@ offline after first load.
 - **REST mode:** only if a live service adds value beyond static packs; routing stays
   on-device regardless.
 
-### Phase 7 — Planner enhancements  `M–L` · both repos · ◐ maps side shipped 2026-09-26 except muster stations · AuraTrip P7.1, P7.7, P7.8 shipped
+### Phase 7 — Planner enhancements `M–L` · both repos · ◐ maps side shipped 2026-09-26 except muster stations · AuraTrip P7.1, P7.7, P7.8 shipped
 
 Phases 0–5 answer "where is it and when do I leave?". Phase 7 answers the next questions:
 can I get in, is it open, how do I get off the ship, and what's nearest. Priority order;
 P7.1 and P7.3 first. Maps tasks are pack fields and router options; AuraTrip tasks sit
 under [AuraTrip epic #209](https://github.com/doomstar288/big-trip-planner/issues/209).
 
-| # | Maps | AuraTrip |
-|---|---|---|
-| P7.1 | ✅ [#62](https://github.com/doomstar288/cruise-ship-maps/pull/62) `access` field, 15 venues fleet-wide | ✅ [AuraTrip #218](https://github.com/doomstar288/big-trip-planner/pull/218) agenda and viewer warnings, rendezvous filter |
-| P7.2 | ✅ [#67](https://github.com/doomstar288/cruise-ship-maps/pull/67) typical hours and booking facts, 43 Xcel venues | [#211](https://github.com/doomstar288/big-trip-planner/issues/211) chips and "usually closed" |
-| P7.3 | ✅ [#65](https://github.com/doomstar288/cruise-ship-maps/pull/65) `portExit` on 24 exits fleet-wide, 12 exit fixtures | [#212](https://github.com/doomstar288/big-trip-planner/issues/212) gangway, tender and meeting-point walk times |
-| P7.4 | ◐ [#64](https://github.com/doomstar288/cruise-ship-maps/pull/64) `avoidLifts` option and fixtures; muster stations unsourced ([#55](https://github.com/doomstar288/cruise-ship-maps/issues/55)) | [#213](https://github.com/doomstar288/big-trip-planner/issues/213) stairs-only muster route |
-| P7.5 | ✅ [#68](https://github.com/doomstar288/cruise-ship-maps/pull/68) `routeToNearest` and fixtures, 13 sourced Xcel restrooms | ◐ [AuraTrip #220](https://github.com/doomstar288/big-trip-planner/pull/220) access, [#225](https://github.com/doomstar288/big-trip-planner/pull/225) measured times, top 3, agenda origins; router swap open ([#214](https://github.com/doomstar288/big-trip-planner/issues/214)) |
-| P7.6 | — | [#215](https://github.com/doomstar288/big-trip-planner/issues/215) fill gaps in the day |
-| P7.7 | — | ✅ [AuraTrip #229](https://github.com/doomstar288/big-trip-planner/pull/229) party cabins, meetups saved to the agenda |
-| P7.8 | — | ✅ [AuraTrip #234](https://github.com/doomstar288/big-trip-planner/pull/234) daily walking summary |
+| #    | Maps                                                                                                                                                                                            | AuraTrip                                                                                                                                                                                                                                                                          |
+| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| P7.1 | ✅ [#62](https://github.com/doomstar288/cruise-ship-maps/pull/62) `access` field, 15 venues fleet-wide                                                                                          | ✅ [AuraTrip #218](https://github.com/doomstar288/big-trip-planner/pull/218) agenda and viewer warnings, rendezvous filter                                                                                                                                                        |
+| P7.2 | ✅ [#67](https://github.com/doomstar288/cruise-ship-maps/pull/67) typical hours and booking facts, 43 Xcel venues                                                                               | [#211](https://github.com/doomstar288/big-trip-planner/issues/211) chips and "usually closed"                                                                                                                                                                                     |
+| P7.3 | ✅ [#65](https://github.com/doomstar288/cruise-ship-maps/pull/65) `portExit` on 24 exits fleet-wide, 12 exit fixtures                                                                           | [#212](https://github.com/doomstar288/big-trip-planner/issues/212) gangway, tender and meeting-point walk times                                                                                                                                                                   |
+| P7.4 | ◐ [#64](https://github.com/doomstar288/cruise-ship-maps/pull/64) `avoidLifts` option and fixtures; muster stations unsourced ([#55](https://github.com/doomstar288/cruise-ship-maps/issues/55)) | [#213](https://github.com/doomstar288/big-trip-planner/issues/213) stairs-only muster route                                                                                                                                                                                       |
+| P7.5 | ✅ [#68](https://github.com/doomstar288/cruise-ship-maps/pull/68) `routeToNearest` and fixtures, 13 sourced Xcel restrooms                                                                      | ◐ [AuraTrip #220](https://github.com/doomstar288/big-trip-planner/pull/220) access, [#225](https://github.com/doomstar288/big-trip-planner/pull/225) measured times, top 3, agenda origins; router swap open ([#214](https://github.com/doomstar288/big-trip-planner/issues/214)) |
+| P7.6 | —                                                                                                                                                                                               | [#215](https://github.com/doomstar288/big-trip-planner/issues/215) fill gaps in the day                                                                                                                                                                                           |
+| P7.7 | —                                                                                                                                                                                               | ✅ [AuraTrip #229](https://github.com/doomstar288/big-trip-planner/pull/229) party cabins, meetups saved to the agenda                                                                                                                                                            |
+| P7.8 | —                                                                                                                                                                                               | ✅ [AuraTrip #234](https://github.com/doomstar288/big-trip-planner/pull/234) daily walking summary                                                                                                                                                                                |
 
 - **P7.1 Access restrictions.** "Suite Guests Only" and "Adults Only" exist only as free-text
   `tags`, so a stateroom guest gets directions to the Retreat Bar with no warning. Add
   `access: "suite" | "adults" | "kids" | "paid"`, compared against the pack's `cabin.type`.
   The router needs no change today; the one restricted `through` edge (Retreat Bar via the
   Retreat Sundeck) leads to a venue with the same access, and a test keeps it that way.
-  *Shipped:* a stateroom guest gets "Suite guests only, and stateroom 10175 isn't a suite."; a
+  _Shipped:_ a stateroom guest gets "Suite guests only, and stateroom 10175 isn't a suite."; a
   suite guest gets nothing; age and pass rules are labels only. Blu (AquaClass), the Concierge
   Lounge and the SEA Thermal Suite stay public until the pack can tell those guests apart.
 - **P7.2 Hours and booking facts.** `hours`, `reservationRequired`, `fee`, `dressCode`, as
   typical facts from public sources. The daily program always wins, and the copy says
-  "usually". *Shipped (maps):* 43 Xcel venues, from one sailing's printed Celebrity Today (the
+  "usually". _Shipped (maps):_ 43 Xcel venues, from one sailing's printed Celebrity Today (the
   union of its sea and port days' windows). Every dining venue has `hours` and
   `reservationRequired` except the Grand Plaza Café, which no source covers. A close at midnight
   is `"24:00"`. Other ships get facts only when a source for that ship or class exists.
@@ -369,31 +374,31 @@ under [AuraTrip epic #209](https://github.com/doomstar288/big-trip-planner/issue
   but finds the exit by name and gives no walk time. Tag the gangway and tender platform in
   the pack, and route to them and to excursion meeting venues. The all-aboard deadline is
   about the pier, so the onboard walk is shown beside it, not subtracted from it.
-  *Shipped (maps):* `portExit` on the gangway (all 14 ships) and the tender exit (the Deck 2
+  _Shipped (maps):_ `portExit` on the gangway (all 14 ships) and the tender exit (the Deck 2
   Magic Carpet on the Edge series, the tender station on the Solstice class), with port-day
   aliases and 12 exit fixtures, each with a step-free twin. Destination Gateway is the waiting
   lounge, not the exit. Millennium class has no sourced tender exit.
 - **P7.4 Muster.** Stations are assigned per cabin by the line and entered from the SeaPass;
   neither repo infers one. Add `muster_station` features and an `avoidLifts` router option,
   because the emergency route is stairs only. Where a cabin can't reach a station without
-  lifts, that's a graph gap to fix, never a lift fallback. *Shipped (maps, router half):*
+  lifts, that's a graph gap to fix, never a lift fallback. _Shipped (maps, router half):_
   `avoidLifts` leaves out lift edges, and the Magic Carpet counts as a lift. Every cabin reaches
   every guest venue without lifts on all 14 ships. With `stepFree` too, only walking is left,
   and a trip off the walk section has no route (never a fallback). No public source names
   Xcel's stations, so there are no `muster_station` features yet; #55 stays open.
-- **P7.5 Nearest.** *Rescoped 2026-09-23:* AuraTrip already ships "Find Nearest"
+- **P7.5 Nearest.** _Rescoped 2026-09-23:_ AuraTrip already ships "Find Nearest"
   (`utils/findNearest.ts`). It ignores `access` (from a stateroom it suggests the Retreat
   Lounge as the nearest bar), guesses restrooms at every lift lobby, shows an untied "~N min"
   without a cabin, and routes once per candidate. Maps adds `routeToNearest` (one Dijkstra run
   that stops at the first candidate, with fixtures, so both routers agree) and restroom POIs
   where a public source exists. AuraTrip fixes access first, then the fallback and restroom
-  wording, and adds agenda-row origins. *Shipped:* maps `routeToNearest` (ties go to the
+  wording, and adds agenda-row origins. _Shipped:_ maps `routeToNearest` (ties go to the
   candidate listed first; it honours `stepFree` and `avoidLifts`) and 13 public Xcel restrooms
   from the GENTS/LADIES/WC labels on Celebrity's own deck plan. AuraTrip shows a time only for a
   route walked from the traveller, offers the best three, and adds "Nearest…" to agenda rows.
   Still open: swapping AuraTrip's per-candidate loop for `routeToNearest`.
 - **P7.6–P7.8** are AuraTrip-only and build on routes the agenda already computes.
-  *Shipped:* P7.7 keeps the party's cabins with the trip, finds meetups for all of them and
+  _Shipped:_ P7.7 keeps the party's cabins with the trip, finds meetups for all of them and
   saves one to the agenda with a leave-by reminder. P7.8 adds an approximate daily walking line
   to each agenda day. P7.6 waits for AuraTrip's P7.2 hours.
 
@@ -427,15 +432,15 @@ in parallel with Phase 2, because it only needs names and aliases, not routes.
 
 ## 6. Risks & open questions
 
-| Risk | Impact | Mitigation |
-|---|---|---|
-| Synthetic layout differs from the real ship | Wrong directions erode trust | Confidence field, ranges not minutes, "approximate" copy, P1 verification, community corrections |
-| Copyright creep while verifying | Breaks the licensing basis of Tier 0 | Record facts only (deck, zone, side, number ranges). Never trace or embed plan imagery. Review in PR template |
-| Real cabin numbering unknown | Cabin-origin routes misplaced | P1.2 ranges. Until then, offer "Pick on map" for the cabin |
-| Pack growth from routing | Slower first load at port Wi-Fi | P2.3 budget, cabins snap to corridors (no cabin nodes) |
-| Venue renames between sailings | Resolver misses | Aliases, remembered `venueRef`, prompt instead of guess |
-| Elevator-time defaults are guesses | Leave-by too early or late | Show ranges, tune from user feedback, Epic F data later |
-| GitHub Pages CORS/availability | Map never loads | P0.6 check. Packs are cached forever once fetched |
+| Risk                                        | Impact                               | Mitigation                                                                                                    |
+| ------------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| Synthetic layout differs from the real ship | Wrong directions erode trust         | Confidence field, ranges not minutes, "approximate" copy, P1 verification, community corrections              |
+| Copyright creep while verifying             | Breaks the licensing basis of Tier 0 | Record facts only (deck, zone, side, number ranges). Never trace or embed plan imagery. Review in PR template |
+| Real cabin numbering unknown                | Cabin-origin routes misplaced        | P1.2 ranges. Until then, offer "Pick on map" for the cabin                                                    |
+| Pack growth from routing                    | Slower first load at port Wi-Fi      | P2.3 budget, cabins snap to corridors (no cabin nodes)                                                        |
+| Venue renames between sailings              | Resolver misses                      | Aliases, remembered `venueRef`, prompt instead of guess                                                       |
+| Elevator-time defaults are guesses          | Leave-by too early or late           | Show ranges, tune from user feedback, Epic F data later                                                       |
+| GitHub Pages CORS/availability              | Map never loads                      | P0.6 check. Packs are cached forever once fetched                                                             |
 
 **Open questions for the team**
 

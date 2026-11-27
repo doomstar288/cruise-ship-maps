@@ -21,7 +21,12 @@ export default function DeckSwitcher({ decks, currentDeck, onSelectDeck }) {
     <>
       <nav className="deck-rail" aria-label="Decks">
         <div className="deck-rail-label">Deck</div>
-        <div className="deck-rail-list" role="tablist" aria-orientation="vertical" onKeyDown={handleKeyDown}>
+        <div
+          className="deck-rail-list"
+          role="tablist"
+          aria-orientation="vertical"
+          onKeyDown={handleKeyDown}
+        >
           {ordered.map((deck) => {
             const isActive = currentDeck.level === deck.level;
             const hasMagicCarpet = deck.venues.some((v) => v.category === 'Magic Carpet');

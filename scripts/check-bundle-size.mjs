@@ -47,7 +47,9 @@ const measured = measureBundle();
 
 if (process.argv.includes('--record')) {
   writeFileSync(BASELINE_PATH, `${JSON.stringify(measured, null, 2)}\n`);
-  console.log(`[record] app bundle: ${kb(measured.rawBytes)} raw / ${kb(measured.gzipBytes)} gzipped`);
+  console.log(
+    `[record] app bundle: ${kb(measured.rawBytes)} raw / ${kb(measured.gzipBytes)} gzipped`
+  );
   process.exit(0);
 }
 
