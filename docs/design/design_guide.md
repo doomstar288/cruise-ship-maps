@@ -1,4 +1,5 @@
 # Cruise Ship Deck Plan & Map Platform
+
 ## UI/UX Design System & Style Guide
 
 > **Document Version**: 1.0.0  
@@ -39,32 +40,32 @@ The color system is specified in **CSS Custom Properties** using `hsl()` and `hs
 ```css
 :root {
   /* Surface & Base Colors */
-  --bg-abyss: hsl(220, 55%, 5%);           /* #050914 - App Background */
-  --bg-deep-ocean: hsl(218, 50%, 8%);      /* #0a111e - Canvas Base */
-  --bg-surface-dark: hsl(217, 44%, 12%);   /* #111a2d - Card Base */
+  --bg-abyss: hsl(220, 55%, 5%); /* #050914 - App Background */
+  --bg-deep-ocean: hsl(218, 50%, 8%); /* #0a111e - Canvas Base */
+  --bg-surface-dark: hsl(217, 44%, 12%); /* #111a2d - Card Base */
   --bg-surface-glass: hsla(217, 40%, 15%, 0.65); /* Floating Card Glass */
-  --bg-surface-glass-hover: hsla(217, 40%, 20%, 0.80);
-  
+  --bg-surface-glass-hover: hsla(217, 40%, 20%, 0.8);
+
   /* Borders & Dividers */
   --border-subtle: hsla(215, 30%, 30%, 0.35);
   --border-glass: hsla(215, 50%, 60%, 0.18);
-  --border-active-glow: hsla(187, 100%, 50%, 0.60);
-  
+  --border-active-glow: hsla(187, 100%, 50%, 0.6);
+
   /* Text & Typography Colors */
-  --text-primary: hsl(210, 40%, 98%);     /* High contrast white-blue */
-  --text-secondary: hsl(215, 20%, 75%);   /* Neutral gray-blue */
-  --text-muted: hsl(215, 15%, 52%);       /* Low contrast metadata */
-  --text-inverse: hsl(220, 55%, 5%);      /* On light badges */
+  --text-primary: hsl(210, 40%, 98%); /* High contrast white-blue */
+  --text-secondary: hsl(215, 20%, 75%); /* Neutral gray-blue */
+  --text-muted: hsl(215, 15%, 52%); /* Low contrast metadata */
+  --text-inverse: hsl(220, 55%, 5%); /* On light badges */
 
   /* Maritime Brand Accents */
-  --accent-gold: hsl(43, 74%, 52%);        /* #e0aa3e - Maritime Gold */
+  --accent-gold: hsl(43, 74%, 52%); /* #e0aa3e - Maritime Gold */
   --accent-gold-hover: hsl(43, 85%, 60%);
-  --accent-cyan: hsl(187, 100%, 42%);      /* #00d9f5 - Celestial Cyan */
+  --accent-cyan: hsl(187, 100%, 42%); /* #00d9f5 - Celestial Cyan */
   --accent-cyan-glow: hsla(187, 100%, 50%, 0.25);
-  --accent-emerald: hsl(160, 84%, 39%);   /* #10b981 - Port / Access */
-  --accent-crimson: hsl(348, 83%, 47%);   /* #e11d48 - Starboard / Emergency */
-  --accent-amber: hsl(38, 92%, 50%);       /* #f59e0b - Caution / Elevator */
-  --accent-indigo: hsl(245, 58%, 62%);    /* #7c3aed - VIP / Suites */
+  --accent-emerald: hsl(160, 84%, 39%); /* #10b981 - Port / Access */
+  --accent-crimson: hsl(348, 83%, 47%); /* #e11d48 - Starboard / Emergency */
+  --accent-amber: hsl(38, 92%, 50%); /* #f59e0b - Caution / Elevator */
+  --accent-indigo: hsl(245, 58%, 62%); /* #7c3aed - VIP / Suites */
 }
 ```
 
@@ -72,16 +73,16 @@ The color system is specified in **CSS Custom Properties** using `hsl()` and `hs
 
 Every amenity type on the ship deck has a designated color family to ensure rapid visual scanning.
 
-| Amenity Category | Token Name | Primary HSL Code | Hex Code | High-Contrast Tag Text | Minimum Contrast |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Staterooms & Suites** | `--amenity-stateroom` | `hsl(215, 80%, 65%)` | `#5b96f7` | `#ffffff` on `#1a3b70` | 7.2:1 (AAA) |
-| **Fine Dining & Buffets** | `--amenity-dining` | `hsl(25, 95%, 53%)` | `#f97316` | `#ffffff` on `#7c2d12` | 6.8:1 (AAA) |
-| **Lounges & Bars** | `--amenity-bar` | `hsl(280, 75%, 60%)` | `#ad46e8` | `#ffffff` on `#581c87` | 7.5:1 (AAA) |
-| **Entertainment & Theater**| `--amenity-entertainment`| `hsl(330, 85%, 55%)` | `#ec4899` | `#ffffff` on `#831843` | 7.1:1 (AAA) |
-| **Pool Deck & Outdoor** | `--amenity-pool` | `hsl(187, 100%, 42%)` | `#00d9f5` | `#042f2e` on `#00d9f5` | 8.4:1 (AAA) |
-| **Spa, Wellness & Gym** | `--amenity-spa` | `hsl(160, 84%, 39%)` | `#10b981` | `#ffffff` on `#064e3b` | 6.4:1 (AA) |
-| **Guest Services & Shore** | `--amenity-services` | `hsl(43, 74%, 52%)` | `#e0aa3e` | `#1c1917` on `#e0aa3e` | 9.1:1 (AAA) |
-| **Elevators & Medical** | `--amenity-technical` | `hsl(0, 84%, 60%)` | `#ef4444` | `#ffffff` on `#7f1d1d` | 6.9:1 (AAA) |
+| Amenity Category            | Token Name                | Primary HSL Code      | Hex Code  | High-Contrast Tag Text | Minimum Contrast |
+| :-------------------------- | :------------------------ | :-------------------- | :-------- | :--------------------- | :--------------- |
+| **Staterooms & Suites**     | `--amenity-stateroom`     | `hsl(215, 80%, 65%)`  | `#5b96f7` | `#ffffff` on `#1a3b70` | 7.2:1 (AAA)      |
+| **Fine Dining & Buffets**   | `--amenity-dining`        | `hsl(25, 95%, 53%)`   | `#f97316` | `#ffffff` on `#7c2d12` | 6.8:1 (AAA)      |
+| **Lounges & Bars**          | `--amenity-bar`           | `hsl(280, 75%, 60%)`  | `#ad46e8` | `#ffffff` on `#581c87` | 7.5:1 (AAA)      |
+| **Entertainment & Theater** | `--amenity-entertainment` | `hsl(330, 85%, 55%)`  | `#ec4899` | `#ffffff` on `#831843` | 7.1:1 (AAA)      |
+| **Pool Deck & Outdoor**     | `--amenity-pool`          | `hsl(187, 100%, 42%)` | `#00d9f5` | `#042f2e` on `#00d9f5` | 8.4:1 (AAA)      |
+| **Spa, Wellness & Gym**     | `--amenity-spa`           | `hsl(160, 84%, 39%)`  | `#10b981` | `#ffffff` on `#064e3b` | 6.4:1 (AA)       |
+| **Guest Services & Shore**  | `--amenity-services`      | `hsl(43, 74%, 52%)`   | `#e0aa3e` | `#1c1917` on `#e0aa3e` | 9.1:1 (AAA)      |
+| **Elevators & Medical**     | `--amenity-technical`     | `hsl(0, 84%, 60%)`    | `#ef4444` | `#ffffff` on `#7f1d1d` | 6.9:1 (AAA)      |
 
 ---
 
@@ -102,17 +103,17 @@ The platform uses a tri-font pairing strategy to establish hierarchical clarity 
 
 ### 3.2 Typography Scale & Style Matrix
 
-| Style Role | Font Family | Size (px / rem) | Weight | Line Height | Letter Spacing | Usage Context |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Display Title** | `Outfit` | `32px / 2.0rem` | 700 (Bold) | 1.2 | `-0.02em` | Main Deck Header, Ship Overview Hero |
-| **Heading 1 (H1)** | `Outfit` | `24px / 1.5rem` | 600 (SemiBold) | 1.3 | `-0.01em` | Deck Name, Venue Modal Title |
-| **Heading 2 (H2)** | `Outfit` | `18px / 1.125rem` | 600 (SemiBold) | 1.4 | `0.00em` | Drawer Section Headers, Category Group |
-| **Heading 3 (H3)** | `Outfit` | `15px / 0.9375rem`| 500 (Medium) | 1.4 | `0.01em` | Cabin Category Name, Tooltip Header |
-| **Body Large** | `Inter` | `16px / 1.0rem` | 400 (Regular) | 1.5 | `0.00em` | Location Descriptions, Route Guidance |
-| **Body Medium** | `Inter` | `14px / 0.875rem` | 400 (Regular) | 1.5 | `0.00em` | General UI Text, Filter Labels |
-| **Body Small** | `Inter` | `12px / 0.75rem` | 500 (Medium) | 1.4 | `0.01em` | Badge Text, Sub-labels, Metadata |
-| **Micro Tag** | `Inter` | `11px / 0.6875rem`| 700 (Bold) | 1.2 | `0.05em (UPPER)`| Deck Number Pill, State Badges |
-| **Code / Telemetry**| `JetBrains Mono`| `13px / 0.8125rem`| 500 (Medium) | 1.4 | `-0.01em` | Cabin #, Lat/Long, API Code Snippets |
+| Style Role           | Font Family      | Size (px / rem)    | Weight         | Line Height | Letter Spacing   | Usage Context                          |
+| :------------------- | :--------------- | :----------------- | :------------- | :---------- | :--------------- | :------------------------------------- |
+| **Display Title**    | `Outfit`         | `32px / 2.0rem`    | 700 (Bold)     | 1.2         | `-0.02em`        | Main Deck Header, Ship Overview Hero   |
+| **Heading 1 (H1)**   | `Outfit`         | `24px / 1.5rem`    | 600 (SemiBold) | 1.3         | `-0.01em`        | Deck Name, Venue Modal Title           |
+| **Heading 2 (H2)**   | `Outfit`         | `18px / 1.125rem`  | 600 (SemiBold) | 1.4         | `0.00em`         | Drawer Section Headers, Category Group |
+| **Heading 3 (H3)**   | `Outfit`         | `15px / 0.9375rem` | 500 (Medium)   | 1.4         | `0.01em`         | Cabin Category Name, Tooltip Header    |
+| **Body Large**       | `Inter`          | `16px / 1.0rem`    | 400 (Regular)  | 1.5         | `0.00em`         | Location Descriptions, Route Guidance  |
+| **Body Medium**      | `Inter`          | `14px / 0.875rem`  | 400 (Regular)  | 1.5         | `0.00em`         | General UI Text, Filter Labels         |
+| **Body Small**       | `Inter`          | `12px / 0.75rem`   | 500 (Medium)   | 1.4         | `0.01em`         | Badge Text, Sub-labels, Metadata       |
+| **Micro Tag**        | `Inter`          | `11px / 0.6875rem` | 700 (Bold)     | 1.2         | `0.05em (UPPER)` | Deck Number Pill, State Badges         |
+| **Code / Telemetry** | `JetBrains Mono` | `13px / 0.8125rem` | 500 (Medium)   | 1.4         | `-0.01em`        | Cabin #, Lat/Long, API Code Snippets   |
 
 ---
 
@@ -129,7 +130,7 @@ Floating UI panels use frosted backdrop filters with multi-layered specular bord
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
   border: 1px solid var(--border-glass);
-  box-shadow: 
+  box-shadow:
     0 8px 32px 0 rgba(0, 0, 0, 0.37),
     inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
   border-radius: 16px;
@@ -141,7 +142,7 @@ Floating UI panels use frosted backdrop filters with multi-layered specular bord
   backdrop-filter: blur(24px) saturate(200%);
   -webkit-backdrop-filter: blur(24px) saturate(200%);
   border: 1px solid hsla(187, 100%, 50%, 0.25);
-  box-shadow: 
+  box-shadow:
     0 12px 48px 0 rgba(0, 0, 0, 0.55),
     0 0 20px 0 var(--accent-cyan-glow),
     inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
@@ -163,6 +164,7 @@ The Deck Switcher allows rapid vertical navigation through the ship’s decks (e
 ```
 
 #### Component Token & Layout Rules
+
 - **Container**: Floating centered horizontally at top or bottom edge (`z-index: 100`).
 - **Pill Item Width**: Auto-fit content with minimum touch target `44px x 44px`.
 - **Active State**: Background `hsl(43, 74%, 52%)`, Text `#0a111e` (Bold), box-shadow `0 0 16px hsla(43, 74%, 52%, 0.4)`.
@@ -207,6 +209,7 @@ Map control toolbars provide quick action widgets for map manipulation, compass 
 ```
 
 #### Widget Specifications
+
 - **Button Size**: `44px x 44px` icon buttons with `12px` border-radius.
 - **Hover Micro-interaction**: Scale `1.05`, background transitions from `hsla(217,40%,20%,0.8)` to `hsla(187,100%,42%,0.2)`.
 - **Active / Pressed**: Scale `0.95`.
@@ -279,16 +282,17 @@ Keyboard accessibility is paramount for interactive map navigation.
 
 1. **Map Region Canvas**: `<main role="region" aria-label="Interactive Cruise Ship Deck Map" tabindex="0">`
 2. **Live Announcements**: Uses an off-screen `aria-live="polite"` region to announce deck transitions and location updates.
-   - *Example*: `"Switched to Deck 6 Lido. Showing 42 amenities including Lido Pool and Horizon Buffet."`
+   - _Example_: `"Switched to Deck 6 Lido. Showing 42 amenities including Lido Pool and Horizon Buffet."`
 3. **SVG Marker Semantics**: Every clickable deck feature contains proper ARIA attributes:
    ```html
-   <path 
-     class="venue-polygon" 
-     id="venue-lido-pool" 
-     role="button" 
-     tabindex="0" 
-     aria-label="Lido Main Pool, Deck 6 Midship, Public Area" 
-     aria-expanded="false" />
+   <path
+     class="venue-polygon"
+     id="venue-lido-pool"
+     role="button"
+     tabindex="0"
+     aria-label="Lido Main Pool, Deck 6 Midship, Public Area"
+     aria-expanded="false"
+   />
    ```
 
 ### 5.4 Motion Accessibility
@@ -297,13 +301,15 @@ Respect user preference for reduced motion:
 
 ```css
 @media (prefers-reduced-motion: reduce) {
-  *, ::before, ::after {
+  *,
+  ::before,
+  ::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  
+
   .map-canvas {
     transition: none !important;
   }

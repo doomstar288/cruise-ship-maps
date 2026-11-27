@@ -181,18 +181,21 @@ export default function App() {
     setIsSearchPaletteOpen(false);
   }, []);
 
-  const handleSearchRouteToVenue = useCallback((venue) => {
-    const targetDeck = venue.deck?.level ?? currentDeck.level;
-    setCurrentDeckLevel(targetDeck);
-    setSelectedVenue(venue);
-    setRouteSpec({
-      id: `to-${venue.id}`,
-      from: { deck: currentDeck.level },
-      to: { deck: targetDeck, venueId: venue.id },
-    });
-    setIsSearchPaletteOpen(false);
-    setIsDockCollapsed(false);
-  }, [currentDeck.level]);
+  const handleSearchRouteToVenue = useCallback(
+    (venue) => {
+      const targetDeck = venue.deck?.level ?? currentDeck.level;
+      setCurrentDeckLevel(targetDeck);
+      setSelectedVenue(venue);
+      setRouteSpec({
+        id: `to-${venue.id}`,
+        from: { deck: currentDeck.level },
+        to: { deck: targetDeck, venueId: venue.id },
+      });
+      setIsSearchPaletteOpen(false);
+      setIsDockCollapsed(false);
+    },
+    [currentDeck.level]
+  );
 
   const handleSearchGoToDeck = useCallback((deckLevel) => {
     setCurrentDeckLevel(deckLevel);
@@ -230,7 +233,15 @@ export default function App() {
 
           <div className="dock-header">
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: 800, letterSpacing: '0.08em', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+              <span
+                style={{
+                  fontSize: '0.75rem',
+                  fontWeight: 800,
+                  letterSpacing: '0.08em',
+                  color: 'var(--text-muted)',
+                  textTransform: 'uppercase',
+                }}
+              >
                 Search the ship
               </span>
               <span className="ship-badge" style={{ fontSize: '0.68rem', padding: '2px 8px' }}>
@@ -270,7 +281,9 @@ export default function App() {
                 </div>
                 <div className="search-results-list">
                   {filteredSearchResults.length === 0 ? (
-                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', padding: '12px 0' }}>
+                    <div
+                      style={{ fontSize: '0.85rem', color: 'var(--text-muted)', padding: '12px 0' }}
+                    >
                       No matching venues or cabins found.
                     </div>
                   ) : (
@@ -283,7 +296,9 @@ export default function App() {
                         <span className="filter-dot" style={{ background: item.color }} />
                         <div style={{ flex: 1, textAlign: 'left' }}>
                           <div className="res-title">{item.name}</div>
-                          <div className="res-sub">{item.deck.shortName} • {item.category}</div>
+                          <div className="res-sub">
+                            {item.deck.shortName} • {item.category}
+                          </div>
                         </div>
                         <ChevronRight size={16} color="var(--text-muted)" />
                       </button>
@@ -331,7 +346,15 @@ export default function App() {
 
                   {/* Preset Sample Routes */}
                   <div style={{ marginTop: '14px' }}>
-                    <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '6px' }}>
+                    <div
+                      style={{
+                        fontSize: '0.72rem',
+                        fontWeight: 800,
+                        color: 'var(--text-muted)',
+                        textTransform: 'uppercase',
+                        marginBottom: '6px',
+                      }}
+                    >
                       Popular Routes
                     </div>
                     <div className="search-results-list">
@@ -345,11 +368,15 @@ export default function App() {
                           }}
                         >
                           <div style={{ textAlign: 'left' }}>
-                            <div className="res-title" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <div
+                              className="res-title"
+                              style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+                            >
                               <Navigation size={14} color="var(--accent-cyan)" /> {route.name}
                             </div>
                             <div className="res-sub">
-                              Deck {route.origin.deck} → Deck {route.destination.deck} • ~{route.estimatedMinutes} min
+                              Deck {route.origin.deck} → Deck {route.destination.deck} • ~
+                              {route.estimatedMinutes} min
                             </div>
                           </div>
                         </button>
@@ -360,31 +387,87 @@ export default function App() {
 
                 {/* Multi-Source Accuracy Card */}
                 <button className="accuracy-card" onClick={() => setShowAccuracyInspector(true)}>
-                  <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--accent-emerald)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div
+                    style={{
+                      fontSize: '0.75rem',
+                      fontWeight: 800,
+                      color: 'var(--accent-emerald)',
+                      textTransform: 'uppercase',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
                     <span>Multi-Source Accuracy Engine</span>
                     <CheckCircle2 size={14} />
                   </div>
-                  <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '4px' }}>
+                  <div
+                    style={{
+                      fontSize: '0.88rem',
+                      fontWeight: 700,
+                      color: 'var(--text-primary)',
+                      marginTop: '4px',
+                    }}
+                  >
                     98.4% Verified Quad-Source Confidence
                   </div>
-                  <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', marginTop: '8px', fontStyle: 'italic' }}>
+                  <div
+                    style={{
+                      fontSize: '0.68rem',
+                      color: 'var(--text-muted)',
+                      marginTop: '8px',
+                      fontStyle: 'italic',
+                    }}
+                  >
                     Simulated demo data — scores are illustrative, not from live feeds.
                   </div>
                 </button>
 
                 {/* Vessel Specifications Summary Card */}
                 <div className="specs-card">
-                  <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--accent-gold)', textTransform: 'uppercase' }}>
+                  <div
+                    style={{
+                      fontSize: '0.75rem',
+                      fontWeight: 800,
+                      color: 'var(--accent-gold)',
+                      textTransform: 'uppercase',
+                    }}
+                  >
                     Ship at a glance
                   </div>
-                  <div style={{ fontSize: '0.85rem', color: 'var(--text-primary)', margin: '4px 0', fontWeight: 700 }}>
+                  <div
+                    style={{
+                      fontSize: '0.85rem',
+                      color: 'var(--text-primary)',
+                      margin: '4px 0',
+                      fontWeight: 700,
+                    }}
+                  >
                     {currentShip.name} ({currentShip.shipClass})
                   </div>
-                  <div style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px', marginTop: '6px' }}>
-                    <span>Length: <strong>{currentShip.lengthMeters} m</strong></span>
-                    <span>Beam: <strong>{currentShip.beamMeters} m</strong></span>
-                    <span>Guests: <strong>{(currentShip.maxPassengers || 3200).toLocaleString()}</strong></span>
-                    <span>Guest decks: <strong>{currentShip.guestDecks}</strong></span>
+                  <div
+                    style={{
+                      fontSize: '0.76rem',
+                      color: 'var(--text-secondary)',
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr',
+                      gap: '4px',
+                      marginTop: '6px',
+                    }}
+                  >
+                    <span>
+                      Length: <strong>{currentShip.lengthMeters} m</strong>
+                    </span>
+                    <span>
+                      Beam: <strong>{currentShip.beamMeters} m</strong>
+                    </span>
+                    <span>
+                      Guests:{' '}
+                      <strong>{(currentShip.maxPassengers || 3200).toLocaleString()}</strong>
+                    </span>
+                    <span>
+                      Guest decks: <strong>{currentShip.guestDecks}</strong>
+                    </span>
                   </div>
                 </div>
               </>

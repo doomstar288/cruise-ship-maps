@@ -74,7 +74,12 @@ export const SIGNATURE_FLEET_VENUES = [
     ships: ['Celebrity Edge', 'Celebrity Apex', 'Celebrity Beyond', 'Celebrity Ascent'],
     description:
       'A transformative multi-deck experiential venue combining three stories of panoramic glass, experiential gastronomy, and live performance art.',
-    availableOnShipIds: ['celebrity-beyond', 'celebrity-ascent', 'celebrity-apex', 'celebrity-edge'],
+    availableOnShipIds: [
+      'celebrity-beyond',
+      'celebrity-ascent',
+      'celebrity-apex',
+      'celebrity-edge',
+    ],
     noteOnCurrent: (shipId) =>
       shipId === 'celebrity-xcel' ? 'Replaced by The Bazaar on Celebrity Xcel' : null,
   },
@@ -212,13 +217,15 @@ export function findFleetAmenity(query, currentShipId) {
       const isOnCurrentShip = amenity.availableOnShipIds.includes(currentShipId);
       // Select a target ship to switch to if not on current ship
       const candidateShips = amenity.availableOnShipIds.filter((id) => id !== currentShipId);
-      const switchTargetShipId = !isOnCurrentShip && candidateShips.length > 0 ? candidateShips[0] : null;
+      const switchTargetShipId =
+        !isOnCurrentShip && candidateShips.length > 0 ? candidateShips[0] : null;
 
       return {
         ...amenity,
         isOnCurrentShip,
         switchTargetShipId,
-        customNote: typeof amenity.noteOnCurrent === 'function' ? amenity.noteOnCurrent(currentShipId) : null,
+        customNote:
+          typeof amenity.noteOnCurrent === 'function' ? amenity.noteOnCurrent(currentShipId) : null,
       };
     }
   }
@@ -242,13 +249,19 @@ function parseCabinInput(input) {
     const suffix = idMatch[3] ? idMatch[3].toUpperCase() : '';
     const cabinNumber = `${rawDigits}${suffix}`;
     const numPart = parseInt(rawDigits, 10);
-    const seq = rawDigits.length >= 4 ? parseInt(rawDigits.slice(rawDigits.length >= 5 ? 2 : 1), 10) : numPart;
+    const seq =
+      rawDigits.length >= 4
+        ? parseInt(rawDigits.slice(rawDigits.length >= 5 ? 2 : 1), 10)
+        : numPart;
     return { deckLevel, cabinNumber, numPart, seq, rawDigits };
   }
 
   // Remove common words like "deck", "cabin", "stateroom", "rm", "#" and category hints
   let cleaned = str
-    .replace(/\b(deck|cabin|stateroom|room|rm|inside|suite|aquaclass|aqua|concierge|veranda|balcony|oceanview|ocean\s*view)\b/gi, '')
+    .replace(
+      /\b(deck|cabin|stateroom|room|rm|inside|suite|aquaclass|aqua|concierge|veranda|balcony|oceanview|ocean\s*view)\b/gi,
+      ''
+    )
     .replace(/[#\s]/g, '')
     .trim();
 
@@ -260,7 +273,10 @@ function parseCabinInput(input) {
     const suffix = hyphenMatch[3] ? hyphenMatch[3].toUpperCase() : '';
     const cabinNumber = `${rawDigits}${suffix}`;
     const numPart = parseInt(rawDigits, 10);
-    const seq = rawDigits.length >= 4 ? parseInt(rawDigits.slice(rawDigits.length >= 5 ? 2 : 1), 10) : numPart;
+    const seq =
+      rawDigits.length >= 4
+        ? parseInt(rawDigits.slice(rawDigits.length >= 5 ? 2 : 1), 10)
+        : numPart;
     return { deckLevel, cabinNumber, numPart, seq, rawDigits };
   }
 
@@ -316,7 +332,11 @@ function inferCategory(deckLevel, rawInput, matchingVenue = null) {
     const name = (matchingVenue.name || '').toLowerCase();
     const code = (matchingVenue.cabinClass || '').toUpperCase();
 
-    if (cat === 'Suites' || name.includes('suite') || ['S1', 'AS', 'MS', 'SS', 'CS', 'RS', 'PS', 'IC', 'EV'].includes(code)) {
+    if (
+      cat === 'Suites' ||
+      name.includes('suite') ||
+      ['S1', 'AS', 'MS', 'SS', 'CS', 'RS', 'PS', 'IC', 'EV'].includes(code)
+    ) {
       return CABIN_CATEGORIES.SUITE;
     }
     if (name.includes('aquaclass') || name.includes('aqua') || ['A1', 'A2', 'AS'].includes(code)) {
@@ -328,10 +348,18 @@ function inferCategory(deckLevel, rawInput, matchingVenue = null) {
     if (name.includes('inside') || code === 'I2') {
       return CABIN_CATEGORIES.INSIDE;
     }
-    if (name.includes('oceanview') || name.includes('ocean view') || ['O2', 'PO', 'DO'].includes(code)) {
+    if (
+      name.includes('oceanview') ||
+      name.includes('ocean view') ||
+      ['O2', 'PO', 'DO'].includes(code)
+    ) {
       return CABIN_CATEGORIES.OCEAN_VIEW;
     }
-    if (name.includes('veranda') || name.includes('balcony') || ['E1', 'E3', 'SV', 'ES'].includes(code)) {
+    if (
+      name.includes('veranda') ||
+      name.includes('balcony') ||
+      ['E1', 'E3', 'SV', 'ES'].includes(code)
+    ) {
       return CABIN_CATEGORIES.VERANDA;
     }
   }
@@ -342,8 +370,10 @@ function inferCategory(deckLevel, rawInput, matchingVenue = null) {
   if (inputLower.includes('suite')) return CABIN_CATEGORIES.SUITE;
   if (inputLower.includes('aqua')) return CABIN_CATEGORIES.AQUA_CLASS;
   if (inputLower.includes('concierge')) return CABIN_CATEGORIES.CONCIERGE;
-  if (inputLower.includes('ocean') || inputLower.includes('view')) return CABIN_CATEGORIES.OCEAN_VIEW;
-  if (inputLower.includes('veranda') || inputLower.includes('balcony')) return CABIN_CATEGORIES.VERANDA;
+  if (inputLower.includes('ocean') || inputLower.includes('view'))
+    return CABIN_CATEGORIES.OCEAN_VIEW;
+  if (inputLower.includes('veranda') || inputLower.includes('balcony'))
+    return CABIN_CATEGORIES.VERANDA;
 
   // Infer based on deck level conventions across Celebrity ships (Edge, Solstice, Millennium)
   if (deckLevel >= 14) return CABIN_CATEGORIES.SUITE;
@@ -412,9 +442,7 @@ export function decodeCabinNumber(input, shipMetadata) {
     if (deck?.venues) {
       matchingVenue = deck.venues.find(
         (v) =>
-          v.id === `c${deckLevel}-${cabinNumber}` ||
-          v.label === cabinNumber ||
-          v.id === cabinNumber
+          v.id === `c${deckLevel}-${cabinNumber}` || v.label === cabinNumber || v.id === cabinNumber
       );
       if (matchingVenue?.center) {
         const x = matchingVenue.center[0];
@@ -482,7 +510,8 @@ export function findCabinInDecks(decks, cabinQuery) {
       deck: venueDeck,
       decoded: {
         ...decoded,
-        suggestedCategory: exactVenue.category === 'Suites' ? CABIN_CATEGORIES.SUITE : decoded.suggestedCategory,
+        suggestedCategory:
+          exactVenue.category === 'Suites' ? CABIN_CATEGORIES.SUITE : decoded.suggestedCategory,
       },
       isExactMatch: true,
     };

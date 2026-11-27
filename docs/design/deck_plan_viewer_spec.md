@@ -1,4 +1,5 @@
 # Cruise Ship Deck Plan & Map Platform
+
 ## Interactive Deck Plan Viewer - Feature & UI Layout Specification
 
 > **Document Version**: 1.0.0  
@@ -50,11 +51,11 @@ To maintain 60 FPS rendering performance while navigating thousands of spatial g
 
 ### 2.1 LOD Threshold Matrix
 
-| LOD Level | Zoom Scale Range ($Z_{scale}$) | Rendered Features & Layer Visibility | Text & Labeling Rules | Performance Budget |
-| :--- | :--- | :--- | :--- | :--- |
-| **LOD 0 (Ship Macro)** | `0.5x` to `1.49x` | • Outer Hull Boundary<br>• Superstructure Profile<br>• Macro Zones (Forward, Midship, Aft)<br>• Deck Number Callouts | • Deck Level Badges only (e.g. `DECK 06`) | < 500 Polygons<br>60 FPS |
-| **LOD 1 (Deck Zone)** | `1.50x` to `3.99x` | • Venue Boundaries (Dining, Theater, Pool)<br>• Elevators & Stairwell Cores<br>• Main Corridor Trunks<br>• Category Color Fill Areas | • Major Venue Names<br>• Amenity Category Icons (Dining, Bar, Spa)<br>• Elevator Core Labels | < 2,500 Polygons<br>60 FPS |
-| **LOD 2 (Detailed Cabin)** | `4.00x` to `10.0x+` | • Individual Stateroom Boundaries<br>• Cabin Doorway Access Points<br>• Bed & Furniture Outlines<br>• Emergency Egress Routes & Fire Doors<br>• Accessibility / Wheelchair Ramp Paths | • Cabin Numbers (e.g. `7204`) <br>• Sub-category Tags (`BALCONY`, `SUITE`)<br>• Detailed Venue Room Names | < 15,000 Polygons<br>60 FPS |
+| LOD Level                  | Zoom Scale Range ($Z_{scale}$) | Rendered Features & Layer Visibility                                                                                                                                                  | Text & Labeling Rules                                                                                     | Performance Budget          |
+| :------------------------- | :----------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------- | :-------------------------- |
+| **LOD 0 (Ship Macro)**     | `0.5x` to `1.49x`              | • Outer Hull Boundary<br>• Superstructure Profile<br>• Macro Zones (Forward, Midship, Aft)<br>• Deck Number Callouts                                                                  | • Deck Level Badges only (e.g. `DECK 06`)                                                                 | < 500 Polygons<br>60 FPS    |
+| **LOD 1 (Deck Zone)**      | `1.50x` to `3.99x`             | • Venue Boundaries (Dining, Theater, Pool)<br>• Elevators & Stairwell Cores<br>• Main Corridor Trunks<br>• Category Color Fill Areas                                                  | • Major Venue Names<br>• Amenity Category Icons (Dining, Bar, Spa)<br>• Elevator Core Labels              | < 2,500 Polygons<br>60 FPS  |
+| **LOD 2 (Detailed Cabin)** | `4.00x` to `10.0x+`            | • Individual Stateroom Boundaries<br>• Cabin Doorway Access Points<br>• Bed & Furniture Outlines<br>• Emergency Egress Routes & Fire Doors<br>• Accessibility / Wheelchair Ramp Paths | • Cabin Numbers (e.g. `7204`) <br>• Sub-category Tags (`BALCONY`, `SUITE`)<br>• Detailed Venue Room Names | < 15,000 Polygons<br>60 FPS |
 
 ### 2.2 Dynamic Label Collision & Asset Swapping
 
@@ -95,10 +96,13 @@ When hovering over an interactive polygon (venue, cabin, or amenity):
 ```css
 /* Interactive Polygon Hover Spec */
 .deck-feature-polygon {
-  fill-opacity: 0.40;
+  fill-opacity: 0.4;
   stroke-width: 1px;
   stroke: var(--border-glass);
-  transition: fill-opacity 150ms ease, stroke 150ms ease, filter 150ms ease;
+  transition:
+    fill-opacity 150ms ease,
+    stroke 150ms ease,
+    filter 150ms ease;
 }
 
 .deck-feature-polygon:hover,
@@ -112,6 +116,7 @@ When hovering over an interactive polygon (venue, cabin, or amenity):
 ```
 
 #### Mini Hover Tooltip Widget
+
 - **Trigger**: Mouse hover ($> 200\text{ms}$ hover dwell) or touch tap preview.
 - **Positioning**: Fixed `$8\text{px}$` offset to the top-right of the cursor; auto-flips if near viewport boundaries.
 - **Content**:
@@ -150,8 +155,12 @@ The navigation pathing engine computes the shortest accessible route between any
 }
 
 @keyframes marching-route-ants {
-  from { stroke-dashoffset: 20; }
-  to   { stroke-dashoffset: 0; }
+  from {
+    stroke-dashoffset: 20;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
 .route-step-indicator {
@@ -164,6 +173,7 @@ The navigation pathing engine computes the shortest accessible route between any
 ```
 
 #### Accessible Routing Toggle
+
 - **Standard Route**: Uses nearest stairs or elevators for fastest traversal.
 - **Accessible Route (ADA)**: Filters out all stairwell nodes in the pathfinding graph, routing exclusively through accessible elevator banks and ramp corridors with minimum $36\text{-inch}$ clearance.
 
@@ -176,9 +186,15 @@ When a user selects one or more amenity categories (e.g. `Dining`, `Bars`, `Pool
 
 ```css
 @keyframes pulse-halo {
-  0%   { stroke-shadow: 0 0 0px var(--accent-cyan); }
-  50%  { stroke-shadow: 0 0 14px var(--accent-cyan); }
-  100% { stroke-shadow: 0 0 0px var(--accent-cyan); }
+  0% {
+    stroke-shadow: 0 0 0px var(--accent-cyan);
+  }
+  50% {
+    stroke-shadow: 0 0 14px var(--accent-cyan);
+  }
+  100% {
+    stroke-shadow: 0 0 0px var(--accent-cyan);
+  }
 }
 ```
 
@@ -283,12 +299,12 @@ stateDiagram-v2
     State PeekState {
         description: 72px height - Title & Quick Navigate Button
     }
-    
+
     PeekState --> HalfState: Drag Up / Tap Card
     State HalfState {
         description: 40% height - Mini gallery & Key Amenities
     }
-    
+
     HalfState --> FullState: Drag Up / Tap Details
     State FullState {
         description: 85% height - Complete Description & Egress Path

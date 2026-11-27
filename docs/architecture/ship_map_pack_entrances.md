@@ -7,14 +7,20 @@ that don't know it ignore it.
 {
   "id": "v3-theatre",
   "featureType": "venue",
-  "bounds": [[24, 8.81], [78, 30.19]],
+  "bounds": [
+    [24, 8.81],
+    [78, 30.19],
+  ],
   "center": [51, 19.5],
-  "entrances": [[78, 14.37], [78, 24.75]]
+  "entrances": [
+    [78, 14.37],
+    [78, 24.75],
+  ],
 }
 ```
 
-| Field | Notes |
-| --- | --- |
+| Field       | Notes                                                                                                                                                                                                      |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `entrances` | Optional `[[x, y], …]` in pack coordinates (metres, same space as `bounds` and `center`, rounded to 2 dp). Doors of a large venue. Only on `venue` features. Omitted, never `[]`, when a feature has none. |
 
 **How to use it.** Route to the **nearest entrance**, not to `center`. Big rooms have doors,

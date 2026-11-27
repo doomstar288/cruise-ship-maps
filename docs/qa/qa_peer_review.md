@@ -1,6 +1,6 @@
 # Cruise Ship Deck Map Platform - Senior QA & Accessibility Peer Review Report
 
-**Target Platform:** Cruise Ship Deck Map Platform (*Celebrity Xcel* Flagship)  
+**Target Platform:** Cruise Ship Deck Map Platform (_Celebrity Xcel_ Flagship)  
 **Auditor:** Senior QA & Accessibility Engineering Lead  
 **Audit Date:** August 8, 2026  
 **Compliance Standards Evaluated:** WCAG 2.1 Level AA & Level AAA, WAI-ARIA 1.2 Specifications, Section 508, Mobile Touch Target Standards (WCAG 2.5.5)
@@ -9,11 +9,12 @@
 
 ## 1. Executive Summary & Audit Scope
 
-A rigorous, critical Quality Assurance (QA) and Accessibility (a11y) audit was performed on the Cruise Ship Deck Map Platform codebase. The platform provides interactive 2D geospatial deck map visualization across 17 decks for the *Celebrity Xcel* Edge-class cruise ship, featuring real-time AI vector upscaling (Real-ESRGAN 4x), wayfinding route guidance, cabin inspection modals, and live GeoJSON / OpenAPI 3.1 schema inspection.
+A rigorous, critical Quality Assurance (QA) and Accessibility (a11y) audit was performed on the Cruise Ship Deck Map Platform codebase. The platform provides interactive 2D geospatial deck map visualization across 17 decks for the _Celebrity Xcel_ Edge-class cruise ship, featuring real-time AI vector upscaling (Real-ESRGAN 4x), wayfinding route guidance, cabin inspection modals, and live GeoJSON / OpenAPI 3.1 schema inspection.
 
 While the application features modern aesthetic styling ("Luxury Nautical Dark Mode / Oceanic Obsidian" theme), the implementation exhibits **severe accessibility deficiencies**, **WCAG 2.1 AA color contrast failures**, **sub-12px font legibility violations**, **complete absence of visible keyboard focus rings**, **unaccessible custom interactive elements**, and **inadequate mobile touch target sizes**.
 
 ### Source Files Audited
+
 - [`src/styles/design-system.css`](../../src/styles/design-system.css)
 - [`src/App.jsx`](../../src/App.jsx)
 - [`src/components/HeaderNavbar.jsx`](../../src/components/HeaderNavbar.jsx)
@@ -27,16 +28,16 @@ While the application features modern aesthetic styling ("Luxury Nautical Dark M
 
 ## 2. Codebase Audit Checklist & Overview Matrix
 
-| Category | Status | Severity | WCAG Success Criterion | Summary of Findings |
-| :--- | :---: | :---: | :--- | :--- |
-| **Typography & Font Sizes** | ❌ FAIL | HIGH | WCAG 1.4.4 Resize Text (Level AA) | 8 distinct instances of sub-12px font sizes (as low as 10.4px) rendering essential UI labels illegible on low-DPI displays. |
-| **Color Contrast Ratio** | ❌ FAIL | CRITICAL | WCAG 1.4.3 Contrast (Minimum) (Level AA) | `--text-muted` (`#64748b`) against `#0a111e` / `#070d18` yields **3.96:1** contrast (fails 4.5:1 requirement). Canvas vector frame lines yield **1.8:1**. |
-| **Keyboard Focus & Navigation** | ❌ FAIL | CRITICAL | WCAG 2.4.7 Focus Visible (Level AA) & 2.1.1 Keyboard | Zero `:focus` or `:focus-visible` CSS outline rules exist. Search result cards are non-keyboard-accessible `<div>` elements. |
-| **WAI-ARIA & Semantics** | ❌ FAIL | HIGH | WCAG 4.1.2 Name, Role, Value (Level AA) | Modals lack `role="dialog"`, `aria-modal`, focus trapping, and `Escape` key handlers. Toggle controls lack `aria-expanded` and `aria-pressed`. |
-| **Mobile Touch Targets** | ❌ FAIL | HIGH | WCAG 2.5.5 Target Size (Level AAA / Mobile Standard) | Dock toggle (36px), tool buttons (40px), close buttons (32px), quick-jump pills (24px height) fail 44x44px minimum touch targets. |
-| **Code Block Legibility** | ⚠️ WARN | MEDIUM | WCAG 1.4.3 & 2.1.1 | Code viewer uses single-color cyan text without syntax tokenization; code block container lacks `tabIndex={0}` for keyboard scroll. |
-| **Geospatial Map A11y** | ❌ FAIL | HIGH | WCAG 1.3.1 Info & Relationships | Leaflet tooltips trigger exclusively on mouse hover, hiding venue specifications from keyboard and screen reader users. |
-| **Responsive Layout & Reflow** | ⚠️ WARN | MEDIUM | WCAG 1.4.10 Reflow (Level AA) | Rigid `height: 100vh` on `body` causes layout jumps on mobile iOS Safari; floating deck switcher overlaps sidebar on screens <640px. |
+| Category                        | Status  | Severity | WCAG Success Criterion                               | Summary of Findings                                                                                                                                       |
+| :------------------------------ | :-----: | :------: | :--------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Typography & Font Sizes**     | ❌ FAIL |   HIGH   | WCAG 1.4.4 Resize Text (Level AA)                    | 8 distinct instances of sub-12px font sizes (as low as 10.4px) rendering essential UI labels illegible on low-DPI displays.                               |
+| **Color Contrast Ratio**        | ❌ FAIL | CRITICAL | WCAG 1.4.3 Contrast (Minimum) (Level AA)             | `--text-muted` (`#64748b`) against `#0a111e` / `#070d18` yields **3.96:1** contrast (fails 4.5:1 requirement). Canvas vector frame lines yield **1.8:1**. |
+| **Keyboard Focus & Navigation** | ❌ FAIL | CRITICAL | WCAG 2.4.7 Focus Visible (Level AA) & 2.1.1 Keyboard | Zero `:focus` or `:focus-visible` CSS outline rules exist. Search result cards are non-keyboard-accessible `<div>` elements.                              |
+| **WAI-ARIA & Semantics**        | ❌ FAIL |   HIGH   | WCAG 4.1.2 Name, Role, Value (Level AA)              | Modals lack `role="dialog"`, `aria-modal`, focus trapping, and `Escape` key handlers. Toggle controls lack `aria-expanded` and `aria-pressed`.            |
+| **Mobile Touch Targets**        | ❌ FAIL |   HIGH   | WCAG 2.5.5 Target Size (Level AAA / Mobile Standard) | Dock toggle (36px), tool buttons (40px), close buttons (32px), quick-jump pills (24px height) fail 44x44px minimum touch targets.                         |
+| **Code Block Legibility**       | ⚠️ WARN |  MEDIUM  | WCAG 1.4.3 & 2.1.1                                   | Code viewer uses single-color cyan text without syntax tokenization; code block container lacks `tabIndex={0}` for keyboard scroll.                       |
+| **Geospatial Map A11y**         | ❌ FAIL |   HIGH   | WCAG 1.3.1 Info & Relationships                      | Leaflet tooltips trigger exclusively on mouse hover, hiding venue specifications from keyboard and screen reader users.                                   |
+| **Responsive Layout & Reflow**  | ⚠️ WARN |  MEDIUM  | WCAG 1.4.10 Reflow (Level AA)                        | Rigid `height: 100vh` on `body` causes layout jumps on mobile iOS Safari; floating deck switcher overlaps sidebar on screens <640px.                      |
 
 ---
 
@@ -47,6 +48,7 @@ While the application features modern aesthetic styling ("Luxury Nautical Dark M
 Text scaled below `12px` (`0.75rem`) severely degrades readability for visually impaired users, elderly users, and users on non-Retina displays. The design system relies heavily on micro-typography for UI labels.
 
 #### Identified Violations:
+
 1. **`src/components/DeckSwitcher.jsx` (Line 40)**:
    - Code: `fontSize: '0.65rem'` (~10.4px) for the "Quick Jump" section title.
    - Impact: Critical legibility barrier; font size is below browser default rendering threshold for clean anti-aliasing.
@@ -72,6 +74,7 @@ Text scaled below `12px` (`0.75rem`) severely degrades readability for visually 
 WCAG 2.1 AA Criterion 1.4.3 mandates a minimum contrast ratio of **4.5:1** for normal text (<18pt / 24px or <14pt / 19px bold) and **3.0:1** for large text. Criterion 1.4.11 mandates **3.0:1** for non-text UI components and boundaries.
 
 #### Color Luminance Audit Matrix:
+
 - Base Dark Background (`--bg-dark-0`, `#070d18`): Relative Luminance = `0.0035`
 - Main Canvas Background (`--bg-dark-1`, `#0a111e`): Relative Luminance = `0.0055`
 - Card Surface Background (`--bg-dark-2`, `#111a2e`): Relative Luminance = `0.0102`
@@ -93,6 +96,7 @@ WCAG 2.1 AA Criterion 1.4.3 mandates a minimum contrast ratio of **4.5:1** for n
 ```
 
 #### Detailed Contrast Violations:
+
 1. **`--text-muted` (`#64748b`) Failure**:
    - Used extensively across `.filter-section-title` (CSS L320), `.deck-switcher-label` (CSS L467), `.deck-tag` (CSS L525), search icons (CSS L308), modal close icons (CSS L700), and specification headers.
    - At **3.96:1**, it fails the 4.5:1 WCAG AA threshold for normal text.
@@ -109,6 +113,7 @@ WCAG 2.1 AA Criterion 1.4.3 mandates a minimum contrast ratio of **4.5:1** for n
 Keyboard navigation is essential for motor-impaired users and power users who rely on the `Tab`, `Shift+Tab`, `Enter`, `Space`, and Arrow keys.
 
 #### Identified Violations:
+
 1. **Complete Absence of Focus Ring Styles in `design-system.css`**:
    - The entire stylesheet contains **zero** declarations for `:focus` or `:focus-visible`.
    - Native outline styles are lost under dark glassmorphism styling. When a user presses `Tab` to navigate through top navbar actions (`.btn-glass`, `.btn-primary-gold`), deck switcher buttons (`.deck-pill`), filter chips (`.filter-chip`), and map toolbar controls (`.tool-btn`), **no visual focus ring is drawn**.
@@ -125,6 +130,7 @@ Keyboard navigation is essential for motor-impaired users and power users who re
 Screen reader users (VoiceOver, NVDA, JAWS) rely on structural ARIA landmarks, roles, and live states to navigate single-page web applications.
 
 #### Identified Violations:
+
 1. **Modal Dialog Accessibility Deficiencies (`CabinInspectorModal.jsx` & `ApiInspectorModal.jsx`)**:
    - Both modal windows are structured as standard `<div>` elements:
      - Missing `role="dialog"` or `role="alertdialog"`.
@@ -148,6 +154,7 @@ Screen reader users (VoiceOver, NVDA, JAWS) rely on structural ARIA landmarks, r
 WCAG 2.5.5 Target Size (Level AAA) and mobile interface guidelines (Apple HIG, Google Material Design) mandate a minimum touch target size of **44x44 CSS pixels** (or 48x48px for Material) to prevent accidental taps and support users with tremors.
 
 #### Touch Target Size Deficiencies:
+
 ```
 +---------------------------------------------------------------------------------+
 | TOUCH TARGET SIZE EVALUATION                                                   |
@@ -171,6 +178,7 @@ WCAG 2.5.5 Target Size (Level AAA) and mobile interface guidelines (Apple HIG, G
 The `ApiInspectorModal` component allows developers and travel partners to inspect GeoJSON payloads, OpenAPI 3.1 schemas, and TypeScript SDK examples.
 
 #### Identified Issues:
+
 1. **Monochrome Syntax Rendering**:
    - `design-system.css` (Line 720) styles `.code-block` with a uniform `color: var(--accent-cyan)` (`#00d9f5`) on background `#070d18`.
    - Lacks tokenized syntax highlighting (JSON keys, strings, booleans, and numbers are indistinguishable). High neon glow on obsidian background causes visual vibration for astigmatic users.
@@ -185,6 +193,7 @@ The `ApiInspectorModal` component allows developers and travel partners to inspe
 Geospatial maps present unique accessibility challenges when vector layers are rendered on HTML canvas or SVG overlays.
 
 #### Identified Issues:
+
 1. **Hover-Only Tooltips**:
    - `DeckMapViewer.jsx` (Lines 143-153) binds Leaflet tooltips to SVG venue rectangles using `bindTooltip()`.
    - Tooltips are triggered strictly on `mousemove` / `mouseover`. Screen reader users and keyboard-only users navigating the viewport cannot access tooltip descriptions.
@@ -196,6 +205,7 @@ Geospatial maps present unique accessibility challenges when vector layers are r
 ### 3.8 Category 8: Responsive Layout, Viewport Scaling (`100dvh`), and Mobile Overlapping
 
 #### Identified Issues:
+
 1. **Hardcoded `100vh` and `overflow: hidden` on `body`**:
    - `design-system.css` (Line 90) sets `height: 100vh; overflow: hidden;`.
    - On iOS Safari and Chrome mobile, `100vh` includes the mobile URL address bar, causing the bottom navigation or status bar to be pushed off-screen. Standard best practice requires `100dvh` (Dynamic Viewport Height).
@@ -209,6 +219,7 @@ Geospatial maps present unique accessibility challenges when vector layers are r
 ## 4. Comprehensive File-by-File Audit Breakdown
 
 ### 4.1 `src/App.jsx`
+
 - **Line 65**: `<aside className={`sidebar-dock ...`}>` lacks `aria-label="Sidebar Dock"` or `role="complementary"`.
 - **Lines 68-73**: `<button className="dock-toggle-btn" ...>` rendered at 36x36px (<44px). Lacks `aria-expanded` and `aria-controls`.
 - **Line 77**: Inline CSS `color: 'var(--text-muted)'` fails 4.5:1 contrast against `#0a111e` background (**3.96:1**).
@@ -221,6 +232,7 @@ Geospatial maps present unique accessibility challenges when vector layers are r
 - **Lines 156-175**: Wayfinding route item `<div>` elements are non-keyboard accessible.
 
 ### 4.2 `src/styles/design-system.css`
+
 - **Line 42**: `--text-muted: #64748b;` fails WCAG AA 4.5:1 contrast ratio (**3.96:1**).
 - **Line 90**: `height: 100vh; overflow: hidden;` breaks mobile viewport rendering and browser zoom.
 - **Line 160**: `.ship-badge` `font-size: 0.72rem` (11.52px).
@@ -236,17 +248,20 @@ Geospatial maps present unique accessibility challenges when vector layers are r
 - **Global**: Complete lack of `:focus-visible` styles.
 
 ### 4.3 `src/components/DeckMapViewer.jsx`
+
 - **Line 89**: Non-upscaled hull outline color `#334155` has **1.8:1** contrast ratio against `#0c1527` canvas.
 - **Line 146**: Tooltip category text `font-size: 11px`.
 - **Line 171**: Map label marker text `font-size: 11px`.
 - **Lines 251-270**: Map toolbar buttons use `title=""` without `aria-label=""`.
 
 ### 4.4 `src/components/DeckSwitcher.jsx`
+
 - **Line 24**: `<button className="deck-pill">` lacks `aria-current={isActive ? 'true' : undefined}`.
 - **Line 40**: Sub-12px font size (`0.65rem` = 10.4px) for Quick Jump section title.
 - **Line 50**: Quick deck buttons exhibit severely deficient touch targets (height ~24px).
 
 ### 4.5 `src/components/CabinInspectorModal.jsx` & `src/components/ApiInspectorModal.jsx`
+
 - Both modals lack `role="dialog"`, `aria-modal="true"`, and `aria-labelledby`.
 - Both modals lack focus traps (keyboard focus escapes into background canvas).
 - Both modals lack `Escape` key handlers.
@@ -267,7 +282,7 @@ To bring the Cruise Ship Deck Map Platform into full compliance with WCAG 2.1 AA
 @@ -42,3 +42,3 @@
 -  --text-muted: #64748b;
 +  --text-muted: #94a3b8; /* Increased brightness for 7.38:1 contrast against #0a111e */
- 
+
 @@ -85,5 +85,5 @@
  body {
    background-color: var(--bg-dark-1);
@@ -354,6 +369,7 @@ To bring the Cruise Ship Deck Map Platform into full compliance with WCAG 2.1 AA
 ### 5.2 React Component Remediation Diffs
 
 #### Remediated Search Card in `src/App.jsx`:
+
 ```jsx
 // Before:
 <div key={item.id} className="search-result-card" onClick={() => handleSelectSearchResult(item)}>
@@ -375,6 +391,7 @@ To bring the Cruise Ship Deck Map Platform into full compliance with WCAG 2.1 AA
 ```
 
 #### Remediated Modal Wrapper with Focus Trap & Escape Key Listener (`src/components/CabinInspectorModal.jsx`):
+
 ```jsx
 import React, { useEffect, useRef } from 'react';
 
@@ -394,17 +411,19 @@ export default function CabinInspectorModal({ venue, deck, onClose, onStartWayfi
 
   return (
     <div className="modal-overlay" onClick={onClose} role="presentation">
-      <div 
-        className="modal-card" 
+      <div
+        className="modal-card"
         ref={modalRef}
         tabIndex={-1}
-        role="dialog" 
-        aria-modal="true" 
+        role="dialog"
+        aria-modal="true"
         aria-labelledby="cabin-modal-title"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="modal-header">
-          <h3 id="cabin-modal-title" style={{ fontSize: '1.15rem', color: 'var(--text-primary)' }}>{venue.name}</h3>
+          <h3 id="cabin-modal-title" style={{ fontSize: '1.15rem', color: 'var(--text-primary)' }}>
+            {venue.name}
+          </h3>
           <button className="modal-close" onClick={onClose} aria-label="Close venue details modal">
             <X size={20} />
           </button>
@@ -421,11 +440,12 @@ export default function CabinInspectorModal({ venue, deck, onClose, onStartWayfi
 ## 6. Verification & Quality Sign-Off
 
 Following the application of the remediation patch:
+
 1. **Lighthouse Accessibility Score**: Target score increase from **68/100** to **100/100**.
 2. **WCAG 2.1 AA Compliance**: 100% pass across all 30 evaluated criteria.
 3. **Screen Reader Verification**: Verified seamless navigation using macOS VoiceOver (`Cmd + F5`) and NVDA.
 4. **Touch Target Verification**: All interactive controls exceed the **44x44px** standard.
 
 **Report Prepared By:**  
-*Senior QA & Accessibility Lead*  
-*Cruise Ship Map Engineering Group*
+_Senior QA & Accessibility Lead_  
+_Cruise Ship Map Engineering Group_

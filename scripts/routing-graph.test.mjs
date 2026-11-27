@@ -456,7 +456,8 @@ describe('access restrictions on routes, across the published fleet', () => {
           }
         });
       for (const target of features) {
-        if (!['venue', 'poi'].includes(target.featureType) || !router.hasFeature(target.id)) continue;
+        if (!['venue', 'poi'].includes(target.featureType) || !router.hasFeature(target.id))
+          continue;
         const route = router.route(origin, { featureId: target.id });
         if (!route) continue; // reachability has its own tests
         for (const id of route.legs.flatMap((leg) => leg.through ?? [])) {
@@ -464,7 +465,9 @@ describe('access restrictions on routes, across the published fleet', () => {
           if (!ACCESS_BARS_ENTRY.has(access)) continue;
           restrictedCrossings += 1;
           if (target.access !== access) {
-            failures.push(`${plan.shipId}: ${target.id} (${target.access ?? 'public'}) via ${id} (${access})`);
+            failures.push(
+              `${plan.shipId}: ${target.id} (${target.access ?? 'public'}) via ${id} (${access})`
+            );
           }
         }
       }
@@ -518,7 +521,8 @@ describe('port exits, across the published fleet', () => {
           for (const cabin of cabins) if (!seen.has(cabin.node)) unreached.push(trip(cabin));
           for (const cabin of firstOnDeck) {
             const origin = router.route(cabin, { featureId: exit.id }, { stepFree })?.origin.node;
-            if (origin !== cabin.node) routerDisagrees.push(`${trip(cabin)}: ${origin ?? 'no route'}`);
+            if (origin !== cabin.node)
+              routerDisagrees.push(`${trip(cabin)}: ${origin ?? 'no route'}`);
           }
         }
       }

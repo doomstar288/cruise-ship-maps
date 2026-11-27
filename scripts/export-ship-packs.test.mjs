@@ -50,12 +50,18 @@ describe('classifyFeature', () => {
     // Elevator cores are authored as category "Guest Services" like the shore-
     // excursion desk; only the tags distinguish them.
     expect(
-      classifyFeature({ name: 'Forward Elevator Bank A', category: 'Guest Services', tags: ['Elevator', 'Stairs'] })
+      classifyFeature({
+        name: 'Forward Elevator Bank A',
+        category: 'Guest Services',
+        tags: ['Elevator', 'Stairs'],
+      })
     ).toBe('elevator');
   });
 
   it('prefers elevator over stairwell when a core is tagged with both', () => {
-    expect(classifyFeature({ name: 'Midship Core', tags: ['Stairs', 'Elevator'] })).toBe('elevator');
+    expect(classifyFeature({ name: 'Midship Core', tags: ['Stairs', 'Elevator'] })).toBe(
+      'elevator'
+    );
     expect(classifyFeature({ name: 'Aft Stairwell', tags: ['Stairs'] })).toBe('stairwell');
   });
 
@@ -65,24 +71,38 @@ describe('classifyFeature', () => {
   });
 
   it('emits crew and back-of-house space as corridor so consumers draw but never list it', () => {
-    expect(classifyFeature({ name: 'Crew Service Area', category: 'Crew & Service', hideLabel: true })).toBe('corridor');
-    expect(classifyFeature({ name: 'Galley', category: 'Crew & Service', tags: ['Crew Only'] })).toBe('corridor');
+    expect(
+      classifyFeature({ name: 'Crew Service Area', category: 'Crew & Service', hideLabel: true })
+    ).toBe('corridor');
+    expect(
+      classifyFeature({ name: 'Galley', category: 'Crew & Service', tags: ['Crew Only'] })
+    ).toBe('corridor');
     expect(classifyFeature({ name: 'Crew & Technical Areas' })).toBe('corridor');
     expect(classifyFeature({ name: 'Provision Stores' })).toBe('corridor');
-    expect(classifyFeature({ name: 'Decorative strip', category: 'Pool & Sun Deck', hideLabel: true })).toBe('corridor');
+    expect(
+      classifyFeature({ name: 'Decorative strip', category: 'Pool & Sun Deck', hideLabel: true })
+    ).toBe('corridor');
   });
 
   it('lists public restrooms as points of interest', () => {
     expect(
-      classifyFeature({ name: 'Restrooms', category: RESTROOM_CATEGORY, tags: ['Restroom', 'Ladies', 'Gents'] })
+      classifyFeature({
+        name: 'Restrooms',
+        category: RESTROOM_CATEGORY,
+        tags: ['Restroom', 'Ladies', 'Gents'],
+      })
     ).toBe('poi');
     // Only the category counts: a venue that merely mentions one stays a venue.
-    expect(classifyFeature({ name: 'Spa', category: 'Spa & Wellness', tags: ['Restroom'] })).toBe('venue');
+    expect(classifyFeature({ name: 'Spa', category: 'Spa & Wellness', tags: ['Restroom'] })).toBe(
+      'venue'
+    );
   });
 
   it('falls back to venue for everything else', () => {
     expect(classifyFeature({ name: 'Luminae Restaurant', category: 'Fine Dining' })).toBe('venue');
-    expect(classifyFeature({ name: 'Celebrity Flagship Store', category: 'Shopping & Galleries' })).toBe('venue');
+    expect(
+      classifyFeature({ name: 'Celebrity Flagship Store', category: 'Shopping & Galleries' })
+    ).toBe('venue');
     expect(classifyFeature({ name: 'Unlabelled space' })).toBe('venue');
   });
 });
@@ -90,8 +110,20 @@ describe('classifyFeature', () => {
 describe('cabinMetaFor', () => {
   it('pulls the cabin number out of the name and keeps the side', () => {
     expect(
-      cabinMetaFor({ name: 'Stateroom 10101 (Infinite Veranda)', category: 'Staterooms', side: 'Port', ada: true, sqft: 243 })
-    ).toMatchObject({ number: '10101', side: 'port', accessible: true, sqft: 243, type: 'stateroom' });
+      cabinMetaFor({
+        name: 'Stateroom 10101 (Infinite Veranda)',
+        category: 'Staterooms',
+        side: 'Port',
+        ada: true,
+        sqft: 243,
+      })
+    ).toMatchObject({
+      number: '10101',
+      side: 'port',
+      accessible: true,
+      sqft: 243,
+      type: 'stateroom',
+    });
   });
 
   it('drops an unknown side rather than guessing one', () => {
@@ -101,7 +133,9 @@ describe('cabinMetaFor', () => {
 
 describe('positionConfidenceFor', () => {
   it('keeps a confidence authored on the source record', () => {
-    expect(positionConfidenceFor({ id: 'v', positionConfidence: 'estimated' }, 'venue')).toBe('estimated');
+    expect(positionConfidenceFor({ id: 'v', positionConfidence: 'estimated' }, 'venue')).toBe(
+      'estimated'
+    );
     expect(positionConfidenceFor({ id: 'c', positionConfidence: 'zone' }, 'cabin')).toBe('zone');
   });
 
@@ -119,28 +153,68 @@ describe('positionConfidenceFor', () => {
   });
 
   it('rejects a value outside the vocabulary rather than publishing it', () => {
-    expect(() => positionConfidenceFor({ id: 'v', positionConfidence: 'exact' }, 'venue')).toThrow(/exact/);
+    expect(() => positionConfidenceFor({ id: 'v', positionConfidence: 'exact' }, 'venue')).toThrow(
+      /exact/
+    );
   });
 });
 
 describe('computeExtent', () => {
   it('spans every deck so all decks share one coordinate space', () => {
     const decks = [
-      { shapeCoordinates: [[0, 0], [10, 0], [10, 10]], venues: [] },
-      { shapeCoordinates: [[5, 5], [50, 5], [50, 40]], venues: [] },
+      {
+        shapeCoordinates: [
+          [0, 0],
+          [10, 0],
+          [10, 10],
+        ],
+        venues: [],
+      },
+      {
+        shapeCoordinates: [
+          [5, 5],
+          [50, 5],
+          [50, 40],
+        ],
+        venues: [],
+      },
     ];
     expect(computeExtent(decks)).toEqual({ minX: 0, minY: 0, maxX: 50, maxY: 40 });
   });
 
   it('includes venue bounds that stick out past the hull outline', () => {
     const decks = [
-      { shapeCoordinates: [[0, 0], [10, 10]], venues: [{ bounds: [[-5, 0], [20, 30]], center: [7, 15] }] },
+      {
+        shapeCoordinates: [
+          [0, 0],
+          [10, 10],
+        ],
+        venues: [
+          {
+            bounds: [
+              [-5, 0],
+              [20, 30],
+            ],
+            center: [7, 15],
+          },
+        ],
+      },
     ];
     expect(computeExtent(decks)).toMatchObject({ minX: -5, maxX: 20, maxY: 30 });
   });
 
   it('refuses a degenerate extent instead of emitting an unnormalizable pack', () => {
-    expect(() => computeExtent([{ shapeCoordinates: [[3, 3], [3, 3]], venues: [] }])).toThrow(/degenerate/);
+    expect(() =>
+      computeExtent([
+        {
+          shapeCoordinates: [
+            [3, 3],
+            [3, 3],
+          ],
+          venues: [],
+        },
+      ])
+    ).toThrow(/degenerate/);
   });
 });
 
@@ -155,12 +229,16 @@ describe('aliasesFor', () => {
 });
 
 describe('revisionOf', () => {
-  it('ignores updatedAt so an unchanged re-export keeps its revision', () => {
-    const a = xcel();
-    const b = xcel();
-    expect(b.updatedAt).toBeDefined();
-    expect(revisionOf(b)).toBe(revisionOf(a));
-  }, TWO_BUILDS_TIMEOUT_MS);
+  it(
+    'ignores updatedAt so an unchanged re-export keeps its revision',
+    () => {
+      const a = xcel();
+      const b = xcel();
+      expect(b.updatedAt).toBeDefined();
+      expect(revisionOf(b)).toBe(revisionOf(a));
+    },
+    TWO_BUILDS_TIMEOUT_MS
+  );
 
   it('changes when deck content changes', () => {
     const pack = sharedXcel();
@@ -197,7 +275,11 @@ describe('timestamp reconciliation', () => {
 
   it('refreshes the catalog generatedAt when a ship row changes', () => {
     const index = { specVersion: 1, generatedAt: 'now', ships: [{ shipId: 'a', revision: 'x' }] };
-    const previous = { specVersion: 1, generatedAt: 'then', ships: [{ shipId: 'a', revision: 'y' }] };
+    const previous = {
+      specVersion: 1,
+      generatedAt: 'then',
+      ships: [{ shipId: 'a', revision: 'y' }],
+    };
     expect(reconcileIndexTimestamp(index, previous).generatedAt).toBe('now');
   });
 });
@@ -231,7 +313,9 @@ describe('the published Celebrity Xcel pack', () => {
   });
 
   it('still draws crew strips, as corridor', () => {
-    const crew = pack.decks.flatMap((d) => d.features.filter((f) => f.category === 'Crew & Service'));
+    const crew = pack.decks.flatMap((d) =>
+      d.features.filter((f) => f.category === 'Crew & Service')
+    );
     expect(crew.length).toBeGreaterThan(0);
     expect(new Set(crew.map((f) => f.featureType))).toEqual(new Set(['corridor']));
   });
@@ -301,7 +385,9 @@ describe('position confidence in the published Celebrity Xcel pack', () => {
   });
 
   it('gives every guest venue an allowed confidence on the feature itself', () => {
-    const guest = features.filter((f) => ['venue', 'poi', 'muster_station'].includes(f.featureType));
+    const guest = features.filter((f) =>
+      ['venue', 'poi', 'muster_station'].includes(f.featureType)
+    );
     expect(guest.length).toBeGreaterThan(0);
     for (const f of guest) expect(POSITION_CONFIDENCE, `${f.id}`).toContain(f.positionConfidence);
   });
@@ -341,7 +427,9 @@ describe('position confidence in the published Celebrity Xcel pack', () => {
   });
 
   it('marks elevators and stairwells estimated and leaves corridors without a claim', () => {
-    const cores = features.filter((f) => f.featureType === 'elevator' || f.featureType === 'stairwell');
+    const cores = features.filter(
+      (f) => f.featureType === 'elevator' || f.featureType === 'stairwell'
+    );
     expect(cores.length).toBeGreaterThan(0);
     expect(cores.every((f) => f.positionConfidence === 'estimated')).toBe(true);
     const corridors = features.filter((f) => f.featureType === 'corridor');
@@ -370,7 +458,11 @@ describe('indexEntryFor', () => {
 
 describe('featureAliasesFor', () => {
   it('drops repeats and an alias that restates the name, ignoring case', () => {
-    const venue = { id: 'x', name: 'The Theatre', aliases: ['OVC', 'the  theatre', 'ovc', ' Theater '] };
+    const venue = {
+      id: 'x',
+      name: 'The Theatre',
+      aliases: ['OVC', 'the  theatre', 'ovc', ' Theater '],
+    };
     expect(featureAliasesFor(venue, 'venue')).toEqual(['OVC', 'Theater']);
   });
 
@@ -380,13 +472,17 @@ describe('featureAliasesFor', () => {
   });
 
   it('returns undefined rather than an empty list', () => {
-    expect(featureAliasesFor({ id: 'x', name: 'The Theatre', aliases: ['the theatre'] }, 'venue')).toBeUndefined();
+    expect(
+      featureAliasesFor({ id: 'x', name: 'The Theatre', aliases: ['the theatre'] }, 'venue')
+    ).toBeUndefined();
     expect(featureAliasesFor({ id: 'x', name: 'Casino' }, 'venue')).toBeUndefined();
   });
 
   it('refuses aliases on anything a guest does not search for', () => {
     for (const type of ['corridor', 'cabin', 'elevator', 'stairwell']) {
-      expect(() => featureAliasesFor({ id: 'x', name: 'Galley', aliases: ['Kitchen'] }, type)).toThrow(/only venue and poi/);
+      expect(() =>
+        featureAliasesFor({ id: 'x', name: 'Galley', aliases: ['Kitchen'] }, type)
+      ).toThrow(/only venue and poi/);
     }
   });
 });
@@ -439,7 +535,8 @@ describe('venue access across the fleet', () => {
     for (const v of records) {
       for (const tag of v.tags ?? []) {
         const expected = TAG_ACCESS[tag];
-        if (expected && v.access !== expected) failures.push(`${v.id} tagged ${tag} has access ${v.access}`);
+        if (expected && v.access !== expected)
+          failures.push(`${v.id} tagged ${tag} has access ${v.access}`);
       }
     }
     expect(failures).toEqual([]);
@@ -504,13 +601,17 @@ describe('portExitFor', () => {
   });
 
   it('rejects a value outside the vocabulary rather than publishing it', () => {
-    expect(() => portExitFor({ id: 'v1', portExit: 'pier' }, 'venue')).toThrow(/unknown portExit "pier"/);
+    expect(() => portExitFor({ id: 'v1', portExit: 'pier' }, 'venue')).toThrow(
+      /unknown portExit "pier"/
+    );
     expect(PORT_EXITS).toEqual(['gangway', 'tender']);
   });
 
   it('refuses a port exit on anything a guest does not search for', () => {
     for (const type of ['corridor', 'cabin', 'elevator', 'stairwell', 'muster_station']) {
-      expect(() => portExitFor({ id: 'x', portExit: 'gangway' }, type)).toThrow(/only venue and poi/);
+      expect(() => portExitFor({ id: 'x', portExit: 'gangway' }, type)).toThrow(
+        /only venue and poi/
+      );
     }
   });
 });
@@ -565,12 +666,17 @@ describe('port exits across the fleet', () => {
         const expected = records.filter((v) => v.portExit === kind).map((v) => v.id);
         for (const name of names) {
           const owners = records
-            .filter((v) => [v.name, ...(v.aliases ?? [])].some((n) => foldName(n) === foldName(name)))
+            .filter((v) =>
+              [v.name, ...(v.aliases ?? [])].some((n) => foldName(n) === foldName(name))
+            )
             .map((v) => v.id);
-          if (owners.join() !== expected.join()) failures.push(`${shipId} "${name}": ${owners.join() || 'none'}`);
+          if (owners.join() !== expected.join())
+            failures.push(`${shipId} "${name}": ${owners.join() || 'none'}`);
         }
       }
-      const pier = records.filter((v) => [v.name, ...(v.aliases ?? [])].some((n) => foldName(n) === 'tender pier'));
+      const pier = records.filter((v) =>
+        [v.name, ...(v.aliases ?? [])].some((n) => foldName(n) === 'tender pier')
+      );
       if (pier.length) failures.push(`${shipId} "Tender Pier": ${pier.map((v) => v.id).join()}`);
     }
     expect(failures).toEqual([]);
@@ -593,11 +699,27 @@ describe('hoursFor', () => {
   const hours = (authored) => hoursFor({ id: 'v1', hours: authored }, 'venue');
 
   it('keeps the windows authored on a guest venue', () => {
-    expect(hours([['07:00', '10:30'], ['18:00', '21:30']])).toEqual([['07:00', '10:30'], ['18:00', '21:30']]);
+    expect(
+      hours([
+        ['07:00', '10:30'],
+        ['18:00', '21:30'],
+      ])
+    ).toEqual([
+      ['07:00', '10:30'],
+      ['18:00', '21:30'],
+    ]);
   });
 
   it('accepts a last window that runs past midnight', () => {
-    expect(hours([['06:00', '11:00'], ['21:00', '02:00']])).toEqual([['06:00', '11:00'], ['21:00', '02:00']]);
+    expect(
+      hours([
+        ['06:00', '11:00'],
+        ['21:00', '02:00'],
+      ])
+    ).toEqual([
+      ['06:00', '11:00'],
+      ['21:00', '02:00'],
+    ]);
     expect(hours([['21:00', '06:00']])).toEqual([['21:00', '06:00']]);
   });
 
@@ -622,61 +744,138 @@ describe('hoursFor', () => {
     ['24:00 as an opening', [['24:00', '02:00']], /"24:00" is not an HH:MM opening time/],
     ['00:00 as a close', [['18:00', '00:00']], /close at midnight as "24:00"/],
     ['a window that closes as it opens', [['09:00', '09:00']], /opens and closes at 09:00/],
-    ['windows out of order', [['12:00', '14:00'], ['07:00', '09:00']], /opening order/],
-    ['overlapping windows', [['07:00', '10:30'], ['10:00', '14:00']], /must not overlap or touch/],
-    ['touching windows', [['07:30', '10:30'], ['10:30', '14:00']], /must not overlap or touch/],
-    ['an all-day window with another', [['00:00', '24:00'], ['06:00', '07:00']], /must not overlap or touch/],
-    ['a past-midnight window that is not last', [['21:00', '02:00'], ['06:00', '11:00']], /only the last window/],
-    ['a night that runs into the morning', [['06:00', '11:00'], ['21:00', '07:00']], /runs into the first one the next day/],
+    [
+      'windows out of order',
+      [
+        ['12:00', '14:00'],
+        ['07:00', '09:00'],
+      ],
+      /opening order/,
+    ],
+    [
+      'overlapping windows',
+      [
+        ['07:00', '10:30'],
+        ['10:00', '14:00'],
+      ],
+      /must not overlap or touch/,
+    ],
+    [
+      'touching windows',
+      [
+        ['07:30', '10:30'],
+        ['10:30', '14:00'],
+      ],
+      /must not overlap or touch/,
+    ],
+    [
+      'an all-day window with another',
+      [
+        ['00:00', '24:00'],
+        ['06:00', '07:00'],
+      ],
+      /must not overlap or touch/,
+    ],
+    [
+      'a past-midnight window that is not last',
+      [
+        ['21:00', '02:00'],
+        ['06:00', '11:00'],
+      ],
+      /only the last window/,
+    ],
+    [
+      'a night that runs into the morning',
+      [
+        ['06:00', '11:00'],
+        ['21:00', '07:00'],
+      ],
+      /runs into the first one the next day/,
+    ],
   ])('rejects %s rather than publishing it', (_label, authored, message) => {
     expect(() => hours(authored)).toThrow(message);
   });
 
   it('refuses hours on anything a guest does not search for', () => {
-    expect(() => hoursFor({ id: 'c1', hours: [['07:00', '10:30']] }, 'cabin')).toThrow(/only venue and poi/);
+    expect(() => hoursFor({ id: 'c1', hours: [['07:00', '10:30']] }, 'cabin')).toThrow(
+      /only venue and poi/
+    );
   });
 });
 
 describe('bookingFactsFor', () => {
   it('keeps the facts a record authors and omits the rest', () => {
-    expect(bookingFactsFor({ id: 'v1', reservationRequired: true, fee: 'surcharge', dressCode: 'smart casual' }, 'venue')).toEqual({
+    expect(
+      bookingFactsFor(
+        { id: 'v1', reservationRequired: true, fee: 'surcharge', dressCode: 'smart casual' },
+        'venue'
+      )
+    ).toEqual({
       reservationRequired: true,
       fee: 'surcharge',
       dressCode: 'smart casual',
     });
-    expect(bookingFactsFor({ id: 'v1', reservationRequired: false }, 'venue')).toEqual({ reservationRequired: false });
+    expect(bookingFactsFor({ id: 'v1', reservationRequired: false }, 'venue')).toEqual({
+      reservationRequired: false,
+    });
     expect(bookingFactsFor({ id: 'v1' }, 'venue')).toEqual({});
   });
 
   it('rejects values outside the vocabulary rather than publishing them', () => {
-    expect(() => bookingFactsFor({ id: 'v1', reservationRequired: 'yes' }, 'venue')).toThrow(/expected true or false/);
+    expect(() => bookingFactsFor({ id: 'v1', reservationRequired: 'yes' }, 'venue')).toThrow(
+      /expected true or false/
+    );
     expect(() => bookingFactsFor({ id: 'v1', fee: 'free' }, 'venue')).toThrow(/unknown fee "free"/);
-    expect(() => bookingFactsFor({ id: 'v1', dressCode: 'formal' }, 'venue')).toThrow(/unknown dressCode "formal"/);
+    expect(() => bookingFactsFor({ id: 'v1', dressCode: 'formal' }, 'venue')).toThrow(
+      /unknown dressCode "formal"/
+    );
     expect(FEES).toEqual(['included', 'surcharge', 'a la carte']);
     expect(DRESS_CODES).toEqual(['casual', 'smart casual']);
   });
 
   it('refuses booking facts on anything a guest does not search for', () => {
-    expect(() => bookingFactsFor({ id: 'c1', fee: 'included' }, 'corridor')).toThrow(/only venue and poi/);
+    expect(() => bookingFactsFor({ id: 'c1', fee: 'included' }, 'corridor')).toThrow(
+      /only venue and poi/
+    );
   });
 });
 
 describe('hoursByDayFor', () => {
-  const union = [['07:30', '09:00'], ['12:00', '13:30'], ['17:30', '21:00']];
-  const byDay = (hoursByDay, hours = union) => hoursByDayFor({ id: 'v1', hours, hoursByDay }, 'venue');
+  const union = [
+    ['07:30', '09:00'],
+    ['12:00', '13:30'],
+    ['17:30', '21:00'],
+  ];
+  const byDay = (hoursByDay, hours = union) =>
+    hoursByDayFor({ id: 'v1', hours, hoursByDay }, 'venue');
 
   it('keeps the day types authored, in the hours format', () => {
-    expect(byDay({ sea: union, port: [['07:30', '09:00'], ['17:30', '21:00']] })).toEqual({
+    expect(
+      byDay({
+        sea: union,
+        port: [
+          ['07:30', '09:00'],
+          ['17:30', '21:00'],
+        ],
+      })
+    ).toEqual({
       sea: union,
-      port: [['07:30', '09:00'], ['17:30', '21:00']],
+      port: [
+        ['07:30', '09:00'],
+        ['17:30', '21:00'],
+      ],
     });
     // One day type is allowed: the other is "not known", not "closed".
     expect(byDay({ port: [['17:30', '21:00']] })).toEqual({ port: [['17:30', '21:00']] });
   });
 
   it('allows a window past midnight and an all-day union', () => {
-    expect(byDay({ sea: [['21:00', '02:00']] }, [['09:00', '03:00']])).toEqual({ sea: [['21:00', '02:00']] });
-    expect(byDay({ port: [['10:00', '12:00']] }, [['00:00', '24:00']])).toEqual({ port: [['10:00', '12:00']] });
+    expect(byDay({ sea: [['21:00', '02:00']] }, [['09:00', '03:00']])).toEqual({
+      sea: [['21:00', '02:00']],
+    });
+    expect(byDay({ port: [['10:00', '12:00']] }, [['00:00', '24:00']])).toEqual({
+      port: [['10:00', '12:00']],
+    });
   });
 
   it('is undefined when a record has none', () => {
@@ -690,19 +889,36 @@ describe('hoursByDayFor', () => {
     ['an unknown day type', { tender: [['17:30', '21:00']] }, /unknown day type "tender"/],
     ['windows that are not a list', { sea: 'noon' }, /malformed hours/],
     ['a malformed window', { sea: [['5:30', '21:00']] }, /not an HH:MM opening time/],
-    ['overlapping windows', { sea: [['17:30', '19:00'], ['18:00', '21:00']] }, /must not overlap/],
-    ['a window outside hours', { port: [['16:00', '17:00']] }, /port window 16:00–17:00 is outside hours/],
+    [
+      'overlapping windows',
+      {
+        sea: [
+          ['17:30', '19:00'],
+          ['18:00', '21:00'],
+        ],
+      },
+      /must not overlap/,
+    ],
+    [
+      'a window outside hours',
+      { port: [['16:00', '17:00']] },
+      /port window 16:00–17:00 is outside hours/,
+    ],
     ['a window straddling two hours windows', { sea: [['08:00', '13:00']] }, /outside hours/],
   ])('rejects %s', (_label, authored, message) => {
     expect(() => byDay(authored)).toThrow(message);
   });
 
   it('needs hours, the union of its day types', () => {
-    expect(() => hoursByDayFor({ id: 'v1', hoursByDay: { sea: union } }, 'venue')).toThrow(/needs hours/);
+    expect(() => hoursByDayFor({ id: 'v1', hoursByDay: { sea: union } }, 'venue')).toThrow(
+      /needs hours/
+    );
   });
 
   it('refuses day-type hours on anything a guest does not search for', () => {
-    expect(() => hoursByDayFor({ id: 'c1', hours: union, hoursByDay: { sea: union } }, 'cabin')).toThrow(/only venue and poi/);
+    expect(() =>
+      hoursByDayFor({ id: 'c1', hours: union, hoursByDay: { sea: union } }, 'cabin')
+    ).toThrow(/only venue and poi/);
   });
 });
 
@@ -730,7 +946,9 @@ describe('hours and booking facts across the fleet', () => {
       (f) => ['venue', 'poi'].includes(f.featureType) && getFilterKey(f) === FILTER_KEYS.DINING
     );
     expect(dining.length).toBeGreaterThan(20);
-    const missing = dining.filter((f) => !f.hours || typeof f.reservationRequired !== 'boolean').map((f) => f.id);
+    const missing = dining
+      .filter((f) => !f.hours || typeof f.reservationRequired !== 'boolean')
+      .map((f) => f.id);
     expect(missing).toEqual(['v3-plaza-cafe']);
   });
 
@@ -741,36 +959,57 @@ describe('hours and booking facts across the fleet', () => {
       fee: 'included',
       dressCode: 'smart casual',
     });
-    expect(byId('v4-cosmopolitan').hours).toEqual([['07:30', '09:00'], ['12:00', '13:30'], ['17:30', '21:00']]);
+    expect(byId('v4-cosmopolitan').hours).toEqual([
+      ['07:30', '09:00'],
+      ['12:00', '13:30'],
+      ['17:30', '21:00'],
+    ]);
     expect(byId('v15-bora')).toMatchObject({ reservationRequired: true, fee: 'surcharge' });
     expect(byId('v5-raw-on-5')).toMatchObject({ reservationRequired: false, fee: 'a la carte' });
     expect(byId('v14-il-secondo-bacio').hours).toEqual([['06:00', '01:00']]);
     expect(byId('v14-oceanview-cafe').hours).toEqual([['00:00', '24:00']]);
     for (const id of ['v3-plaza-cafe', 'v3-martini-bar', 'v3-theatre']) {
-      expect(FACT_KEYS.filter((key) => key in byId(id)), id).toEqual([]);
+      expect(
+        FACT_KEYS.filter((key) => key in byId(id)),
+        id
+      ).toEqual([]);
     }
     // 20 dining venues with hours (deck-16 Mast Grill removed; grill is Deck 14 only),
     // and the bars and other venues whose hours are sourced.
     expect(features.filter((f) => 'hours' in f)).toHaveLength(42);
   });
 
-  it('splits hours by sea and port day only where the sailing\'s programs say they differ', () => {
+  it("splits hours by sea and port day only where the sailing's programs say they differ", () => {
     // Lunch is sea-day only at Cosmopolitan, Fine Cut and Luminae; Bora's brunch is
     // 10:30–1:00 at sea and 11:00–12:00 in port. Every other venue keeps the union.
-    expect(features.filter((f) => 'hoursByDay' in f).map((f) => f.id).sort()).toEqual([
-      'v15-bora',
-      'v16-luminae',
-      'v4-cosmopolitan',
-      'v5-fine-cut',
-    ]);
+    expect(
+      features
+        .filter((f) => 'hoursByDay' in f)
+        .map((f) => f.id)
+        .sort()
+    ).toEqual(['v15-bora', 'v16-luminae', 'v4-cosmopolitan', 'v5-fine-cut']);
     expect(byId('v4-cosmopolitan').hoursByDay).toEqual({
-      sea: [['07:30', '09:00'], ['12:00', '13:30'], ['17:30', '21:00']],
-      port: [['07:30', '09:00'], ['17:30', '21:00']],
+      sea: [
+        ['07:30', '09:00'],
+        ['12:00', '13:30'],
+        ['17:30', '21:00'],
+      ],
+      port: [
+        ['07:30', '09:00'],
+        ['17:30', '21:00'],
+      ],
     });
     expect(byId('v5-fine-cut').hoursByDay.port).toEqual([['17:30', '21:00']]);
-    expect(byId('v15-bora').hoursByDay.port).toEqual([['11:00', '12:00'], ['18:00', '20:30']]);
+    expect(byId('v15-bora').hoursByDay.port).toEqual([
+      ['11:00', '12:00'],
+      ['18:00', '20:30'],
+    ]);
     // `hours` stays the union, so a consumer that ignores the split behaves as before.
-    expect(byId('v4-cosmopolitan').hours).toEqual([['07:30', '09:00'], ['12:00', '13:30'], ['17:30', '21:00']]);
+    expect(byId('v4-cosmopolitan').hours).toEqual([
+      ['07:30', '09:00'],
+      ['12:00', '13:30'],
+      ['17:30', '21:00'],
+    ]);
   });
 
   it('gives no other ship any of these facts until a source for that ship or class does', () => {
@@ -787,7 +1026,9 @@ describe('restrooms', () => {
     // Each is cited in the Xcel generator. Other ships have no sourced restrooms yet.
     const restrooms = SHIPS.flatMap(({ metadata, decks }) =>
       decks.flatMap((d) =>
-        (d.venues ?? []).filter((v) => v.category === RESTROOM_CATEGORY).map((v) => `${metadata.id} ${v.id}`)
+        (d.venues ?? [])
+          .filter((v) => v.category === RESTROOM_CATEGORY)
+          .map((v) => `${metadata.id} ${v.id}`)
       )
     );
     expect(restrooms).toEqual([
@@ -809,7 +1050,9 @@ describe('restrooms', () => {
 
   it('publishes them as public points of interest a consumer can find by category', () => {
     const published = sharedXcel().decks.flatMap((d) =>
-      d.features.filter((f) => f.category === RESTROOM_CATEGORY).map((f) => ({ ...f, deck: d.deckNumber }))
+      d.features
+        .filter((f) => f.category === RESTROOM_CATEGORY)
+        .map((f) => ({ ...f, deck: d.deckNumber }))
     );
     expect(published).toHaveLength(13);
     for (const f of published) {
@@ -822,7 +1065,9 @@ describe('restrooms', () => {
     }
     // Each is drawn in the zone and on the side where Celebrity's plan labels it.
     const zoneOf = (f) => describeLocation(f.center).split(' · ')[0].toLowerCase();
-    expect(published.map((f) => `${f.deck} ${zoneOf(f)} ${f.center[1] < 19.5 ? 'port' : 'stbd'}`)).toEqual([
+    expect(
+      published.map((f) => `${f.deck} ${zoneOf(f)} ${f.center[1] < 19.5 ? 'port' : 'stbd'}`)
+    ).toEqual([
       '2 midship port',
       '3 aft stbd',
       '4 forward stbd',
@@ -849,7 +1094,9 @@ describe('aliases and spans in the Celebrity Xcel pack', () => {
     return found;
   };
   // Levels of one multi-deck venue, from the deck records (the group is not published).
-  const groupOf = new Map(SHIPS[0].decks.flatMap((d) => d.venues).map((v) => [v.id, v.venueGroup ?? v.id]));
+  const groupOf = new Map(
+    SHIPS[0].decks.flatMap((d) => d.venues).map((v) => [v.id, v.venueGroup ?? v.id])
+  );
 
   it('still declares spec version 1: both fields are additive', () => {
     expect(pack.specVersion).toBe(1);
@@ -874,7 +1121,9 @@ describe('aliases and spans in the Celebrity Xcel pack', () => {
 
   it('offers an accent-free alias for every accented guest venue name', () => {
     const accented = features.filter(
-      (f) => ['venue', 'poi'].includes(f.featureType) && f.name !== f.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      (f) =>
+        ['venue', 'poi'].includes(f.featureType) &&
+        f.name !== f.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     );
     expect(accented.length).toBeGreaterThan(0);
     for (const f of accented) {
@@ -884,12 +1133,29 @@ describe('aliases and spans in the Celebrity Xcel pack', () => {
   });
 
   it.each([
-    [['The Theatre', 'The Theatre (Middle Level)', 'The Theatre (Upper Level)'], [3, 4, 5]],
-    [['Grand Plaza', 'Grand Plaza (Middle Level)', 'Grand Plaza (Upper Level)'], [3, 4, 5]],
-    [['Mosaic at The Bazaar', 'Market at The Bazaar', 'Spice Café', 'The Bazaar (Upper Level)'], [4, 5, 6]],
-    [['The Club', 'The Attic at The Club'], [4, 5]],
     [
-      ['Magic Carpet (Tender Platform)', 'Magic Carpet (Deck 5 Dining)', 'Magic Carpet (Pool Deck)', 'Magic Carpet (Dinner on the Edge)'],
+      ['The Theatre', 'The Theatre (Middle Level)', 'The Theatre (Upper Level)'],
+      [3, 4, 5],
+    ],
+    [
+      ['Grand Plaza', 'Grand Plaza (Middle Level)', 'Grand Plaza (Upper Level)'],
+      [3, 4, 5],
+    ],
+    [
+      ['Mosaic at The Bazaar', 'Market at The Bazaar', 'Spice Café', 'The Bazaar (Upper Level)'],
+      [4, 5, 6],
+    ],
+    [
+      ['The Club', 'The Attic at The Club'],
+      [4, 5],
+    ],
+    [
+      [
+        'Magic Carpet (Tender Platform)',
+        'Magic Carpet (Deck 5 Dining)',
+        'Magic Carpet (Pool Deck)',
+        'Magic Carpet (Dinner on the Edge)',
+      ],
       [2, 5, 14, 16],
     ],
   ])('sets the span on every level of %j', (names, span) => {
@@ -915,7 +1181,9 @@ describe('aliases and spans in the Celebrity Xcel pack', () => {
     // Generated cabins and crew strips legitimately repeat names ("Crew Service
     // Area", "Forward Elevators"), so only clashes involving an alias count.
     const aliasKeys = new Set(features.flatMap((f) => (f.aliases ?? []).map(foldName)));
-    expect(clashes.filter(([key]) => aliasKeys.has(key)).map(([, claims]) => claims.map((c) => c.label))).toEqual([]);
+    expect(
+      clashes.filter(([key]) => aliasKeys.has(key)).map(([, claims]) => claims.map((c) => c.label))
+    ).toEqual([]);
   });
 
   it('never gives an alias to anything but a guest venue or point of interest', () => {
@@ -931,7 +1199,8 @@ describe('aliases and spans in the Celebrity Xcel pack', () => {
       expect(f.spansDecks, f.id).toContain(f.deck);
       expect(f.spansDecks.length, f.id).toBeGreaterThan(1);
       expect(f.spansDecks, f.id).toEqual([...new Set(f.spansDecks)].sort((a, b) => a - b));
-      for (const n of f.spansDecks) expect(decks.has(n), `${f.id} spans missing deck ${n}`).toBe(true);
+      for (const n of f.spansDecks)
+        expect(decks.has(n), `${f.id} spans missing deck ${n}`).toBe(true);
     }
   });
 

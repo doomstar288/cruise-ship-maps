@@ -43,7 +43,9 @@ describe('CabinInspectorModal', () => {
     const { venue, deck } = cabinOnDeck(10);
     renderInspector({ venue, deck });
 
-    expect(screen.getByText(new RegExp(`\\+${venue.verandaSqft} sq ft veranda`))).toBeInTheDocument();
+    expect(
+      screen.getByText(new RegExp(`\\+${venue.verandaSqft} sq ft veranda`))
+    ).toBeInTheDocument();
     expect(screen.queryByText(/\{venue\.verandaSqft\}/)).not.toBeInTheDocument();
   });
 
