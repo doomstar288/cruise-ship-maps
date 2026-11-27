@@ -1,9 +1,16 @@
 # Open-Source Cruise Ship Deck Plan & Map Platform
+
 ## System Architecture, Spatial Database Schema & Scaling Blueprint
 
 > **Document Version:** 1.0.0  
 > **Status:** Approved Architecture Baseline  
-> **Maintainer:** Core Infrastructure & Spatial Systems Architecture Team  
+> **Maintainer:** Core Infrastructure & Spatial Systems Architecture Team
+
+> **Reality check (2026-11-27): this blueprint was never built.** This repo is a single Vite app.
+> There is no Turborepo, PostGIS database, server or REST API here. What exists is the static
+> [Ship Map Pack v1](ship_map_pack.md) under `public/v1/`, whose paths mirror the routes below so a client
+> could later swap a static base URL for a live API. For what is actually implemented, read
+> [`../../CLAUDE.md`](../../CLAUDE.md).
 
 ---
 
@@ -230,8 +237,8 @@ CREATE TABLE venues (
     deck_id UUID NOT NULL REFERENCES decks(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
     category VARCHAR(100) NOT NULL CHECK (category IN (
-        'dining', 'bar_lounge', 'entertainment', 'pool_deck', 
-        'wellness_spa', 'shopping', 'casino', 'kids_club', 
+        'dining', 'bar_lounge', 'entertainment', 'pool_deck',
+        'wellness_spa', 'shopping', 'casino', 'kids_club',
         'guest_services', 'outdoor_recreation', 'navigation_bridge'
     )),
     description TEXT,
@@ -345,7 +352,15 @@ The platform standardizes all deck features using an extended GeoJSON format (`d
   "title": "Cruise Deck GeoJSON Extension v1.0",
   "description": "Standardized spatial FeatureCollection schema for cruise ship deck plans.",
   "type": "object",
-  "required": ["type", "ship_id", "deck_number", "deck_name", "elevation_meters", "z_index", "features"],
+  "required": [
+    "type",
+    "ship_id",
+    "deck_number",
+    "deck_name",
+    "elevation_meters",
+    "z_index",
+    "features"
+  ],
   "properties": {
     "type": {
       "type": "string",
@@ -398,7 +413,10 @@ The platform standardizes all deck features using an extended GeoJSON format (`d
           "type": "object",
           "required": ["type", "coordinates"],
           "properties": {
-            "type": { "type": "string", "enum": ["Point", "LineString", "Polygon", "MultiPolygon"] },
+            "type": {
+              "type": "string",
+              "enum": ["Point", "LineString", "Polygon", "MultiPolygon"]
+            },
             "coordinates": { "type": "array" }
           }
         },
@@ -408,7 +426,15 @@ The platform standardizes all deck features using an extended GeoJSON format (`d
           "properties": {
             "feature_type": {
               "type": "string",
-              "enum": ["venue", "cabin", "corridor", "stairwell", "elevator", "muster_station", "poi"]
+              "enum": [
+                "venue",
+                "cabin",
+                "corridor",
+                "stairwell",
+                "elevator",
+                "muster_station",
+                "poi"
+              ]
             },
             "category": { "type": "string" },
             "name": { "type": "string" },
@@ -466,9 +492,7 @@ The API is fully documented under the **OpenAPI 3.1.0** standard for consumption
       "description": "Staging Sandbox API"
     }
   ],
-  "security": [
-    { "ApiKeyAuth": [] }
-  ],
+  "security": [{ "ApiKeyAuth": [] }],
   "paths": {
     "/cruise-lines": {
       "get": {
@@ -552,7 +576,12 @@ The API is fully documented under the **OpenAPI 3.1.0** standard for consumption
         "operationId": "getDeckGeoJSON",
         "tags": ["Geospatial"],
         "parameters": [
-          { "name": "ship_id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          {
+            "name": "ship_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
           { "name": "deck_number", "in": "path", "required": true, "schema": { "type": "integer" } }
         ],
         "responses": {
@@ -573,9 +602,24 @@ The API is fully documented under the **OpenAPI 3.1.0** standard for consumption
         "operationId": "getVectorTile",
         "tags": ["Vector Tiles"],
         "parameters": [
-          { "name": "ship_id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } },
-          { "name": "deck_number", "in": "path", "required": true, "schema": { "type": "integer" } },
-          { "name": "z", "in": "path", "required": true, "schema": { "type": "integer", "minimum": 14, "maximum": 22 } },
+          {
+            "name": "ship_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "deck_number",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          },
+          {
+            "name": "z",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "minimum": 14, "maximum": 22 }
+          },
           { "name": "x", "in": "path", "required": true, "schema": { "type": "integer" } },
           { "name": "y", "in": "path", "required": true, "schema": { "type": "integer" } }
         ],
@@ -584,7 +628,9 @@ The API is fully documented under the **OpenAPI 3.1.0** standard for consumption
             "description": "Mapbox Vector Tile (.pbf) binary stream",
             "headers": {
               "Content-Encoding": { "schema": { "type": "string", "example": "gzip" } },
-              "Cache-Control": { "schema": { "type": "string", "example": "public, max-age=31536000, immutable" } }
+              "Cache-Control": {
+                "schema": { "type": "string", "example": "public, max-age=31536000, immutable" }
+              }
             },
             "content": {
               "application/x-protobuf": {
@@ -601,7 +647,12 @@ The API is fully documented under the **OpenAPI 3.1.0** standard for consumption
         "operationId": "searchVenues",
         "tags": ["Search"],
         "parameters": [
-          { "name": "ship_id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          {
+            "name": "ship_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
           { "name": "q", "in": "query", "required": true, "schema": { "type": "string" } },
           { "name": "deck", "in": "query", "required": false, "schema": { "type": "integer" } },
           { "name": "category", "in": "query", "required": false, "schema": { "type": "string" } }
@@ -627,7 +678,12 @@ The API is fully documented under the **OpenAPI 3.1.0** standard for consumption
         "operationId": "calculateRoute",
         "tags": ["Pathfinding"],
         "parameters": [
-          { "name": "ship_id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+          {
+            "name": "ship_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
         ],
         "requestBody": {
           "required": true,
@@ -767,6 +823,7 @@ flowchart LR
 ```
 
 ### 5.1 Edge Vector Tile Caching Blueprint
+
 1. **Immutable Cache Headers:**
    All vector tile responses include immutable HTTP headers:
    `Cache-Control: public, max-age=31536000, immutable`
@@ -777,22 +834,23 @@ flowchart LR
    Tiles are pre-compressed using Brotli (compression level 6) and Gzip, reducing median tile size from 45 KB to 8 KB.
 
 ### 5.2 PostGIS `ST_AsMVT` Spatial Optimization
+
 To guarantee sub-30ms raw tile generation on database misses, the PostGIS query uses `ST_TileEnvelope` and `ST_AsMVTGeom` with feature simplification:
 
 ```sql
 -- High-Performance Dynamic Tile Generation SQL Query
 SELECT ST_AsMVT(tile, 'venues', 4096, 'geom')
 FROM (
-    SELECT 
-        id, 
-        name, 
-        category, 
+    SELECT
+        id,
+        name,
+        category,
         wheelchair_accessible,
         ST_AsMVTGeom(
-            ST_Transform(geometry, 3857), 
+            ST_Transform(geometry, 3857),
             ST_TileEnvelope($1, $2, $3), -- $1=z, $2=x, $3=y
-            4096, 
-            256, 
+            4096,
+            256,
             true
         ) AS geom
     FROM venues
@@ -802,25 +860,27 @@ FROM (
 ```
 
 ### 5.3 High-Res Deck Map Asset Tiering
-* **Raw Cad/SVG Storage:** Raw source CAD files (`.dwg`/`.dxf`) and uncompressed master SVGs are stored in **Cloudflare R2 Storage** (S3-compatible, zero egress fee).
-* **Pyramid Raster Previews:** High-resolution deck plan raster images generate WebP and AVIF tile pyramids (zoom levels z14-z22) for background context overlays.
-* **Vector Simplification Thresholds:**
-  * Zoom 14–16: Simplify geometries (`ST_SimplifyPreserveTopology(geom, 0.0001)`), omit interior cabin partitions.
-  * Zoom 17–22: Render full polygon detail including cabin boundaries, furniture POIs, and emergency exit paths.
+
+- **Raw Cad/SVG Storage:** Raw source CAD files (`.dwg`/`.dxf`) and uncompressed master SVGs are stored in **Cloudflare R2 Storage** (S3-compatible, zero egress fee).
+- **Pyramid Raster Previews:** High-resolution deck plan raster images generate WebP and AVIF tile pyramids (zoom levels z14-z22) for background context overlays.
+- **Vector Simplification Thresholds:**
+  - Zoom 14–16: Simplify geometries (`ST_SimplifyPreserveTopology(geom, 0.0001)`), omit interior cabin partitions.
+  - Zoom 17–22: Render full polygon detail including cabin boundaries, furniture POIs, and emergency exit paths.
 
 ### 5.4 High Availability & Rate Limiting Strategy
-* **Redis Sliding-Window Rate Limiter:** Enforces 1,000 req/min for free public developers, and 50,000 req/min for enterprise tier tokens.
-* **Database Connection Pooling:** PgBouncer instance configured in transaction pooling mode with a max of 200 active connections per PostGIS node.
-* **Multi-Region Read Replicas:** Read requests (`/tiles`, `/venues/search`) routed to local read replicas across US-East, EU-Central, and AP-Southeast.
+
+- **Redis Sliding-Window Rate Limiter:** Enforces 1,000 req/min for free public developers, and 50,000 req/min for enterprise tier tokens.
+- **Database Connection Pooling:** PgBouncer instance configured in transaction pooling mode with a max of 200 active connections per PostGIS node.
+- **Multi-Region Read Replicas:** Read requests (`/tiles`, `/venues/search`) routed to local read replicas across US-East, EU-Central, and AP-Southeast.
 
 ---
 
 ## 6. Verification & Architecture Compliance Summary
 
-| Architectural Component | Specification & Target | Compliance Metric |
-| :--- | :--- | :--- |
-| **Data Format** | Extended GeoJSON (RFC 7946) & Mapbox Vector Tile (.pbf) | `deck_geojson_v1.schema.json` validated |
-| **Database** | PostgreSQL 16 + PostGIS 3.4 | GIST spatial indexing on all geometries |
-| **API Contract** | OpenAPI 3.1.0 | Standard HTTP REST & Binary protobuf streaming |
-| **Tile Response SLA** | P99 < 45ms (Uncached), < 10ms (Edge Cache Hit) | Brotli compressed `.pbf` tiles |
-| **Routing Capability** | Multi-deck A* Pathfinding | Inter-deck elevator & stair transitions |
+| Architectural Component | Specification & Target                                  | Compliance Metric                              |
+| :---------------------- | :------------------------------------------------------ | :--------------------------------------------- |
+| **Data Format**         | Extended GeoJSON (RFC 7946) & Mapbox Vector Tile (.pbf) | `deck_geojson_v1.schema.json` validated        |
+| **Database**            | PostgreSQL 16 + PostGIS 3.4                             | GIST spatial indexing on all geometries        |
+| **API Contract**        | OpenAPI 3.1.0                                           | Standard HTTP REST & Binary protobuf streaming |
+| **Tile Response SLA**   | P99 < 45ms (Uncached), < 10ms (Edge Cache Hit)          | Brotli compressed `.pbf` tiles                 |
+| **Routing Capability**  | Multi-deck A* Pathfinding                               | Inter-deck elevator & stair transitions        |

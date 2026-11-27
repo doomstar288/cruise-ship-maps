@@ -132,8 +132,7 @@ export function getSampleRoutesForShip(shipId, decks, { stepFree = false } = {})
     findVenue((v) => v.id === 'v10-oceanview-cafe');
 
   const theatreDest =
-    findVenue((v) => v.id === 'v4-theatre') ??
-    findVenue((v) => v.id === 'v3-theatre');
+    findVenue((v) => v.id === 'v4-theatre') ?? findVenue((v) => v.id === 'v3-theatre');
 
   const specs = [];
 

@@ -17,7 +17,13 @@ describe('aliasesFor', () => {
 });
 
 describe('loadShipManifest', () => {
-  const ships = ['celebrity-xcel', 'celebrity-ascent', 'celebrity-beyond', 'celebrity-apex', 'celebrity-edge'];
+  const ships = [
+    'celebrity-xcel',
+    'celebrity-ascent',
+    'celebrity-beyond',
+    'celebrity-apex',
+    'celebrity-edge',
+  ];
 
   it.each(ships)('loads valid manifest for %s', (shipId) => {
     const manifest = loadShipManifest(shipId);

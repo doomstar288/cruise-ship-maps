@@ -9,6 +9,7 @@ roadmap.
 ## 1. Map viewer — runtime correctness
 
 ### ✅ Fit-to-bounds is computed, not hardcoded
+
 The viewer previously fit every deck to a fixed box (`[[-10,-10],[110,337]]`),
 so decks with different extents (and the Magic Carpet, which cantilevers past
 the hull) never framed correctly, and content hid under the floating overlays.
@@ -20,6 +21,7 @@ deck switcher, toolbar, or status bar. The map also seeds an initial view on
 creation so it is never left blank before the first fit.
 
 ### ✅ Geometry and labels render independently (performance)
+
 The single render effect listed `currentZoom` in its dependencies, so **every
 pan/zoom cleared and rebuilt every polygon** — expensive on stateroom decks with
 hundreds of cabins.
@@ -30,11 +32,13 @@ group that redraws on zoom for LOD thinning and collision recompute. Panning no
 longer rebuilds geometry.
 
 ### ✅ Label pills are legible
+
 Pills collapsed to just their colour dot because the flex pill had no definite
 width inside Leaflet's zero-size marker. Added `width: max-content` (capped by
 the existing `max-width`) so the venue name renders.
 
 ### ✅ StrictMode teardown race fixed
+
 A `requestAnimationFrame`-deferred fit could fire against a map that React's
 StrictMode had already torn down, throwing `_leaflet_pos`. Deferred map
 operations now no-op unless the map is still the current instance.
@@ -44,6 +48,7 @@ operations now no-op unless the map is still the current instance.
 ## 2. Data & filtering
 
 ### ✅ Venue taxonomy normalized
+
 The dataset uses ~20 free-form `category` strings while the filter chips compared
 against a handful of exact keys, so filters silently dropped venues (e.g.
 "Dining & Nightlife", "Pools & Recreation"). A new `src/utils/venueTaxonomy.js`
@@ -51,6 +56,7 @@ maps any category onto the canonical filter keys via keyword matching and drives
 both filtering and label priority. Covered by unit tests.
 
 ### ◻️ Emit GeoJSON as the canonical format (recommended)
+
 Model decks/venues as GeoJSON `FeatureCollection`s. It is the standard
 interchange format (feeds Leaflet, MapLibre, and deck.gl unchanged), and it makes
 the existing "Open API GeoJSON" affordance real rather than decorative. Validate
@@ -61,12 +67,14 @@ with a schema (e.g. `zod`).
 ## 3. Integrity of presented data
 
 ### ✅ Simulated features labelled
+
 The "98.4% verified accuracy", "Real-ESRGAN 4x upscale", "AIS satellite" and
 "multi-source consensus" features are hardcoded mocks. Added clear
 "simulated / prototype data" disclaimers to the accuracy sidebar card and the
 Multi-Source inspector modal so the demo does not present fiction as fact.
 
 ### ◻️ Decide: build or clearly gate (recommended)
+
 Either implement one of these pipelines for real, or keep them behind an obvious
 "demo" treatment. Do not ship them as literal claims.
 
@@ -75,15 +83,18 @@ Either implement one of these pipelines for real, or keep them behind an obvious
 ## 4. Engineering quality (tooling)
 
 ### ✅ ESLint + Prettier
+
 Flat-config ESLint (`eslint.config.js`) with the React and React-Hooks plugins,
 replacing the placeholder `"lint": "vite build"` script. Prettier config added
 for consistent formatting (`npm run format`).
 
 ### ✅ Vitest test suite
+
 `vitest.config.js` (jsdom, globals, coverage) plus unit tests for the taxonomy
 helpers and dataset invariants (13 tests). Wired into CI.
 
 ### ◻️ TypeScript migration (recommended, larger)
+
 `@types/*` are already installed but nothing is typed. Migrating `.jsx → .tsx`
 would catch the class of bug this review found (mismatched category keys) at
 compile time.

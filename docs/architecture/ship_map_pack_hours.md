@@ -14,12 +14,12 @@ This is the detail doc for the fields. The pack format as a whole is in
 All four appear only on `venue` and `poi` features. A missing field means "not known". It
 doesn't mean "closed" or "walk in".
 
-| Field | Type | Meaning |
-| --- | --- | --- |
-| `hours` | `[[open, close], …]` | Typical opening windows, in ship's time. Format below. |
-| `reservationRequired` | boolean | `true`: normally booked ahead, e.g. a specialty restaurant or a seating. A walk-in may still get a table when there's room. `false`: guests normally walk in, even where bookings are taken, as in the main restaurants. |
-| `fee` | `"included"`, `"surcharge"` or `"a la carte"` | What the food costs a guest who may use the venue (`access` says who may): in the fare, a cover charge per person, or priced per item. Drinks are extra either way. |
-| `dressCode` | `"casual"` or `"smart casual"` | The venue's usual code. The program's attire for the evening, e.g. Evening Chic, wins. |
+| Field                 | Type                                          | Meaning                                                                                                                                                                                                                  |
+| --------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `hours`               | `[[open, close], …]`                          | Typical opening windows, in ship's time. Format below.                                                                                                                                                                   |
+| `reservationRequired` | boolean                                       | `true`: normally booked ahead, e.g. a specialty restaurant or a seating. A walk-in may still get a table when there's room. `false`: guests normally walk in, even where bookings are taken, as in the main restaurants. |
+| `fee`                 | `"included"`, `"surcharge"` or `"a la carte"` | What the food costs a guest who may use the venue (`access` says who may): in the fare, a cover charge per person, or priced per item. Drinks are extra either way.                                                      |
+| `dressCode`           | `"casual"` or `"smart casual"`                | The venue's usual code. The program's attire for the evening, e.g. Evening Chic, wins.                                                                                                                                   |
 
 A consumer should ignore a `fee` or `dressCode` value it doesn't know.
 
@@ -49,7 +49,9 @@ Both ends count as open, so an agenda item at the closing time isn't flagged. To
 ```js
 const minutes = (hhmm) => Number(hhmm.slice(0, 2)) * 60 + Number(hhmm.slice(3));
 const inWindow = (t, [open, close]) =>
-  minutes(close) < minutes(open) ? t >= minutes(open) || t <= minutes(close) : t >= minutes(open) && t <= minutes(close);
+  minutes(close) < minutes(open)
+    ? t >= minutes(open) || t <= minutes(close)
+    : t >= minutes(open) && t <= minutes(close);
 const usuallyOpen = (t, hours) => hours.some((window) => inWindow(t, window));
 ```
 
