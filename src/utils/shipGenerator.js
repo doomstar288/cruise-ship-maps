@@ -55,24 +55,108 @@ export const FLEET_MANIFESTS = {
 
 export const AVAILABLE_SHIPS = [
   // Edge Series
-  { id: 'celebrity-xcel', name: 'Celebrity Xcel', shipClass: 'Edge Series', lengthMeters: 327, guestDecks: 15 },
-  { id: 'celebrity-ascent', name: 'Celebrity Ascent', shipClass: 'Edge Series', lengthMeters: 327, guestDecks: 15 },
-  { id: 'celebrity-beyond', name: 'Celebrity Beyond', shipClass: 'Edge Series', lengthMeters: 327, guestDecks: 15 },
-  { id: 'celebrity-apex', name: 'Celebrity Apex', shipClass: 'Edge Series', lengthMeters: 306, guestDecks: 14 },
-  { id: 'celebrity-edge', name: 'Celebrity Edge', shipClass: 'Edge Series', lengthMeters: 306, guestDecks: 14 },
+  {
+    id: 'celebrity-xcel',
+    name: 'Celebrity Xcel',
+    shipClass: 'Edge Series',
+    lengthMeters: 327,
+    guestDecks: 15,
+  },
+  {
+    id: 'celebrity-ascent',
+    name: 'Celebrity Ascent',
+    shipClass: 'Edge Series',
+    lengthMeters: 327,
+    guestDecks: 15,
+  },
+  {
+    id: 'celebrity-beyond',
+    name: 'Celebrity Beyond',
+    shipClass: 'Edge Series',
+    lengthMeters: 327,
+    guestDecks: 15,
+  },
+  {
+    id: 'celebrity-apex',
+    name: 'Celebrity Apex',
+    shipClass: 'Edge Series',
+    lengthMeters: 306,
+    guestDecks: 14,
+  },
+  {
+    id: 'celebrity-edge',
+    name: 'Celebrity Edge',
+    shipClass: 'Edge Series',
+    lengthMeters: 306,
+    guestDecks: 14,
+  },
 
   // Solstice Class
-  { id: 'celebrity-solstice', name: 'Celebrity Solstice', shipClass: 'Solstice Class', lengthMeters: 317.2, guestDecks: 14 },
-  { id: 'celebrity-equinox', name: 'Celebrity Equinox', shipClass: 'Solstice Class', lengthMeters: 317.2, guestDecks: 14 },
-  { id: 'celebrity-eclipse', name: 'Celebrity Eclipse', shipClass: 'Solstice Class', lengthMeters: 317.2, guestDecks: 14 },
-  { id: 'celebrity-silhouette', name: 'Celebrity Silhouette', shipClass: 'Solstice Class', lengthMeters: 315, guestDecks: 14 },
-  { id: 'celebrity-reflection', name: 'Celebrity Reflection', shipClass: 'Solstice Class', lengthMeters: 319, guestDecks: 14 },
+  {
+    id: 'celebrity-solstice',
+    name: 'Celebrity Solstice',
+    shipClass: 'Solstice Class',
+    lengthMeters: 317.2,
+    guestDecks: 14,
+  },
+  {
+    id: 'celebrity-equinox',
+    name: 'Celebrity Equinox',
+    shipClass: 'Solstice Class',
+    lengthMeters: 317.2,
+    guestDecks: 14,
+  },
+  {
+    id: 'celebrity-eclipse',
+    name: 'Celebrity Eclipse',
+    shipClass: 'Solstice Class',
+    lengthMeters: 317.2,
+    guestDecks: 14,
+  },
+  {
+    id: 'celebrity-silhouette',
+    name: 'Celebrity Silhouette',
+    shipClass: 'Solstice Class',
+    lengthMeters: 315,
+    guestDecks: 14,
+  },
+  {
+    id: 'celebrity-reflection',
+    name: 'Celebrity Reflection',
+    shipClass: 'Solstice Class',
+    lengthMeters: 319,
+    guestDecks: 14,
+  },
 
   // Millennium Class
-  { id: 'celebrity-millennium', name: 'Celebrity Millennium', shipClass: 'Millennium Class', lengthMeters: 294, guestDecks: 11 },
-  { id: 'celebrity-infinity', name: 'Celebrity Infinity', shipClass: 'Millennium Class', lengthMeters: 294, guestDecks: 11 },
-  { id: 'celebrity-summit', name: 'Celebrity Summit', shipClass: 'Millennium Class', lengthMeters: 294, guestDecks: 11 },
-  { id: 'celebrity-constellation', name: 'Celebrity Constellation', shipClass: 'Millennium Class', lengthMeters: 294, guestDecks: 11 },
+  {
+    id: 'celebrity-millennium',
+    name: 'Celebrity Millennium',
+    shipClass: 'Millennium Class',
+    lengthMeters: 294,
+    guestDecks: 11,
+  },
+  {
+    id: 'celebrity-infinity',
+    name: 'Celebrity Infinity',
+    shipClass: 'Millennium Class',
+    lengthMeters: 294,
+    guestDecks: 11,
+  },
+  {
+    id: 'celebrity-summit',
+    name: 'Celebrity Summit',
+    shipClass: 'Millennium Class',
+    lengthMeters: 294,
+    guestDecks: 11,
+  },
+  {
+    id: 'celebrity-constellation',
+    name: 'Celebrity Constellation',
+    shipClass: 'Millennium Class',
+    lengthMeters: 294,
+    guestDecks: 11,
+  },
 ];
 
 /**
@@ -140,7 +224,9 @@ export function generateShip(shipId) {
       imoNumber: manifest.imoNumber,
       grossTonnage: manifest.grossTonnage,
       lengthMeters: manifest.lengthMeters,
-      beamMeters: manifest.beamMeters ?? (shipClass.includes('solstice') ? 36.9 : shipClass.includes('millennium') ? 32.2 : 39),
+      beamMeters:
+        manifest.beamMeters ??
+        (shipClass.includes('solstice') ? 36.9 : shipClass.includes('millennium') ? 32.2 : 39),
       totalDecks: manifest.totalDecks,
       guestDecks: manifest.guestDecks,
       deckRange: manifest.deckRange,

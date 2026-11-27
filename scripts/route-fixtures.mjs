@@ -154,7 +154,8 @@ export const ROUTE_FIXTURE_CASES = {
     },
     {
       id: 'cabin-3-to-tender-platform-2',
-      description: 'One flight down at midship, then through Destination Gateway onto the Magic Carpet',
+      description:
+        'One flight down at midship, then through Destination Gateway onto the Magic Carpet',
       from: cabin('c3-3100'),
       to: venue('v2-magic-carpet'),
     },
@@ -167,7 +168,8 @@ export const ROUTE_FIXTURE_CASES = {
     },
     {
       id: 'aft-cabin-8-to-gangway-2',
-      description: 'Past the aft lifts, whose Deck 2 stop opens onto crew space, to the midship lift',
+      description:
+        'Past the aft lifts, whose Deck 2 stop opens onto crew space, to the midship lift',
       from: cabin('c8-8337'),
       to: venue('v2-gangway'),
     },
@@ -193,7 +195,8 @@ export const ROUTE_FIXTURE_CASES = {
     },
     {
       id: 'edge-villa-15-to-gangway-2',
-      description: "Deck 2's forward lobby doesn't reach the gangway: lift to Deck 3, aft, one flight down",
+      description:
+        "Deck 2's forward lobby doesn't reach the gangway: lift to Deck 3, aft, one flight down",
       from: cabin('c15-15100'),
       to: venue('v2-gangway'),
     },

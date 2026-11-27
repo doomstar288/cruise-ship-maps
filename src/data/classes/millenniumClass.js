@@ -11,10 +11,7 @@
  * 11 guest decks (Decks 2–12; Deck 13 skipped per maritime tradition).
  */
 
-import {
-  createHullPipeline,
-  VENUE_COLORS as C,
-} from '../../utils/deckPlanDataPipeline.js';
+import { createHullPipeline, VENUE_COLORS as C } from '../../utils/deckPlanDataPipeline.js';
 
 // Millennium Class specific core stations
 const MILLENNIUM_CORE_STATIONS = {
@@ -77,11 +74,17 @@ export function generateMillenniumClassDecks(manifest) {
   ];
 
   // Main dining room name from manifest
-  const mainDiningVenue = (manifest.venues || []).find((v) => v.category === 'Fine Dining' && v.name.includes('Restaurant'));
-  const mainDiningName = mainDiningVenue ? mainDiningVenue.name.replace(/\s*\(Lower Level\)$/, '') : 'Metropolitan Restaurant';
+  const mainDiningVenue = (manifest.venues || []).find(
+    (v) => v.category === 'Fine Dining' && v.name.includes('Restaurant')
+  );
+  const mainDiningName = mainDiningVenue
+    ? mainDiningVenue.name.replace(/\s*\(Lower Level\)$/, '')
+    : 'Metropolitan Restaurant';
 
   // Forward observation lounge name
-  const deck11LoungeVenue = (manifest.venues || []).find((v) => v.deck === 11 && v.category === 'Bars & Lounges' && v.zone === 'fwd');
+  const deck11LoungeVenue = (manifest.venues || []).find(
+    (v) => v.deck === 11 && v.category === 'Bars & Lounges' && v.zone === 'fwd'
+  );
   const deck11LoungeName = deck11LoungeVenue ? deck11LoungeVenue.name : 'Cosmos Lounge';
 
   const venueGroups = getVenueGroups();
@@ -110,7 +113,10 @@ export function generateMillenniumClassDecks(manifest) {
 
   const venue = (level, fields) => placeVenue(level, fields);
 
-  function stateroomDeck(level, { range, typeFor, transom = true, extraBanks = [], fixedCabins = [], cabinRanges }) {
+  function stateroomDeck(
+    level,
+    { range, typeFor, transom = true, extraBanks = [], fixedCabins = [], cabinRanges }
+  ) {
     const avoid = [...CORES, ...(transom ? [STERN_STAIR_X] : [])];
     const cabins = generateStaterooms(level, {
       range,
@@ -121,7 +127,13 @@ export function generateMillenniumClassDecks(manifest) {
       cabinRanges: cabinRanges ?? manifest.cabinRanges?.[String(level)],
     });
     return [
-      ...generateCenterlineCore(level, ['fwd', 'mid', 'aft', ...(transom ? ['stern'] : []), ...extraBanks]),
+      ...generateCenterlineCore(level, [
+        'fwd',
+        'mid',
+        'aft',
+        ...(transom ? ['stern'] : []),
+        ...extraBanks,
+      ]),
       ...generateServiceStrips(level, { range, avoid }),
       ...cabins,
     ];
@@ -134,7 +146,8 @@ export function generateMillenniumClassDecks(manifest) {
     deck(2, {
       title: 'Medical Center & Services',
       category: 'Tenders & Guest Services',
-      description: 'Shipboard Medical Center, embarkation gangway and security checkpoint, crew quarters and engineering technical areas.',
+      description:
+        'Shipboard Medical Center, embarkation gangway and security checkpoint, crew quarters and engineering technical areas.',
       venues: [
         venue(2, {
           id: 'v2-medical',
@@ -142,7 +155,8 @@ export function generateMillenniumClassDecks(manifest) {
           category: 'Guest Services',
           color: C.service,
           x: [50, 74],
-          description: 'Shipboard medical clinic staffed by certified physicians and nursing staff.',
+          description:
+            'Shipboard medical clinic staffed by certified physicians and nursing staff.',
           tags: ['Medical', 'First Aid'],
           aliases: ['Medical Clinic'],
         }),
@@ -190,7 +204,8 @@ export function generateMillenniumClassDecks(manifest) {
     deck(3, {
       title: 'Celebrity Theater & Staterooms',
       category: 'Entertainment & Staterooms',
-      description: 'Celebrity Theater lower level, Grand Foyer atrium, Guest Relations, Shore Excursions, and oceanview staterooms.',
+      description:
+        'Celebrity Theater lower level, Grand Foyer atrium, Guest Relations, Shore Excursions, and oceanview staterooms.',
       venues: [
         venue(3, {
           id: 'v3-theatre',
@@ -200,7 +215,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.entertainment,
           x: [20, 72],
           y: FULL_BEAM_INNER,
-          description: 'Three-story main show theater featuring Broadway and West End production spectacles. Lower level.',
+          description:
+            'Three-story main show theater featuring Broadway and West End production spectacles. Lower level.',
           tags: ['Shows', 'Lower Level'],
           aliases: ['Celebrity Theater', 'The Theater'],
         }),
@@ -213,7 +229,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.entertainment,
           x: [92, 120],
           y: [8, 24],
-          description: 'Elegant multi-deck central atrium featuring a backlit translucent onyx staircase and classical musical ensembles.',
+          description:
+            'Elegant multi-deck central atrium featuring a backlit translucent onyx staircase and classical musical ensembles.',
           tags: ['Atrium', 'Live Music'],
           aliases: ['Grand Foyer', 'Atrium'],
         }),
@@ -224,7 +241,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.service,
           x: [124, 144],
           y: PORT_OUTER,
-          description: '24-hour reception desk for guest inquiries, billing, and onboard assistance.',
+          description:
+            '24-hour reception desk for guest inquiries, billing, and onboard assistance.',
           tags: ['Reception', 'Customer Service'],
           aliases: ['Guest Relations', 'Guest Services', 'Reception'],
         }),
@@ -235,7 +253,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.service,
           x: [124, 144],
           y: STBD_OUTER,
-          description: 'Destination concierge desk for booking guided shore excursions and cultural tours.',
+          description:
+            'Destination concierge desk for booking guided shore excursions and cultural tours.',
           tags: ['Tours', 'Excursions'],
           aliases: ['Shore Ex', 'Shore Excursions'],
         }),
@@ -264,7 +283,8 @@ export function generateMillenniumClassDecks(manifest) {
     deck(4, {
       title: 'Casino, Rendezvous & Dining',
       category: 'Entertainment & Dining',
-      description: 'Celebrity Theater orchestra level, Fortunes Casino, Martini Bar, Rendezvous Lounge, Photo Gallery, and lower level of the Main Restaurant.',
+      description:
+        'Celebrity Theater orchestra level, Fortunes Casino, Martini Bar, Rendezvous Lounge, Photo Gallery, and lower level of the Main Restaurant.',
       venues: [
         venue(4, {
           id: 'v4-theatre',
@@ -297,7 +317,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.entertainment,
           x: [110, 136],
           y: FULL_BEAM_INNER,
-          description: 'Exciting Vegas-style gaming venue featuring craps, blackjack, roulette, poker, and slots.',
+          description:
+            'Exciting Vegas-style gaming venue featuring craps, blackjack, roulette, poker, and slots.',
           tags: ['Casino', 'Gaming'],
           aliases: ['Fortunes Casino', 'The Casino', 'Casino'],
         }),
@@ -330,7 +351,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.bar,
           x: [138, 158],
           y: PORT_OUTER,
-          description: 'Celebrity signature frosted bar counter offering handcrafted martinis and theatrical shaker pours.',
+          description:
+            'Celebrity signature frosted bar counter offering handcrafted martinis and theatrical shaker pours.',
           tags: ['Martinis', 'Cocktails'],
           aliases: ['Martini Bar', 'The Martini Bar'],
         }),
@@ -341,7 +363,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.bar,
           x: [138, 158],
           y: STBD_OUTER,
-          description: 'Warm, inviting pre-dinner cocktail lounge with live dance music and cabaret acts.',
+          description:
+            'Warm, inviting pre-dinner cocktail lounge with live dance music and cabaret acts.',
           tags: ['Live Music', 'Dancing'],
           aliases: ['Rendezvous Lounge', 'Rendezvous'],
         }),
@@ -352,7 +375,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.service,
           x: [174, 218],
           y: CENTER_PASSAGE,
-          description: 'Interactive digital photo viewing kiosks and fine portrait photography studio.',
+          description:
+            'Interactive digital photo viewing kiosks and fine portrait photography studio.',
           tags: ['Photos'],
           aliases: ['Photo Gallery'],
         }),
@@ -377,7 +401,8 @@ export function generateMillenniumClassDecks(manifest) {
     deck(5, {
       title: 'Specialty Dining & Galleria Boutiques',
       category: 'Dining & Shopping',
-      description: 'Celebrity Theater balcony, Galleria Boutiques, Art Gallery, Café al Bacio, Blu, Tuscan Grille, and upper level of the Main Restaurant.',
+      description:
+        'Celebrity Theater balcony, Galleria Boutiques, Art Gallery, Café al Bacio, Blu, Tuscan Grille, and upper level of the Main Restaurant.',
       venues: [
         venue(5, {
           id: 'v5-theatre',
@@ -399,7 +424,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.shopping,
           x: [92, 138],
           y: PORT_OUTER,
-          description: 'Tax- and duty-free shopping for designer fashion, fine watches, perfumes, and liquor.',
+          description:
+            'Tax- and duty-free shopping for designer fashion, fine watches, perfumes, and liquor.',
           tags: ['Shopping', 'Boutiques'],
           aliases: ['Galleria Boutiques', 'The Shops'],
         }),
@@ -410,7 +436,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.entertainment,
           x: [92, 138],
           y: STBD_OUTER,
-          description: 'Fine art gallery with original paintings, sculptures, and live art auctions.',
+          description:
+            'Fine art gallery with original paintings, sculptures, and live art auctions.',
           tags: ['Art', 'Auctions'],
           aliases: ['Art Gallery', 'Park West Gallery'],
         }),
@@ -433,7 +460,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.dining,
           x: [142, 160],
           y: PORT_OUTER,
-          description: 'European-style café serving custom espresso, artisanal teas, freshly baked pastries, and Italian gelato.',
+          description:
+            'European-style café serving custom espresso, artisanal teas, freshly baked pastries, and Italian gelato.',
           tags: ['Coffee', 'Pastries', 'Gelato'],
           aliases: ['Cafe al Bacio', 'Café al Bacio', 'Gelateria'],
         }),
@@ -444,7 +472,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.bar,
           x: [142, 160],
           y: STBD_OUTER,
-          description: 'Intimate wine lounge featuring sommelier-curated tastings and global vintages.',
+          description:
+            'Intimate wine lounge featuring sommelier-curated tastings and global vintages.',
           tags: ['Wine', 'Lounge'],
           aliases: ['Cellar Masters', 'Wine Bar'],
         }),
@@ -455,7 +484,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.dining,
           x: [176, 232],
           y: PORT_OUTER,
-          description: 'AquaClass specialty restaurant serving inventive, clean cuisine prepared with natural, fresh ingredients.',
+          description:
+            'AquaClass specialty restaurant serving inventive, clean cuisine prepared with natural, fresh ingredients.',
           tags: ['AquaClass', 'Specialty Dining'],
           aliases: ['Blu Restaurant', 'Blu'],
         }),
@@ -466,7 +496,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.dining,
           x: [176, 232],
           y: STBD_OUTER,
-          description: 'Italian steakhouse featuring handmade pasta, artisanal charcuterie, USDA Prime dry-aged steaks, and Italian wines.',
+          description:
+            'Italian steakhouse featuring handmade pasta, artisanal charcuterie, USDA Prime dry-aged steaks, and Italian wines.',
           tags: ['Italian', 'Steakhouse'],
           aliases: ['Tuscan Grille', 'Tuscan Grill'],
         }),
@@ -489,7 +520,11 @@ export function generateMillenniumClassDecks(manifest) {
   // ---------------------------------------------------------------- Decks 6–9 (Staterooms & Suites)
   for (let lvl = 6; lvl <= 9; lvl += 1) {
     const isSuiteDeck = lvl === 6;
-    const title = isSuiteDeck ? 'Penthouse Suites & Staterooms' : lvl === 9 ? 'AquaClass & Staterooms' : 'Staterooms & Suites';
+    const title = isSuiteDeck
+      ? 'Penthouse Suites & Staterooms'
+      : lvl === 9
+        ? 'AquaClass & Staterooms'
+        : 'Staterooms & Suites';
 
     decks.push(
       deck(lvl, {
@@ -521,7 +556,8 @@ export function generateMillenniumClassDecks(manifest) {
     deck(10, {
       title: 'Resort Pool, Solarium & Buffet',
       category: 'Pools & Sun Deck',
-      description: 'The Spa and signature Thalassotherapy Pool in the glass-domed Solarium, Main Resort Pool, and Oceanview Café & Grill.',
+      description:
+        'The Spa and signature Thalassotherapy Pool in the glass-domed Solarium, Main Resort Pool, and Oceanview Café & Grill.',
       venues: [
         venue(10, {
           id: 'v10-spa',
@@ -530,7 +566,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.spa,
           x: [28, 74],
           y: FULL_BEAM_INNER,
-          description: 'Full-service wellness sanctuary offering massages, facials, acupuncture, and a state-of-the-art ocean-view fitness gym.',
+          description:
+            'Full-service wellness sanctuary offering massages, facials, acupuncture, and a state-of-the-art ocean-view fitness gym.',
           tags: ['Spa', 'Wellness', 'Gym'],
           aliases: ['The Spa', 'Canyon Ranch', 'Fitness Center', 'Gym'],
         }),
@@ -541,7 +578,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.spa,
           x: [58, 74],
           y: PORT_OUTER,
-          description: 'Thermal suite with steam rooms, dry saunas, and heated ceramic relaxation loungers.',
+          description:
+            'Thermal suite with steam rooms, dry saunas, and heated ceramic relaxation loungers.',
           tags: ['Thermal Suite', 'Sauna'],
           access: 'paid',
         }),
@@ -553,7 +591,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.pool,
           x: [90, 154],
           y: FULL_BEAM_INNER,
-          description: 'Signature glass-canopied adult retreat featuring Millennium Class iconic Thalassotherapy seawater pool with hydro-massage jets.',
+          description:
+            'Signature glass-canopied adult retreat featuring Millennium Class iconic Thalassotherapy seawater pool with hydro-massage jets.',
           tags: ['Solarium', 'Adults Only', 'Thalassotherapy'],
           access: 'adults',
           aliases: ['Thalassotherapy Pool', 'Solarium', 'Adults Pool'],
@@ -576,7 +615,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.pool,
           x: [176, 206],
           y: [10, 22.2],
-          description: 'Outdoor freshwater swimming pool with whirlpool spas, plush loungers, and live poolside music.',
+          description:
+            'Outdoor freshwater swimming pool with whirlpool spas, plush loungers, and live poolside music.',
           tags: ['Pool', 'Sun Deck'],
           aliases: ['Main Pool', 'Resort Pool'],
         }),
@@ -587,7 +627,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.bar,
           x: [176, 204],
           y: PORT_OUTER,
-          description: 'Poolside bar serving cold draft beers, frozen piña coladas, and refreshing cocktails.',
+          description:
+            'Poolside bar serving cold draft beers, frozen piña coladas, and refreshing cocktails.',
           tags: ['Pool Bar', 'Cocktails'],
           aliases: ['Pool Bar'],
         }),
@@ -598,7 +639,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.dining,
           x: [176, 204],
           y: STBD_OUTER,
-          description: 'Classic poolside grill serving made-to-order hamburgers, hot dogs, chicken sandwiches, and crispy fries.',
+          description:
+            'Classic poolside grill serving made-to-order hamburgers, hot dogs, chicken sandwiches, and crispy fries.',
           tags: ['Grill', 'Burgers'],
           aliases: ['Mast Grill', 'Mast Bar'],
         }),
@@ -609,7 +651,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.dining,
           x: [210, 234],
           y: FULL_BEAM_INNER,
-          description: 'Bustling buffet market featuring global culinary stations: pasta bar, Asian noodle station, salad bar, rotisserie meats, and dessert bakery.',
+          description:
+            'Bustling buffet market featuring global culinary stations: pasta bar, Asian noodle station, salad bar, rotisserie meats, and dessert bakery.',
           tags: ['Buffet', 'Casual Dining'],
           aliases: ['Oceanview Café', 'Oceanview Cafe', 'Buffet', 'OVC'],
         }),
@@ -642,7 +685,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.bar,
           x: [32, 72],
           y: FULL_BEAM_INNER,
-          description: 'Panoramic forward observation lounge offering floor-to-ceiling vistas, afternoon cocktails, live music, and evening dancing.',
+          description:
+            'Panoramic forward observation lounge offering floor-to-ceiling vistas, afternoon cocktails, live music, and evening dancing.',
           tags: ['Observation', 'Cocktails', 'Panoramic'],
           aliases: [deck11LoungeName, 'Observation Lounge', 'Sky Lounge'],
         }),
@@ -665,7 +709,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.entertainment,
           x: [186, 218],
           y: PORT_OUTER,
-          description: 'Dedicated youth center featuring interactive gaming, arts and crafts, STEM activities, and scavenger hunts.',
+          description:
+            'Dedicated youth center featuring interactive gaming, arts and crafts, STEM activities, and scavenger hunts.',
           tags: ['Kids Club'],
           access: 'kids',
           aliases: ['Camp at Sea', 'Kids Club', 'Fun Factory'],
@@ -677,7 +722,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.entertainment,
           x: [186, 218],
           y: STBD_OUTER,
-          description: 'Exclusive hangout for teens aged 13–17 with video consoles, foosball, music, and late-night teen parties.',
+          description:
+            'Exclusive hangout for teens aged 13–17 with video consoles, foosball, music, and late-night teen parties.',
           tags: ['Teens'],
           access: 'kids',
           aliases: ['XClub', 'Teen Club'],
@@ -689,7 +735,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.entertainment,
           x: [224, 260],
           y: CENTER_PASSAGE,
-          description: 'Outdoor movie cinema and chic lounge space under the stars with plush daybeds and cocktail service.',
+          description:
+            'Outdoor movie cinema and chic lounge space under the stars with plush daybeds and cocktail service.',
           tags: ['Movies', 'Outdoor Lounge'],
           aliases: ['Rooftop Terrace', 'Aft Terrace'],
         }),
@@ -700,7 +747,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.bar,
           x: [262, 284],
           y: [4, 28.2],
-          description: 'Signature aft outdoor bar offering the ultimate sunset and wake views with craft cocktails and beers.',
+          description:
+            'Signature aft outdoor bar offering the ultimate sunset and wake views with craft cocktails and beers.',
           tags: ['Sunset Bar', 'Aft View', 'Cocktails'],
           aliases: ['Sunset Bar', 'Aft Sunset Bar'],
         }),
@@ -713,7 +761,8 @@ export function generateMillenniumClassDecks(manifest) {
     deck(12, {
       title: 'The Retreat Sundeck & Sports Court',
       category: 'Suites & Sports',
-      description: 'The Retreat Sundeck forward for suite guests, and the open-air Sports Court aft.',
+      description:
+        'The Retreat Sundeck forward for suite guests, and the open-air Sports Court aft.',
       venues: [
         venue(12, {
           id: 'v12-retreat-sundeck',
@@ -722,7 +771,8 @@ export function generateMillenniumClassDecks(manifest) {
           color: C.suite,
           x: [36, 78],
           y: [6, 26.2],
-          description: 'Exclusive private sundeck reserved for suite guests, featuring luxury loungers, dedicated concierge, and poolside cocktails.',
+          description:
+            'Exclusive private sundeck reserved for suite guests, featuring luxury loungers, dedicated concierge, and poolside cocktails.',
           tags: ['Suites', 'Retreat', 'Sundeck'],
           access: 'suite',
           aliases: ['The Retreat Sundeck', 'Retreat Sundeck'],

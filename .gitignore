@@ -9,6 +9,9 @@ build
 # Test coverage
 coverage
 
+# Nested git worktrees created by agent sessions
+.claude/worktrees/
+
 # Environment & local variables
 .env
 .env.local

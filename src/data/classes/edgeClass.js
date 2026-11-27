@@ -34,7 +34,10 @@ const CENTER = [12, 27];
  */
 function getVenueGroups(hasEden) {
   const groups = {
-    theatre: { spansDecks: [3, 4, 5], aliases: ['The Theatre', 'The Theater', 'Theatre', 'Theater'] },
+    theatre: {
+      spansDecks: [3, 4, 5],
+      aliases: ['The Theatre', 'The Theater', 'Theatre', 'Theater'],
+    },
     'grand-plaza': { spansDecks: [3, 4, 5], aliases: ['Grand Plaza', 'Grand Plaza Bar'] },
     'the-club': { spansDecks: [4, 5], aliases: [] },
     'magic-carpet': { spansDecks: [2, 5, 14, 16], aliases: ['Magic Carpet', 'Magic Carpet Bar'] },
@@ -53,7 +56,8 @@ function getVenueGroups(hasEden) {
 const edgeVeranda = (x) => (x >= 95 && x < 186 ? 'E1' : 'E3');
 
 /** Magic Carpet Sky Suite directly forward of the platform's starboard track */
-const nextToMagicCarpet = ({ x, side, row }) => side === 'Starboard' && row === 'outside' && x >= 144 && x < 154;
+const nextToMagicCarpet = ({ x, side, row }) =>
+  side === 'Starboard' && row === 'outside' && x >= 144 && x < 154;
 
 /**
  * Generates all decks for an Edge-class ship given its manifest.
@@ -98,7 +102,9 @@ export function generateEdgeClassDecks(manifest) {
   const hasBora = hasVenue('Bora');
   const shoreExcursionsDeck =
     (manifest.venues || []).find((v) => v.name === 'Shore Excursions')?.deck ?? 3;
-  const hasDeck12Luminae = (manifest.venues || []).some((v) => v.deck === 12 && v.name.includes('Luminae'));
+  const hasDeck12Luminae = (manifest.venues || []).some(
+    (v) => v.deck === 12 && v.name.includes('Luminae')
+  );
   const isStretched = lengthMeters >= 320;
   const hasDeck17 = isStretched && (manifest.deckRange ? manifest.deckRange.max >= 17 : true);
 
@@ -128,7 +134,10 @@ export function generateEdgeClassDecks(manifest) {
 
   const venue = (level, fields) => placeVenue(level, fields);
 
-  function stateroomDeck(level, { range, typeFor, transom = true, extraBanks = [], fixedCabins = [], cabinRanges }) {
+  function stateroomDeck(
+    level,
+    { range, typeFor, transom = true, extraBanks = [], fixedCabins = [], cabinRanges }
+  ) {
     const avoid = [...CORES, ...(transom ? [STERN_STAIR_X] : [])];
     const cabins = generateStaterooms(level, {
       range,
@@ -143,7 +152,13 @@ export function generateEdgeClassDecks(manifest) {
       cabinRanges: cabinRanges ?? manifest.cabinRanges?.[String(level)],
     });
     return [
-      ...generateCenterlineCore(level, ['fwd', 'mid', 'aft', ...(transom ? ['stern'] : []), ...extraBanks]),
+      ...generateCenterlineCore(level, [
+        'fwd',
+        'mid',
+        'aft',
+        ...(transom ? ['stern'] : []),
+        ...extraBanks,
+      ]),
       ...generateServiceStrips(level, { range, avoid }),
       ...cabins,
     ];
@@ -165,7 +180,8 @@ export function generateEdgeClassDecks(manifest) {
           category: 'Guest Services',
           color: C.service,
           x: [58, 80],
-          description: 'Shipboard medical center staffed by physicians and nurses, near the forward elevators.',
+          description:
+            'Shipboard medical center staffed by physicians and nurses, near the forward elevators.',
           tags: ['Medical', 'First Aid'],
           aliases: ['Medical Clinic'],
         }),
@@ -220,7 +236,8 @@ export function generateEdgeClassDecks(manifest) {
         magicCarpetStop(2, {
           name: 'Magic Carpet (Tender Platform)',
           ...partOf('magic-carpet', { aliases: ['Tender Platform'] }),
-          description: 'At Deck 2 the Magic Carpet becomes a tender embarkation platform for Destination Gateway.',
+          description:
+            'At Deck 2 the Magic Carpet becomes a tender embarkation platform for Destination Gateway.',
           tags: ['Tender Platform', 'Starboard'],
           // Guests wait in Destination Gateway and board the tenders from here.
           portExit: 'tender',
@@ -264,7 +281,8 @@ export function generateEdgeClassDecks(manifest) {
           category: 'Entertainment',
           color: C.entertainment,
           x: [24, 78],
-          description: 'Three-deck main theater (Decks 3–5) with a 360° stage and production shows. Lower level entrance.',
+          description:
+            'Three-deck main theater (Decks 3–5) with a 360° stage and production shows. Lower level entrance.',
           tags: ['Shows', 'Lower Level'],
         }),
         ...generateCenterlineCore(3),
@@ -282,7 +300,8 @@ export function generateEdgeClassDecks(manifest) {
           color: C.entertainment,
           x: [152, 184],
           y: [7, 32],
-          description: 'The ship’s three-deck social hub beneath a kinetic chandelier. Lower level.',
+          description:
+            'The ship’s three-deck social hub beneath a kinetic chandelier. Lower level.',
           tags: ['Atrium', 'Live Music'],
         }),
         venue(3, {
@@ -296,7 +315,8 @@ export function generateEdgeClassDecks(manifest) {
           color: C.bar,
           x: [162, 176],
           y: [14, 25],
-          description: 'Full-circle bar at the center of the Grand Plaza, known for its flair bartenders.',
+          description:
+            'Full-circle bar at the center of the Grand Plaza, known for its flair bartenders.',
           tags: ['Cocktails', 'Grand Plaza'],
         }),
         venue(3, {
@@ -479,7 +499,8 @@ export function generateEdgeClassDecks(manifest) {
       color: C.dining,
       x: [152, 184],
       y: PORT_EDGE,
-      description: 'French bistro on the Grand Plaza; hosts Le Petit Chef animated dining at night.',
+      description:
+        'French bistro on the Grand Plaza; hosts Le Petit Chef animated dining at night.',
       tags: ['French', 'Le Petit Chef'],
     }),
     venue(4, {
@@ -756,7 +777,8 @@ export function generateEdgeClassDecks(manifest) {
       positionConfidence: 'verified',
       name: 'Magic Carpet (Deck 5 Dining)',
       ...partOf('magic-carpet'),
-      description: 'The cantilevered Magic Carpet docks on Deck 5 as an open-air extension of the dining venues.',
+      description:
+        'The cantilevered Magic Carpet docks on Deck 5 as an open-air extension of the dining venues.',
       tags: ['Cantilevered', 'Ocean Views', 'Starboard'],
     }),
     venue(5, {
@@ -881,9 +903,28 @@ export function generateEdgeClassDecks(manifest) {
   const midDeckTypes = {
     7: ({ x }) => (x < 50 ? 'DO' : edgeVeranda(x)),
     8: ({ x }) => (x < 45 ? 'DO' : x < 81 ? 'A1' : edgeVeranda(x)),
-    9: ({ x }) => (x < 45 ? 'DO' : x < 81 ? 'A1' : x < 120 && x >= 95 ? 'S1' : x < 186 && x >= 95 ? 'C2' : edgeVeranda(x)),
+    9: ({ x }) =>
+      x < 45
+        ? 'DO'
+        : x < 81
+          ? 'A1'
+          : x < 120 && x >= 95
+            ? 'S1'
+            : x < 186 && x >= 95
+              ? 'C2'
+              : edgeVeranda(x),
     10: ({ x }) =>
-      x < 45 ? 'E3' : x < 70 ? 'A1' : x < 81 ? 'AS' : x < 120 && x >= 95 ? 'S1' : x < 186 && x >= 95 ? 'C2' : edgeVeranda(x),
+      x < 45
+        ? 'E3'
+        : x < 70
+          ? 'A1'
+          : x < 81
+            ? 'AS'
+            : x < 120 && x >= 95
+              ? 'S1'
+              : x < 186 && x >= 95
+                ? 'C2'
+                : edgeVeranda(x),
   };
   const midDeckInfo = {
     7: 'Deluxe Oceanview staterooms forward, Prime Edge and Edge Infinite Veranda staterooms, and Sunset Verandas facing the wake.',
@@ -922,7 +963,8 @@ export function generateEdgeClassDecks(manifest) {
           category: 'Navigation & Bridge',
           color: C.service,
           x: [18, 42],
-          description: 'The ship’s navigation bridge, with wings overhanging both sides. Crew only.',
+          description:
+            'The ship’s navigation bridge, with wings overhanging both sides. Crew only.',
           tags: ['Bridge', 'Crew Only'],
           aliases: ['The Bridge', 'Bridge'],
         }),
@@ -1047,7 +1089,8 @@ export function generateEdgeClassDecks(manifest) {
     magicCarpetStop(14, {
       name: 'Magic Carpet (Pool Deck)',
       ...partOf('magic-carpet'),
-      description: 'On Deck 14 the Magic Carpet extends the pool deck out over the sea, in front of the cabanas.',
+      description:
+        'On Deck 14 the Magic Carpet extends the pool deck out over the sea, in front of the cabanas.',
       tags: ['Pool Deck', 'Starboard'],
     }),
     venue(14, {
@@ -1144,7 +1187,8 @@ export function generateEdgeClassDecks(manifest) {
       category: 'Bars & Lounges',
       color: C.bar,
       x: [96, 134],
-      description: 'Enlarged private lounge for suite guests with complimentary drinks and dedicated concierge.',
+      description:
+        'Enlarged private lounge for suite guests with complimentary drinks and dedicated concierge.',
       tags: ['The Retreat', 'Suite Guests Only'],
       access: 'suite',
       aliases: ['Retreat Lounge'],
@@ -1399,7 +1443,8 @@ export function generateEdgeClassDecks(manifest) {
       deck(17, {
         title: 'The Retreat Sundeck',
         category: 'The Retreat',
-        description: 'The suites-only Retreat Sundeck with round pool, plunge pools, cabanas and The Retreat Bar.',
+        description:
+          'The suites-only Retreat Sundeck with round pool, plunge pools, cabanas and The Retreat Bar.',
         venues: [
           ...generateCenterlineCore(17, ['fwd']),
           venue(17, {
