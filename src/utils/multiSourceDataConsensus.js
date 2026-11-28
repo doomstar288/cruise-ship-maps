@@ -14,8 +14,8 @@ export const ACCURACY_SOURCES = [
       'Vector coordinates extracted directly from official Celebrity Cruises Edge-Class vessel blueprints.',
   },
   {
-    id: 'IMO_9938430_AIS_TELEMETRY',
-    name: 'IMO 9938430 Satellite & AIS Telemetry',
+    id: 'IMO_9884136_AIS_TELEMETRY',
+    name: 'IMO 9884136 Satellite & AIS Telemetry',
     type: 'Vessel CAD Hull Metrics',
     trustScore: 0.99,
     lastSynced: '2026-08-05',
