@@ -76,9 +76,9 @@ router + layout ──record:route-fixtures──► public/v1/ships/<id>/route-
 - **Some UI is illustrative, not data.** The "Multi-Source Consensus" panel
   (`src/utils/multiSourceDataConsensus.js`) is a hardcoded list of sources with trust scores and made-up
   sync dates — there is no AIS, satellite or Real-ESRGAN ingestion anywhere in the repo, and the "AI Upscale"
-  button is only a display toggle. `ApiInspectorModal` shows a `mockGeoJson`. The IMO used in that panel
-  and in older README text (9938430) **fails the IMO check digit**; Celebrity Xcel's is `9884136`. Don't quote
-  accuracy percentages from those components.
+  button is only a display toggle. `ApiInspectorModal` shows a `mockGeoJson`. That panel used to cite IMO
+  9938430, which **fails the IMO check digit**; it now uses Celebrity Xcel's real `9884136`, and a test keeps
+  every IMO in it valid. Don't quote accuracy percentages from those components.
 - **Generated or machine-specific folders:** `.claude/worktrees/` (agent checkouts) is ignored by git,
   eslint and prettier; don't edit inside it.
 
